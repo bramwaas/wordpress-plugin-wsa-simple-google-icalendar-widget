@@ -8,12 +8,11 @@ Version: 0.0.1
 License: GPL3
 Tested up to: 4.8.3
 */
-
 /*
     Simple Google calendar widget for Wordpress
     Copyright (C) Bram Waasdorp 2017 
     Forked from Simple Google Calendar Widget v 0.7 by Nico Boehr
-
+ 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -123,22 +122,29 @@ class Simple_Gcal_Widget extends WP_Widget
         if(isset($instance['title'])) {
             echo $args['before_title'], $instance['title'], $args['after_title'];
         }
-        
-        $data = $this->getData($instance);
+         $data = $this->getData($instance);
 
         if (!empty($data) && is_array($data)) {
-            date_default_timezone_set(get_option('timezone_string'));
-            echo '<ol class="eventlist">';
+           date_default_timezone_set(get_option('timezone_string'));
+           echo '<ul class="list-group simple-gcal-widget">';
             foreach($data as $e) {
-                echo '<li';
-                if(!empty($e->location)) {
-                    echo ' title="', sprintf(__('Location: %s', 'simple_gcal'), htmlspecialchars($e->location)), '" ';
+              echo '<li class="list-group-item ">', strftime(__('<span class="weekday">%A</span> <span class="day">%e</span> <span class="month">%B</span>', 'simple_gcal'), $e->start);
+               if(!empty($e->summary)) {
+                    echo  '<br>',   htmlspecialchars($e->summary) ;
                 }
-                echo '><span class="date">', strftime(__('<span class="day">%d</span>%b', 'simple_gcal'), $e->start), '</span>';
-                echo htmlspecialchars($e->summary);
-                echo '</li>';
+               if(!empty($e->description)) {
+                    echo  '<br>',  htmlspecialchars($e->description);
+                }
+             echo '<br>', strftime(__('<span class="time">%R</span> ', 'simple_gcal'), $e->start),
+		  ' - ', strftime(__('<span class="time">%R</span> ', 'simple_gcal'), $e->end) ;
+              if(!empty($e->location)) {
+                    echo  ' ',  htmlspecialchars($e->location);
+                }
+
+ 
+            echo '</li>';
             }
-            echo '</ol>';
+	echo '</ul>';
             date_default_timezone_set('UTC');
         }
 
