@@ -6,6 +6,8 @@ class IcsParsingException extends Exception {}
  * a simple ICS parser.
  *
  * note that this class does not implement all ICS functionality.
+*   bw 20171109 endkele verbteringen voor statr en end in ical.php
+
  */
 class IcsParser {
 
@@ -42,7 +44,7 @@ class IcsParser {
             }
         } while($haveVevent);
 
-        usort($events, array($this, "eventSortComparer"));
+       usort($events, array($this, "eventSortComparer"));
 
         $this->events = $events;
     }
@@ -67,17 +69,21 @@ class IcsParser {
     }
 
     private function parseIcsDateTime($datetime) {
-        if (strlen($datetime) < 13) {
+        if (strlen($datetime) < 8) {
             return -1;
         }
 
         $year = substr($datetime, 0, 4);
         $month = substr($datetime, 4, 2);
         $day = substr($datetime, 6, 2);
-
-        $hour = substr($datetime, 9, 2);
-        $minute = substr($datetime, 11, 2);
-
+        if (strlen($datetime) >= 13) then {
+            $hour = substr($datetime, 9, 2);
+            $minute = substr($datetime, 11, 2);
+        } else {
+            $hour = '00';
+            $minute = '00';
+        }    
+        
         // check if it is GMT
         $lastChar = $datetime[strlen($datetime) - 1];
 
@@ -105,17 +111,22 @@ class IcsParser {
         $lines = explode("\n", $eventStr);
         $eventObj = new StdClass;
 
-        foreach($lines as $l) {
+        foreach($lines as $l) { 
+
             $list = explode(":", $l);
 
             // to avoid "undefined index..."
-            $token = $list[0];
+            $token = "";
             $value = "";
+//bw 20171108 toegvoegd, omdat soms timezone info na DTSTART, of DTEND stond bv DTSTART;TZID=Europe/Amsterdam, of
+//          DTSTART;VALUE=DATE:20171203
+            $tl = explode(";", $list[0]);
+            $token = $tl[0];
+// bw end               
             if (count($list) > 1) {
                 // trim() to remove \r
                 $value = trim($list[1]);
             }
-
             switch($token) {
                 case "SUMMARY":
                     $eventObj->summary = $value;
@@ -132,6 +143,11 @@ class IcsParser {
                 case "DTEND":
                     $eventObj->end = $this->parseIcsDateTime($value);
                     break;
+// bw 20171108 toegevoegd UID  
+               case "UID":
+                    $eventObj->uid = $value;
+                    break;
+ 
             }
 
         }
