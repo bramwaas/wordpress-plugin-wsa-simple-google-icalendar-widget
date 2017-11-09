@@ -15,17 +15,6 @@ This widget is a Fork of version 0.7 of that simple google calendar widget by NB
 * Small footprint, uses only Google ID of the calendar to get event information via iCal
 * Output in unorderd list with Bootstrap 4 listgroup classes and toggle for details.
 
-## Copyright and License
-
-This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-licenses/gpl-2.0.html), version 2 or later.
-
-2017&thinsp;&ndash;&thinsp;2017 &copy; [Bram Waasdorp](http://www.waasdorpsoekhan.nl).
-
-## Documentation
-* Gets calendar events via iCal url of google calendar
-* Displays selected number of events, or events in a selected period from now as listgroup-items
-* Displays event start-date and summary; toggle details, description, start-, end-time, location. 
-
 ## Installation
 * Do the usual setup procedure… you know… downloading… unpacking… uploading… activating. 
 Or just install it through the wordpress plugin directory.
@@ -36,6 +25,16 @@ Just drag it into your sidebar.
  You can find it by going to Calendar settings › Calendars, clicking on the appropriate calendar,
  scrolling all the way down to “Calendar address”. There’s your calendar id.
 * You’re done!
+
+## Documentation
+* Gets calendar events via iCal url of google calendar
+* Displays selected number of events, or events in a selected period from now as listgroup-items
+* Displays event start-date and summary; toggle details, description, start-, end-time, location. 
+
+## Copyright and License
+
+This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-licenses/gpl-2.0.html), version 2 or later.
+2017&thinsp;&ndash;&thinsp;2017 &copy; [Bram Waasdorp](http://www.waasdorpsoekhan.nl).
 
 ## Changelog
 
