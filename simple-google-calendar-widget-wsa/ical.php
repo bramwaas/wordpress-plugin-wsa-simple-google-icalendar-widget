@@ -76,7 +76,7 @@ class IcsParser {
         $year = substr($datetime, 0, 4);
         $month = substr($datetime, 4, 2);
         $day = substr($datetime, 6, 2);
-        if (strlen($datetime) >= 13) then {
+        if (strlen($datetime) >= 13)  {
             $hour = substr($datetime, 9, 2);
             $minute = substr($datetime, 11, 2);
         } else {
