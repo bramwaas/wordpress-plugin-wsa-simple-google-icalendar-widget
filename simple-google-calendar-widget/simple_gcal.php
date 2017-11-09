@@ -2,15 +2,16 @@
 /*
 Plugin Name: Simple Google Calendar Widget
 Description: Widget that displays events from a public google calendar
-Author: Nico Boehr
-Version: 0.7
+Author: Bram Waasdorp
+Version: 0.0.1
 License: GPL3
-Tested up to: 4.7
+Tested up to: 4.8.3
 */
 
 /*
     Simple Google calendar widget for Wordpress
-    Copyright (C) 2012 Nico Boehr
+    Copyright (C) Bram Waasdorp 2017 
+    Forked from Simple Google Calendar Widget v 0.7 by Nico Boehr
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
