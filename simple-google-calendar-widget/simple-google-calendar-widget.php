@@ -2,6 +2,7 @@
 /*
 Plugin Name: Simple Google Calendar Widget
 Description: Widget that displays events from a public google calendar
+Plugin URI: https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
 Author: Bram Waasdorp
 Version: 0.0.1
 License: GPL3
