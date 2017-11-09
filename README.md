@@ -3,7 +3,7 @@ Google offers some HTML snippets to embed your public Google Calendar into your 
 These are great, but as soon as you want to make a few adjustments to the styling,
 that goes beyond changing some colors, they’re useless.
 
-Because of that NBoehr wrote a very simple widget, that fetches events from a public google
+Because of that Nico Boehr wrote a very simple widget, that fetches events from a public google
 calendar and nicely displays them in form of a widget, allowing you to apply all kinds of CSS.
 https://nl.wordpress.org/plugins/simple-google-calendar-widget/
 
@@ -41,3 +41,4 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 * 0.0 imported V0.7 of NBoehr
 * 20171108: Added support for start and end time with timezone
 * 20171108: Changed lay-out of output of teh widget so that is more in line with bootstrap 4 and with the iframe-widget of google
+* 0.0.1 renamed starting .php file to simple-google-calendar-widget.php
