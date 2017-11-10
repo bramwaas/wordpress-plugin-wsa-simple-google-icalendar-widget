@@ -128,7 +128,8 @@ class Simple_Gcal_Widget extends WP_Widget
            date_default_timezone_set(get_option('timezone_string'));
            echo '<ul class="list-group simple-gcal-widget">';
             foreach($data as $e) {
-              echo '<li class="list-group-item ">', strftime(__('<span class="weekday">%A</span> <span class="day">%e</span> <span class="month">%B</span>', 'simple_gcal'), $e->start);
+		/* of dateformat  =  'l ' . get_option( 'date_format' ) */
+              echo '<li class="list-group-item gcal-date">',  date_i18n( 'l j F Y', $e->start, false );
                if(!empty($e->summary)) {
                     echo  '<br><a class="btn btn-primary" data-toggle="collapse" href="#', $e->uid, '" aria-expanded="false" aria-controls="', $e->uid, '">',   htmlspecialchars($e->summary), '</a>' ;
                 }
