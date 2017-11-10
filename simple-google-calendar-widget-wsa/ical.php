@@ -49,14 +49,15 @@ class IcsParser {
         $this->events = $events;
     }
 
-    public function getFutureEvents() {
+    public function getFutureEvents($days = 366) {
         // events are already sorted
         $newEvents = array();
         $now = time();
+        $enddate = strtotime("+$days day")
 
         foreach ($this->events as $e) {
-            if (($e->start >= $now) ||
-                ($e->end >= $now)) {
+            if ((($e->start >= $now) || ($e->end >= $now))
+                && $e->start <= $enddate) {
                     $newEvents[] = $e;
                 }
         }
