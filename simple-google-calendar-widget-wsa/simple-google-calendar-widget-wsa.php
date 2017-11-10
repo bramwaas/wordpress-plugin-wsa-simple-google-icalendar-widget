@@ -131,11 +131,11 @@ class Simple_Gcal_Widget extends WP_Widget
 		/* of dateformat  =  'l ' . get_option( 'date_format' ) */
               echo '<li class="list-group-item gcal-date">',  date_i18n( 'l j F Y', $e->start, false );
                if(!empty($e->summary)) {
-                    echo  '<br><a class="btn btn-primary" data-toggle="collapse" href="#', esc_attr($e->uid), '" aria-expanded="false" aria-controls="', esc_attr($e->uid), '">',   htmlspecialchars($e->summary), '</a>' ;
+                    echo  '<br><a class="btn btn-primary" data-toggle="collapse" href="#', esc_attr($e->uid), '" aria-expanded="false" aria-controls="', esc_attr($e->uid), '">',   htmlspecialchars(str_replace(array("\r\n", "\n", "\r"), "<br>", $e->summary)), '</a>' ;
                 }
 	       echo '<div class="collapse" id="',  esc_attr($e->uid), '">';	    
                if(!empty($e->description)) {
-                    echo  '<br>',  htmlspecialchars($e->description);
+                    echo  '<br>',  htmlspecialchars(str_replace(array("\r\n", "\n", "\r"), "<br>", $e->description));
                 }
 	     if ($e->end > $e->start )	{    
              echo '<br><span class="time">', date_i18n( 'G:i', $e->start, false ), 
