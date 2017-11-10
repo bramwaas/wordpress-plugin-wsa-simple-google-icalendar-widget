@@ -130,8 +130,9 @@ class Simple_Gcal_Widget extends WP_Widget
             foreach($data as $e) {
               echo '<li class="list-group-item ">', strftime(__('<span class="weekday">%A</span> <span class="day">%e</span> <span class="month">%B</span>', 'simple_gcal'), $e->start);
                if(!empty($e->summary)) {
-                    echo  '<br>',   htmlspecialchars($e->summary) ;
+                    echo  '<br><a class="btn btn-primary" data-toggle="collapse" href="#', $e->uid, '" aria-expanded="false" aria-controls="', $e->uid, '">',   htmlspecialchars($e->summary), '</a>' ;
                 }
+	       echo '<div class="collapse" id="',  $e->uid, '">';	    
                if(!empty($e->description)) {
                     echo  '<br>',  htmlspecialchars($e->description);
                 }
@@ -142,7 +143,7 @@ class Simple_Gcal_Widget extends WP_Widget
                 }
 
  
-            echo '</li>';
+            echo '</div></li>';
             }
 	echo '</ul>';
             date_default_timezone_set('UTC');
