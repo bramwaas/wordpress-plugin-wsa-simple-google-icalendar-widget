@@ -111,7 +111,7 @@ class Simple_Gcal_Widget extends WP_Widget
             $parser = new IcsParser();
             $parser->parse($httpData['body']);
 
-            $events = $parser->getFutureEvents();
+            $events = $parser->getFutureEvents($instance['event_period']);
             return $this->limitArray($events, $count);
         } catch(IcsParsingException $e) {
             return null;
