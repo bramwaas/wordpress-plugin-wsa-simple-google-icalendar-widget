@@ -137,8 +137,12 @@ class Simple_Gcal_Widget extends WP_Widget
                if(!empty($e->description)) {
                     echo  '<br>',  htmlspecialchars($e->description);
                 }
-             echo '<br>', strftime(__('<span class="time">%R</span> ', 'simple_gcal'), $e->start),
-		  ' - ', strftime(__('<span class="time">%R</span> ', 'simple_gcal'), $e->end) ;
+	     if ($e->end > $e->start )	{    
+             echo '<br><span class="time">', date_i18n( 'G:i', $e->start, false ), 
+		  '</span> - <span class="time">', date_i18n( 'G:i', $e->end, false ), '</span>' ;
+	     } else {
+		echo '    ';      
+	     }
               if(!empty($e->location)) {
                     echo  ' ',  htmlspecialchars($e->location);
                 }
