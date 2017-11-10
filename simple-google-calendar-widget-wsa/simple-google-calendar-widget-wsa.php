@@ -7,6 +7,9 @@ Author: Bram Waasdorp
 Version: 0.0.1
 License: GPL3
 Tested up to: 4.8.3
+Text Domain:  simple_gcal_wsa
+Domain Path:  /languages
+
 */
 /*
     Simple Google calendar widget for Wordpress
@@ -35,9 +38,9 @@ class Simple_Gcal_Widget extends WP_Widget
     public function __construct()
     {
         // load our textdomain
-        load_plugin_textdomain('simple_gcal', false, basename( dirname( __FILE__ ) ) . '/languages' );
+        load_plugin_textdomain('simple_gcal_wsa', false, basename( dirname( __FILE__ ) ) . '/languages' );
         
-        parent::__construct('Simple_Gcal_Widget', 'Simple Google Calendar Widget', array('description' => __('Displays events from a public Google Calendar', 'simple_gcal')));
+        parent::__construct('Simple_Gcal_Widget', 'Simple Google Calendar Widget', array('description' => __('Displays events from a public Google Calendar', 'simple_gcal_wsa')));
     }
     
     private function getTransientId()
@@ -188,30 +191,37 @@ class Simple_Gcal_Widget extends WP_Widget
     public function form($instance) 
     {
         $default = array(
-            'title' => __('Events', 'simple_gcal'),
-            'cache_time' => 60,
+            'title' => __('Events', 'simple_gcal_wsa'),
+	    'event_count' => 10,
+	    'event_period' => 92,	
+            'cache_time' => 60
+	    		
         );
         $instance = wp_parse_args((array) $instance, $default);
         
         ?>
         <p>
-          <label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:', 'simple_gcal'); ?></label> 
+          <label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:', 'simple_gcal_wsa'); ?></label> 
           <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($instance['title']); ?>" />
         </p>
         <p>
-          <label for="<?php echo $this->get_field_id('calendar_id'); ?>"><?php _e('Calendar ID:', 'simple_gcal'); ?></label> 
+          <label for="<?php echo $this->get_field_id('calendar_id'); ?>"><?php _e('Calendar ID:', 'simple_gcal_wsa'); ?></label> 
           <input class="widefat" id="<?php echo $this->get_field_id('calendar_id'); ?>" name="<?php echo $this->get_field_name('calendar_id'); ?>" type="text" value="<?php echo esc_attr($instance['calendar_id']); ?>" />
         </p>
         <p>
-          <label for="<?php echo $this->get_field_id('event_count'); ?>"><?php _e('Number of events displayed:', 'simple_gcal'); ?></label> 
+          <label for="<?php echo $this->get_field_id('event_count'); ?>"><?php _e('Number of events displayed:', 'simple_gcal_wsa'); ?></label> 
           <input class="widefat" id="<?php echo $this->get_field_id('event_count'); ?>" name="<?php echo $this->get_field_name('event_count'); ?>" type="text" value="<?php echo esc_attr($instance['event_count']); ?>" />
         </p>
         <p>
-          <label for="<?php echo $this->get_field_id('cache_time'); ?>"><?php _e('Cache expiration time in minutes:', 'simple_gcal'); ?></label> 
+          <label for="<?php echo $this->get_field_id('event_period'); ?>"><?php _e('Number of days after today with events displayed:', 'simple_gcal_wsa'); ?></label> 
+          <input class="widefat" id="<?php echo $this->get_field_id('event_period'); ?>" name="<?php echo $this->get_field_name('event_period'); ?>" type="text" value="<?php echo esc_attr($instance['event_period']); ?>" />
+        </p>
+        <p>
+          <label for="<?php echo $this->get_field_id('cache_time'); ?>"><?php _e('Cache expiration time in minutes:', 'simple_gcal_wsa'); ?></label> 
           <input class="widefat" id="<?php echo $this->get_field_id('cache_time'); ?>" name="<?php echo $this->get_field_name('cache_time'); ?>" type="text" value="<?php echo esc_attr($instance['cache_time']); ?>" />
         </p>
         <p>
-            <?php _e('Need <a href="http://wordpress.org/extend/plugins/simple-google-calendar-widget/" target="_blank">help</a>?', 'simple_gcal'); ?>
+            <?php _e('Need <a href="http://wordpress.org/extend/plugins/simple-google-calendar-widget/" target="_blank">help</a>?', 'simple_gcal_wsa'); ?>
         </p>
         <?php
     }
