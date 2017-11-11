@@ -126,28 +126,37 @@ class Simple_Gcal_Widget extends WP_Widget
             echo $args['before_title'], $instance['title'], $args['after_title'];
         }
          $data = $this->getData($instance);
-
         if (!empty($data) && is_array($data)) {
            date_default_timezone_set(get_option('timezone_string'));
            echo '<ul class="list-group simple-gcal-widget">';
             foreach($data as $e) {
-		/* of dateformat  =  'l ' . get_option( 'date_format' ) */
-              echo '<li class="list-group-item gcal-date">',  date_i18n( 'l j F Y', $e->start, false );
+            	$idlist = explode("@", esc_attr($e->uid) );
+            	$itemid = $idlist[0];
+            	/* of dateformat  =  'l ' . get_option( 'date_format' ) */
+            	echo '<li class="list-group-item gcal-date">',  ucfirst(date_i18n( 'l j F Y', $e->start, false ));
                if(!empty($e->summary)) {
-                    echo  '<br><a class="btn btn-primary" data-toggle="collapse" href="#', esc_attr($e->uid), '" aria-expanded="false" aria-controls="', esc_attr($e->uid), '">',   htmlspecialchars(str_replace(array("\r\n", "\n", "\r"), "<br>", $e->summary)), '</a>' ;
+                    echo  '<br><a class="gcal_summary" data-toggle="collapse" href="#',
+                    	$itemid, '" aria-expanded="false" aria-controls="', 
+                    	$itemid, '">';
+                    	if (date('z', $e->start) === date('z', $e->end))	{
+                    		echo date_i18n( 'G:i ', $e->start, false ); 
+                    	}
+                    	echo $e->summary,
+                    	'</a>' ;
                 }
-	       echo '<div class="collapse" id="',  esc_attr($e->uid), '">';	    
+                echo '<div class="collapse gcal_details" id="',  $itemid, '">';	    
                if(!empty($e->description)) {
-                    echo  '<br>',  htmlspecialchars(str_replace(array("\r\n", "\n", "\r"), "<br>", $e->description));
+               	echo   $e->description
+                    ,'<br>';
                 }
-	     if ($e->end > $e->start )	{    
-             echo '<br><span class="time">', date_i18n( 'G:i', $e->start, false ), 
+                if (date('z', $e->start) === date('z', $e->end))	{    
+             echo '<span class="time">', date_i18n( 'G:i', $e->start, false ), 
 		  '</span> - <span class="time">', date_i18n( 'G:i', $e->end, false ), '</span>' ;
 	     } else {
-		echo '    ';      
+		echo '-';      
 	     }
               if(!empty($e->location)) {
-                    echo  ' ',  htmlspecialchars($e->location);
+                    echo  ' ',  $e->location;
                 }
 
  
@@ -175,13 +184,21 @@ class Simple_Gcal_Widget extends WP_Widget
             $instance['cache_time'] = 60;
         }
         
+        $instance['event_period'] = $new_instance['event_period'];
+        if(is_numeric($new_instance['event_period']) && $new_instance['event_period'] > 1) {
+            $instance['event_period'] = $new_instance['event_period'];
+        } else {
+            $instance['event_period'] = 366;
+        }
+        
         $instance['event_count'] = $new_instance['event_count'];
         if(is_numeric($new_instance['event_count']) && $new_instance['event_count'] > 1) {
-            $instance['event_count'] = $new_instance['event_count'];
+        	$instance['event_count'] = $new_instance['event_count'];
         } else {
-            $instance['event_count'] = 5;
+        	$instance['event_count'] = 5;
         }
-
+        
+        
         // delete our transient cache
         $this->clearData();
         

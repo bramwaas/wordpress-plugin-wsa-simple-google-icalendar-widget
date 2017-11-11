@@ -49,11 +49,11 @@ class IcsParser {
         $this->events = $events;
     }
 
-    public function getFutureEvents($days = 366) {
+    public function getFutureEvents($period = 366) {
         // events are already sorted
         $newEvents = array();
         $now = time();
-        $enddate = strtotime("+$days day");
+        $enddate = strtotime("+$period day");
 
         foreach ($this->events as $e) {
             if ((($e->start >= $now) || ($e->end >= $now))
@@ -81,8 +81,8 @@ class IcsParser {
             $hour = substr($datetime, 9, 2);
             $minute = substr($datetime, 11, 2);
         } else {
-            $hour = '00';
-            $minute = '00';
+            $hour = 0;
+            $minute = 0;
         }    
         
         // check if it is GMT
@@ -127,16 +127,17 @@ class IcsParser {
             if (count($list) > 1) {
                 // trim() to remove \r
                 $value = trim($list[1]);
+                $desc = str_replace(array('\;', '\,', '\r\n', '\n', '\r'), array(';', ',', '<br>', '<br>', '<br>'), htmlspecialchars($value));
             }
             switch($token) {
                 case "SUMMARY":
-                    $eventObj->summary = $value;
+                	$eventObj->summary = $desc;
                     break;
                 case "DESCRIPTION":
-                    $eventObj->description = $value;
+                	$eventObj->description = $desc;
                     break;
                 case "LOCATION":
-                    $eventObj->location = $value;
+                	$eventObj->location = $desc;
                     break;
                 case "DTSTART":
                     $eventObj->start = $this->parseIcsDateTime($value);
