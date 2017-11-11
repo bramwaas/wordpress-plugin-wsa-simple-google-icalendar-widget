@@ -50,7 +50,10 @@ class Simple_Gcal_Widget extends WP_Widget
     
     private function getCalendarUrl($calId)
     {
-        return 'https://www.google.com/calendar/ical/'.$calId.'/public/basic.ics';
+    	if (substr($calId, 0, 4) == 'http')
+    	{ return $calId; }
+    	else 
+    	{ return 'https://www.google.com/calendar/ical/'.$calId.'/public/basic.ics'; }
     }
     
     private function getData($instance)
@@ -129,21 +132,26 @@ class Simple_Gcal_Widget extends WP_Widget
         if (!empty($data) && is_array($data)) {
            date_default_timezone_set(get_option('timezone_string'));
            echo '<ul class="list-group simple-gcal-widget">';
+           $prevdate = '';
             foreach($data as $e) {
             	$idlist = explode("@", esc_attr($e->uid) );
-            	$itemid = $idlist[0];
+            	$itemid = $this->id  . '_' . $idlist[0];
             	/* of dateformat  =  'l ' . get_option( 'date_format' ) */
-            	echo '<li class="list-group-item gcal-date">',  ucfirst(date_i18n( 'l j F Y', $e->start, false ));
-               if(!empty($e->summary)) {
-                    echo  '<br><a class="gcal_summary" data-toggle="collapse" href="#',
-                    	$itemid, '" aria-expanded="false" aria-controls="', 
-                    	$itemid, '">';
-                    	if (date('z', $e->start) === date('z', $e->end))	{
-                    		echo date_i18n( 'G:i ', $e->start, false ); 
-                    	}
-                    	echo $e->summary,
-                    	'</a>' ;
-                }
+            	echo '<li class="list-group-item gcal-date">';
+            	if ($prevdate !=  ucfirst(date_i18n( 'l j F Y', $e->start, false ))) {
+            		$prevdate =  ucfirst(date_i18n( 'l j F Y', $e->start, false ));
+            		echo $prevdate, '<br>';
+            	}
+                echo  '<a class="gcal_summary" data-toggle="collapse" href="#',
+                   	$itemid, '" aria-expanded="false" aria-controls="', 
+                   	$itemid, '">';
+                   	if (date('z', $e->start) === date('z', $e->end))	{
+                   		echo date_i18n( 'G:i ', $e->start, false ); 
+                   	}
+                if(!empty($e->summary)) {
+                  	echo $e->summary;
+                }	
+                echo	'</a>' ;
                 echo '<div class="collapse gcal_details" id="',  $itemid, '">';	    
                if(!empty($e->description)) {
                	echo   $e->description
@@ -222,7 +230,7 @@ class Simple_Gcal_Widget extends WP_Widget
           <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($instance['title']); ?>" />
         </p>
         <p>
-          <label for="<?php echo $this->get_field_id('calendar_id'); ?>"><?php _e('Calendar ID:', 'simple_gcal_wsa'); ?></label> 
+          <label for="<?php echo $this->get_field_id('calendar_id'); ?>"><?php _e('Calendar ID, or iCal URL:', 'simple_gcal_wsa'); ?></label> 
           <input class="widefat" id="<?php echo $this->get_field_id('calendar_id'); ?>" name="<?php echo $this->get_field_name('calendar_id'); ?>" type="text" value="<?php echo esc_attr($instance['calendar_id']); ?>" />
         </p>
         <p>

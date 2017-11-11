@@ -87,12 +87,13 @@ class IcsParser {
         
         // check if it is GMT
         $lastChar = $datetime[strlen($datetime) - 1];
-
-        if ($lastChar == 'Z') {
-            $time = gmmktime($hour, $minute, 0, $month, $day, $year);
-        } else {
-            // TODO: correctly handle this.
-            $time = mktime($hour, $minute, 0, $month, $day, $year);
+        $time = gmmktime($hour, $minute, 0, $month, $day, $year);
+        
+        if ($lastChar != 'Z') {
+        	// subtract timezone offset from GMT
+        	date_default_timezone_set(get_option('timezone_string'));
+         	$time = strtotime("-" . (date('Z', $time)). " second", $time);;
+        	date_default_timezone_set('UTC');
         }
 
         return $time;
