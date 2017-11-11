@@ -60,7 +60,7 @@ class Simple_Gcal_Widget extends WP_Widget
         $transientId = $this->getTransientId();
         
         if(false === ($data = get_transient($transientId))) {
-            $data = $this->fetch($calId, $instance['event_count']);
+        	$data = $this->fetch($calId, $instance['event_count'], $instance['event_period']);
 
             // do not cache data if fetching failed
             if ($data) {
@@ -93,7 +93,7 @@ class Simple_Gcal_Widget extends WP_Widget
         return $out;
     }
     
-    private function fetch($calId, $count)
+    private function fetch($calId, $count, $period)
     {
         $url = $this->getCalendarUrl($calId);
         $httpData = wp_remote_get($url);
@@ -111,7 +111,7 @@ class Simple_Gcal_Widget extends WP_Widget
             $parser = new IcsParser();
             $parser->parse($httpData['body']);
 
-            $events = $parser->getFutureEvents($instance['event_period']);
+            $events = $parser->getFutureEvents($period);
             return $this->limitArray($events, $count);
         } catch(IcsParsingException $e) {
             return null;

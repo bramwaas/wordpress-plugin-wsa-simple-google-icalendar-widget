@@ -53,7 +53,7 @@ class IcsParser {
         // events are already sorted
         $newEvents = array();
         $now = time();
-        $enddate = strtotime("+$days day")
+        $enddate = strtotime("+$days day");
 
         foreach ($this->events as $e) {
             if ((($e->start >= $now) || ($e->end >= $now))
