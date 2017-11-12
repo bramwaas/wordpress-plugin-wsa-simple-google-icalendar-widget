@@ -6,7 +6,8 @@ class IcsParsingException extends Exception {}
  * a simple ICS parser.
  *
  * note that this class does not implement all ICS functionality.
-*   bw 20171109 endkele verbteringen voor statr en end in ical.php
+ *   bw 20171109 enkele verbeteringen voor start en end in ical.php
+ * Version: 0.1.0
 
  */
 class IcsParser {
@@ -69,7 +70,7 @@ class IcsParser {
         return $this->events;
     }
 
-    private function parseIcsDateTime($datetime) {
+    private function parseIcsDateTime($datetime, $tzid) {
         if (strlen($datetime) < 8) {
             return -1;
         }
@@ -87,15 +88,18 @@ class IcsParser {
         
         // check if it is GMT
         $lastChar = $datetime[strlen($datetime) - 1];
-        $time = gmmktime($hour, $minute, 0, $month, $day, $year);
-        
-        if ($lastChar != 'Z') {
-        	// subtract timezone offset from GMT
-        	date_default_timezone_set(get_option('timezone_string'));
-         	$time = strtotime("-" . (date('Z', $time)). " second", $time);;
+
+        if ($lastChar == 'Z') {
+        	$time = gmmktime($hour, $minute, 0, $month, $day, $year);
+        } else {
+        	// TODO: correctly handle this.
+ //       	date_default_timezone_set(get_option('timezone_string'));
+        	date_default_timezone_set($tzid);
+        	$time = mktime($hour, $minute, 0, $month, $day, $year);
         	date_default_timezone_set('UTC');
         }
-
+        
+        
         return $time;
     }
 
@@ -116,14 +120,21 @@ class IcsParser {
         foreach($lines as $l) { 
 
             $list = explode(":", $l);
-
-            // to avoid "undefined index..."
             $token = "";
             $value = "";
-//bw 20171108 toegvoegd, omdat soms timezone info na DTSTART, of DTEND stond bv DTSTART;TZID=Europe/Amsterdam, of
-//          DTSTART;VALUE=DATE:20171203
+            $tzid = '';
+            //bw 20171108 added, because sometimes there is timezone or other info after DTSTART, or DTEND 
+//     eg. DTSTART;TZID=Europe/Amsterdam, or  DTSTART;VALUE=DATE:20171203
             $tl = explode(";", $list[0]);
             $token = $tl[0];
+            if (count($tl) > 1 ){
+            	$dtl = explode("=", $tl[1]);
+            	if (count($dtl) > 1 ){
+            		if ($dtl[0] == 'TZID') {
+            			$tzid = $dtl[1];
+            		}
+            	}
+            }
 // bw end               
             if (count($list) > 1) {
                 // trim() to remove \r
@@ -141,10 +152,10 @@ class IcsParser {
                 	$eventObj->location = $desc;
                     break;
                 case "DTSTART":
-                    $eventObj->start = $this->parseIcsDateTime($value);
+                    $eventObj->start = $this->parseIcsDateTime($value, $tzid);
                     break;
                 case "DTEND":
-                    $eventObj->end = $this->parseIcsDateTime($value);
+                    $eventObj->end = $this->parseIcsDateTime($value, $tzid);
                     break;
 // bw 20171108 toegevoegd UID  
                case "UID":
