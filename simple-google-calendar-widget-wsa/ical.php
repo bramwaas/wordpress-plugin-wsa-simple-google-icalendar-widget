@@ -7,7 +7,7 @@ class IcsParsingException extends Exception {}
  *
  * note that this class does not implement all ICS functionality.
  *   bw 20171109 enkele verbeteringen voor start en end in ical.php
- * Version: 0.1.0
+ * Version: 0.2.0
 
  */
 class IcsParser {
@@ -36,8 +36,49 @@ class IcsParser {
                 }
 
                 $eventStr = substr($eventStr, 0, $endpos);
-                $events[] = $this->parseVevent($eventStr);
+                $e = $this->parseVevent($eventStr);
+                $events[] = $e;
+// expand repeating events
+				if (isset($e->rrule) && $e->rrule > ' ') {
+					// FREQ=MONTHLY;UNTIL=20201108T225959Z;BYMONTHDAY=8
+					$rrulel = explode (";", $e->rrule);
+					foreach ($rrulel as $rel) {
+						$kv = explode("=", $rel);
+						$key = $kv[0];
+						$value = '';
+						$freq = '';
+						$mday = 0;
+						$from = $e->start;
+						$until = '';
+						if (count($kv) > 1) {
+							$value = $kv[1];
+						}
+						switch ($key){
+							case "FREQ"	:
+								$freq = $value;
+							break;
+							case "UNTIL"	:
+								$until = $this->parseIcsDateTime($value);
+							break;
+							case "BYMONTHDAY"	:
+								$mday = $value;
+							break;
+						} 
+					}
+					if ($freq = 'MONTHLY') {
+						$en = $e;
+						$i = 0;
+						do  {
+						$i = $i + 1;
+						$en->start = strtotime("+1 month", $en->start);
+						$en->end = strtotime("+1 month", $en->end);
+						$events[] = $en;
+						} while (/* $en->start < $until && */ $i <12);
+					}
+					
+				}
 
+//
                 $parsedUntil = strpos($curstr, self::TOKEN_END_VEVENT) + strlen(self::TOKEN_END_VEVENT) + 1;
                 $curstr = substr($curstr, $parsedUntil);
             } else {
@@ -70,7 +111,7 @@ class IcsParser {
         return $this->events;
     }
 
-    private function parseIcsDateTime($datetime, $tzid) {
+    private function parseIcsDateTime($datetime, $tzid = '') {
         if (strlen($datetime) < 8) {
             return -1;
         }
@@ -93,8 +134,11 @@ class IcsParser {
         	$time = gmmktime($hour, $minute, 0, $month, $day, $year);
         } else {
         	// TODO: correctly handle this.
- //       	date_default_timezone_set(get_option('timezone_string'));
-        	date_default_timezone_set($tzid);
+        	if ($tzid > ' ') {
+        		date_default_timezone_set($tzid);
+        	} else {
+        		date_default_timezone_set(get_option('timezone_string'));
+        	}
         	$time = mktime($hour, $minute, 0, $month, $day, $year);
         	date_default_timezone_set('UTC');
         }
@@ -135,7 +179,6 @@ class IcsParser {
             		}
             	}
             }
-// bw end               
             if (count($list) > 1) {
                 // trim() to remove \r
                 $value = trim($list[1]);
@@ -153,15 +196,21 @@ class IcsParser {
                     break;
                 case "DTSTART":
                     $eventObj->start = $this->parseIcsDateTime($value, $tzid);
+                    if ($tzid > ' ') {
+                    	$eventObj->tzid = $tzid;
+                    }
                     break;
                 case "DTEND":
                     $eventObj->end = $this->parseIcsDateTime($value, $tzid);
                     break;
-// bw 20171108 toegevoegd UID  
+                    // bw 20171108 toegevoegd UID RRULE
                case "UID":
                     $eventObj->uid = $value;
                     break;
- 
+               case "RRULE":
+               		$eventObj->rrule = $value;
+               	break;
+               	
             }
 
         }
