@@ -4,7 +4,7 @@ Plugin Name: Simple Google iCalendar Widget
 Description: Widget that displays events from a public google calendar
 Plugin URI: https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
 Author: Bram Waasdorp
-Version: 0.2.0
+Version: 0.2.1
 License: GPL3
 Tested up to: 4.8.3
 Text Domain:  simple_ical
@@ -40,7 +40,7 @@ class Simple_Gcal_Widget extends WP_Widget
         // load our textdomain
         load_plugin_textdomain('simple_ical', false, basename( dirname( __FILE__ ) ) . '/languages' );
         
-        parent::__construct('Simple_Gcal_Widget', 'Simple Google Calendar Widget', array('description' => __('Displays events from a public Google Calendar', 'simple_ical')));
+        parent::__construct('Simple_Gcal_Widget', 'Simple Google iCalendar Widget', array('description' => __('Displays events from a public Google Calendar', 'simple_ical')));
     }
     
     private function getTransientId()
@@ -246,7 +246,7 @@ class Simple_Gcal_Widget extends WP_Widget
           <input class="widefat" id="<?php echo $this->get_field_id('cache_time'); ?>" name="<?php echo $this->get_field_name('cache_time'); ?>" type="text" value="<?php echo esc_attr($instance['cache_time']); ?>" />
         </p>
         <p>
-            <?php _e('Need <a href="http://wordpress.org/extend/plugins/simple-google-calendar-widget/" target="_blank">help</a>?', 'simple_ical'); ?>
+            <?php _e('Need <a href="https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget/blob/master/README.md" target="_blank">help</a>?', 'simple_ical'); ?>
         </p>
         <?php
     }
