@@ -4,7 +4,7 @@ Plugin Name: Simple Google iCalendar Widget
 Description: Widget that displays events from a public google calendar
 Plugin URI: https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
 Author: Bram Waasdorp
-Version: 0.2.1
+Version: 0.2.2
 License: GPL3
 Tested up to: 4.8.3
 Text Domain:  simple_ical
@@ -30,7 +30,7 @@ Domain Path:  /languages
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require 'ical.php';
+require 'includes/ical.php';
 
 class Simple_Gcal_Widget extends WP_Widget 
 {
@@ -40,7 +40,11 @@ class Simple_Gcal_Widget extends WP_Widget
         // load our textdomain
         load_plugin_textdomain('simple_ical', false, basename( dirname( __FILE__ ) ) . '/languages' );
         
-        parent::__construct('Simple_Gcal_Widget', 'Simple Google iCalendar Widget', array('description' => __('Displays events from a public Google Calendar', 'simple_ical')));
+        parent::__construct('Simple_Gcal_Widget',
+			    'Simple Google iCalendar Widget', 
+			    array( 'classname' => 'Simple_Gcal_Widget',
+				    'description' => __('Displays events from a public Google Calendar', 'simple_ical')),
+			          );
     }
     
     private function getTransientId()
@@ -177,7 +181,16 @@ class Simple_Gcal_Widget extends WP_Widget
         echo '<br class="clear" />';
         echo $args['after_widget']; 
     }
-
+	/**
+	 * Sanitize widget form values as they are saved.
+	 *
+	 * @see WP_Widget::update()
+	 *
+	 * @param array $new_instance Values just sent to be saved.
+	 * @param array $old_instance Previously saved values from database.
+	 *
+	 * @return array Updated safe values to be saved.
+	 */
     public function update($new_instance, $old_instance) 
     {
         $instance = $old_instance;
@@ -212,7 +225,13 @@ class Simple_Gcal_Widget extends WP_Widget
         
         return $instance;
     }
-
+	/**
+	 * Back-end widget form.
+	 *
+	 * @see WP_Widget::form()
+	 *
+	 * @param array $instance Previously saved values from database.
+	 */
     public function form($instance) 
     {
         $default = array(
@@ -249,6 +268,7 @@ class Simple_Gcal_Widget extends WP_Widget
             <?php _e('Need <a href="https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget/blob/master/README.md" target="_blank">help</a>?', 'simple_ical'); ?>
         </p>
         <?php
+	return '';    
     }
 
 }
