@@ -244,7 +244,7 @@ class Simple_Gcal_Widget extends WP_Widget
     {
         $default = array(
             'title' => __('Events', 'simple_ical'),
-   	    'calendar_id' => ''		
+   	    'calendar_id' => '',	
 	    'event_count' => 10,
 	    'event_period' => 92,	
             'cache_time' => 60,
