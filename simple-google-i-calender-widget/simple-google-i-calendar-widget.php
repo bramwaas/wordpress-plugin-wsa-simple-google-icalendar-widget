@@ -40,16 +40,17 @@ class Simple_Gcal_Widget extends WP_Widget
         // load our textdomain
         load_plugin_textdomain('simple_ical', false, basename( dirname( __FILE__ ) ) . '/languages' );
         
-        parent::__construct('Simple_Gcal_Widget',
-			    'Simple Google iCalendar Widget', 
-			    array( 'classname' => 'Simple_Gcal_Widget',
-				    'description' => __('Displays events from a public Google Calendar', 'simple_ical')),
+        parent::__construct('simple_ical_widget', // Base ID
+			    'Simple Google iCalendar Widget', // Name
+			    array( // Args
+				   'classname' => 'Simple_Gcal_Widget', 
+				   'description' => __('Displays events from a public Google Calendar or other iCal source', 'simple_ical')),
 			          );
     }
     
     private function getTransientId()
     {
-        return 'wp_gcal_widget_'.$this->id;
+        return 'wp_ical_widget_'.$this->id;
     }
     
     private function getCalendarUrl($calId)
@@ -124,7 +125,14 @@ class Simple_Gcal_Widget extends WP_Widget
             return null;
         }
     }
-
+	/**
+	 * Front-end display of widget.
+	 *
+	 * @see WP_Widget::widget()
+	 *
+	 * @param array $args     Widget arguments.
+	 * @param array $instance Saved values from database.
+	 */
     public function widget($args, $instance) 
     {
         $title = apply_filters('widget_title', $instance['title']);
@@ -236,9 +244,10 @@ class Simple_Gcal_Widget extends WP_Widget
     {
         $default = array(
             'title' => __('Events', 'simple_ical'),
+   	    'calendar_id' => ''		
 	    'event_count' => 10,
 	    'event_period' => 92,	
-            'cache_time' => 60
+            'cache_time' => 60,
 	    		
         );
         $instance = wp_parse_args((array) $instance, $default);
