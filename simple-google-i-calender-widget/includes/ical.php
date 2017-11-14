@@ -39,7 +39,31 @@ class IcsParser {
                 $e = $this->parseVevent($eventStr);
                 $events[] = $e;
 // expand repeating events
-				if (isset($e->rrule) && $e->rrule > ' ') {
+				if (isset($e->rrule) && $e->rrule !== '') {
+					// Recurring event, parse RRULE and add appropriate duplicate events
+                $rrules = array();
+                $rruleStrings = explode(';', $e->rrule);
+                foreach ($rruleStrings as $s) {
+                    list($k, $v) = explode('=', $s);
+                    $rrules[$k] = $v;
+                }
+                // Get frequency
+                $frequency = $rrules['FREQ'];
+                // Get Start timestamp
+                $startTimestamp = $initialStart->getTimestamp();
+                if (isset($anEvent['DTEND'])) {
+                    $endTimestamp = $initialEnd->getTimestamp();
+                } elseif (isset($anEvent['DURATION'])) {
+                    $duration = end($anEvent['DURATION_array']);
+                    $endTimestamp = $this->parseDuration($anEvent['DTSTART'], $duration);
+                } else {
+                    $endTimestamp = $anEvent['DTSTART_array'][2];
+                }
+                $eventTimestampOffset = $endTimestamp - $startTimestamp;
+                // Get Interval
+                $interval = (isset($rrules['INTERVAL']) && $rrules['INTERVAL'] !== '') ? $rrules['INTERVAL'] : 1;
+             
+					/* oud
 					// FREQ=MONTHLY;UNTIL=20201108T225959Z;BYMONTHDAY=8
 					$rrulel = explode (";", $e->rrule);
 					foreach ($rrulel as $rel) {
@@ -75,6 +99,7 @@ class IcsParser {
 						$events[] = $en;
 						} while (/* $en->start < $until && */ $i <12);
 					}
+		    */
 					
 				}
 
