@@ -45,4 +45,4 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 * 0.1.0 a lot of small changes eg: better support for events in a timezone and events that last a whole day. Replace escaped chars for summary, description and location. Refinements in output HTML.
 TODO repeating events.
 * 0.2.0 starting work on repeating events 
-* 0.3.0 a
+* 0.3.2 simpl repeauting events (only ful periods) works

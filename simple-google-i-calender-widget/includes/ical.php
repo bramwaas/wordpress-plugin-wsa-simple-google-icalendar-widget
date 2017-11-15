@@ -7,7 +7,7 @@ class IcsParsingException extends Exception {}
  *
  * note that this class does not implement all ICS functionality.
  *   bw 20171109 enkele verbeteringen voor start en end in ical.php
- * Version: 0.2.2
+ * Version: 0.3.2
 
  */
 class IcsParser {
@@ -15,11 +15,14 @@ class IcsParser {
     const TOKEN_BEGIN_VEVENT = "\nBEGIN:VEVENT";
     const TOKEN_END_VEVENT = "\nEND:VEVENT";
 
-    public function parse($str) {
+    public function parse($str ,  $penddate,  $pcount) {
 
         $curstr = $str;
         $haveVevent = true;
         $events = array();
+        $now = time();
+        
+        
 
         do {
             $startpos = strpos($curstr, self::TOKEN_BEGIN_VEVENT);
@@ -61,11 +64,19 @@ class IcsParser {
                 $rruleStrings = explode(';', $e->rrule);
                 foreach ($rruleStrings as $s) {
                     list($k, $v) = explode('=', $s);
-                    $rrules[$k] = $v;
+                    $rrules[strtolower ($k)] = strtoupper ($v);
                 }
-                // Get frequency
-                $frequency = $rrules['FREQ'];
+                // Get frequency and other values when set
+                $frequency = $rrules['freq'];
+                $interval = (isset($rrules['interval']) && $rrules['interval'] !== '') ? $rrules['interval'] : 1;
+                $until = (isset($rrules['until'])) ? $this->parseIcsDateTime($rrules['until']) : $penddate;
+               	$count = (isset($rrules['count'])) ? $rrules['count'] : 0;
+               	$byday = (isset($rrules['byday'])) ? $rrules['byday'] : '';
+               	$bymonth = (isset($rrules['bymonth'])) ? $rrules['bymonth'] : '';
+               	$bymonthday = (isset($rrules['bymonthday'])) ? $rrules['bymonthday'] : '';
+               	
                 // Get Start timestamp
+                /*
                 $startTimestamp = $initialStart->getTimestamp();
                 if (isset($anEvent['DTEND'])) {
                     $endTimestamp = $initialEnd->getTimestamp();
@@ -78,8 +89,51 @@ class IcsParser {
                 $eventTimestampOffset = $endTimestamp - $startTimestamp;
                 // Get Interval
                 $interval = (isset($rrules['INTERVAL']) && $rrules['INTERVAL'] !== '') ? $rrules['INTERVAL'] : 1;
-             
-					/* oud
+             */
+               	$timezone = new DateTimeZone((isset($e->tzid)&& $e->tzid !== '') ? $e->tzid : get_option('timezone_string'));
+               	$i = 1;
+               	$cen = 0;
+               	switch ($frequency){
+               		case "YEARLY"	:
+               		case "MONTHLY"	:
+               		case "WEEKLY"	:
+               		case "DAILY"	:
+               			$dateinterval = new DateInterval('P' . $interval . substr($frequency,0,1));
+        
+               			$newstart = new DateTime('@' . $e->start, $timezone);
+               			$newend = new DateTime('@' . $e->end, $timezone);
+               			$newstart->add($dateinterval);
+               			while ( $newstart->getTimestamp() < $until
+           						 &&   $i < 12
+               					&& ($count == 0 || $i < $count  )            						)
+           				{
+                 					$tzadd = $timezone->getOffset ( $newend) - $timezone->getOffset ( $newstart);
+           					
+           					$newend->add($dateinterval);
+           					if ($tzadd != 0) {
+           						$tziv = new DateInterval('PT' . abs($tzadd) . 'S');
+           						if ($tzadd < 0) {
+           							$tziv->invert = 1;
+           						}
+           						$newstart->add($tziv);
+           						$newend->add($tziv);
+           					}
+           					if ($newstart->getTimestamp() >= $now 
+           						&& $newstart->getTimestamp() <= $penddate
+           						&& $cen < $pcount) {		
+           						$cen++;
+           						$en =  clone $e;
+           						$en->start = $newstart->getTimestamp();
+           						$en->end = $newend->getTimestamp();
+           						$en->uid = $i . $e->uid;
+           						$en->summary = 'nr:' . $i . ' cen:' . $cen . ' '. $e->summary;
+           						$events[] = $en;
+           						}
+           					$i++;
+           					$newstart->add($dateinterval);
+           				} 
+                 	}
+               	/* oud
 					// 
 					$rrulel = explode (";", $e->rrule);
 					foreach ($rrulel as $rel) {
@@ -113,7 +167,7 @@ class IcsParser {
 						$en->start = strtotime("+1 month", $en->start);
 						$en->end = strtotime("+1 month", $en->end);
 						$events[] = $en;
-						} while (/* $en->start < $until && */ $i <12);
+						} while ( $en->start < $until &&  $i <12);
 					}
 		    */
 					
@@ -132,15 +186,14 @@ class IcsParser {
         $this->events = $events;
     }
 
-    public function getFutureEvents($period = 366) {
+    public function getFutureEvents($penddate ) {
         // events are already sorted
         $newEvents = array();
         $now = time();
-        $enddate = strtotime("+$period day");
 
         foreach ($this->events as $e) {
             if ((($e->start >= $now) || ($e->end >= $now))
-                && $e->start <= $enddate) {
+            		&& $e->start <= $penddate) {
                     $newEvents[] = $e;
                 }
         }
