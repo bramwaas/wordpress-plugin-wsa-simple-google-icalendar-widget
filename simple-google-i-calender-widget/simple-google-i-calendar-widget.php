@@ -28,10 +28,8 @@ Domain Path:  /languages
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-    0.3.0 include FileCache from https://github.com/peterpostmann/file-cache/tree/atomic_file_put_contents
  */
 
-require 'includes/FileCache.php';
 require 'includes/ical.php';
 
 class Simple_Gcal_Widget extends WP_Widget 
