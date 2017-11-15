@@ -43,4 +43,6 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 * 20171108: Changed lay-out of output of teh widget so that is more in line with bootstrap 4 and with the iframe-widget of google
 * 0.0.1 renamed starting .php file to simple-google-calendar-widget.php
 * 0.1.0 a lot of small changes eg: better support for events in a timezone and events that last a whole day. Replace escaped chars for summary, description and location. Refinements in output HTML.
-TODO repeating events. 
+TODO repeating events.
+* 0.2.0 starting work on repeating events 
+* 0.3.0 added FileCache class code of https://github.com/inouet/file-cache https://github.com/  forked by https://github.com/peterpostmann/file-cache/tree/atomic_file_put_contents 
