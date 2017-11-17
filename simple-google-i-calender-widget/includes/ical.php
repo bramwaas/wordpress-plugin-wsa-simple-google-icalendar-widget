@@ -117,16 +117,15 @@ class IcsParser {
            					$tzadd = $tzoffsetprev - $timezone->getOffset ( $newstart);
            					$tzoffsetprev = $timezone->getOffset ( $newstart);
            					$newend->add($dateinterval);
-           					$newend->add($eivlength);
            					if ($tzadd != 0) {
            						$tziv = new DateInterval('PT' . abs($tzadd) . 'S');
            						if ($tzadd < 0) {
            							$tziv->invert = 1;
            						}
            						$newstart->add($tziv);
-           						$newend->setTimestamp($newstart->getTimestamp()) ;
-           						$newend->add($eivlength);
            					}
+           					$newend->setTimestamp($newstart->getTimestamp()) ;
+           					$newend->add($eivlength);
            					if ($newstart->getTimestamp() >= $now 
            						&& $newstart->getTimestamp() <= $penddate
            						&& $cen < $pcount) {		
