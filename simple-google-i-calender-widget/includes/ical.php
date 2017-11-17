@@ -7,7 +7,7 @@ class IcsParsingException extends Exception {}
  *
  * note that this class does not implement all ICS functionality.
  *   bw 20171109 enkele verbeteringen voor start en end in ical.php
- * Version: 0.3.2
+ * Version: 0.3.3
 
  */
 class IcsParser {
@@ -60,7 +60,11 @@ class IcsParser {
  * FREQ=DAILY;COUNT=5;INTERVAL=7 Every 7 days,5 times
 
  */
-		$rrules = array();
+			$edtstart = new DateTime('@' . $e->start, $timezone);
+			$edtendd   = new DateTime('@' . $e->end, $timezone);
+			$eivlength = $edtstart->diff($edtendd);
+			
+			$rrules = array();
                 $rruleStrings = explode(';', $e->rrule);
                 foreach ($rruleStrings as $s) {
                     list($k, $v) = explode('=', $s);
@@ -74,6 +78,7 @@ class IcsParser {
                	$byday = (isset($rrules['byday'])) ? $rrules['byday'] : '';
                	$bymonth = (isset($rrules['bymonth'])) ? $rrules['bymonth'] : '';
                	$bymonthday = (isset($rrules['bymonthday'])) ? $rrules['bymonthday'] : '';
+               	$timezone = new DateTimeZone((isset($e->tzid)&& $e->tzid !== '') ? $e->tzid : get_option('timezone_string'));
                	
                 // Get Start timestamp
                 /*
@@ -90,7 +95,6 @@ class IcsParser {
                 // Get Interval
                 $interval = (isset($rrules['INTERVAL']) && $rrules['INTERVAL'] !== '') ? $rrules['INTERVAL'] : 1;
              */
-               	$timezone = new DateTimeZone((isset($e->tzid)&& $e->tzid !== '') ? $e->tzid : get_option('timezone_string'));
                	$i = 1;
                	$cen = 0;
                	switch ($frequency){
@@ -100,23 +104,28 @@ class IcsParser {
                		case "DAILY"	:
                			$dateinterval = new DateInterval('P' . $interval . substr($frequency,0,1));
         
-               			$newstart = new DateTime('@' . $e->start, $timezone);
-               			$newend = new DateTime('@' . $e->end, $timezone);
+               			$newstart = clone $edtstart;
+               			
+               			$tzoffsetprev = $timezone->getOffset ( $newstart);
                			$newstart->add($dateinterval);
+               			$newend = clone $newstart;
+               			$newend->add($eivlength);
                			while ( $newstart->getTimestamp() < $until
            						 &&   $i < 12
                					&& ($count == 0 || $i < $count  )            						)
            				{
-                 					$tzadd = $timezone->getOffset ( $newend) - $timezone->getOffset ( $newstart);
-           					
+           					$tzadd = $tzoffsetprev - $timezone->getOffset ( $newstart);
+           					$tzoffsetprev = $timezone->getOffset ( $newstart);
            					$newend->add($dateinterval);
+           					$newend->add($eivlength);
            					if ($tzadd != 0) {
            						$tziv = new DateInterval('PT' . abs($tzadd) . 'S');
            						if ($tzadd < 0) {
            							$tziv->invert = 1;
            						}
            						$newstart->add($tziv);
-           						$newend->add($tziv);
+           						$newend->setTimestamp($newstart->getTimestamp()) ;
+           						$newend->add($eivlength);
            					}
            					if ($newstart->getTimestamp() >= $now 
            						&& $newstart->getTimestamp() <= $penddate
