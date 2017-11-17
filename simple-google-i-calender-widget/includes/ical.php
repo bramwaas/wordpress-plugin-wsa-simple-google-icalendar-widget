@@ -61,6 +61,7 @@ class IcsParser {
 
  */
 			$edtstart = new DateTime('@' . $e->start, $timezone);
+			$egdstart = getdate($e->start);
 			$edtendd   = new DateTime('@' . $e->end, $timezone);
 			$eivlength = $edtstart->diff($edtendd);
 			
@@ -75,9 +76,9 @@ class IcsParser {
                 $interval = (isset($rrules['interval']) && $rrules['interval'] !== '') ? $rrules['interval'] : 1;
                 $until = (isset($rrules['until'])) ? $this->parseIcsDateTime($rrules['until']) : $penddate;
                	$count = (isset($rrules['count'])) ? $rrules['count'] : 0;
-               	$byday = (isset($rrules['byday'])) ? $rrules['byday'] : '';
-               	$bymonth = (isset($rrules['bymonth'])) ? $rrules['bymonth'] : '';
-               	$bymonthday = (isset($rrules['bymonthday'])) ? $rrules['bymonthday'] : '';
+               	$byday = explode(',', (isset($rrules['byday'])) ? $rrules['byday'] : strtoupper(substr($egdstart['weekday'],0,2))); 
+               	$bymonth = explode(',', (isset($rrules['bymonth'])) ? $rrules['bymonth'] : $egdstart['mon']);
+               	$bymonthday = explode(',', (isset($rrules['bymonthday'])) ? $rrules['bymonthday'] : $egdstart['mday']);
                	$timezone = new DateTimeZone((isset($e->tzid)&& $e->tzid !== '') ? $e->tzid : get_option('timezone_string'));
                	
                 // Get Start timestamp
@@ -114,10 +115,10 @@ class IcsParser {
            						 &&   $i < 12
                					&& ($count == 0 || $i < $count  )            						)
            				{
+           					// process daylight saving time 
            					$tzadd = $tzoffsetprev - $timezone->getOffset ( $newstart);
            					$tzoffsetprev = $timezone->getOffset ( $newstart);
-           					$newend->add($dateinterval);
-           					if ($tzadd != 0) {
+           					if ($tzadd != 0) { 
            						$tziv = new DateInterval('PT' . abs($tzadd) . 'S');
            						if ($tzadd < 0) {
            							$tziv->invert = 1;
@@ -133,7 +134,7 @@ class IcsParser {
            						$en =  clone $e;
            						$en->start = $newstart->getTimestamp();
            						$en->end = $newend->getTimestamp();
-           						$en->uid = $i . $e->uid;
+           						$en->uid = $i . '_' . $e->uid;
            						$en->summary = 'nr:' . $i . ' cen:' . $cen . ' '. $e->summary;
            						$events[] = $en;
            						}
