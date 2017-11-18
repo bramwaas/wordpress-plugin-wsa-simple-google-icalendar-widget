@@ -7,7 +7,7 @@ class IcsParsingException extends Exception {}
  *
  * note that this class does not implement all ICS functionality.
  *   bw 20171109 enkele verbeteringen voor start en end in ical.php
- * Version: 0.3.4
+ * Version: 0.3.5
 
  */
 class IcsParser {
@@ -62,6 +62,7 @@ class IcsParser {
  */
 			$timezone = new DateTimeZone((isset($e->tzid)&& $e->tzid !== '') ? $e->tzid : get_option('timezone_string'));
 			$edtstart = new DateTime('@' . $e->start, $timezone);
+			$edtstartmday = $edtstart->format('j');
 			$egdstart = getdate($e->start);
 			//      example 2017-11-16
 			// 		$egdstart['weekday'] 'Monday' - 'Sunday' example 'Thursday'
@@ -86,110 +87,83 @@ class IcsParser {
                	$bymonth = explode(',', (isset($rrules['bymonth'])) ? $rrules['bymonth'] : '');
                	$bymonthday = explode(',', (isset($rrules['bymonthday'])) ? $rrules['bymonthday'] : '');
                	
-                // Get Start timestamp
-                /*
-                $startTimestamp = $initialStart->getTimestamp();
-                if (isset($anEvent['DTEND'])) {
-                    $endTimestamp = $initialEnd->getTimestamp();
-                } elseif (isset($anEvent['DURATION'])) {
-                    $duration = end($anEvent['DURATION_array']);
-                    $endTimestamp = $this->parseDuration($anEvent['DTSTART'], $duration);
-                } else {
-                    $endTimestamp = $anEvent['DTSTART_array'][2];
-                }
-                $eventTimestampOffset = $endTimestamp - $startTimestamp;
-                // Get Interval
-                $interval = (isset($rrules['INTERVAL']) && $rrules['INTERVAL'] !== '') ? $rrules['INTERVAL'] : 1;
-             */
-               	$i = 0;
+               	$i = 1;
                	$cen = 0;
                	switch ($frequency){
                		case "YEARLY"	:
                		case "MONTHLY"	:
                		case "WEEKLY"	:
                		case "DAILY"	:
-               			$dateinterval = new DateInterval('P' . $interval . substr($frequency,0,1));
+               			$freqinterval = new DateInterval('P' . $interval . substr($frequency,0,1));
+               			$interval3day = new DateInterval('P3D');
+               			$fmdayok = true;
+               			$freqstart = clone $edtstart;
                			$newstart = clone $edtstart;
-               			$tzoffsetprev = $timezone->getOffset ( $newstart);
- //              			$newstart->add($dateinterval);
-               			$newend = clone $newstart;
-               			$newend->add($eduration);
-               			while ( $newstart->getTimestamp() <= $penddate
-               					&& $newstart->getTimestamp() < $until
+               			$newend = clone $edtstart;
+               			$tzoffsetprev = $timezone->getOffset ( $freqstart);
+              			while ( $freqstart->getTimestamp() <= $penddate
+               					&& $freqstart->getTimestamp() < $until
                					&& ($count == 0 || $i < $count  )            						)
            				{   // first FREQ loop on dtstart will only output new events
                				// created by a BY... clause
-           					$newend->setTimestamp($newstart->getTimestamp()) ;
-           					$newend->add($eduration);
-           					if ( $newstart->getTimestamp() <= $penddate
-           						&& $cen < $pcount) {
-           						if ($newstart->getTimestamp() >= $now
-           							&& $newstart > 	$edtstart) {		
-           							$cen++;
-           							$en =  clone $e;
-           							$en->start = $newstart->getTimestamp();
-           							$en->end = $newend->getTimestamp();
-           							$en->uid = $i . '_' . $e->uid;
-           							$en->summary = 'nr:' . $i . ' cen:' . $cen . ' '. $e->summary;
-           							$events[] = $en;
-           							}
-           						// next eventcount from $e->start	
-           						$i++;
-           					}
+           					foreach ($bymonthday as $mday) {
+           						$newstart->setTimestamp($freqstart->getTimestamp()) ;
+           						if (isset($rrules['bymonth'])){
+           							$d = $newstart->format('d');
+           							$m = $newstart->format('m');
+           							$Y = $newstart->format('Y');
+           							
+           							if (!$newstart->setDate($Y , $m , $mday)) // set the wanted day for the month
+           								{ next;}
+           						} else {
+           							//
+           						}
+           						if ($fmdayok    
+           							&& $newstart->getTimestamp() <= $penddate
+           							&& $newstart> $edtstart) { // count events after dtstart
+           							if ($newstart->getTimestamp() >= $now
+           									) { // copy only events after now
+           								$cen++;
+           								$en =  clone $e;
+           								$en->start = $newstart->getTimestamp();
+           								$newend->setTimestamp($en->start) ;
+           								$newend->add($eduration);
+           								$en->end = $newend->getTimestamp();
+           								$en->uid = $i . '_' . $e->uid;
+           								$en->summary = 'nr:' . $i . ' cen:' . $cen . ' '. $e->summary;
+    //       							$en->summary = $en->summary . '<br>' .$frequency. 'fs j:'. $freqstart->format('j'). 'mday'. $edtstart->format('j');
+           								$events[] = $en;
+           							} // copy eevents
+           							// next eventcount from $e->start	
+           							$i++;
+           						} // end count events
+           					} // end bymonthday
            					// next startdate by FREQ for loop < $until and <= $penddate
-           					$newstart->add($dateinterval);
+           					$freqstart->add($freqinterval);
+           					if  ($fmdayok &&
+           							in_array($frequency , array('MONTHLY', 'YEARLY')) &&
+           							$freqstart->format('j') !== $edtstartmday){ 
+           						// eg 31 jan + 1 month = 3 mar; -3 days => 28 feb 
+           						$freqstart->sub($interval3day);
+           						$fmdayok = false;
+           					} elseif (!$fmdayok ){
+           						$freqstart->add($interval3day);
+           						$fmdayok = true;
+           						
+           					}
            					// process daylight saving time
-           					$tzadd = $tzoffsetprev - $timezone->getOffset ( $newstart);
-           					$tzoffsetprev = $timezone->getOffset ( $newstart);
+           					$tzadd = $tzoffsetprev - $timezone->getOffset ( $freqstart);
+           					$tzoffsetprev = $timezone->getOffset ( $freqstart);
            					if ($tzadd != 0) {
            						$tziv = new DateInterval('PT' . abs($tzadd) . 'S');
            						if ($tzadd < 0) {
            							$tziv->invert = 1;
            						}
-           					$newstart->add($tziv);
+           					$freqstart->add($tziv);
            					}
            				} 
                  	}
-               	/* oud
-					// 
-					$rrulel = explode (";", $e->rrule);
-					foreach ($rrulel as $rel) {
-						$kv = explode("=", $rel);
-						$key = $kv[0];
-						$value = '';
-						$freq = '';
-						$mday = 0;
-						$from = $e->start;
-						$until = '';
-						if (count($kv) > 1) {
-							$value = $kv[1];
-						}
-						switch ($key){
-							case "FREQ"	:
-								$freq = $value;
-							break;
-							case "UNTIL"	:
-								$until = $this->parseIcsDateTime($value);
-							break;
-							case "BYMONTHDAY"	:
-								$mday = $value;
-							break;
-						} 
-					}
-					if ($freq = 'MONTHLY') {
-						$en = $e;
-						$i = 0;
-						do  {
-						$i = $i + 1;
-						$en->start = strtotime("+1 month", $en->start);
-						$en->end = strtotime("+1 month", $en->end);
-						$events[] = $en;
-						} while ( $en->start < $until &&  $i <12);
-					}
-		    */
-					
-				}
-
+ 				} // switch freq
 //
                 $parsedUntil = strpos($curstr, self::TOKEN_END_VEVENT) + strlen(self::TOKEN_END_VEVENT) + 1;
                 $curstr = substr($curstr, $parsedUntil);
