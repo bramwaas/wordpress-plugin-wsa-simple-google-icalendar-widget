@@ -30,6 +30,13 @@ Just drag it into your sidebar.
 * Gets calendar events via iCal url of google calendar ID
 * Displays selected number of events, or events in a selected period from now as listgroup-items
 * Displays event start-date and summary; toggle details, description, start-, end-time, location. 
+*   see http://www.ietf.org/rfc/rfc5545.txt for specification of te ical format.
+* Displays most common repeating events (see 3.3.10. [Page 38] Recurrence Rule in specification
+* * Frequency Yearly, Monthly, Weekly, Dayly (not parsed Hourly, Minutely ...)
+* * End of repeating by COUNT or UNTIL
+* * By day month or by monthday (BYDAY, BYMONTH, BYMONTHDAY) no other by
+* * (not parsed: BYYEARDAY, BYSETPOS, BYHOUR, BYMINUTE, WKST)
+* * Respects Timezone and Day Light Saving time 
 
 ## Copyright and License
 
@@ -45,4 +52,4 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 * 0.1.0 a lot of small changes eg: better support for events in a timezone and events that last a whole day. Replace escaped chars for summary, description and location. Refinements in output HTML.
 TODO repeating events.
 * 0.2.0 starting work on repeating events 
-* 0.3.2 simpl repeauting events (only ful periods) works
+* 0.3.3 simple repeating events (only full periods) works

@@ -7,7 +7,7 @@ class IcsParsingException extends Exception {}
  *
  * note that this class does not implement all ICS functionality.
  *   bw 20171109 enkele verbeteringen voor start en end in ical.php
- * Version: 0.3.3
+ * Version: 0.3.4
 
  */
 class IcsParser {
@@ -60,10 +60,16 @@ class IcsParser {
  * FREQ=DAILY;COUNT=5;INTERVAL=7 Every 7 days,5 times
 
  */
+			$timezone = new DateTimeZone((isset($e->tzid)&& $e->tzid !== '') ? $e->tzid : get_option('timezone_string'));
 			$edtstart = new DateTime('@' . $e->start, $timezone);
 			$egdstart = getdate($e->start);
+			//      example 2017-11-16
+			// 		$egdstart['weekday'] 'Monday' - 'Sunday' example 'Thursday'
+			//		$egdstart['mon']  monthnr in year 1 - 12 example 11  (november) 
+			//		$egdstart['mday'] day in the month 1 - 31 example 16
 			$edtendd   = new DateTime('@' . $e->end, $timezone);
-			$eivlength = $edtstart->diff($edtendd);
+			$eduration = $edtstart->diff($edtendd);
+
 			
 			$rrules = array();
                 $rruleStrings = explode(';', $e->rrule);
@@ -76,10 +82,9 @@ class IcsParser {
                 $interval = (isset($rrules['interval']) && $rrules['interval'] !== '') ? $rrules['interval'] : 1;
                 $until = (isset($rrules['until'])) ? $this->parseIcsDateTime($rrules['until']) : $penddate;
                	$count = (isset($rrules['count'])) ? $rrules['count'] : 0;
-               	$byday = explode(',', (isset($rrules['byday'])) ? $rrules['byday'] : strtoupper(substr($egdstart['weekday'],0,2))); 
-               	$bymonth = explode(',', (isset($rrules['bymonth'])) ? $rrules['bymonth'] : $egdstart['mon']);
-               	$bymonthday = explode(',', (isset($rrules['bymonthday'])) ? $rrules['bymonthday'] : $egdstart['mday']);
-               	$timezone = new DateTimeZone((isset($e->tzid)&& $e->tzid !== '') ? $e->tzid : get_option('timezone_string'));
+               	$byday = explode(',', (isset($rrules['byday'])) ? $rrules['byday'] : ''); 
+               	$bymonth = explode(',', (isset($rrules['bymonth'])) ? $rrules['bymonth'] : '');
+               	$bymonthday = explode(',', (isset($rrules['bymonthday'])) ? $rrules['bymonthday'] : '');
                	
                 // Get Start timestamp
                 /*
@@ -96,7 +101,7 @@ class IcsParser {
                 // Get Interval
                 $interval = (isset($rrules['INTERVAL']) && $rrules['INTERVAL'] !== '') ? $rrules['INTERVAL'] : 1;
              */
-               	$i = 1;
+               	$i = 0;
                	$cen = 0;
                	switch ($frequency){
                		case "YEARLY"	:
@@ -104,42 +109,45 @@ class IcsParser {
                		case "WEEKLY"	:
                		case "DAILY"	:
                			$dateinterval = new DateInterval('P' . $interval . substr($frequency,0,1));
-        
                			$newstart = clone $edtstart;
-               			
                			$tzoffsetprev = $timezone->getOffset ( $newstart);
-               			$newstart->add($dateinterval);
+ //              			$newstart->add($dateinterval);
                			$newend = clone $newstart;
-               			$newend->add($eivlength);
-               			while ( $newstart->getTimestamp() < $until
-           						 &&   $i < 12
+               			$newend->add($eduration);
+               			while ( $newstart->getTimestamp() <= $penddate
+               					&& $newstart->getTimestamp() < $until
                					&& ($count == 0 || $i < $count  )            						)
-           				{
-           					// process daylight saving time 
+           				{   // first FREQ loop on dtstart will only output new events
+               				// created by a BY... clause
+           					$newend->setTimestamp($newstart->getTimestamp()) ;
+           					$newend->add($eduration);
+           					if ( $newstart->getTimestamp() <= $penddate
+           						&& $cen < $pcount) {
+           						if ($newstart->getTimestamp() >= $now
+           							&& $newstart > 	$edtstart) {		
+           							$cen++;
+           							$en =  clone $e;
+           							$en->start = $newstart->getTimestamp();
+           							$en->end = $newend->getTimestamp();
+           							$en->uid = $i . '_' . $e->uid;
+           							$en->summary = 'nr:' . $i . ' cen:' . $cen . ' '. $e->summary;
+           							$events[] = $en;
+           							}
+           						// next eventcount from $e->start	
+           						$i++;
+           					}
+           					// next startdate by FREQ for loop < $until and <= $penddate
+           					$newstart->add($dateinterval);
+           					// process daylight saving time
            					$tzadd = $tzoffsetprev - $timezone->getOffset ( $newstart);
            					$tzoffsetprev = $timezone->getOffset ( $newstart);
-           					if ($tzadd != 0) { 
+           					if ($tzadd != 0) {
            						$tziv = new DateInterval('PT' . abs($tzadd) . 'S');
            						if ($tzadd < 0) {
            							$tziv->invert = 1;
            						}
-           						$newstart->add($tziv);
+           					$newstart->add($tziv);
            					}
-           					$newend->setTimestamp($newstart->getTimestamp()) ;
-           					$newend->add($eivlength);
-           					if ($newstart->getTimestamp() >= $now 
-           						&& $newstart->getTimestamp() <= $penddate
-           						&& $cen < $pcount) {		
-           						$cen++;
-           						$en =  clone $e;
-           						$en->start = $newstart->getTimestamp();
-           						$en->end = $newend->getTimestamp();
-           						$en->uid = $i . '_' . $e->uid;
-           						$en->summary = 'nr:' . $i . ' cen:' . $cen . ' '. $e->summary;
-           						$events[] = $en;
-           						}
-           					$i++;
-           					$newstart->add($dateinterval);
            				} 
                  	}
                	/* oud
