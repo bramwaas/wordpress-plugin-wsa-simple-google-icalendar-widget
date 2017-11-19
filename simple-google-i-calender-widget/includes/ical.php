@@ -7,7 +7,7 @@ class IcsParsingException extends Exception {}
  *
  * note that this class does not implement all ICS functionality.
  *   bw 20171109 enkele verbeteringen voor start en end in ical.php
- * Version: 0.3.6
+ * Version: 0.3.7
 
  */
 class IcsParser {
@@ -148,21 +148,21 @@ class IcsParser {
            								
            								if (in_array($frequency , array('MONTHLY', 'YEARLY')) ){
            									
-           									//		$test = 'MY mday:' .$by . 'fdays:' . $fdays ; //. 'ns:' . $newstart->format('Y-m-d G:i');
+           									$test =  'MY $byd:' .$byd . ' $byi:' . $byi; //. 'ns:' . $newstart->format('Y-m-d G:i');
 //           									if (!$newstart->setDate($fY , $fm , $by))
-           									{ continue;}
+//           									{ continue;}
            								} else
            								{
-           									//	$test = 'WD mday:' .$by . 'fdays:' . $fdays ; //. 'ns:' . $newstart->format('Y-m-d G:i');
+           									$test =  'WD $byd:' .$byd . ' $byi:' . $byi; //. 'ns:' . $newstart->format('Y-m-d G:i');
            									if ((!$fmdayok)
  //          											|| (intval($fd) !== intval($by))
            											)
            									{continue;}
            								}
            							} else {
-           								 $test = 'Geen byday';
-           								if (!$fmdayok &&
- //          										intval($edtstartmday) == intval($newstart->format('j'))
+           								 $test =  'Geen byday';
+           								if (!$fmdayok 
+           							//       && intval($edtstartmday) == intval($newstart->format('j'))
            										)
            								{continue;}
            							}
