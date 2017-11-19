@@ -7,7 +7,7 @@ class IcsParsingException extends Exception {}
  *
  * note that this class does not implement all ICS functionality.
  *   bw 20171109 enkele verbeteringen voor start en end in ical.php
- * Version: 0.3.7
+ * Version: 0.4.0
 
  */
 class IcsParser {
@@ -63,6 +63,7 @@ class IcsParser {
 			$timezone = new DateTimeZone((isset($e->tzid)&& $e->tzid !== '') ? $e->tzid : get_option('timezone_string'));
 			$edtstart = new DateTime('@' . $e->start, $timezone);
 			$edtstartmday = $edtstart->format('j');
+			$edtstartmon = $edtstart->format('n');
 			$egdstart = getdate($e->start);
 			//      example 2017-11-16
 			// 		$egdstart['weekday'] 'Monday' - 'Sunday' example 'Thursday'
@@ -107,64 +108,84 @@ class IcsParser {
            				{   // first FREQ loop on dtstart will only output new events
                				// created by a BY... clause
                				$test = '';
-               				$ok = true;
                				$fd = $freqstart->format('d');
                				$fm = $freqstart->format('m');
                				$fY = $freqstart->format('Y');
                				$fdays = $freqstart->format('t');
-               				
-           					foreach ($bymonthday as $by) {
-           						$newstart->setTimestamp($freqstart->getTimestamp()) ;
+           				
+               				foreach ($bymonth as $by) {
+               					$newstart->setTimestamp($freqstart->getTimestamp()) ;
+               					if (isset($rrules['bymonth'])){
+               						if ($by < 0){
+               							$by = 13 + $by;
+               						}
+               						
+               						if ($frequency ='YEARLY' ){ // expand
+               							
+               							$test = 'Y mday:' .$by . 'fdays:' . $fdays ; //. 'ns:' . $newstart->format('Y-m-d G:i');
+               							if (!$newstart->setDate($fY , $by, $fd))
+               							{ continue;}
+               						} else
+               						{ // limit
+               							$test = 'MWD mday:' .$by . 'fdays:' . $fdays ; //. 'ns:' . $newstart->format('Y-m-d G:i');
+               							if ((!$fmdayok) ||
+               									(intval($newstart->format('n')) != intval($by)))
+               							{continue;}
+               						}
+               					} else { // passthrough
+               						$test = 'Geen bymonth';
+               					}
+               					
+               					foreach ($bymonthday as $by) {
            						if (isset($rrules['bymonthday'])){
            							if ($by < 0){
-           								$by = $fdays + 1 + $by;
+           								$by = $newstart->format('t')+ 1 + $by;
            							}
            							
-           							if (in_array($frequency , array('MONTHLY', 'YEARLY')) ){
+           							if (in_array($frequency , array('MONTHLY', 'YEARLY')) ){ // expand
            								
           						//		$test = 'MY mday:' .$by . 'fdays:' . $fdays ; //. 'ns:' . $newstart->format('Y-m-d G:i');
            								if (!$newstart->setDate($fY , $fm , $by))
            							   	{ continue;}
            							} else 
-           							{
+           							{ // limit
            							//	$test = 'WD mday:' .$by . 'fdays:' . $fdays ; //. 'ns:' . $newstart->format('Y-m-d G:i');
            								if ((!$fmdayok) ||
-           									(intval($fd) !== intval($by)))
+           										(intval($newstart->format('j')) !== intval($by)))
            									{continue;}
            							}
-           						} else {
+           						} else { // passthrough
            							// $test = 'Geen bymonthday';
-           							if (!$fmdayok &&
-           								intval($edtstartmday) == intval($newstart->format('j'))
-           								)
-           								{continue;}
            						}
- 
+           							
            						foreach ($byday as $by) {
            							$newstart->setTimestamp($freqstart->getTimestamp()) ;
            							if (isset($rrules['byday'])){
-           								$byd = substr($by,0,-2);
+           								$byd = substr($by,-2);
            								$byi = intval($by);
            								
-           								if (in_array($frequency , array('MONTHLY', 'YEARLY')) ){
-           									
-           									$test =  'MY $byd:' .$byd . ' $byi:' . $byi; //. 'ns:' . $newstart->format('Y-m-d G:i');
+           								if (in_array($frequency , array('WEEKLY','MONTHLY', 'YEARLY'))
+           										&& (! isset($rrules['bymonthday']))	
+           										&& (! isset($rrules['byyearday']))	
+           										) { //expand
+           									$test =  'WMY $byd:' .$byd . ' $byi:' . $byi; 
 //           									if (!$newstart->setDate($fY , $fm , $by))
 //           									{ continue;}
            								} else
-           								{
-           									$test =  'WD $byd:' .$byd . ' $byi:' . $byi; //. 'ns:' . $newstart->format('Y-m-d G:i');
+           								{ //limit
+           									$test =  'D $byd:' .$byd . ' $byi:' . $byi; //. 'ns:' . $newstart->format('Y-m-d G:i');
            									if ((!$fmdayok)
  //          											|| (intval($fd) !== intval($by))
            											)
            									{continue;}
            								}
-           							} else {
+           							} else { // passthrough
            								 $test =  'Geen byday';
-           								if (!$fmdayok 
-           							//       && intval($edtstartmday) == intval($newstart->format('j'))
-           										)
-           								{continue;}
+           								 if (!$fmdayok
+           								 		&& intval($edtstartmday) == intval($newstart->format('j'))
+           								 		&& intval($edtstartmon) == intval($newstart->format('n'))
+           								 		)
+           								 {continue;}
            							}
 
            							if (  
@@ -190,6 +211,7 @@ class IcsParser {
            						} // end count events
            					} // end byday	
            					} // end bymonthday
+           					} // end bymonth
            					// next startdate by FREQ for loop < $until and <= $penddate
            					$freqstart->add($freqinterval);
            					if  ($fmdayok &&
