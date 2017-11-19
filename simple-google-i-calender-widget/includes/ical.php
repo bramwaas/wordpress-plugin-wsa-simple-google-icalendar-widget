@@ -106,20 +106,29 @@ class IcsParser {
                					&& ($count == 0 || $i < $count  )            						)
            				{   // first FREQ loop on dtstart will only output new events
                				// created by a BY... clause
+               				$test = '';
+               				$ok = true;
            					foreach ($bymonthday as $mday) {
            						$newstart->setTimestamp($freqstart->getTimestamp()) ;
-           						if (isset($rrules['bymonth'])){
-           							$d = $newstart->format('d');
-           							$m = $newstart->format('m');
-           							$Y = $newstart->format('Y');
-           							
-           							if (!$newstart->setDate($Y , $m , $mday)) // set the wanted day for the month
-           								{ next;}
+           						$fd = $newstart->format('d');
+           						$fm = $newstart->format('m');
+           						$fY = $newstart->format('Y');
+           						$fdays = $newstart->format('t');
+           						if (isset($rrules['bymonthday'])){
+   //        							$ok = $newstart->setDate($fY , $fm , $mday); // set the wanted day for the month
+                                    if ($mday < 0){
+                                    	$mday = $fdays + 1 + $mday;
+                                    }
+           							$test = 'mday:' .$mday . 'fdays:' . $fdays ; //. 'ns:' . $newstart->format('Y-m-d G:i');
+           							if (!$newstart->setDate($fY , $fm , $mday))
+           							   { continue;}
            						} else {
-           							//
+           							$test = 'Geen bymonthday';
+           							if (!$fmdayok  )
+           								{continue;}
            						}
-           						if ($fmdayok    
-           							&& $newstart->getTimestamp() <= $penddate
+           						if (  
+           							 $newstart->getTimestamp() <= $penddate
            							&& $newstart> $edtstart) { // count events after dtstart
            							if ($newstart->getTimestamp() >= $now
            									) { // copy only events after now
@@ -131,7 +140,7 @@ class IcsParser {
            								$en->end = $newend->getTimestamp();
            								$en->uid = $i . '_' . $e->uid;
            								$en->summary = 'nr:' . $i . ' cen:' . $cen . ' '. $e->summary;
-    //       							$en->summary = $en->summary . '<br>' .$frequency. 'fs j:'. $freqstart->format('j'). 'mday'. $edtstart->format('j');
+           							    $en->summary = $en->summary . '<br>Test:' . $test;
            								$events[] = $en;
            							} // copy eevents
            							// next eventcount from $e->start	
