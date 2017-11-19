@@ -7,7 +7,7 @@ class IcsParsingException extends Exception {}
  *
  * note that this class does not implement all ICS functionality.
  *   bw 20171109 enkele verbeteringen voor start en end in ical.php
- * Version: 0.3.5
+ * Version: 0.3.6
 
  */
 class IcsParser {
@@ -108,23 +108,35 @@ class IcsParser {
                				// created by a BY... clause
                				$test = '';
                				$ok = true;
+               				$fd = $freqstart->format('d');
+               				$fm = $freqstart->format('m');
+               				$fY = $freqstart->format('Y');
+               				$fdays = $freqstart->format('t');
+               				
            					foreach ($bymonthday as $mday) {
            						$newstart->setTimestamp($freqstart->getTimestamp()) ;
-           						$fd = $newstart->format('d');
-           						$fm = $newstart->format('m');
-           						$fY = $newstart->format('Y');
-           						$fdays = $newstart->format('t');
            						if (isset($rrules['bymonthday'])){
-   //        							$ok = $newstart->setDate($fY , $fm , $mday); // set the wanted day for the month
-                                    if ($mday < 0){
-                                    	$mday = $fdays + 1 + $mday;
-                                    }
-           							$test = 'mday:' .$mday . 'fdays:' . $fdays ; //. 'ns:' . $newstart->format('Y-m-d G:i');
-           							if (!$newstart->setDate($fY , $fm , $mday))
-           							   { continue;}
+           							if ($mday < 0){
+           								$mday = $fdays + 1 + $mday;
+           							}
+           							
+           							if (in_array($frequency , array('MONTHLY', 'YEARLY')) ){
+           								
+          						//		$test = 'MY mday:' .$mday . 'fdays:' . $fdays ; //. 'ns:' . $newstart->format('Y-m-d G:i');
+           								if (!$newstart->setDate($fY , $fm , $mday))
+           							   	{ continue;}
+           							} else 
+           							{
+           							//	$test = 'WD mday:' .$mday . 'fdays:' . $fdays ; //. 'ns:' . $newstart->format('Y-m-d G:i');
+           								if ((!$fmdayok) ||
+           									(intval($fd) !== intval($mday)))
+           									{continue;}
+           							}
            						} else {
-           							$test = 'Geen bymonthday';
-           							if (!$fmdayok  )
+           							// $test = 'Geen bymonthday';
+           							if (!$fmdayok &&
+           								intval($edtstartmday) == intval($newstart->format('j'))
+           								)
            								{continue;}
            						}
            						if (  
@@ -140,7 +152,9 @@ class IcsParser {
            								$en->end = $newend->getTimestamp();
            								$en->uid = $i . '_' . $e->uid;
            								$en->summary = 'nr:' . $i . ' cen:' . $cen . ' '. $e->summary;
-           							    $en->summary = $en->summary . '<br>Test:' . $test;
+ 										if ($test > ' ') {
+           									$en->summary = $en->summary . '<br>Test:' . $test;
+ 										}
            								$events[] = $en;
            							} // copy eevents
            							// next eventcount from $e->start	
