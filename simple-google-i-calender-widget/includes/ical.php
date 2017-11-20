@@ -288,7 +288,25 @@ class IcsParser {
         
         // check if it is GMT
         $lastChar = $datetime[strlen($datetime) - 1];
-
+ // TODO: use DateTime object with timezone, not date_default_timezone_set if possible.       
+ //       $timezone = new DateTimeZone((isset($e->tzid)&& $e->tzid !== '') ? $e->tzid : get_option('timezone_string'));
+ // see public static DateTime DateTime::createFromFormat 
+ //    ( string $format , string $time [, DateTimeZone $timezone ] )
+ //       $format = 'Y-m-d H:i:s';
+ //       $date = DateTime::createFromFormat($format, '2009-02-15 15:16:17');
+ //       echo "Format: $format; " . $date->format('Y-m-d H:i:s') . "\n";
+ //  Output:     Format: Y-m-d H:i:s; 2009-02-15 15:16:17
+ //
+ // so the correct way is to do:
+ //       $d = DateTime::createFromFormat("Y-m-d H:i:s T","2011-11-06 01:00:00 EST",new DateTimeZone($timezone)); // set $timezone to any valid string for DateTimeZone, it doesn't matter
+ //       echo $d->format("Y-m-d H:i:s T U");
+ // returns "2011-11-06 01:00:00 EST - 1320559200" as wanted
+ //       e, O, P and T:	Timezone identifier,
+ //                         or difference to UTC in hours, 
+ //                         or difference to UTC with colon between hours and minutes, 
+ //                         or timezone abbreviation	
+ // Examples: UTC, GMT, Atlantic/Azores or +0200 or +02:00 or EST, MDT
+        
         if ($lastChar == 'Z') {
         	$time = gmmktime($hour, $minute, 0, $month, $day, $year);
         } else {
