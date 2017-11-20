@@ -306,6 +306,8 @@ class IcsParser {
  //                         or difference to UTC with colon between hours and minutes, 
  //                         or timezone abbreviation	
  // Examples: UTC, GMT, Atlantic/Azores or +0200 or +02:00 or EST, MDT
+ // $date = date_create_from_format('Y-m-d H:i:s', '2009-02-15 15:16:17', new DateTimeZone('Europe/Amsterdam'));
+ // $date2 = date_create_from_format('Y-m-d H:i:s', '2009-02-15 15:16:17', new DateTimeZone('GMT'));
         
         if ($lastChar == 'Z') {
         	$time = gmmktime($hour, $minute, 0, $month, $day, $year);
