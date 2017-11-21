@@ -171,13 +171,24 @@ class IcsParser {
            						if (isset($rrules['byday'])){
            							foreach ($byday as $by) {
            								// expand byday codes to bydays datetimes
-           								$byd = substr($by,-2);
+           								$byd = $weekdays[substr($by,-2)];
            								$byi = intval($by);
-           								$wdf = strtotime();
-           								$wdl = strtotime();
+           								$wdf = strtotime('first ' . $byd . ' of', $freqstart->getTimestamp());
+           								$wdl = strtotime('last ' . $byd . ' of', $wdf);
+           								if ($byi > 0) {
+           									$bydays[] = strtotime(($by - 1) . ' weeks', $wdf);	
+           								} elseif ($byi < 0) {
+           									$bydays[] = strtotime(($by + 1) . ' weeks', $wdl);
+           									
+           								}
+           								else { $d = $wdf;
+           									while ($d <= $wdl) {
+           										$bydays[] = $d;
+           										$d = strtotime('+1 weeks', $d);
+           								}
            							}
            						}
-           						
+           						}
            						foreach ($bydays as $by) {
            							$newstart->setTimestamp($freqstart->getTimestamp()) ;
            							if (isset($rrules['byday'])){
