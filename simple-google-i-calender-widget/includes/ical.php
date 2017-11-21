@@ -60,6 +60,16 @@ class IcsParser {
  * FREQ=DAILY;COUNT=5;INTERVAL=7 Every 7 days,5 times
 
  */
+			$weekdays = array (
+					'SU' => 'sunday',
+					'MO' => 'monday',
+					'TU' => 'tuesday',
+					'WE' => 'wednesday',
+					'TH' => 'thursday',
+					'FR' => 'friday',
+					'SA' => 'saturday',
+					);
+		
 			$timezone = new DateTimeZone((isset($e->tzid)&& $e->tzid !== '') ? $e->tzid : get_option('timezone_string'));
 			$edtstart = new DateTime('@' . $e->start, $timezone);
 			$edtstartmday = $edtstart->format('j');
@@ -84,10 +94,9 @@ class IcsParser {
                 $interval = (isset($rrules['interval']) && $rrules['interval'] !== '') ? $rrules['interval'] : 1;
                 $until = (isset($rrules['until'])) ? $this->parseIcsDateTime($rrules['until']) : $penddate;
                	$count = (isset($rrules['count'])) ? $rrules['count'] : 0;
-               	$byday = explode(',', (isset($rrules['byday'])) ? $rrules['byday'] : ''); 
                	$bymonth = explode(',', (isset($rrules['bymonth'])) ? $rrules['bymonth'] : '');
                	$bymonthday = explode(',', (isset($rrules['bymonthday'])) ? $rrules['bymonthday'] : '');
-               	
+               	$byday = explode(',', (isset($rrules['byday'])) ? $rrules['byday'] : '');
                	$i = 1;
                	$cen = 0;
                	switch ($frequency){
@@ -157,12 +166,21 @@ class IcsParser {
            						} else { // passthrough
            							// $test = 'Geen bymonthday';
            						}
-           							
-           						foreach ($byday as $by) {
-           							$newstart->setTimestamp($freqstart->getTimestamp()) ;
-           							if (isset($rrules['byday'])){
+           						
+           						$bydays = '';
+           						if (isset($rrules['byday'])){
+           							foreach ($byday as $by) {
+           								// expand byday codes to bydays datetimes
            								$byd = substr($by,-2);
            								$byi = intval($by);
+           								$wdf = strtotime();
+           								$wdl = strtotime();
+           							}
+           						}
+           						
+           						foreach ($bydays as $by) {
+           							$newstart->setTimestamp($freqstart->getTimestamp()) ;
+           							if (isset($rrules['byday'])){
            								
            								if (in_array($frequency , array('WEEKLY','MONTHLY', 'YEARLY'))
            										&& (! isset($rrules['bymonthday']))	
