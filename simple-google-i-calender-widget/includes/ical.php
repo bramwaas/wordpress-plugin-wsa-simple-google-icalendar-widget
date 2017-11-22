@@ -172,8 +172,9 @@ class IcsParser {
            							foreach ($byday as $by) {
            								// expand byday codes to bydays datetimes
            								$byd = $weekdays[substr($by,-2)];
+           								// alleen goed bij MONTHLY en YEARLY BYMONTH
            								$byi = intval($by);
-           								$wdf = strtotime('first ' . $byd . ' of', $freqstart->getTimestamp());
+           								$wdf = strtotime('first ' . $byd . ' of', $newstart->getTimestamp());
            								$wdl = strtotime('last ' . $byd . ' of', $wdf);
            								if ($byi > 0) {
            									$bydays[] = strtotime(($by - 1) . ' weeks', $wdf);	
