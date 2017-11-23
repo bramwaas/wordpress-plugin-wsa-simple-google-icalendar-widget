@@ -174,8 +174,12 @@ class IcsParser {
            								$byd = $weekdays[substr($by,-2)];
            								// alleen goed bij MONTHLY en YEARLY BYMONTH
            								$byi = intval($by);
-           								$wdf = strtotime('first ' . $byd . ' of', $newstart->getTimestamp());
-           								$wdl = strtotime('last ' . $byd . ' of', $wdf);
+           								if ($frequency == 'MONTHLY' 
+           										|| ($frequency == 'YEARLY' && isset($rrules['bymonth'])) )
+           								{
+           									$wdf = strtotime('first ' . $byd . ' of', $newstart->getTimestamp());
+           									$wdl = strtotime('last ' . $byd . ' of', $wdf);
+           								}
            								if ($byi > 0) {
            									$bydays[] = strtotime(($by - 1) . ' weeks', $wdf);	
            								} elseif ($byi < 0) {
