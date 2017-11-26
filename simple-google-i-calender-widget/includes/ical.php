@@ -169,57 +169,56 @@ class IcsParser {
            						
            						$bydays = '';
            						if (isset($rrules['byday'])){
-           							foreach ($byday as $by) {
-           								// expand byday codes to bydays datetimes
-           								$byd = $weekdays[substr($by,-2)];
-           								// alleen goed bij MONTHLY en YEARLY BYMONTH
-           								$byi = intval($by);
-           								if ($frequency == 'MONTHLY' 
-           										|| ($frequency == 'YEARLY' && isset($rrules['bymonth'])) )
-           								{
-           									$wdf = strtotime('first ' . $byd . ' of', $newstart->getTimestamp());
-           									$wdl = strtotime('last ' . $byd . ' of', $wdf);
-           								}
+           						if (in_array($frequency , array('WEEKLY','MONTHLY', 'YEARLY'))
+           									&& (! isset($rrules['bymonthday']))
+           									&& (! isset($rrules['byyearday']))) { // expand
+           						foreach ($byday as $by) {
+           							// expand byday codes to bydays datetimes
+           							$byd = $weekdays[substr($by,-2)];
+           							// alleen goed bij MONTHLY en YEARLY BYMONTH
+           							$byi = intval($by);
+           							$test =  'WMY $byd:' .$byd . ' $byi:' . $byi;
+           							if ($frequency == 'YEARLY' && (!isset($rrules['bymonth']))){
+           								// TODO byday yearly
+           							} // Yearly
+           									
+           							elseif ($frequency == 'MONTHLY'	|| $frequency == 'YEARLY'  ){
+           		
+           								$wdf = strtotime('first ' . $byd . ' of', $newstart->getTimestamp());
+           								$wdl = strtotime('last ' . $byd . ' of', $wdf);
+           								
            								if ($byi > 0) {
            									$bydays[] = strtotime(($by - 1) . ' weeks', $wdf);	
            								} elseif ($byi < 0) {
            									$bydays[] = strtotime(($by + 1) . ' weeks', $wdl);
            									
            								}
-           								else { $d = $wdf;
-           									while ($d <= $wdl) {
-           										$bydays[] = $d;
-           										$d = strtotime('+1 weeks', $d);
+           								else {
+           									$d = $wdf;
            								}
-           							}
-           						}
-           						}
+           								while ($d <= $wdl) {
+           									$bydays[] = $d;
+           									$d = strtotime('+1 weeks', $d);
+           								}
+           							} // Monthly
+           							else  { // $frequency == 'WEEKLY'
+           								// TODO byday weekly
+           							} // Weekly
+           							
+           						} // foreach
+           						} // expand
+           						else { // limit frequency period smaller than Week
+           							$bydays = $byday;
+           							// TODO maybe correct action limit byday mayby nothing
+           						} // limit
+           						} // isset byday
            						foreach ($bydays as $by) {
-           							$newstart->setTimestamp($freqstart->getTimestamp()) ;
-           							if (isset($rrules['byday'])){
-           								
-           								if (in_array($frequency , array('WEEKLY','MONTHLY', 'YEARLY'))
-           										&& (! isset($rrules['bymonthday']))	
-           										&& (! isset($rrules['byyearday']))	
-           										) { //expand
-           									$test =  'WMY $byd:' .$byd . ' $byi:' . $byi; 
-//           									if (!$newstart->setDate($fY , $fm , $by))
-//           									{ continue;}
-           								} else
-           								{ //limit
-           									$test =  'D $byd:' .$byd . ' $byi:' . $byi; //. 'ns:' . $newstart->format('Y-m-d G:i');
-           									if ((!$fmdayok)
- //          											|| (intval($fd) !== intval($by))
-           											)
-           									{continue;}
-           								}
-           							} else { // passthrough
-           								 $test =  'Geen byday';
-           								 if (!$fmdayok
-           								 		&& intval($edtstartmday) == intval($newstart->format('j'))
-           								 		&& intval($edtstartmon) == intval($newstart->format('n'))
-           								 		)
-           								 {continue;}
+           							if (intval($by) > 0 ) {
+           								$newstart->setTimestamp($by) ;
+           							}
+           							if (!$fmdayok
+           								&& $newstart->format('Ymd') == $edtstart->format('Ymd')){
+           								continue;
            							}
 
            							if (  
