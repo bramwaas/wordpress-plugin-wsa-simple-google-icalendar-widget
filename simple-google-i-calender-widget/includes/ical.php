@@ -205,14 +205,20 @@ class IcsParser {
            									$d = strtotime('+1 weeks', $d);
            								}
            							} // Monthly
-           							else  { // $frequency == 'WEEKLY'
+           							else  { // $frequency == 'WEEKLY' byi is not allowed so we dont parse it
            								// TODO byday weekly
            							} // Weekly
            							
            						} // foreach
            						} // expand
            						else { // limit frequency period smaller than Week
+           							// intval (byi) is not allowed so we dont parse it
            							$bydays = $byday;
+           							if ($bydays == '' 
+           								|| in_array(strtoupper(substr($newstart->format('D'),0,2 )), $bydays)
+           							){
+           								//ok
+           							} else {continue;}
            							// TODO maybe correct action limit byday mayby nothing
            						} // limit
            						} // isset byday
