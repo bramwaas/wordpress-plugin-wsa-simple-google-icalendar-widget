@@ -7,7 +7,7 @@ class IcsParsingException extends Exception {}
  *
  * note that this class does not implement all ICS functionality.
  *   bw 20171109 enkele verbeteringen voor start en end in ical.php
- * Version: 0.4.1
+ * Version: 0.4.2
 
  */
 class IcsParser {
@@ -121,7 +121,8 @@ class IcsParser {
                				$fm = $freqstart->format('m');
                				$fY = $freqstart->format('Y');
                				$fdays = $freqstart->format('t');
-           				
+               				$expand = false;
+               				
                				foreach ($bymonth as $by) {
                					$newstart->setTimestamp($freqstart->getTimestamp()) ;
                					if (isset($rrules['bymonth'])){
@@ -132,6 +133,7 @@ class IcsParser {
                						if ($frequency ='YEARLY' ){ // expand
                							
                							$test = 'Y mday:' .$by . 'fdays:' . $fdays ; //. 'ns:' . $newstart->format('Y-m-d G:i');
+               							$expand = true;			
                							if (!$newstart->setDate($fY , $by, $fd))
                							{ continue;}
                						} else
@@ -154,6 +156,7 @@ class IcsParser {
            							if (in_array($frequency , array('MONTHLY', 'YEARLY')) ){ // expand
            								
           						//		$test = 'MY mday:' .$by . 'fdays:' . $fdays ; //. 'ns:' . $newstart->format('Y-m-d G:i');
+           								$expand = true;
            								if (!$newstart->setDate($fY , $fm , $by))
            							   	{ continue;}
            							} else 
@@ -172,6 +175,7 @@ class IcsParser {
            						if (in_array($frequency , array('WEEKLY','MONTHLY', 'YEARLY'))
            									&& (! isset($rrules['bymonthday']))
            									&& (! isset($rrules['byyearday']))) { // expand
+           						$expand =true;
            						foreach ($byday as $by) {
            							// expand byday codes to bydays datetimes
            							$byd = $weekdays[substr($by,-2)];
@@ -216,13 +220,11 @@ class IcsParser {
            							if (intval($by) > 0 ) {
            								$newstart->setTimestamp($by) ;
            							}
-           							if (!$fmdayok
-           								&& $newstart->format('Ymd') == $edtstart->format('Ymd')){
-           								continue;
-           							}
 
-           							if (  
-           							 $newstart->getTimestamp() <= $penddate
+           							if ( 
+           								($fmdayok  || $expand
+           								|| $newstart->format('Ymd') != $edtstart->format('Ymd'))
+           							&& $newstart->getTimestamp() <= $penddate
            							&& $newstart> $edtstart) { // count events after dtstart
            							if ($newstart->getTimestamp() >= $now
            									) { // copy only events after now
