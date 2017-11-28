@@ -188,20 +188,28 @@ class IcsParser {
            									
            							elseif ($frequency == 'MONTHLY'	|| $frequency == 'YEARLY'  ){
            		
-           								$wdf = strtotime('first ' . $byd . ' of', $newstart->getTimestamp());
-           								$wdl = strtotime('last ' . $byd . ' of', $wdf);
+           								//$wdf = strtotime('first ' . $byd . ' of', $newstart->getTimestamp());
+           								$wdf = clone $newstart;
+           								$wdf->modify('first ' . $byd . ' of');
+           								//$wdl = strtotime('last ' . $byd . ' of', $wdf);
+           								$wdl = clone $newstart;
+           								$wdl->modify('last ' . $byd . ' of');
            								
            								if ($byi > 0) {
-           									$bydays[] = strtotime(($byi - 1) . ' weeks', $wdf);	
+           //									$bydays[] = strtotime(($byi - 1) . ' weeks', $wdf);
+           									$wdf->modify(($byi - 1) . ' weeks');
+           									$bydays[] = $wdf->getTimestamp();
            								} elseif ($byi < 0) {
-           									$bydays[] = strtotime(($byi + 1) . ' weeks', $wdl);
+           //									$bydays[] = strtotime(($byi + 1) . ' weeks', $wdl);
+           									$wdl->modify(($byi + 1) . ' weeks');
+           									$bydays[] = $wdl->getTimestamp();
            									
            								}
            								else {
-           									$d = $wdf;
-           									while ($d <= $wdl) {
-           										$bydays[] = $d;
-           										$d = strtotime('+1 weeks', $d);
+    //     									$d = $wdf;
+           									while ($wdf <= $wdl) {
+           										$bydays[] = $wdf->timestamp();
+           										$wdf->modify('+1 weeks');
            									}
            								}
            							} // Monthly
