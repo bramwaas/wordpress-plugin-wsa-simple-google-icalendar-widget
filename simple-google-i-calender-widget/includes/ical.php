@@ -208,8 +208,8 @@ class IcsParser {
            								else {
     //     									$d = $wdf;
            									while ($wdf <= $wdl) {
-           										$bydays[] = $wdf->timestamp();
-           										$wdf->modify('+1 weeks');
+           										$bydays[] = $wdf->getTimestamp();
+           										$wdf->add(new DateInterval('P1W'));
            									}
            								}
            							} // Monthly
