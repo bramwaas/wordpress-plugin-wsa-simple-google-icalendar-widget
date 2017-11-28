@@ -170,7 +170,8 @@ class IcsParser {
            							// $test = 'Geen bymonthday';
            						}
            						
-           						$bydays = '';
+           						$bydays = array('');
+   
            						if (isset($rrules['byday'])){
            						if (in_array($frequency , array('WEEKLY','MONTHLY', 'YEARLY'))
            									&& (! isset($rrules['bymonthday']))
@@ -181,7 +182,6 @@ class IcsParser {
            							$byd = $weekdays[substr($by,-2)];
            							// alleen goed bij MONTHLY en YEARLY BYMONTH
            							$byi = intval($by);
-           							$test =  'WMY $byd:' .$byd . ' $byi:' . $byi;
            							if ($frequency == 'YEARLY' && (!isset($rrules['bymonth']))){
            								// TODO byday yearly
            							} // Yearly
@@ -192,17 +192,17 @@ class IcsParser {
            								$wdl = strtotime('last ' . $byd . ' of', $wdf);
            								
            								if ($byi > 0) {
-           									$bydays[] = strtotime(($by - 1) . ' weeks', $wdf);	
+           									$bydays[] = strtotime(($byi - 1) . ' weeks', $wdf);	
            								} elseif ($byi < 0) {
-           									$bydays[] = strtotime(($by + 1) . ' weeks', $wdl);
+           									$bydays[] = strtotime(($byi + 1) . ' weeks', $wdl);
            									
            								}
            								else {
            									$d = $wdf;
-           								}
-           								while ($d <= $wdl) {
-           									$bydays[] = $d;
-           									$d = strtotime('+1 weeks', $d);
+           									while ($d <= $wdl) {
+           										$bydays[] = $d;
+           										$d = strtotime('+1 weeks', $d);
+           									}
            								}
            							} // Monthly
            							else  { // $frequency == 'WEEKLY' byi is not allowed so we dont parse it
@@ -214,7 +214,7 @@ class IcsParser {
            						else { // limit frequency period smaller than Week
            							// intval (byi) is not allowed so we dont parse it
            							$bydays = $byday;
-           							if ($bydays == '' 
+           							if ($bydays == array('') 
            								|| in_array(strtoupper(substr($newstart->format('D'),0,2 )), $bydays)
            							){
            								//ok
