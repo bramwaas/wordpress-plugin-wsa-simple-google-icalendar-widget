@@ -120,6 +120,8 @@ class IcsParser {
                				$fd = $freqstart->format('d');
                				$fm = $freqstart->format('m');
                				$fY = $freqstart->format('Y');
+               				$fH = $freqstart->format('H'); 
+               				$fi = $freqstart->format('i');
                				$fdays = $freqstart->format('t');
                				$expand = false;
                				
@@ -191,9 +193,12 @@ class IcsParser {
            								//$wdf = strtotime('first ' . $byd . ' of', $newstart->getTimestamp());
            								$wdf = clone $newstart;
            								$wdf->modify('first ' . $byd . ' of');
+           								$wdf->setTime($fH, $fi);
+           								
            								//$wdl = strtotime('last ' . $byd . ' of', $wdf);
            								$wdl = clone $newstart;
            								$wdl->modify('last ' . $byd . ' of');
+           								$wdl->setTime($fH, $fi);
            								
            								if ($byi > 0) {
            //									$bydays[] = strtotime(($byi - 1) . ' weeks', $wdf);
