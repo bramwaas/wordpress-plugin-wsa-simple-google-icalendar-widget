@@ -110,7 +110,6 @@ class IcsParser {
                			$freqstart = clone $edtstart;
                			$newstart = clone $edtstart;
                			$newend = clone $edtstart;
-               			$tzoffsetprev = $timezone->getOffset ( $freqstart);
                			$tzoffsetedt = $timezone->getOffset ( $edtstart);
                			while ( $freqstart->getTimestamp() <= $penddate
                					&& $freqstart->getTimestamp() < $until
@@ -155,7 +154,7 @@ class IcsParser {
            							if ($by < 0){
            								$by = $newstart->format('t')+ 1 + $by;
            							}
-           							
+           							if ( $by > $fdays) {continue;}
            							if (in_array($frequency , array('MONTHLY', 'YEARLY')) ){ // expand
            								
           								$test = 'MY mday:' .$by . 'fdays:' . $fdays ; //. 'ns:' . $newstart->format('Y-m-d G:i');
@@ -199,19 +198,14 @@ class IcsParser {
            								$wdl->setTime($fH, $fi);
         								
            								if ($byi > 0) {
-           //									$bydays[] = strtotime(($byi - 1) . ' weeks', $wdf);
-           //									$wdf->modify(($byi - 1) . ' weeks');
            									$wdf->add(new DateInterval('P' . ($byi - 1) . 'W'));
            									$bydays[] = $wdf->getTimestamp();
            								} elseif ($byi < 0) {
-           //									$bydays[] = strtotime(($byi + 1) . ' weeks', $wdl);
-    //       									$wdl->modify(($byi + 1) . ' weeks');
            									$wdf->sub(new DateInterval('P' . (1 - $byi) . 'W'));
            									$bydays[] = $wdl->getTimestamp();
            									
            								}
            								else {
-    //     									$d = $wdf;
            									while ($wdf <= $wdl) {
            										$bydays[] = $wdf->getTimestamp();
            										$wdf->add(new DateInterval('P1W'));
