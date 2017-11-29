@@ -205,7 +205,7 @@ class IcsParser {
            								} elseif ($byi < 0) {
            //									$bydays[] = strtotime(($byi + 1) . ' weeks', $wdl);
     //       									$wdl->modify(($byi + 1) . ' weeks');
-           									$wdf->subtract(new DateInterval('P' . ($byi + 1) . 'W'));
+           									$wdf->sub(new DateInterval('P' . (1 - $byi) . 'W'));
            									$bydays[] = $wdl->getTimestamp();
            									
            								}
