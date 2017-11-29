@@ -7,7 +7,7 @@ class IcsParsingException extends Exception {}
  *
  * note that this class does not implement all ICS functionality.
  *   bw 20171109 enkele verbeteringen voor start en end in ical.php
- * Version: 0.5.0
+ * Version: 0.5.1
 
  */
 class IcsParser {
@@ -111,7 +111,8 @@ class IcsParser {
                			$newstart = clone $edtstart;
                			$newend = clone $edtstart;
                			$tzoffsetprev = $timezone->getOffset ( $freqstart);
-              			while ( $freqstart->getTimestamp() <= $penddate
+               			$tzoffsetedt = $timezone->getOffset ( $edtstart);
+               			while ( $freqstart->getTimestamp() <= $penddate
                					&& $freqstart->getTimestamp() < $until
                					&& ($count == 0 || $i < $count  )            						)
            				{   // first FREQ loop on dtstart will only output new events
@@ -157,7 +158,7 @@ class IcsParser {
            							
            							if (in_array($frequency , array('MONTHLY', 'YEARLY')) ){ // expand
            								
-          						//		$test = 'MY mday:' .$by . 'fdays:' . $fdays ; //. 'ns:' . $newstart->format('Y-m-d G:i');
+          								$test = 'MY mday:' .$by . 'fdays:' . $fdays ; //. 'ns:' . $newstart->format('Y-m-d G:i');
            								$expand = true;
            								if (!$newstart->setDate($fY , $fm , $by))
            							   	{ continue;}
@@ -247,6 +248,16 @@ class IcsParser {
            							if ($newstart->getTimestamp() >= $now
            									) { // copy only events after now
            								$cen++;
+           								// process daylight saving time
+           								$tzadd = $tzoffsetedt - $timezone->getOffset ( $newstart);
+           								if ($tzadd != 0) {
+           									$tziv = new DateInterval('PT' . abs($tzadd) . 'S');
+           									if ($tzadd < 0) {
+           										$tziv->invert = 1;
+           									}
+           									$newstart->add($tziv);
+           								}
+           								
            								$en =  clone $e;
            								$en->start = $newstart->getTimestamp();
            								$newend->setTimestamp($en->start) ;
@@ -277,16 +288,6 @@ class IcsParser {
            						$freqstart->add($interval3day);
            						$fmdayok = true;
            						
-           					}
-           					// process daylight saving time
-           					$tzadd = $tzoffsetprev - $timezone->getOffset ( $freqstart);
-           					$tzoffsetprev = $timezone->getOffset ( $freqstart);
-           					if ($tzadd != 0) {
-           						$tziv = new DateInterval('PT' . abs($tzadd) . 'S');
-           						if ($tzadd < 0) {
-           							$tziv->invert = 1;
-           						}
-           					$freqstart->add($tziv);
            					}
            				} 
                  	}
