@@ -184,29 +184,28 @@ class IcsParser {
            							$byd = $weekdays[substr($by,-2)];
            							// alleen goed bij MONTHLY en YEARLY BYMONTH
            							$byi = intval($by);
-           							if ($frequency == 'YEARLY' && (!isset($rrules['bymonth']))){
+           							if ($frequency == 'MONTHLY'	|| $frequency == 'YEARLY' ){
            								// TODO byday yearly
-           							} // Yearly
-           									
-           							elseif ($frequency == 'MONTHLY'	|| $frequency == 'YEARLY'  ){
-           		
-           								//$wdf = strtotime('first ' . $byd . ' of', $newstart->getTimestamp());
            								$wdf = clone $newstart;
-           								$wdf->modify('first ' . $byd . ' of');
-           								$wdf->setTime($fH, $fi);
-           								
-           								//$wdl = strtotime('last ' . $byd . ' of', $wdf);
            								$wdl = clone $newstart;
+           								if ($frequency == 'YEARLY' && (!isset($rrules['bymonth']))){
+           									$wdf->setDate($fY , 1, $fd);
+           									$wdl->setDate($fY , 12, $fd);
+           								}
+           								$wdf->modify('first ' . $byd . ' of');
            								$wdl->modify('last ' . $byd . ' of');
+           								$wdf->setTime($fH, $fi);
            								$wdl->setTime($fH, $fi);
-           								
+        								
            								if ($byi > 0) {
            //									$bydays[] = strtotime(($byi - 1) . ' weeks', $wdf);
-           									$wdf->modify(($byi - 1) . ' weeks');
+           //									$wdf->modify(($byi - 1) . ' weeks');
+           									$wdf->add(new DateInterval('P' . ($byi - 1) . 'W'));
            									$bydays[] = $wdf->getTimestamp();
            								} elseif ($byi < 0) {
            //									$bydays[] = strtotime(($byi + 1) . ' weeks', $wdl);
-           									$wdl->modify(($byi + 1) . ' weeks');
+    //       									$wdl->modify(($byi + 1) . ' weeks');
+           									$wdf->subtract(new DateInterval('P' . ($byi + 1) . 'W'));
            									$bydays[] = $wdl->getTimestamp();
            									
            								}
@@ -217,14 +216,14 @@ class IcsParser {
            										$wdf->add(new DateInterval('P1W'));
            									}
            								}
-           							} // Monthly
+           							} // Yearly or Monthly
            							else  { // $frequency == 'WEEKLY' byi is not allowed so we dont parse it
            								// TODO byday weekly
            							} // Weekly
            							
            						} // foreach
            						} // expand
-           						else { // limit frequency period smaller than Week
+           						else { // limit frequency period smaller than Week//
            							// intval (byi) is not allowed so we dont parse it
            							$bydays = $byday;
            							if ($bydays == array('') 
