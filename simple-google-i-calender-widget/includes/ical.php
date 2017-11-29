@@ -196,12 +196,13 @@ class IcsParser {
            								$wdl->modify('last ' . $byd . ' of');
            								$wdf->setTime($fH, $fi);
            								$wdl->setTime($fH, $fi);
-        								
+           								$test = 'MY $byd' . $byd . ' $wdf:' .$wdf->format('Ymd'). ' $wdl:' . $wdl->format('Ymd'); //. 'ns:' . $newstart->format('Y-m-d G:i');
+           								
            								if ($byi > 0) {
            									$wdf->add(new DateInterval('P' . ($byi - 1) . 'W'));
            									$bydays[] = $wdf->getTimestamp();
            								} elseif ($byi < 0) {
-           									$wdf->sub(new DateInterval('P' . (1 - $byi) . 'W'));
+           									$wdl->sub(new DateInterval('P' . (1 - $byi) . 'W'));
            									$bydays[] = $wdl->getTimestamp();
            									
            								}
