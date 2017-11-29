@@ -185,7 +185,6 @@ class IcsParser {
            							// alleen goed bij MONTHLY en YEARLY BYMONTH
            							$byi = intval($by);
            							if ($frequency == 'MONTHLY'	|| $frequency == 'YEARLY' ){
-           								// TODO byday yearly
            								$wdf = clone $newstart;
            								$wdl = clone $newstart;
            								if ($frequency == 'YEARLY' && (!isset($rrules['bymonth']))){
@@ -196,7 +195,7 @@ class IcsParser {
            								$wdl->modify('last ' . $byd . ' of');
            								$wdf->setTime($fH, $fi);
            								$wdl->setTime($fH, $fi);
-           								$test = 'MY $byd' . $byd . ' $wdf:' .$wdf->format('Ymd'). ' $wdl:' . $wdl->format('Ymd') . ' intl: ' . 'P' . (1 - $byi) . 'W';
+           								$test = 'MY $byd' . $byd . ' $wdf:' .$wdf->format('Ymd'). ' $wdl:' . $wdl->format('Ymd') . ' intl: ' . 'P' . (- $byi -1) . 'W';
            								
            								if ($byi > 0) {
            									$wdf->add(new DateInterval('P' . ($byi - 1) . 'W'));
