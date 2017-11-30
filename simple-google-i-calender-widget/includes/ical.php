@@ -124,7 +124,8 @@ class IcsParser {
                				$fi = $freqstart->format('i');
                				$fdays = $freqstart->format('t');
                				$expand = false;
-               				
+               				// sort($bymonth);	// order array so that oldest items first are counted
+// TODO order of negative numbers
                				foreach ($bymonth as $by) {
                					$newstart->setTimestamp($freqstart->getTimestamp()) ;
                					if (isset($rrules['bymonth'])){
@@ -148,7 +149,8 @@ class IcsParser {
                					} else { // passthrough
                						$test = 'Geen bymonth';
                					}
-               					
+               					// sort($bymonthday);	// order array so that oldest items first are counted
+               					// TODO order of negative numbers
                					foreach ($bymonthday as $by) {
            						if (isset($rrules['bymonthday'])){
            							if ($by < 0){
@@ -240,6 +242,7 @@ class IcsParser {
            							// TODO maybe correct action limit byday mayby nothing
            						} // limit
            						} // isset byday
+           							sort($bydays);	// order array so that oldest items first are counted
            						foreach ($bydays as $by) {
            							if (intval($by) > 0 ) {
            								$newstart->setTimestamp($by) ;
@@ -248,6 +251,7 @@ class IcsParser {
            							if ( 
            								($fmdayok  || $expand
            								|| $newstart->format('Ymd') != $edtstart->format('Ymd'))
+           							&& ($count == 0 || $i < $count)
            							&& $newstart->getTimestamp() <= $penddate
            							&& $newstart> $edtstart) { // count events after dtstart
            							if ($newstart->getTimestamp() >= $now
