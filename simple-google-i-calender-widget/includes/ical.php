@@ -7,7 +7,7 @@ class IcsParsingException extends Exception {}
  *
  * note that this class does not implement all ICS functionality.
  *   bw 20171109 enkele verbeteringen voor start en end in ical.php
- * Version: 0.5.1
+ * Version: 0.5.2
 
  */
 class IcsParser {
@@ -184,8 +184,8 @@ class IcsParser {
            							$byd = $weekdays[substr($by,-2)];
            							// alleen goed bij MONTHLY en YEARLY BYMONTH
            							$byi = intval($by);
+           							$wdf = clone $newstart;
            							if ($frequency == 'MONTHLY'	|| $frequency == 'YEARLY' ){
-           								$wdf = clone $newstart;
            								$wdl = clone $newstart;
            								if ($frequency == 'YEARLY' && (!isset($rrules['bymonth']))){
            									$wdf->setDate($fY , 1, $fd);
@@ -213,7 +213,18 @@ class IcsParser {
            								}
            							} // Yearly or Monthly
            							else  { // $frequency == 'WEEKLY' byi is not allowed so we dont parse it
-           								// TODO byday weekly
+           								// TODO test byday weekly
+           								$wdnrn = $newstart->format('N'); // Mo 1; Su 7
+           								$wdnrb = array_search($byd,array_keys($weekdays));  // numeric index in weekdays
+           								if ($wdnrb > $wdnrn) {
+           									$wdf->add (new DateInterval('P' . ($wdnrn - $wdnrb ) . 'D'));
+           								} 
+           								if ($wdnrb < $wdnrn) {
+           									$wdf->sub (new DateInterval('P' . ($wdnrb - $wdnrn) . 'D'));
+           									
+           								}
+           								$bydays[] = $wdf->getTimestamp();
+           								
            							} // Weekly
            							
            						} // foreach
