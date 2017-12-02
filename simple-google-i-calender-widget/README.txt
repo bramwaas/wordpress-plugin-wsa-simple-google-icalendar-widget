@@ -1,4 +1,17 @@
-# Wordpress plugin wsa simple google calendar widget
+=== Simple Google iCalendar Widget ===
+Contributors: bramwaas
+Tags: comments, spam
+Requires at least: 4.8.4
+Tested up to: 4.9.1
+Requires PHP: 5.2.4
+Stable tag: trunk
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+ 
+Widget that displays events from a public google calendar
+ 
+== Description ==
+
 Google offers some HTML snippets to embed your public Google Calendar into your website.
 These are great, but as soon as you want to make a few adjustments to the styling,
 that goes beyond changing some colors, they’re useless.
@@ -9,13 +22,13 @@ https://nl.wordpress.org/plugins/simple-google-calendar-widget/
 
 This widget is a Fork of version 0.7 of that simple google calendar widget by NBoehr
 
-## Plugin Features
+== Plugin Features ==
 
 * Calendar widget to display appointments/events of a public Google calendar 
 * Small footprint, uses only Google ID of the calendar to get event information via iCal
 * Output in unorderd list with Bootstrap 4 listgroup classes and toggle for details.
 
-## Installation
+== Installation ==
 * Do the usual setup procedure… you know… downloading… unpacking… uploading… activating. 
 Or just install it through the wordpress plugin directory.
 * As soon as you activated the plugin, you should see a new widget under Design › Widgets.
@@ -191,12 +204,12 @@ RFC 5545                       iCalendar                  September 2009
 
 
 
-## Copyright and License
+== Copyright and License ==
 
 This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-licenses/gpl-2.0.html), version 2 or later.
 2017&thinsp;&ndash;&thinsp;2017 &copy; [Bram Waasdorp](http://www.waasdorpsoekhan.nl).
 
-## Changelog
+== Changelog ==
 
 * 0.0 imported V0.7 of NBoehr
 * 20171108: Added support for start and end time with timezone
