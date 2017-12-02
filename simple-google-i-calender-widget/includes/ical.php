@@ -174,7 +174,7 @@ class IcsParser {
            							// $test = 'Geen bymonthday';
            						}
            						
-           						$bydays = array('');
+           						$bydays = array();
    
            						if (isset($rrules['byday'])){
            						if (in_array($frequency , array('WEEKLY','MONTHLY', 'YEARLY'))
@@ -197,8 +197,9 @@ class IcsParser {
            								$wdl->modify('last ' . $byd . ' of');
            								$wdf->setTime($fH, $fi);
            								$wdl->setTime($fH, $fi);
-           								$test = 'MY $byd' . $byd . ' $wdf:' .$wdf->format('Ymd'). ' $wdl:' . $wdl->format('Ymd') . ' intl: ' . 'P' . (- $byi -1) . 'W';
-           								
+           								$test = 'MY $byd' . $byd . ' $wdf:' .$wdf->format('Ymd'). ' $wdl:' . $wdl->format('Ymd');
+           								$test = $test . ' by:' . $by;
+           								 
            								if ($byi > 0) {
            									$wdf->add(new DateInterval('P' . ($byi - 1) . 'W'));
            									$bydays[] = $wdf->getTimestamp();
