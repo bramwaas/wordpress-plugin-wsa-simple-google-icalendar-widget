@@ -145,21 +145,22 @@ class Simple_Gcal_Widget extends WP_Widget
         }
         $sflg = (isset($instance['suffix_lg_class'])) ? $instance['suffix_lg_class'] : '' ;
         $sflgi = (isset($instance['suffix_lgi_class'])) ? $instance['suffix_lgi_class'] : '' ;
+        $sflgia = (isset($instance['suffix_lgia_class'])) ? $instance['suffix_lgia_class'] : '' ;
         $data = $this->getData($instance);
         if (!empty($data) && is_array($data)) {
            date_default_timezone_set(get_option('timezone_string'));
-           echo '<ul class="list-group'; $sflg; ' simple-ical-widget">';
+           echo '<ul class="list-group' .  $sflg . ' simple-ical-widget">';
            $prevdate = '';
             foreach($data as $e) {
             	$idlist = explode("@", esc_attr($e->uid) );
             	$itemid = $this->id  . '_' . $idlist[0];
             	/* of dateformat  =  'l ' . get_option( 'date_format' ) */
-            	echo '<li class="list-group-item'; $sflgi; ' ical-date">';
+            	echo '<li class="list-group-item' .  $sflgi . ' ical-date">';
             	if ($prevdate !=  ucfirst(date_i18n( 'l j F Y', $e->start, false ))) {
             		$prevdate =  ucfirst(date_i18n( 'l j F Y', $e->start, false ));
             		echo $prevdate, '<br>';
             	}
-                echo  '<a class="ical_summary" data-toggle="collapse" href="#',
+                echo  '<a class="ical_summary' .  $sflgia . '" data-toggle="collapse" href="#',
                    	$itemid, '" aria-expanded="false" aria-controls="', 
                    	$itemid, '">';
                    	if (date('z', $e->start) === date('z', $e->end))	{
@@ -169,7 +170,7 @@ class Simple_Gcal_Widget extends WP_Widget
                   	echo $e->summary;
                 }	
                 echo	'</a>' ;
-                echo '<div class="collapse gcal_details" id="',  $itemid, '">';	    
+                echo '<div class="collapse gcal_details' .  $sflgia . '" id="',  $itemid, '">';	    
                if(!empty($e->description)) {
                	echo   $e->description
                     ,'<br>';
@@ -233,6 +234,7 @@ class Simple_Gcal_Widget extends WP_Widget
         }
         $instance['suffix_lg_class'] = strip_tags($new_instance['suffix_lg_class']); // TODO is strip_tags ok
         $instance['suffix_lgi_class'] = strip_tags($new_instance['suffix_lgi_class']); // TODO is strip_tags ok
+        $instance['suffix_lgia_class'] = strip_tags($new_instance['suffix_lgia_class']); // TODO is strip_tags ok
         
         // delete our transient cache
         $this->clearData();
@@ -255,7 +257,8 @@ class Simple_Gcal_Widget extends WP_Widget
 	    'event_period' => 92,	
         		'cache_time' => 60,
         		'suffix_lg_class' => '',
-        		'suffix_lgi_class' => '',
+        		'suffix_lgi_class' => ' py-0',
+        		'suffix_lgia_class' => '',
         		
         );
         $instance = wp_parse_args((array) $instance, $default);
@@ -283,11 +286,15 @@ class Simple_Gcal_Widget extends WP_Widget
         </p>
         <p>
           <label for="<?php echo $this->get_field_id('suffix_lg_class'); ?>"><?php _e('Suffix group class:', 'simple_ical'); ?></label> 
-          <input class="widefat" id="<?php echo $this->get_field_id('suffix_lg_class'); ?>" name="<?php echo $this->get_field_name('suffix_lg_class'); ?>" type="text" value="<?php echo esc_attr($instance['title']); ?>" />
+          <input class="widefat" id="<?php echo $this->get_field_id('suffix_lg_class'); ?>" name="<?php echo $this->get_field_name('suffix_lg_class'); ?>" type="text" value="<?php echo esc_attr($instance['suffix_lg_class']); ?>" />
         </p>
         <p>
-          <label for="<?php echo $this->get_field_id('suffix_lgi_class'); ?>"><?php _e('Suffix item class:', 'simple_ical'); ?></label> 
-          <input class="widefat" id="<?php echo $this->get_field_id('suffix_lgi_class'); ?>" name="<?php echo $this->get_field_name('suffix_lgi_class'); ?>" type="text" value="<?php echo esc_attr($instance['title']); ?>" />
+          <label for="<?php echo $this->get_field_id('suffix_lgi_class'); ?>"><?php _e('Suffix event date class:', 'simple_ical'); ?></label> 
+          <input class="widefat" id="<?php echo $this->get_field_id('suffix_lgi_class'); ?>" name="<?php echo $this->get_field_name('suffix_lgi_class'); ?>" type="text" value="<?php echo esc_attr($instance['suffix_lgi_class']); ?>" />
+        </p>
+        <p>
+          <label for="<?php echo $this->get_field_id('suffix_lgia_class'); ?>"><?php _e('Suffix event details class:', 'simple_ical'); ?></label> 
+          <input class="widefat" id="<?php echo $this->get_field_id('suffix_lgia_class'); ?>" name="<?php echo $this->get_field_name('suffix_lgia_class'); ?>" type="text" value="<?php echo esc_attr($instance['suffix_lgia_class']); ?>" />
         </p>
         <p>
             <?php _e('Need <a href="https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget/blob/master/README.md" target="_blank">help</a>?', 'simple_ical'); ?>
