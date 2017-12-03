@@ -4,7 +4,7 @@ Plugin Name: Simple Google iCalendar Widget
 Description: Widget that displays events from a public google calendar
 Plugin URI: https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
 Author: Bram Waasdorp
-Version: 0.5.0
+Version: 0.5.4
 License: GPL3
 Tested up to: 4.8.3
 Requires PHP:  5.3.0 tested with 7.0
@@ -143,21 +143,23 @@ class Simple_Gcal_Widget extends WP_Widget
         if(isset($instance['title'])) {
             echo $args['before_title'], $instance['title'], $args['after_title'];
         }
-         $data = $this->getData($instance);
+        $sflg = (isset($instance['suffix_lg_class'])) ? $instance['suffix_lg_class'] : '' ;
+        $sflgi = (isset($instance['suffix_lgi_class'])) ? $instance['suffix_lgi_class'] : '' ;
+        $data = $this->getData($instance);
         if (!empty($data) && is_array($data)) {
            date_default_timezone_set(get_option('timezone_string'));
-           echo '<ul class="list-group simple-gcal-widget">';
+           echo '<ul class="list-group'; $sflg; ' simple-ical-widget">';
            $prevdate = '';
             foreach($data as $e) {
             	$idlist = explode("@", esc_attr($e->uid) );
             	$itemid = $this->id  . '_' . $idlist[0];
             	/* of dateformat  =  'l ' . get_option( 'date_format' ) */
-            	echo '<li class="list-group-item gcal-date">';
+            	echo '<li class="list-group-item'; $sflgi; ' ical-date">';
             	if ($prevdate !=  ucfirst(date_i18n( 'l j F Y', $e->start, false ))) {
             		$prevdate =  ucfirst(date_i18n( 'l j F Y', $e->start, false ));
             		echo $prevdate, '<br>';
             	}
-                echo  '<a class="gcal_summary" data-toggle="collapse" href="#',
+                echo  '<a class="ical_summary" data-toggle="collapse" href="#',
                    	$itemid, '" aria-expanded="false" aria-controls="', 
                    	$itemid, '">';
                    	if (date('z', $e->start) === date('z', $e->end))	{
@@ -229,7 +231,8 @@ class Simple_Gcal_Widget extends WP_Widget
         } else {
         	$instance['event_count'] = 5;
         }
-        
+        $instance['suffix_lg_class'] = strip_tags($new_instance['suffix_lg_class']); // TODO is strip_tags ok
+        $instance['suffix_lgi_class'] = strip_tags($new_instance['suffix_lgi_class']); // TODO is strip_tags ok
         
         // delete our transient cache
         $this->clearData();
@@ -250,8 +253,10 @@ class Simple_Gcal_Widget extends WP_Widget
    	    'calendar_id' => '',	
 	    'event_count' => 10,
 	    'event_period' => 92,	
-            'cache_time' => 60,
-	    		
+        		'cache_time' => 60,
+        		'suffix_lg_class' => '',
+        		'suffix_lgi_class' => '',
+        		
         );
         $instance = wp_parse_args((array) $instance, $default);
         
@@ -275,6 +280,14 @@ class Simple_Gcal_Widget extends WP_Widget
         <p>
           <label for="<?php echo $this->get_field_id('cache_time'); ?>"><?php _e('Cache expiration time in minutes:', 'simple_ical'); ?></label> 
           <input class="widefat" id="<?php echo $this->get_field_id('cache_time'); ?>" name="<?php echo $this->get_field_name('cache_time'); ?>" type="text" value="<?php echo esc_attr($instance['cache_time']); ?>" />
+        </p>
+        <p>
+          <label for="<?php echo $this->get_field_id('suffix_lg_class'); ?>"><?php _e('Suffix group class:', 'simple_ical'); ?></label> 
+          <input class="widefat" id="<?php echo $this->get_field_id('suffix_lg_class'); ?>" name="<?php echo $this->get_field_name('suffix_lg_class'); ?>" type="text" value="<?php echo esc_attr($instance['title']); ?>" />
+        </p>
+        <p>
+          <label for="<?php echo $this->get_field_id('suffix_lgi_class'); ?>"><?php _e('Suffix item class:', 'simple_ical'); ?></label> 
+          <input class="widefat" id="<?php echo $this->get_field_id('suffix_lgi_class'); ?>" name="<?php echo $this->get_field_name('suffix_lgi_class'); ?>" type="text" value="<?php echo esc_attr($instance['title']); ?>" />
         </p>
         <p>
             <?php _e('Need <a href="https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget/blob/master/README.md" target="_blank">help</a>?', 'simple_ical'); ?>
