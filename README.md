@@ -208,3 +208,6 @@ TODO repeating events.
 * 0.3.3 simple repeating events (only full periods) works
 * 0.3.5 discard non existent days like 31th november first try with byday
 * 0.5.0 BYDAY complete first try with sort tested with wordpress 4.8.3 php 7
+* 0.6.0 BYDAY and BYMONTHDAY work with complete sorting and unifying in MONTH frequency
+        adding class suffixes from setting.
+        

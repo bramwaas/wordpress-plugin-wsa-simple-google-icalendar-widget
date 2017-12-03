@@ -7,7 +7,7 @@ class IcsParsingException extends Exception {}
  *
  * note that this class does not implement all ICS functionality.
  *   bw 20171109 enkele verbeteringen voor start en end in ical.php
- * Version: 0.5.3
+ * Version: 0.6.0
 
  */
 class IcsParser {
@@ -124,14 +124,22 @@ class IcsParser {
                				$fi = $freqstart->format('i');
                				$fdays = $freqstart->format('t');
                				$expand = false;
-               				foreach ($bymonth as $by){
+// bymonth               				
+               				if (isset($rrules['bymonth'])) {
+               				$test = 'Bymonth:';
+               				$byn = array();
+               				foreach ($bymonth as $by){ 
+               					// convert bymonth ordinals to month-numbers
                					if ($by < 0){
                						$by = 13 + $by;
                					}
+               					$test = $test . ', ' .  $by;
+               					$byn[] = $by;
                				}
-               				$bymonth= array_unique($bymonth); // make unique
-               				sort($bymonth);	// order array so that oldest items first are counted
-              				foreach ($bymonth as $by) {
+               				$byn = array_unique($byn); // make unique
+               				sort($byn);	// order array so that oldest items first are counted
+               				} else {$byn = array('');}
+               				foreach ($byn as $by) {
                					$newstart->setTimestamp($freqstart->getTimestamp()) ;
                					if (isset($rrules['bymonth'])){
               						
@@ -151,37 +159,44 @@ class IcsParser {
                					} else { // passthrough
                						$test = 'Geen bymonth';
                					}
-               					$ndays = $newstart->format('t');
+// bymonthday
+               					if (isset($rrules['bymonthday'])) {
+               					$byn = array();
+               					$ndays = intval($newstart->format('t'));
+ //TODO verwijderen als ok              					$test = 'Bymonthday ndays:' . $ndays;
                					foreach ($bymonthday as $by){
+               						// convert bymonthday ordinals to day-of-month-numbers
                						if ($by < 0){
-               							$by = $ndays + 1 + $by;
+               							$by = 1 + $ndays + intval($by);
                						}
+               						$byn[] = $by;
                					}
-               					$bymonthday = array_unique($bymonthday); // make unique 
-               					sort($bymonthday);	// order array so that oldest items first are counted
-               					
-               					foreach ($bymonthday as $by) {
+               					$byn= array_unique($byn); // make unique 
+               					sort($byn);	// order array so that oldest items first are counted
+               				    } else {$byn = array('');}
+               				
+               					foreach ($byn as $by) {
            						if (isset($rrules['bymonthday'])){
-           							$test = 'MY mday:' .$by . 'ndays:' . $ndays ; //. 'ns:' . $newstart->format('Y-m-d G:i');
+//TODO verwijderen als ok           							$test = $test . '<br>Bymonthday MY mday:' .$by . 'ndays:' . $ndays ; //. 'ns:' . $newstart->format('Y-m-d G:i');
            							if ( $by > $ndays) {continue;}
            							if (in_array($frequency , array('MONTHLY', 'YEARLY')) ){ // expand
-           								
+//           								if (intval($by) < 1) $by = 11;
            								$expand = true;
-           								if (!$newstart->setDate($fY , $fm , $by))
-           							   	{ continue;}
+           								if (!$newstart->setDate($fY , $fm , $by)){
+           									continue;
+           								}
            							} else 
            							{ // limit
-           							//	$test = 'WD mday:' .$by . 'fdays:' . $fdays ; //. 'ns:' . $newstart->format('Y-m-d G:i');
+           								$test = $test . '<br>WD mday:' .$by . 'fdays:' . $fdays ; //. 'ns:' . $newstart->format('Y-m-d G:i');
            								if ((!$fmdayok) ||
            										(intval($newstart->format('j')) !== intval($by)))
            									{continue;}
            							}
            						} else { // passthrough
-           							// $test = 'Geen bymonthday';
+           							 $test = 'Geen bymonthday';
            						}
-           						
+// byday           						
            						$bydays = array();
-   
            						if (isset($rrules['byday'])){
            						if (in_array($frequency , array('WEEKLY','MONTHLY', 'YEARLY'))
            									&& (! isset($rrules['bymonthday']))
@@ -190,7 +205,6 @@ class IcsParser {
            						foreach ($byday as $by) {
            							// expand byday codes to bydays datetimes
            							$byd = $weekdays[substr($by,-2)];
-           							// alleen goed bij MONTHLY en YEARLY BYMONTH
            							$byi = intval($by);
            							$wdf = clone $newstart;
            							if ($frequency == 'MONTHLY'	|| $frequency == 'YEARLY' ){
@@ -203,8 +217,8 @@ class IcsParser {
            								$wdl->modify('last ' . $byd . ' of');
            								$wdf->setTime($fH, $fi);
            								$wdl->setTime($fH, $fi);
-           								$test = 'MY $byd' . $byd . ' $wdf:' .$wdf->format('Ymd'). ' $wdl:' . $wdl->format('Ymd');
-           								$test = $test . ' by:' . $by;
+//TODO verwijderen indien ok          								$test = 'MY $byd' . $byd . ' $wdf:' .$wdf->format('Ymd'). ' $wdl:' . $wdl->format('Ymd');
+//TODO            								$test = $test . ' by:' . $by;
            								 
            								if ($byi > 0) {
            									$wdf->add(new DateInterval('P' . ($byi - 1) . 'W'));
@@ -249,7 +263,7 @@ class IcsParser {
            							// TODO maybe correct action limit byday mayby nothing
            						} // limit
            						} // isset byday
-           						else {$bydays == array('');
+           						else {$bydays = array('');
            						}
            						$bydays= array_unique($bydays); // make unique 
            						sort($bydays);	// order array so that oldest items first are counted
