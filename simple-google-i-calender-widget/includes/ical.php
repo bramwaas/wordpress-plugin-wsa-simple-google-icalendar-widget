@@ -7,7 +7,7 @@ class IcsParsingException extends Exception {}
  *
  * note that this class does not implement all ICS functionality.
  *   bw 20171109 enkele verbeteringen voor start en end in ical.php
- * Version: 0.5.2
+ * Version: 0.5.3
 
  */
 class IcsParser {
@@ -220,10 +220,10 @@ class IcsParser {
            								$wdnrn = $newstart->format('N'); // Mo 1; Su 7
            								$wdnrb = array_search($byd,array_keys($weekdays));  // numeric index in weekdays
            								if ($wdnrb > $wdnrn) {
-           									$wdf->add (new DateInterval('P' . ($wdnrn - $wdnrb ) . 'D'));
+           									$wdf->add (new DateInterval('P' . ($wdnrb - $wdnrn ) . 'D'));
            								} 
            								if ($wdnrb < $wdnrn) {
-           									$wdf->sub (new DateInterval('P' . ($wdnrb - $wdnrn) . 'D'));
+           									$wdf->sub (new DateInterval('P' . ($wdnrn - $wdnrb) . 'D'));
            									
            								}
            								$bydays[] = $wdf->getTimestamp();
@@ -243,7 +243,9 @@ class IcsParser {
            							// TODO maybe correct action limit byday mayby nothing
            						} // limit
            						} // isset byday
-           							sort($bydays);	// order array so that oldest items first are counted
+           						else {$bydays == array('');
+           						}
+           						sort($bydays);	// order array so that oldest items first are counted
            						foreach ($bydays as $by) {
            							if (intval($by) > 0 ) {
            								$newstart->setTimestamp($by) ;
