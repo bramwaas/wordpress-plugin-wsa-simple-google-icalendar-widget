@@ -124,15 +124,17 @@ class IcsParser {
                				$fi = $freqstart->format('i');
                				$fdays = $freqstart->format('t');
                				$expand = false;
-               				// sort($bymonth);	// order array so that oldest items first are counted
-// TODO order of negative numbers
-               				foreach ($bymonth as $by) {
+               				foreach ($bymonth as $by){
+               					if ($by < 0){
+               						$by = 13 + $by;
+               					}
+               				}
+               				$bymonth= array_unique($bymonth); // make unique
+               				sort($bymonth);	// order array so that oldest items first are counted
+              				foreach ($bymonth as $by) {
                					$newstart->setTimestamp($freqstart->getTimestamp()) ;
                					if (isset($rrules['bymonth'])){
-               						if ($by < 0){
-               							$by = 13 + $by;
-               						}
-               						
+              						
                						if ($frequency ='YEARLY' ){ // expand
                							
                							$test = 'Y mday:' .$by . 'fdays:' . $fdays ; //. 'ns:' . $newstart->format('Y-m-d G:i');
@@ -155,13 +157,15 @@ class IcsParser {
                							$by = $ndays + 1 + $by;
                						}
                					}
-               					$bymonthday = array_unique($bymonthday); // make unique and order array so that oldest items first are counted
+               					$bymonthday = array_unique($bymonthday); // make unique 
+               					sort($bymonthday);	// order array so that oldest items first are counted
+               					
                					foreach ($bymonthday as $by) {
            						if (isset($rrules['bymonthday'])){
+           							$test = 'MY mday:' .$by . 'ndays:' . $ndays ; //. 'ns:' . $newstart->format('Y-m-d G:i');
            							if ( $by > $ndays) {continue;}
            							if (in_array($frequency , array('MONTHLY', 'YEARLY')) ){ // expand
            								
-          								$test = 'MY mday:' .$by . 'fdays:' . $fdays ; //. 'ns:' . $newstart->format('Y-m-d G:i');
            								$expand = true;
            								if (!$newstart->setDate($fY , $fm , $by))
            							   	{ continue;}
@@ -247,7 +251,7 @@ class IcsParser {
            						} // isset byday
            						else {$bydays == array('');
            						}
-           						$bydays= array_unique($bydays); // make unique and order array so that oldest items first are counted
+           						$bydays= array_unique($bydays); // make unique 
            						sort($bydays);	// order array so that oldest items first are counted
            						foreach ($bydays as $by) {
            							if (intval($by) > 0 ) {
