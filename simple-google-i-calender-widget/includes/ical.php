@@ -149,14 +149,16 @@ class IcsParser {
                					} else { // passthrough
                						$test = 'Geen bymonth';
                					}
-               					// sort($bymonthday);	// order array so that oldest items first are counted
-               					// TODO order of negative numbers
+               					$ndays = $newstart->format('t');
+               					foreach ($bymonthday as $by){
+               						if ($by < 0){
+               							$by = $ndays + 1 + $by;
+               						}
+               					}
+               					$bymonthday = array_unique($bymonthday); // make unique and order array so that oldest items first are counted
                					foreach ($bymonthday as $by) {
            						if (isset($rrules['bymonthday'])){
-           							if ($by < 0){
-           								$by = $newstart->format('t')+ 1 + $by;
-           							}
-           							if ( $by > $fdays) {continue;}
+           							if ( $by > $ndays) {continue;}
            							if (in_array($frequency , array('MONTHLY', 'YEARLY')) ){ // expand
            								
           								$test = 'MY mday:' .$by . 'fdays:' . $fdays ; //. 'ns:' . $newstart->format('Y-m-d G:i');
@@ -245,6 +247,7 @@ class IcsParser {
            						} // isset byday
            						else {$bydays == array('');
            						}
+           						$bydays= array_unique($bydays); // make unique and order array so that oldest items first are counted
            						sort($bydays);	// order array so that oldest items first are counted
            						foreach ($bydays as $by) {
            							if (intval($by) > 0 ) {

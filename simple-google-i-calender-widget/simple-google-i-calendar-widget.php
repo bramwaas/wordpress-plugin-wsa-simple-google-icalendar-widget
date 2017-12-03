@@ -160,7 +160,7 @@ class Simple_Gcal_Widget extends WP_Widget
             		$prevdate =  ucfirst(date_i18n( 'l j F Y', $e->start, false ));
             		echo $prevdate, '<br>';
             	}
-                echo  '<a class="ical_summary' .  $sflgia . '" data-toggle="collapse" href="#',
+                echo  '<a class="dropdown-toggle' .  $sflgia . ' ical_summary" data-toggle="collapse" href="#',
                    	$itemid, '" aria-expanded="false" aria-controls="', 
                    	$itemid, '">';
                    	if (date('z', $e->start) === date('z', $e->end))	{
