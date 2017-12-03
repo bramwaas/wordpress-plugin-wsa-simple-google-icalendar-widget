@@ -92,8 +92,28 @@ class IcsParser {
                 // Get frequency and other values when set
                 $frequency = $rrules['freq'];
                 $interval = (isset($rrules['interval']) && $rrules['interval'] !== '') ? $rrules['interval'] : 1;
+                $freqinterval = new DateInterval('P' . $interval . substr($frequency,0,1));
+                $interval3day = new DateInterval('P3D');
                 $until = (isset($rrules['until'])) ? $this->parseIcsDateTime($rrules['until']) : $penddate;
-               	$count = (isset($rrules['count'])) ? $rrules['count'] : 0;
+                $freqendloop = ($until > $penddate) ? $until : $penddate;
+                switch ($frequency){
+                	case "YEARLY"	:
+                		$freqendloop = $freqendloop + (31622400 * $interval); // 366 days in sec
+                		continue;
+                	case "MONTHLY"	:
+                		$freqendloop = $freqendloop + (2678400 * $interval); // 31 days in sec
+                		continue;
+                		
+                	case "WEEKLY"	:
+                		$freqendloop = $freqendloop + (604800 * $interval); // 7 days in sec
+                		continue;
+                		
+                	case "DAILY"	:
+                		$freqendloop = $freqendloop + (86400 * $interval); // 1 days in sec
+                		continue;
+                		
+                }
+               $count = (isset($rrules['count'])) ? $rrules['count'] : 0;
                	$bymonth = explode(',', (isset($rrules['bymonth'])) ? $rrules['bymonth'] : '');
                	$bymonthday = explode(',', (isset($rrules['bymonthday'])) ? $rrules['bymonthday'] : '');
                	$byday = explode(',', (isset($rrules['byday'])) ? $rrules['byday'] : '');
@@ -104,15 +124,12 @@ class IcsParser {
                		case "MONTHLY"	:
                		case "WEEKLY"	:
                		case "DAILY"	:
-               			$freqinterval = new DateInterval('P' . $interval . substr($frequency,0,1));
-               			$interval3day = new DateInterval('P3D');
-               			$fmdayok = true;
+                        $fmdayok = true;
                			$freqstart = clone $edtstart;
                			$newstart = clone $edtstart;
                			$newend = clone $edtstart;
                			$tzoffsetedt = $timezone->getOffset ( $edtstart);
-               			while ( $freqstart->getTimestamp() <= $penddate
-               					&& $freqstart->getTimestamp() < $until
+               			while ( $freqstart->getTimestamp() <= $freqendloop
                					&& ($count == 0 || $i < $count  )            						)
            				{   // first FREQ loop on dtstart will only output new events
                				// created by a BY... clause
@@ -127,35 +144,44 @@ class IcsParser {
 // bymonth               				
                				if (isset($rrules['bymonth'])) {
                				$test = 'Bymonth:';
-               				$byn = array();
+               				$bym = array();
                				foreach ($bymonth as $by){ 
                					// convert bymonth ordinals to month-numbers
                					if ($by < 0){
                						$by = 13 + $by;
                					}
                					$test = $test . ', ' .  $by;
-               					$byn[] = $by;
+               					$bym[] = $by;
                				}
-               				$byn = array_unique($byn); // make unique
-               				sort($byn);	// order array so that oldest items first are counted
-               				} else {$byn = array('');}
-               				foreach ($byn as $by) {
+               				$bym= array_unique($bym); // make unique
+               				sort($bym);	// order array so that oldest items first are counted
+               				} else {$bym= array('');}
+               				foreach ($bym as $by) {
                					$newstart->setTimestamp($freqstart->getTimestamp()) ;
                					if (isset($rrules['bymonth'])){
               						
                						if ($frequency ='YEARLY' ){ // expand
-               							
-               							$test = 'Y mday:' .$by . 'fdays:' . $fdays ; //. 'ns:' . $newstart->format('Y-m-d G:i');
-               							$expand = true;			
-               							if (!$newstart->setDate($fY , $by, $fd))
-               							{ continue;}
+               							$newstart->setDate($fY , $by, 1);
+               							$ndays = intval($newstart->format('t'));
+               							$test = 'Y mnr:' .$by . ' $ndays:' . $ndays . ' interval:' . 'P' . $interval . substr($frequency,0,1). ' ns:' . $newstart->format('Y-m-d G:i');
+               							$expand = true;
+               							if (isset($rrules['bymonthday'])
+               									|| isset($rrules['byday'])){
+               										// no action day-of the-month is set later
+               							} elseif (intval($fd) <= $ndays) {
+               								$newstart->setDate($fY , $by, $fd);
+               							} else {
+               								continue;
+               							}
+               							$test = $test . '<br>newstart:' . $newstart->format('Y-m-d G:i t');
                						} else
                						{ // limit
-               							$test = 'MWD mday:' .$by . 'fdays:' . $fdays ; //. 'ns:' . $newstart->format('Y-m-d G:i');
+               							$test = 'MWD mnr:' .$by  ; //. 'ns:' . $newstart->format('Y-m-d G:i');
                							if ((!$fmdayok) ||
                									(intval($newstart->format('n')) != intval($by)))
                							{continue;}
                						}
+               						$test = $test . '<br>einde:' . date('Y-m-d G:i', $freqendloop ) . ' pend: ' . date('Y-m-d G:i', $penddate );
                					} else { // passthrough
                						$test = 'Geen bymonth';
                					}
@@ -193,7 +219,7 @@ class IcsParser {
            									{continue;}
            							}
            						} else { // passthrough
-           							 $test = 'Geen bymonthday';
+ //          							 $test = 'Geen bymonthday';
            						}
 // byday           						
            						$bydays = array();
@@ -277,6 +303,7 @@ class IcsParser {
            								|| $newstart->format('Ymd') != $edtstart->format('Ymd'))
            							&& ($count == 0 || $i < $count)
            							&& $newstart->getTimestamp() <= $penddate
+           							&& $newstart->getTimestamp() < $until
            							&& $newstart> $edtstart) { // count events after dtstart
            							if ($newstart->getTimestamp() >= $now
            									) { // copy only events after now
