@@ -7,7 +7,7 @@ class IcsParsingException extends Exception {}
  *
  * note that this class does not implement all ICS functionality.
  *   bw 20171109 enkele verbeteringen voor start en end in ical.php
- * Version: 0.6.0
+ * Version: 0.6.1
 
  */
 class IcsParser {
@@ -21,6 +21,7 @@ class IcsParser {
         $haveVevent = true;
         $events = array();
         $now = time();
+        $penddate = (isset($penddate) && $penddate > $now) ? $penddate : $now;
         
         
 
@@ -95,6 +96,7 @@ class IcsParser {
                 $freqinterval = new DateInterval('P' . $interval . substr($frequency,0,1));
                 $interval3day = new DateInterval('P3D');
                 $until = (isset($rrules['until'])) ? $this->parseIcsDateTime($rrules['until']) : $penddate;
+                $until = ($until < $penddate) ? $until : ($penddate - 1); 
                 $freqendloop = ($until > $penddate) ? $until : $penddate;
                 switch ($frequency){
                 	case "YEARLY"	:
@@ -165,12 +167,12 @@ class IcsParser {
                							$ndays = intval($newstart->format('t'));
                							$test = 'Y mnr:' .$by . ' $ndays:' . $ndays . ' interval:' . 'P' . $interval . substr($frequency,0,1). ' ns:' . $newstart->format('Y-m-d G:i');
                							$expand = true;
-               							if (isset($rrules['bymonthday'])
+               							if (intval($fd) <= $ndays) {
+               								$newstart->setDate($fY , $by, $fd);
+               							} elseif (isset($rrules['bymonthday'])
                									|| isset($rrules['byday'])){
                										// no action day-of the-month is set later
-               							} elseif (intval($fd) <= $ndays) {
-               								$newstart->setDate($fY , $by, $fd);
-               							} else {
+               							}  else {
                								continue;
                							}
                							$test = $test . '<br>newstart:' . $newstart->format('Y-m-d G:i t');
@@ -203,23 +205,27 @@ class IcsParser {
                				
                					foreach ($byn as $by) {
            						if (isset($rrules['bymonthday'])){
-//TODO verwijderen als ok           							$test = $test . '<br>Bymonthday MY mday:' .$by . 'ndays:' . $ndays ; //. 'ns:' . $newstart->format('Y-m-d G:i');
-           							if ( $by > $ndays) {continue;}
+//TODO verwijderen als ok 
+									$test = $test . '<br>Bymonthday MY mday:' .$by . ' ndays:' . $ndays ; //. 'ns:' . $newstart->format('Y-m-d G:i');
            							if (in_array($frequency , array('MONTHLY', 'YEARLY')) ){ // expand
 //           								if (intval($by) < 1) $by = 11;
            								$expand = true;
-           								if (!$newstart->setDate($fY , $fm , $by)){
+           								if (intval($by) <= $ndays) {
+           								$newstart->setDate($fY , $fm , $by);
+           								} else {
            									continue;
            								}
            							} else 
            							{ // limit
-           								$test = $test . '<br>WD mday:' .$by . 'fdays:' . $fdays ; //. 'ns:' . $newstart->format('Y-m-d G:i');
+//TODO verwijderen als ok 
+           								$test = $test . '<br>WD mday:' .$by . ' ndays:' . $ndays ; //. 'ns:' . $newstart->format('Y-m-d G:i');
            								if ((!$fmdayok) ||
            										(intval($newstart->format('j')) !== intval($by)))
            									{continue;}
            							}
            						} else { // passthrough
- //          							 $test = 'Geen bymonthday';
+//TODO verwijderen als ok 
+         							 $test = $test . '<br>Geen bymonthday';
            						}
 // byday           						
            						$bydays = array();
@@ -280,13 +286,11 @@ class IcsParser {
            						} // expand
            						else { // limit frequency period smaller than Week//
            							// intval (byi) is not allowed so we dont parse it
-           							$bydays = $byday;
-           							if ($bydays == array('') 
-           								|| in_array(strtoupper(substr($newstart->format('D'),0,2 )), $bydays)
-           							){
-           								//ok
+           							if ($byday == array('') 
+           								|| in_array(strtoupper(substr($newstart->format('D'),0,2 )), $byday)
+           							){ // only one time in this loop no change of $newstart
+           								$bydays =  array('');
            							} else {continue;}
-           							// TODO maybe correct action limit byday mayby nothing
            						} // limit
            						} // isset byday
            						else {$bydays = array('');
@@ -302,7 +306,6 @@ class IcsParser {
            								($fmdayok  || $expand
            								|| $newstart->format('Ymd') != $edtstart->format('Ymd'))
            							&& ($count == 0 || $i < $count)
-           							&& $newstart->getTimestamp() <= $penddate
            							&& $newstart->getTimestamp() < $until
            							&& $newstart> $edtstart) { // count events after dtstart
            							if ($newstart->getTimestamp() >= $now
