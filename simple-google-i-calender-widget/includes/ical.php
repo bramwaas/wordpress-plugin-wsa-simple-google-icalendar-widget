@@ -7,7 +7,7 @@ class IcsParsingException extends Exception {}
  *
  * note that this class does not implement all ICS functionality.
  *   bw 20171109 enkele verbeteringen voor start en end in ical.php
- * Version: 0.6.1
+ * Version: 0.6.2
 
  */
 class IcsParser {
@@ -22,6 +22,15 @@ class IcsParser {
         $events = array();
         $now = time();
         $penddate = (isset($penddate) && $penddate > $now) ? $penddate : $now;
+        $weekdays = array (
+        		'SU' => 'sunday',
+        		'MO' => 'monday',
+        		'TU' => 'tuesday',
+        		'WE' => 'wednesday',
+        		'TH' => 'thursday',
+        		'FR' => 'friday',
+        		'SA' => 'saturday',
+        );
         
         
 
@@ -61,15 +70,6 @@ class IcsParser {
  * FREQ=DAILY;COUNT=5;INTERVAL=7 Every 7 days,5 times
 
  */
-			$weekdays = array (
-					'SU' => 'sunday',
-					'MO' => 'monday',
-					'TU' => 'tuesday',
-					'WE' => 'wednesday',
-					'TH' => 'thursday',
-					'FR' => 'friday',
-					'SA' => 'saturday',
-					);
 		
 			$timezone = new DateTimeZone((isset($e->tzid)&& $e->tzid !== '') ? $e->tzid : get_option('timezone_string'));
 			$edtstart = new DateTime('@' . $e->start, $timezone);
@@ -197,7 +197,9 @@ class IcsParser {
                						if ($by < 0){
                							$by = 1 + $ndays + intval($by);
                						}
+               						if ($by > 0 && $by <= $nadays) {
                						$byn[] = $by;
+               						}
                					}
                					$byn= array_unique($byn); // make unique 
                					sort($byn);	// order array so that oldest items first are counted
@@ -208,13 +210,8 @@ class IcsParser {
 //TODO verwijderen als ok 
 									$test = $test . '<br>Bymonthday MY mday:' .$by . ' ndays:' . $ndays ; //. 'ns:' . $newstart->format('Y-m-d G:i');
            							if (in_array($frequency , array('MONTHLY', 'YEARLY')) ){ // expand
-//           								if (intval($by) < 1) $by = 11;
            								$expand = true;
-           								if (intval($by) <= $ndays) {
-           								$newstart->setDate($fY , $fm , $by);
-           								} else {
-           									continue;
-           								}
+           								$newstart->setDate($newstart->format('Y'), $newstart->format('m'), $by);
            							} else 
            							{ // limit
 //TODO verwijderen als ok 
