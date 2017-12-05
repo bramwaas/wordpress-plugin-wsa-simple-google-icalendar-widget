@@ -4,7 +4,7 @@ Plugin Name: Simple Google iCalendar Widget
 Description: Widget that displays events from a public google calendar
 Plugin URI: https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
 Author: Bram Waasdorp
-Version: 0.6.0
+Version: 0.6.3
 License: GPL3
 Tested up to: 4.8.3
 Requires PHP:  5.3.0 tested with 7.0
@@ -212,7 +212,7 @@ class Simple_Gcal_Widget extends WP_Widget
         
         $instance['calendar_id'] = htmlspecialchars($new_instance['calendar_id']);
         
-        $instance['cache_time'] = $new_instance['cache_time'];
+        $instance['cache_time'] = strip_tags($new_instance['cache_time']);
         if(is_numeric($new_instance['cache_time']) && $new_instance['cache_time'] > 1) {
             $instance['cache_time'] = $new_instance['cache_time'];
         } else {
@@ -232,9 +232,10 @@ class Simple_Gcal_Widget extends WP_Widget
         } else {
         	$instance['event_count'] = 5;
         }
-        $instance['suffix_lg_class'] = strip_tags($new_instance['suffix_lg_class']); // TODO is strip_tags ok
-        $instance['suffix_lgi_class'] = strip_tags($new_instance['suffix_lgi_class']); // TODO is strip_tags ok
-        $instance['suffix_lgia_class'] = strip_tags($new_instance['suffix_lgia_class']); // TODO is strip_tags ok
+        // using strip_tags because it can start with space or contain more classe seperated by spaces
+        $instance['suffix_lg_class'] = strip_tags($new_instance['suffix_lg_class']);  
+        $instance['suffix_lgi_class'] = strip_tags($new_instance['suffix_lgi_class']);  
+        $instance['suffix_lgia_class'] = strip_tags($new_instance['suffix_lgia_class']); 
         
         // delete our transient cache
         $this->clearData();
@@ -289,7 +290,7 @@ class Simple_Gcal_Widget extends WP_Widget
           <input class="widefat" id="<?php echo $this->get_field_id('suffix_lg_class'); ?>" name="<?php echo $this->get_field_name('suffix_lg_class'); ?>" type="text" value="<?php echo esc_attr($instance['suffix_lg_class']); ?>" />
         </p>
         <p>
-          <label for="<?php echo $this->get_field_id('suffix_lgi_class'); ?>"><?php _e('Suffix event date class:', 'simple_ical'); ?></label> 
+          <label for="<?php echo $this->get_field_id('suffix_lgi_class'); ?>"><?php _e('Suffix event start class:', 'simple_ical'); ?></label> 
           <input class="widefat" id="<?php echo $this->get_field_id('suffix_lgi_class'); ?>" name="<?php echo $this->get_field_name('suffix_lgi_class'); ?>" type="text" value="<?php echo esc_attr($instance['suffix_lgi_class']); ?>" />
         </p>
         <p>
