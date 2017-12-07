@@ -7,7 +7,7 @@ class IcsParsingException extends Exception {}
  *
  * note that this class does not implement all ICS functionality.
  *   bw 20171109 enkele verbeteringen voor start en end in ical.php
- * Version: 0.6.2
+ * Version: 0.6.5
 
  */
 class IcsParser {
@@ -197,7 +197,7 @@ class IcsParser {
                						if ($by < 0){
                							$by = 1 + $ndays + intval($by);
                						}
-               						if ($by > 0 && $by <= $nadays) {
+               						if ($by > 0 && $by <= $ndays) {
                						$byn[] = $by;
                						}
                					}
