@@ -30,6 +30,8 @@ Domain Path:  /languages
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+require_once( 'includes/ical.php' );
+require_once('includes/widget-admin.php');
 
 
 class Simple_iCal_Widget extends WP_Widget 
@@ -48,29 +50,8 @@ class Simple_iCal_Widget extends WP_Widget
 			          )
         		);
     }
-    /**
-     * Loads files needed by the plugin.
-     *
-     * @since  0.1.0
-     * @access private
-     * @return void
-     */
-    private function includes() {
-    	// Load class files. for general use
-    	// Load includes files.
-    	require_once( 'includes/ical.php' );
-     	// Load template files.
-    	//		require_once( $this->dir . 'inc/template.php' );
-    	// Load admin files.
-    	if ( is_admin() ) {
-    		// General admin functions. ! only for admin nu for general use
-    		require_once('includes/widget-admin.php');
-    		$ical_admin = new Simple_iCal_Admin;
-    		add_action('admin_menu',array ($ical_admin, 'simple_ical_admin_menu'));
-    	}
-    }
-      
-    private function getTransientId()
+ 
+   private function getTransientId()
     {
         return 'wp_ical_widget_'.$this->id;
     }
@@ -329,4 +310,7 @@ class Simple_iCal_Widget extends WP_Widget
     }
 
 }
+$ical_admin = new Simple_iCal_Admin;
+add_action('admin_menu',array ($ical_admin, 'simple_ical_admin_menu'));
+
 add_action('widgets_init', create_function('', 'return register_widget("Simple_iCal_Widget");'));
