@@ -12,79 +12,64 @@
  * Version: 0.6.4
 */
 //menu items
-function wsaallotment_admin_modifymenu() {
+/**
+ * Back-end sub menu item to display widget help page.
+ *
+ * @see WP_Widget::form()
+ *
+ * @param .
+ */
+function simple_ical_admin_menu() {
 	
-	//this is the main item for the menu
-	add_menu_page(__('Allotments', 'wsaallotment'), //page title
-			__('Allotments', 'wsaallotment'), //menu title
-			'member_administration', //capabilities
-			'wsaallotment_allotments_list', //menu slug
-			'wsaallotment_allotments_list' //function
-			);
-	//this submenu is HIDDEN, however, we need to add it anyways
+	//ther is no main menu item for simple_ical
+	//this submenu is HIDDEN, however, we need to add it to create a page in the admin area
 	add_submenu_page(null, //parent slug
-			__('Update section', 'wsaallotment'), //page title
-			__('Update', 'wsaallotment'), //menu titlemanage_options
-			'member_administration', //capability
-			'wsaallotment_section_update', //menu slug
-			'wsaallotment_section_update'); //function
+			__('Info', 'simple_ical'), //page title
+			__('Info', 'simple_ical'), //menu title
+			'read', //capability read because it 's only info
+			'simple_ical_info', //menu slug
+			'simple_ical_info'); //function
 			
-add_submenu_page('wsaallotment_allotments_list', //parent slug
-		__('Info', 'wsaallotment'), //page title
-		__('Info', 'wsaallotment'), //menu title
-		'member_administration', //capability
-		'wsaallotment_info', //menu slug
-		'wsaallotment_info'); //function
-		
 }
-function wsaallotment_info () {
+/**
+ * Back-end widget help page.
+ *
+ * @see WP_Widget::form()
+ *
+ * @param .
+ */
+function simple_ical_info () {
 	//
 	echo('<div class="wrap">');
-	_e('<h2>Info</h2><p>', 'wsaallotment');
+	_e('<h2>Info</h2>', 'simple_ical');
 	
-	_e('<strong>Closed shortcodes.</strong></p><p>', 'wsaallotment');
+	_e('<p><strong>Title</strong></p>', 'simple_ical');
+	_e('<p>Title of ths instance of the widget</p>', 'simple_ical');
 	
-	_e('Format: [shortcode]...text to be edited ...[/shortcode]</p><p>', 'wsaallotment');
+	_e('<p><strong>Calendar ID, or iCal URL</strong></p>', 'simple_ical');
+	_e('<p>The Google calendar ID, or the URL of te iCal file to display.</p>', 'simple_ical');
 	
-	_e('The text between the startshortcode [shortcode] and the endshortcode [/shortcode] wil be edited. In this plugin the content is visble or not.</p><p>', 'wsaallotment');
+	_e('<p><strong>Number of events displayed</strong></p>', 'simple_ical');
+	_e('<p>The maximum number of events to display.</p>', 'simple_ical');
 	
-	_e('<strong>Examples:</strong></p><p>', 'wsaallotment');
+	_e('<p><strong>Number of days after today with events displayed</strong></p>', 'simple_ical');
+	_e('<p>Last date to display events in number of days after today.</p>', 'simple_ical');
 	
-	echo ('<strong>is_gardener:</strong></p><p>');
+	_e('<p><strong>Cache expiration time in minutes</strong></p>', 'simple_ical');
+	_e('<p>Minimal time in minutes between reads from source.</p>', 'simple_ical');
 	
-	_e('[is_gardener]shows this content when user is a gardener[/is_gardener]</p><p>', 'wsaallotment');
+	_e('<p><strong>Suffix group class</strong></p>', 'simple_ical');
+	_e('<p>Suffix to add after css-class around the event (list-group),<br>start with space to keep the original class and add another class.</p>', 'simple_ical');
 	
-	echo('<strong>not_gardener</strong>:</p><p>');
+	_e('<p><strong>Suffix event start class</strong></p>', 'simple_ical');
+	_e('<p>Suffix to add after the css-class around the event start line (list-group-item),<br>start with space to keep the original class and add another class.<br>E.g.:  py-0 with leading space; standard bootstrap 4 class to set padding top and bottom  to 0;  ml-1 to set margin left to 0.25 rem</p>', 'simple_ical');
 	
-	_e('[not_gardener]shows this content when user is not a gardener or is not logged in[/not_gardener]</p><p>', 'wsaallotment');
+	_e('<p><strong>Suffix event details classs</strong></p>', 'simple_ical');
+	_e('<p>Suffix to add after the css-class around the event details link (list-group-item),<br>start with space to keep the original class and add another class.</p>', 'simple_ical');
 	
-	echo('<strong>has_allotment</strong>:</p><p>');
-	
-	_e('[has_allotment]shows this content when user is a gardener and has an allotment[/has_allotment]</p><p>', 'wsaallotment');
-	
-	echo('<strong>not_allotment</strong>:</p><p>');
-	
-	_e('[not_allotment]shows this content when user has not an allotment, is not a gardener or is not logged in[/not_allotment]</p><p>', 'wsaallotment');
-	
-	_e('<strong>Open (simple)  shortcodes.</strong></p><p>', 'wsaallotment');
-	
-	_e('Format: [shortcode]</p><p>', 'wsaallotment');
-	
-	_e('The shortcode is replaced by content from plugin.</p><p>', 'wsaallotment');
-	
-	_e('<strong>Examples:</strong></p><p>', 'wsaallotment');
-	
-	_e('<strong>view_gardener,</p><p>', 'wsaallotment');
-	_e('</strong>Shows a view on the gardener information we have about this user:</p><p>', 'wsaallotment');
-	
-	echo('[view_gardener]</p><p>');
-	
-	_e('<strong>view_allotment,</p><p>', 'wsaallotment');
-	_e('</strong>Shows a view on the alottment information we have about this user:</p><p>', 'wsaallotment');
-	echo('[view_allotment]</p><p>');
-	echo('</p></div>');
-	
-	
-	
+	echo('</div>');
 	
 }
+// CRUD actions in admin-menu
+add_action('admin_menu','simple_ical_admin_menu');
+
