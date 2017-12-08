@@ -11,6 +11,7 @@
  * @license    http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * Version: 0.6.4
 */
+class Simple_iCal_Admin {
 //menu items
 /**
  * Back-end sub menu item to display widget help page.
@@ -71,5 +72,7 @@ function simple_ical_info () {
 	
 }
 // CRUD actions in admin-menu
-add_action('admin_menu','simple_ical_admin_menu');
+}
+
+
 

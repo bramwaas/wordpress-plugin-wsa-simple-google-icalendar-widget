@@ -4,7 +4,7 @@ Plugin Name: Simple Google iCalendar Widget
 Description: Widget that displays events from a public google calendar
 Plugin URI: https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
 Author: Bram Waasdorp
-Version: 0.6.4
+Version: 0.6.6
 License: GPL3
 Tested up to: 4.8.3
 Requires PHP:  5.3.0 tested with 7.0
@@ -31,8 +31,6 @@ Domain Path:  /languages
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require 'includes/ical.php';
-require 'includes/widget-admin.php';
 
 class Simple_iCal_Widget extends WP_Widget 
 {
@@ -50,7 +48,28 @@ class Simple_iCal_Widget extends WP_Widget
 			          )
         		);
     }
-    
+    /**
+     * Loads files needed by the plugin.
+     *
+     * @since  0.1.0
+     * @access private
+     * @return void
+     */
+    private function includes() {
+    	// Load class files. for general use
+    	// Load includes files.
+    	require_once( 'includes/ical.php' );
+     	// Load template files.
+    	//		require_once( $this->dir . 'inc/template.php' );
+    	// Load admin files.
+    	if ( is_admin() ) {
+    		// General admin functions. ! only for admin nu for general use
+    		require_once('includes/widget-admin.php');
+    		$ical_admin = new Simple_iCal_Admin;
+    		add_action('admin_menu',array ($ical_admin, 'simple_ical_admin_menu'));
+    	}
+    }
+      
     private function getTransientId()
     {
         return 'wp_ical_widget_'.$this->id;
@@ -308,6 +327,6 @@ class Simple_iCal_Widget extends WP_Widget
         <?php
 	return '';    
     }
-}
 
+}
 add_action('widgets_init', create_function('', 'return register_widget("Simple_iCal_Widget");'));
