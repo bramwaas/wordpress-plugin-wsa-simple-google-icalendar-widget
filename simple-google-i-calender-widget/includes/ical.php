@@ -7,7 +7,7 @@ class IcsParsingException extends Exception {}
  *
  * note that this class does not implement all ICS functionality.
  *   bw 20171109 enkele verbeteringen voor start en end in ical.php
- * Version: 0.6.5
+ * Version: 0.6.6
 
  */
 class IcsParser {
@@ -23,13 +23,13 @@ class IcsParser {
         $now = time();
         $penddate = (isset($penddate) && $penddate > $now) ? $penddate : $now;
         $weekdays = array (
-        		'SU' => 'sunday',
         		'MO' => 'monday',
         		'TU' => 'tuesday',
         		'WE' => 'wednesday',
         		'TH' => 'thursday',
         		'FR' => 'friday',
         		'SA' => 'saturday',
+        		'SU' => 'sunday',
         );
         
         
@@ -145,14 +145,14 @@ class IcsParser {
                				$expand = false;
 // bymonth               				
                				if (isset($rrules['bymonth'])) {
-               				$test = 'Bymonth:';
+//               				$test = 'Bymonth:';
                				$bym = array();
                				foreach ($bymonth as $by){ 
                					// convert bymonth ordinals to month-numbers
                					if ($by < 0){
                						$by = 13 + $by;
                					}
-               					$test = $test . ', ' .  $by;
+ //              					$test = $test . ', ' .  $by;
                					$bym[] = $by;
                				}
                				$bym= array_unique($bym); // make unique
@@ -165,7 +165,7 @@ class IcsParser {
                						if ($frequency ='YEARLY' ){ // expand
                							$newstart->setDate($fY , $by, 1);
                							$ndays = intval($newstart->format('t'));
-               							$test = 'Y mnr:' .$by . ' $ndays:' . $ndays . ' interval:' . 'P' . $interval . substr($frequency,0,1). ' ns:' . $newstart->format('Y-m-d G:i');
+//               							$test = 'Y mnr:' .$by . ' $ndays:' . $ndays . ' interval:' . 'P' . $interval . substr($frequency,0,1). ' ns:' . $newstart->format('Y-m-d G:i');
                							$expand = true;
                							if (intval($fd) <= $ndays) {
                								$newstart->setDate($fY , $by, $fd);
@@ -175,17 +175,17 @@ class IcsParser {
                							}  else {
                								continue;
                							}
-               							$test = $test . '<br>newstart:' . $newstart->format('Y-m-d G:i t');
+ //              							$test = $test . '<br>newstart:' . $newstart->format('Y-m-d G:i t');
                						} else
                						{ // limit
-               							$test = 'MWD mnr:' .$by  ; //. 'ns:' . $newstart->format('Y-m-d G:i');
+ //              							$test = 'MWD mnr:' .$by  ; //. 'ns:' . $newstart->format('Y-m-d G:i');
                							if ((!$fmdayok) ||
                									(intval($newstart->format('n')) != intval($by)))
                							{continue;}
                						}
-               						$test = $test . '<br>einde:' . date('Y-m-d G:i', $freqendloop ) . ' pend: ' . date('Y-m-d G:i', $penddate );
+ //              						$test = $test . '<br>einde:' . date('Y-m-d G:i', $freqendloop ) . ' pend: ' . date('Y-m-d G:i', $penddate );
                					} else { // passthrough
-               						$test = 'Geen bymonth';
+ //              						$test = 'Geen bymonth';
                					}
 // bymonthday
                					if (isset($rrules['bymonthday'])) {
@@ -208,21 +208,21 @@ class IcsParser {
                					foreach ($byn as $by) {
            						if (isset($rrules['bymonthday'])){
 //TODO verwijderen als ok 
-									$test = $test . '<br>Bymonthday MY mday:' .$by . ' ndays:' . $ndays ; //. 'ns:' . $newstart->format('Y-m-d G:i');
+//									$test = $test . '<br>Bymonthday MY mday:' .$by . ' ndays:' . $ndays ; //. 'ns:' . $newstart->format('Y-m-d G:i');
            							if (in_array($frequency , array('MONTHLY', 'YEARLY')) ){ // expand
            								$expand = true;
            								$newstart->setDate($newstart->format('Y'), $newstart->format('m'), $by);
            							} else 
            							{ // limit
 //TODO verwijderen als ok 
-           								$test = $test . '<br>WD mday:' .$by . ' ndays:' . $ndays ; //. 'ns:' . $newstart->format('Y-m-d G:i');
+//           								$test = $test . '<br>WD mday:' .$by . ' ndays:' . $ndays ; //. 'ns:' . $newstart->format('Y-m-d G:i');
            								if ((!$fmdayok) ||
            										(intval($newstart->format('j')) !== intval($by)))
            									{continue;}
            							}
            						} else { // passthrough
 //TODO verwijderen als ok 
-         							 $test = $test . '<br>Geen bymonthday';
+//         							 $test = $test . '<br>Geen bymonthday';
            						}
 // byday           						
            						$bydays = array();
@@ -267,7 +267,8 @@ class IcsParser {
            							else  { // $frequency == 'WEEKLY' byi is not allowed so we dont parse it
            								// TODO test byday weekly
            								$wdnrn = $newstart->format('N'); // Mo 1; Su 7
-           								$wdnrb = array_search($byd,array_keys($weekdays));  // numeric index in weekdays
+           								$wdnrb = array_search($byd,array_values($weekdays)) + 1;  // numeric index in weekdays
+           								$test = $test . ' W wdnrn:' . $wdnrn . ' wdnrb:' . $wdnrb . ' byd:' . $byd; 
            								if ($wdnrb > $wdnrn) {
            									$wdf->add (new DateInterval('P' . ($wdnrb - $wdnrn ) . 'D'));
            								} 
