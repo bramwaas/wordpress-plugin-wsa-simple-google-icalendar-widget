@@ -4,7 +4,7 @@ Plugin Name: Simple Google iCalendar Widget
 Description: Widget that displays events from a public google calendar
 Plugin URI: https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
 Author: Bram Waasdorp
-Version: 0.6.6
+Version: 0.6.7
 License: GPL3
 Tested up to: 4.8.3
 Requires PHP:  5.3.0 tested with 7.0
@@ -171,7 +171,7 @@ class Simple_iCal_Widget extends WP_Widget
                   	echo $e->summary;
                 }	
                 echo	'</a>' ;
-                echo '<div class="collapse gcal_details' .  $sflgia . '" id="',  $itemid, '">';	    
+                echo '<div class="collapse ical_details' .  $sflgia . '" id="',  $itemid, '">';	    
                if(!empty($e->description)) {
                	echo   $e->description
                     ,'<br>';
@@ -299,7 +299,6 @@ class Simple_iCal_Widget extends WP_Widget
           <input class="widefat" id="<?php echo $this->get_field_id('suffix_lgia_class'); ?>" name="<?php echo $this->get_field_name('suffix_lgia_class'); ?>" type="text" value="<?php echo esc_attr($instance['suffix_lgia_class']); ?>" />
         </p>
         <p>
-//            <?php _e('Need <a href="https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget/blob/master/README.md" target="_blank">help</a>?', 'simple_ical'); ?>
             <?php _e('Need <a href="', 'simple_ical');
             echo admin_url('admin.php?page=simple_ical_info'); 
                 _e('" target="_blank">help</a>?', 'simple_ical'); ?>
