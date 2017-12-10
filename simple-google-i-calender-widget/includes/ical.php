@@ -136,6 +136,7 @@ class IcsParser {
            				{   // first FREQ loop on dtstart will only output new events
                				// created by a BY... clause
                				$test = '';
+               				$test = $test . '<br>' . $e->rrule . ' freq:' . $frequency;
                				$fd = $freqstart->format('d');
  // TODO verwijderen niet gebruikt              				$fm = $freqstart->format('m');
                				$fY = $freqstart->format('Y');
@@ -161,7 +162,7 @@ class IcsParser {
                					$newstart->setTimestamp($freqstart->getTimestamp()) ;
                					if (isset($rrules['bymonth'])){
               						
-               						if ($frequency ='YEARLY' ){ // expand
+               						if ($frequency == 'YEARLY' ){ // expand
                							$newstart->setDate($fY , $by, 1);
                							$ndays = intval($newstart->format('t'));
 //               							$test = 'Y mnr:' .$by . ' $ndays:' . $ndays . ' interval:' . 'P' . $interval . substr($frequency,0,1). ' ns:' . $newstart->format('Y-m-d G:i');
@@ -232,7 +233,13 @@ class IcsParser {
            						$expand =true;
            						foreach ($byday as $by) {
            							// expand byday codes to bydays datetimes
-           							$byd = $weekdays[substr($by,-2)];
+//TODO verwijderen als ok
+           							$test = $test . '<br>by:' . $by . ' freq:' . $frequency;
+           							$byd = $weekdays[substr($by,-2)]; 
+           							if (!($byd > 'a')) continue; // if $by contains only number (not good ical)
+//TODO verwijderen als ok
+           							$test = $test . ' byd:' . $byd ;
+           							
            							$byi = intval($by);
            							$wdf = clone $newstart;
            							if ($frequency == 'MONTHLY'	|| $frequency == 'YEARLY' ){
@@ -246,7 +253,6 @@ class IcsParser {
            								$wdf->setTime($fH, $fi);
            								$wdl->setTime($fH, $fi);
 //TODO verwijderen indien ok          								$test = 'MY $byd' . $byd . ' $wdf:' .$wdf->format('Ymd'). ' $wdl:' . $wdl->format('Ymd');
-//TODO            								$test = $test . ' by:' . $by;
            								 
            								if ($byi > 0) {
            									$wdf->add(new DateInterval('P' . ($byi - 1) . 'W'));
