@@ -289,12 +289,19 @@ class IcsParser {
            						} // expand
            						else { // limit frequency period smaller than Week//
            							// intval (byi) is not allowed so we dont parse it
-           							$test = $test . '<br>Limit WD f:' . $frequency . '  nsday:' . strtoupper(substr($newstart->format('D'),0,2 ));
+           							$test = $test . '<br>Limit WD f:' . $frequency . '  nsday:' . strtoupper(substr($newstart->format('D'),0,2 )); 
+           							foreach ($byday as $by) {
+           								$test = $test . ' by:' . $by;
+           							}
            							if ($byday == array('') 
            								|| in_array(strtoupper(substr($newstart->format('D'),0,2 )), $byday)
            							){ // only one time in this loop no change of $newstart
            								$bydays =  array('');
-           							} else {continue;}
+           							} else {
+           								$bydays =  array('');
+           								
+           							//	continue;
+           							}
            						} // limit
            						} // isset byday
            						else {$bydays = array('');
