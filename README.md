@@ -1,18 +1,19 @@
 # Wordpress plugin wsa simple google calendar widget
 Google offers some HTML snippets to embed your public Google Calendar into your website.
 These are great, but as soon as you want to make a few adjustments to the styling,
-that goes beyond changing some colors, they’re useless.
+that goes beyond changing some colors, they’re not enough.
 
 Because of that Nico Boehr wrote a very simple widget, that fetches events from a public google
 calendar and nicely displays them in form of a widget, allowing you to apply all kinds of CSS.
-https://nl.wordpress.org/plugins/simple-google-calendar-widget/
-
-This widget is a Fork of version 0.7 of that simple google calendar widget by NBoehr
+I needed support for repeating events so I extended the widget to give limited support for repaeting
+events, improved the support for timezones and day-light saving, and made the deafult output in line
+with bootstrap 4 list.
 
 ## Plugin Features
 
-* Calendar widget to display appointments/events of a public Google calendar 
-* Small footprint, uses only Google ID of the calendar to get event information via iCal
+* Calendar widget to display appointments/events of a public Google calendar or
+* an ics iCal file.
+* Small footprint, uses only Google ID or URL of the calendar to get event information via iCal
 * Output in unorderd list with Bootstrap 4 listgroup classes and toggle for details.
 
 ## Installation
@@ -27,7 +28,7 @@ Just drag it into your sidebar.
 * You’re done!
 
 ## Documentation
-* Gets calendar events via iCal url of google calendar ID
+* Gets calendar events via iCal url of google calendar ID, or an other url that point to an ics file.
 * Displays selected number of events, or events in a selected period from now as listgroup-items
 * Displays event start-date and summary; toggle details, description, start-, end-time, location. 
 *   see http://www.ietf.org/rfc/rfc5545.txt for specification of te ical format.
@@ -189,6 +190,9 @@ RFC 5545                       iCalendar                  September 2009
       minute, hour, day, or month would have been retrieved from the
       "DTSTART" property.
 
+(This widget is a Fork of version 0.7 of that simple google calendar widget by NBoehr
+https://nl.wordpress.org/plugins/simple-google-calendar-widget/)
+
 
 
 ## Copyright and License
@@ -210,5 +214,5 @@ TODO repeating events.
 * 0.5.0 BYDAY complete first try with sort tested with wordpress 4.8.3 php 7
 * 0.6.0 BYDAY and BYMONTHDAY work with complete sorting and unifying in MONTH frequency
         adding class suffixes from setting.
-* 0.7.0 BYDAY with DAILY frequency tested. Test code deleted.
+* 0.7.0 BYDAY with DAILY frequency tested. Test code deleted. Present as RC to wordpress.
         
