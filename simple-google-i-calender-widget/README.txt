@@ -81,14 +81,19 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 == Changelog ==
 
 * 0.0 imported V0.7 of NBoehr
-* 20171108: Added support for start and end time with timezone
-* 20171108: Changed lay-out of output of teh widget so that is more in line with bootstrap 4 and with the iframe-widget of google
-* 0.0.1 renamed starting .php file to simple-google-calendar-widget.php
-* 0.1.0 a lot of small changes eg: better support for events in a timezone and events that last a whole day. Replace escaped chars for summary, description and location. Refinements in output HTML.
-TODO repeating events.
+* 0.1.0 Added support for start and end time with timezone
+		Changed lay-out of output of teh widget so that is more in line with bootstrap 4 and with the iframe-widget of google
+		a lot of small changes eg: better support for events in a timezone and events that last a whole day. Replace escaped chars for summary,
+		description and location. Refinements in output HTML.
+		renamed starting .php file to simple-google-calendar-widget.php
 * 0.2.0 starting work on repeating events 
 * 0.3.3 simple repeating events (only full periods) works
 * 0.3.5 discard non existent days like 31th november first try with byday
+		works als with complete url to ical .ics file.
+		renamed plugin to simple-google-i-calendar-widget and 
+		renamed references gcal to ical		
 * 0.5.0 BYDAY complete first try with sort tested with wordpress 4.8.3 php 7
 * 0.6.0 BYDAY and BYMONTHDAY work with complete sorting and unifying in MONTH frequency
         adding class suffixes from setting.
+* 0.7.0 BYDAY with DAILY frequency tested. Test code deleted.
+              

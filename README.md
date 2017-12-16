@@ -210,4 +210,5 @@ TODO repeating events.
 * 0.5.0 BYDAY complete first try with sort tested with wordpress 4.8.3 php 7
 * 0.6.0 BYDAY and BYMONTHDAY work with complete sorting and unifying in MONTH frequency
         adding class suffixes from setting.
+* 0.7.0 BYDAY with DAILY frequency tested. Test code deleted.
         
