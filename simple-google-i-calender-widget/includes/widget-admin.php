@@ -9,7 +9,7 @@
  * @copyright  Copyright (c)  2017, Bram Waasdorp
  * @link       https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  * @license    http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * Version: 0.6.7
+ * Version: 0.7.0
 */
 class Simple_iCal_Admin {
 //menu items
@@ -73,7 +73,7 @@ public function simple_ical_info () {
 	echo('</div>');
 	
 }
-// CRUD actions in admin-menu
+// info in admin-menu
 }
 
 

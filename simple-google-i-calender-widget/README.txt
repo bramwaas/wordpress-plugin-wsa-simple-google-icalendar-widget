@@ -8,23 +8,23 @@ Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
  
-Widget that displays events from a public google calendar
+Widget that displays events from a public google calendar or iCal file.
  
 == Description ==
 
 Google offers some HTML snippets to embed your public Google Calendar into your website.
 These are great, but as soon as you want to make a few adjustments to the styling,
-that goes beyond changing some colors, they’re useless.
+that goes beyond changing some colors, they’re not enough.
 
 Because of that Nico Boehr wrote a very simple widget, that fetches events from a public google
 calendar and nicely displays them in form of a widget, allowing you to apply all kinds of CSS.
-https://nl.wordpress.org/plugins/simple-google-calendar-widget/
-
-This widget is a Fork of version 0.7 of that simple google calendar widget by NBoehr
+I needed support for repeating events so I extended the widget to give limited support for repaeting
+events, improved the support for timezones and day-light saving, and made the deafult output in line
+with a bootstrap 4 list.
 
 == Plugin Features ==
 
-* Calendar widget to display appointments/events of a public Google calendar 
+* Calendar widget to display appointments/events of a public Google calendar or other iCal file.
 * Small footprint, uses only Google ID of the calendar to get event information via iCal
 * Output in unorderd list with Bootstrap 4 listgroup classes and toggle for details.
 
@@ -39,7 +39,7 @@ Just drag it into your sidebar.
  You can find Google calendar ID by going to Calendar Settings › Calendars, clicking on the appropriate calendar, scrolling all the way down to “Calendar address”. There’s your calendar id.
 * You’re done!
 
-## Documentation
+== Documentation ==
 * Gets calendar events via iCal url of google calendar ID
 * Displays selected number of events, or events in a selected period from now as listgroup-items
 * Displays event start-date and summary; toggle details, description, start-, end-time, location. 
@@ -55,7 +55,9 @@ Just drag it into your sidebar.
 
    +----------+-------+------+-------+------+
    |          |DAILY  |WEEKLY|MONTHLY|YEARLY|
-   +----------+-------+------+-------+------+
+   +----------+-------+------+-------+------+(This widget is a Fork of version 0.7 of that simple google calendar widget by NBoehr
+https://nl.wordpress.org/plugins/simple-google-calendar-widget/)
+   
    |BYMONTH   |Limit  |Limit |Limit  |Expand|
    +----------+-------+------+-------+------+
    |BYMONTHDAY|Limit  |N/A   |Expand |Expand|
@@ -71,6 +73,8 @@ Just drag it into your sidebar.
                special expand for MONTHLY if BYMONTH present; otherwise,
                special expand for YEARLY.
 
+(This widget is a Fork of version 0.7 of that simple google calendar widget by NBoehr
+https://nl.wordpress.org/plugins/simple-google-calendar-widget/)
 
 
 == Copyright and License ==
@@ -95,5 +99,5 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 * 0.5.0 BYDAY complete first try with sort tested with wordpress 4.8.3 php 7
 * 0.6.0 BYDAY and BYMONTHDAY work with complete sorting and unifying in MONTH frequency
         adding class suffixes from setting.
-* 0.7.0 BYDAY with DAILY frequency tested. Test code deleted.
+* 0.7.0 BYDAY with DAILY frequency tested. Test code deleted. Present as RC to wordpress.
               
