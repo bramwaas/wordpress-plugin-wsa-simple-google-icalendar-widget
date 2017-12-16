@@ -309,7 +309,6 @@ class IcsParser {
            								$newend->add($eduration);
            								$en->end = $newend->getTimestamp();
            								$en->uid = $i . '_' . $e->uid;
-           								$en->summary = 'nr:' . $i . ' cen:' . $cen . ' '. $e->summary;
  										if ($test > ' ') { 	$en->summary = $en->summary . '<br>Test:' . $test; 	}
            								$events[] = $en;
            							} // copy eevents
