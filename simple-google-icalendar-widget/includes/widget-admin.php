@@ -9,7 +9,7 @@
  * @copyright  Copyright (c)  2017, Bram Waasdorp
  * @link       https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  * @license    http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * Version: 0.7.0
+ * Version: 1.0.0
 */
 class Simple_iCal_Admin {
 //menu items
