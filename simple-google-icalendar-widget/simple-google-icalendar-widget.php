@@ -144,6 +144,7 @@ class Simple_iCal_Widget extends WP_Widget
         if(isset($instance['title'])) {
             echo $args['before_title'], $instance['title'], $args['after_title'];
         }
+        $dflg = (isset($instance['dateformat_lg'])) ? $instance['dateformat_lg'] : 'l jS \of F' ;
         $sflg = (isset($instance['suffix_lg_class'])) ? $instance['suffix_lg_class'] : '' ;
         $sflgi = (isset($instance['suffix_lgi_class'])) ? $instance['suffix_lgi_class'] : '' ;
         $sflgia = (isset($instance['suffix_lgia_class'])) ? $instance['suffix_lgia_class'] : '' ;
@@ -157,8 +158,8 @@ class Simple_iCal_Widget extends WP_Widget
             	$itemid = $this->id  . '_' . $idlist[0];
             	/* of dateformat  =  'l ' . get_option( 'date_format' ) */
             	echo '<li class="list-group-item' .  $sflgi . ' ical-date">';
-            	if ($prevdate !=  ucfirst(date_i18n( 'l j F Y', $e->start, false ))) {
-            		$prevdate =  ucfirst(date_i18n( 'l j F Y', $e->start, false ));
+            	if ($prevdate !=  ucfirst(date_i18n( $dflg, $e->start, false ))) {
+            		$prevdate =  ucfirst(date_i18n( $dflg, $e->start, false ));
             		echo $prevdate, '<br>';
             	}
                 echo  '<a class="ical_summary' .  $sflgia . '" data-toggle="collapse" href="#',
@@ -234,6 +235,7 @@ class Simple_iCal_Widget extends WP_Widget
         	$instance['event_count'] = 5;
         }
         // using strip_tags because it can start with space or contain more classe seperated by spaces
+        $instance['dateformat_lg'] = strip_tags($new_instance['dateformat_lg']);  
         $instance['suffix_lg_class'] = strip_tags($new_instance['suffix_lg_class']);  
         $instance['suffix_lgi_class'] = strip_tags($new_instance['suffix_lgi_class']);  
         $instance['suffix_lgia_class'] = strip_tags($new_instance['suffix_lgia_class']); 
@@ -258,6 +260,7 @@ class Simple_iCal_Widget extends WP_Widget
 	    'event_count' => 10,
 	    'event_period' => 92,	
         		'cache_time' => 60,
+			'dateformat_lg' => 'l jS \of F',
         		'suffix_lg_class' => '',
         		'suffix_lgi_class' => ' py-0',
         		'suffix_lgia_class' => '',
@@ -285,6 +288,10 @@ class Simple_iCal_Widget extends WP_Widget
         <p>
           <label for="<?php echo $this->get_field_id('cache_time'); ?>"><?php _e('Cache expiration time in minutes:', 'simple_ical'); ?></label> 
           <input class="widefat" id="<?php echo $this->get_field_id('cache_time'); ?>" name="<?php echo $this->get_field_name('cache_time'); ?>" type="text" value="<?php echo esc_attr($instance['cache_time']); ?>" />
+        </p>
+        <p>
+          <label for="<?php echo $this->get_field_id('dateformat_lg'); ?>"><?php _e('Date format first line:', 'simple_ical'); ?></label> 
+          <input class="widefat" id="<?php echo $this->get_field_id('dateformat_lg'); ?>" name="<?php echo $this->get_field_name('dateformat_lg'); ?>" type="text" value="<?php echo esc_attr($instance['dateformat_lg']); ?>" />
         </p>
         <p>
           <label for="<?php echo $this->get_field_id('suffix_lg_class'); ?>"><?php _e('Suffix group class:', 'simple_ical'); ?></label> 
