@@ -48,7 +48,7 @@ Just drag it into your sidebar.
 
 (see 3.3.10. [Page 38] Recurrence Rule in specification
 * Frequency Yearly, Monthly, Weekly, Dayly (not parsed Hourly, Minutely ...)
-* End of repeating by COUNT or UNTIL
+* 0.7.0 BYDAY with DAILY frequency tested. Test code deleted. Present as RC to wordpress.* End of repeating by COUNT or UNTIL
 * By day month or by monthday (BYDAY, BYMONTH, BYMONTHDAY) no other by
   (not parsed: BYYEARDAY, BYSETPOS, BYHOUR, BYMINUTE, WKST)
 * Respects Timezone and Day Light Saving time 
@@ -91,7 +91,7 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 		description and location. Refinements in output HTML.
 		renamed starting .php file to simple-google-calendar-widget.php
 * 0.2.0 starting work on repeating events 
-* 0.3.3 simple repeating events (only full periods) works
+* 0.3.3 simple repeating events (only full periods) works* 0.7.0 BYDAY with DAILY frequency tested. Test code deleted. Present as RC to wordpress.
 * 0.3.5 discard non existent days like 31th november first try with byday
 		works als with complete url to ical .ics file.
 		renamed plugin to simple-google-i-calendar-widget and 
@@ -100,4 +100,5 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 * 0.6.0 BYDAY and BYMONTHDAY work with complete sorting and unifying in MONTH frequency
         adding class suffixes from setting.
 * 0.7.0 BYDAY with DAILY frequency tested. Test code deleted. Present as RC to wordpress.
+* 1.0.0 first version in WP plugin directory, directory and start php renamed after slug simple-google-icalendar-widget
               
