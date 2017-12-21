@@ -61,6 +61,9 @@ public function simple_ical_info () {
 	_e('<p><strong>Cache expiration time in minutes</strong></p>', 'simple_ical');
 	_e('<p>Minimal time in minutes between reads from source.</p>', 'simple_ical');
 	
+	_e('<p><strong>Date format first line</strong></p>', 'simple_ical');
+	_e('<p>Date format first line default: l jS \of F,<br>l = day of the week (Monday); j =  day of the month (25) F = name of month (december)<br>y or Y = Year (17 or 2017); see also php.net/manual/en/function.date.php .</p>', 'simple_ical');
+	
 	_e('<p><strong>Suffix group class</strong></p>', 'simple_ical');
 	_e('<p>Suffix to add after css-class around the event (list-group),<br>start with space to keep the original class and add another class.</p>', 'simple_ical');
 	
