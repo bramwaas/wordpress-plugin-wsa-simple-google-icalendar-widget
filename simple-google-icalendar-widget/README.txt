@@ -1,6 +1,6 @@
 === Simple Google iCalendar Widget ===
 Contributors: bramwaas
-Tags: ical iCalendar Google Calendar
+Tags: ical, iCalendar, Google Calendar, .ics, events, upcoming events, bootstrap
 Requires at least: 4.8.4
 Tested up to: 4.9.1
 Requires PHP: 5.3.0
@@ -8,25 +8,21 @@ Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
  
-Widget that displays events from a public google calendar or iCal file.
+Widget displays upcoming events from a public google calendar or iCal (.ics) file and is easy to style.
  
 == Description ==
 
-Google offers some HTML snippets to embed your public Google Calendar into your website.
-These are great, but as soon as you want to make a few adjustments to the styling,
-that goes beyond changing some colors, they are not enough.
+Displays upcoming events from a public google calendar or an url with a public iCal calendar file (.ics). It is  easy to fit the style in line with your theme-style, in particular when your theme uses bootstrap (4) framework, otherwise you can apply all kinds of CSS and add the necessary classes to the widget-parts to make it fit. 
 
-Because of that Nico Boehr wrote a very simple widget, that fetches events from a public google
-calendar and nicely displays them in form of a widget, allowing you to apply all kinds of CSS.
-I needed support for repeating events so I extended the widget to give limited support for repeating
-events, improved the support for timezones and day-light saving, and made the default output in line
-with a bootstrap 4 list.
+You can use this widget when the HTML snippets Google offers to embed your public Google Calendar into your website are not enough to fit the widget in line with youre website's style. 
 
 == Plugin Features ==
 
-* Calendar widget to display appointments/events of a public Google calendar or other iCal file.
+* Calendar widget to display events of a public Google calendar or other iCal file.
 * Small footprint, uses only Google ID of the calendar to get event information via iCal
+* Displays most common repeating events. Yearly, Monthly, Weekly and Dayly.  
 * Output in unorderd list with Bootstrap 4 listgroup classes and toggle for details.
+* Configurable classes for listgroup and listgroup items output to make it fit to your css, if you don't use bootstrap.
 
 == Installation ==
 * Do the usual setup procedure you know downloading unpacking uploading activating. 
@@ -40,15 +36,15 @@ Just drag it into your sidebar.
 * You are done!
 
 == Documentation ==
-* Gets calendar events via iCal url of google calendar ID
+* Gets calendar events via iCal url of Google Calendar ID
 * Displays selected number of events, or events in a selected period from now as listgroup-items
 * Displays event start-date and summary; toggle details, description, start-, end-time, location. 
-*   see http://www.ietf.org/rfc/rfc5545.txt for specification of te ical format.
+*   see (http://www.ietf.org/rfc/rfc5545.txt) for specification of te ical format.
 * Displays most common repeating events 
 
-(see 3.3.10. [Page 38] Recurrence Rule in specification
-* Frequency Yearly, Monthly, Weekly, Dayly (not parsed Hourly, Minutely ...)
-* 0.7.0 BYDAY with DAILY frequency tested. Test code deleted. Present as RC to wordpress.* End of repeating by COUNT or UNTIL
+see 3.3.10. Page 38 Recurrence Rule in specification
+* Frequency Yearly, Monthly, Weekly, Dayly; not parsed Hourly, Minutely ...
+* End of repeating by COUNT or UNTIL
 * By day month or by monthday (BYDAY, BYMONTH, BYMONTHDAY) no other by
   (not parsed: BYYEARDAY, BYSETPOS, BYHOUR, BYMINUTE, WKST)
 * Respects Timezone and Day Light Saving time 
@@ -71,8 +67,8 @@ Just drag it into your sidebar.
                special expand for MONTHLY if BYMONTH present; otherwise,
                special expand for YEARLY.
 
-(This widget is a Fork of version 0.7 of that simple google calendar widget by NBoehr
-https://nl.wordpress.org/plugins/simple-google-calendar-widget/)
+This widget is a Fork of version 0.7 of that simple google calendar widget by NBoehr
+(https://nl.wordpress.org/plugins/simple-google-calendar-widget/) 
 
 
 == Copyright and License ==
