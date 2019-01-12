@@ -2,7 +2,7 @@
 Contributors: bramwaas
 Tags: ical iCalendar GoogleCalendar
 Requires at least: 4.8.4
-Tested up to: 4.9.9
+Tested up to: 5.0.3
 Requires PHP: 5.3.0
 Stable tag: trunk
 License: GPLv2 or later
@@ -80,26 +80,25 @@ https://nl.wordpress.org/plugins/simple-google-calendar-widget/)
 == Copyright and License ==
 
 This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-licenses/gpl-2.0.html), version 2 or later.
-2017&thinsp;&ndash;&thinsp;2017 &copy; [Bram Waasdorp](http://www.waasdorpsoekhan.nl).
+2017&thinsp;&ndash;&thinsp;2019 &copy; [Bram Waasdorp](http://www.waasdorpsoekhan.nl).
 
 == Changelog ==
 
-* 0.0 imported V0.7 of NBoehr
+* 1.0.1 PHP 7.2 deprecated create_function chand in anonymous function in widget_init.
+* 1.0.0 first version in WP plugin directory, directory and start php renamed after slug simple-google-icalendar-widget
+* 0.7.0 BYDAY with DAILY frequency tested. Test code deleted. Present as RC to wordpress.
+* 0.6.0 BYDAY and BYMONTHDAY work with complete sorting and unifying in MONTH frequency
+        adding class suffixes from setting.
+* 0.5.0 BYDAY complete first try with sort tested with wordpress 4.8.3 php 7
+* 0.3.5 discard non existent days like 31th november first try with byday
+		works als with complete url to ical .ics file.
+		renamed plugin to simple-google-i-calendar-widget and 
+		renamed references gcal to ical		
+* 0.3.3 simple repeating events (only full periods) works* 0.7.0 BYDAY with DAILY frequency tested. Test code deleted. Present as RC to wordpress.
+* 0.2.0 starting work on repeating events 
 * 0.1.0 Added support for start and end time with timezone
 		Changed lay-out of output of teh widget so that is more in line with bootstrap 4 and with the iframe-widget of google
 		a lot of small changes eg: better support for events in a timezone and events that last a whole day. Replace escaped chars for summary,
 		description and location. Refinements in output HTML.
 		renamed starting .php file to simple-google-calendar-widget.php
-* 0.2.0 starting work on repeating events 
-* 0.3.3 simple repeating events (only full periods) works* 0.7.0 BYDAY with DAILY frequency tested. Test code deleted. Present as RC to wordpress.
-* 0.3.5 discard non existent days like 31th november first try with byday
-		works als with complete url to ical .ics file.
-		renamed plugin to simple-google-i-calendar-widget and 
-		renamed references gcal to ical		
-* 0.5.0 BYDAY complete first try with sort tested with wordpress 4.8.3 php 7
-* 0.6.0 BYDAY and BYMONTHDAY work with complete sorting and unifying in MONTH frequency
-        adding class suffixes from setting.
-* 0.7.0 BYDAY with DAILY frequency tested. Test code deleted. Present as RC to wordpress.
-* 1.0.0 first version in WP plugin directory, directory and start php renamed after slug simple-google-icalendar-widget
-* 1.0.1 PHP 7.2 deprecated create_function chand in anonymous function in widget_init.
-              
+* 0.0 imported V0.7 of NBoehr
