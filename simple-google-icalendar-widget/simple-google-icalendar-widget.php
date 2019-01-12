@@ -321,5 +321,6 @@ add_action('admin_menu',array ($ical_admin, 'simple_ical_admin_menu'));
 
 // add_action('widgets_init', create_function('', 'return register_widget("Simple_iCal_Widget");'));
 // replaced by
-add_action ('widgets_init', function () { return register_widget( 'Simple_iCal_Widget' );} );
+function simple_ical_widget () {  register_widget( 'Simple_iCal_Widget' );}
+add_action ('widgets_init', 'simple_ical_widget'  );
 // end replace
