@@ -1,57 +1,63 @@
 === Simple Google iCalendar Widget ===
 Contributors: bramwaas
-Tags: ical, iCalendar, Google Calendar, .ics, events, upcoming events, bootstrap
+Tags: ical iCalendar GoogleCalendar
 Requires at least: 4.8.4
-Tested up to: 4.9.2
+Tested up to: 4.9.9
 Requires PHP: 5.3.0
-Stable tag: 1.0.0
+Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
  
-Widget displays upcoming events from a public google calendar or iCal (.ics) file and is easy to style.
+Widget that displays events from a public google calendar or iCal file.
  
 == Description ==
 
-Displays upcoming events from a public google calendar or an url with a public iCal calendar file (.ics). It is  easy to fit the style in line with your theme-style, in particular when your theme uses bootstrap (4) framework, otherwise you can apply all kinds of CSS and add the necessary classes to the widget-parts to make it fit. 
+Google offers some HTML snippets to embed your public Google Calendar into your website.
+These are great, but as soon as you want to make a few adjustments to the styling,
+that goes beyond changing some colors, they’re not enough.
 
-You can use this widget when the HTML snippets Google offers to embed your public Google Calendar into your website are not enough to fit the widget in line with youre website's style. 
+Because of that Nico Boehr wrote a very simple widget, that fetches events from a public google
+calendar and nicely displays them in form of a widget, allowing you to apply all kinds of CSS.
+I needed support for repeating events so I extended the widget to give limited support for repaeting
+events, improved the support for timezones and day-light saving, and made the deafult output in line
+with a bootstrap 4 list.
 
 == Plugin Features ==
 
-* Calendar widget to display events of a public Google calendar or other iCal file.
+* Calendar widget to display appointments/events of a public Google calendar or other iCal file.
 * Small footprint, uses only Google ID of the calendar to get event information via iCal
-* Displays most common repeating events. Yearly, Monthly, Weekly and Dayly.  
 * Output in unorderd list with Bootstrap 4 listgroup classes and toggle for details.
-* Configurable classes for listgroup and listgroup items output to make it fit to your css, if you don't use bootstrap.
 
 == Installation ==
-* Do the usual setup procedure you know downloading unpacking uploading activating. 
+* Do the usual setup procedure… you know… downloading… unpacking… uploading… activating. 
 Or just install it through the wordpress plugin directory.
 * As soon as you activated the plugin, you should see a new widget under Design › Widgets.
 Just drag it into your sidebar.
 * Fill out all the necessary configuration fields.
  Under Calendar ID enter the calendar ID displayed by Google Calendar, or complete url of a
  Google calendar or other iCal file.
- You can find Google calendar ID by going to Calendar Settings / Calendars, clicking on the appropriate calendar, scrolling all the way down to Calendar address. There is your calendar id.
-* You are done!
+ You can find Google calendar ID by going to Calendar Settings › Calendars, clicking on the appropriate calendar, scrolling all the way down to “Calendar address”. There’s your calendar id.
+* You’re done!
 
 == Documentation ==
-* Gets calendar events via iCal url of Google Calendar ID
+* Gets calendar events via iCal url of google calendar ID
 * Displays selected number of events, or events in a selected period from now as listgroup-items
 * Displays event start-date and summary; toggle details, description, start-, end-time, location. 
-*   see (http://www.ietf.org/rfc/rfc5545.txt) for specification of te ical format.
+*   see http://www.ietf.org/rfc/rfc5545.txt for specification of te ical format.
 * Displays most common repeating events 
 
-see 3.3.10. Page 38 Recurrence Rule in specification
-* Frequency Yearly, Monthly, Weekly, Dayly; not parsed Hourly, Minutely ...
-* End of repeating by COUNT or UNTIL
+(see 3.3.10. [Page 38] Recurrence Rule in specification
+* Frequency Yearly, Monthly, Weekly, Dayly (not parsed Hourly, Minutely ...)
+* 0.7.0 BYDAY with DAILY frequency tested. Test code deleted. Present as RC to wordpress.* End of repeating by COUNT or UNTIL
 * By day month or by monthday (BYDAY, BYMONTH, BYMONTHDAY) no other by
   (not parsed: BYYEARDAY, BYSETPOS, BYHOUR, BYMINUTE, WKST)
 * Respects Timezone and Day Light Saving time 
 
    +----------+-------+------+-------+------+
    |          |DAILY  |WEEKLY|MONTHLY|YEARLY|
-   +----------+-------+------+-------+------+   
+   +----------+-------+------+-------+------+(This widget is a Fork of version 0.7 of that simple google calendar widget by NBoehr
+https://nl.wordpress.org/plugins/simple-google-calendar-widget/)
+   
    |BYMONTH   |Limit  |Limit |Limit  |Expand|
    +----------+-------+------+-------+------+
    |BYMONTHDAY|Limit  |N/A   |Expand |Expand|
@@ -67,8 +73,8 @@ see 3.3.10. Page 38 Recurrence Rule in specification
                special expand for MONTHLY if BYMONTH present; otherwise,
                special expand for YEARLY.
 
-This widget is a Fork of version 0.7 of that simple google calendar widget by NBoehr
-(https://nl.wordpress.org/plugins/simple-google-calendar-widget/) 
+(This widget is a Fork of version 0.7 of that simple google calendar widget by NBoehr
+https://nl.wordpress.org/plugins/simple-google-calendar-widget/)
 
 
 == Copyright and License ==
@@ -95,4 +101,5 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
         adding class suffixes from setting.
 * 0.7.0 BYDAY with DAILY frequency tested. Test code deleted. Present as RC to wordpress.
 * 1.0.0 first version in WP plugin directory, directory and start php renamed after slug simple-google-icalendar-widget
+* 1.0.1 PHP 7.2 deprecated create_function chand in anonymous function in widget_init.
               
