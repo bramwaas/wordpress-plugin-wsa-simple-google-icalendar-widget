@@ -84,7 +84,7 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 
 == Changelog ==
 
-* 1.0.1 PHP 7.2 deprecated create_function chand in anonymous function in widget_init.
+* 1.0.1 PHP 7.2 deprecated create_function chand in anonymous function in widget_init. Tested with wp 5.0.3
 * 1.0.0 first version in WP plugin directory, directory and start php renamed after slug simple-google-icalendar-widget
 * 0.7.0 BYDAY with DAILY frequency tested. Test code deleted. Present as RC to wordpress.
 * 0.6.0 BYDAY and BYMONTHDAY work with complete sorting and unifying in MONTH frequency
