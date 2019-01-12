@@ -6,7 +6,7 @@ Plugin URI: https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calen
 Author: Bram Waasdorp
 Version: 1.0.1
 License: GPL3
-Tested up to: 4.9.9
+Tested up to: 5.0.3
 Requires PHP:  5.3.0 tested with 7.2
 Text Domain:  simple_ical
 Domain Path:  /languages
