@@ -4,17 +4,17 @@ Plugin Name: Simple Google iCalendar Widget
 Description: Widget that displays events from a public google calendar
 Plugin URI: https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
 Author: Bram Waasdorp
-Version: 1.0.0
+Version: 1.0.1
 License: GPL3
-Tested up to: 4.8.3
-Requires PHP:  5.3.0 tested with 7.0
+Tested up to: 4.9.9
+Requires PHP:  5.3.0 tested with 7.2
 Text Domain:  simple_ical
 Domain Path:  /languages
 
 */
 /*
     Simple Google calendar widget for Wordpress
-    Copyright (C) Bram Waasdorp 2017 
+    Copyright (C) Bram Waasdorp 2017 - 2019
     Forked from Simple Google Calendar Widget v 0.7 by Nico Boehr
  
     This program is free software: you can redistribute it and/or modify
@@ -319,4 +319,7 @@ class Simple_iCal_Widget extends WP_Widget
 $ical_admin = new Simple_iCal_Admin;
 add_action('admin_menu',array ($ical_admin, 'simple_ical_admin_menu'));
 
-add_action('widgets_init', create_function('', 'return register_widget("Simple_iCal_Widget");'));
+// add_action('widgets_init', create_function('', 'return register_widget("Simple_iCal_Widget");'));
+// replaced by
+add_action ('widgets_init', function () { return register_widget( 'Simple_iCal_Widget' );} );
+// end replace
