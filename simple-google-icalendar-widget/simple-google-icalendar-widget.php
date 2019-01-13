@@ -15,6 +15,7 @@ Domain Path:  /languages
 /*
     Simple Google calendar widget for Wordpress
     Copyright (C) Bram Waasdorp 2017 - 2019
+    2019-01-13 8:37
     Forked from Simple Google Calendar Widget v 0.7 by Nico Boehr
  
     This program is free software: you can redistribute it and/or modify
