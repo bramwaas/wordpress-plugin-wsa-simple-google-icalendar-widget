@@ -2,7 +2,7 @@
 Contributors: bramwaas
 Tags: ical iCalendar GoogleCalendar
 Requires at least: 4.8.4
-Tested up to: 5.0.3
+Tested up to: 5.2.1
 Requires PHP: 5.3.0
 Stable tag: trunk
 License: GPLv2 or later
@@ -14,7 +14,7 @@ Widget that displays events from a public google calendar or iCal file.
 
 Google offers some HTML snippets to embed your public Google Calendar into your website.
 These are great, but as soon as you want to make a few adjustments to the styling,
-that goes beyond changing some colors, they’re not enough.
+that goes beyond changing some colors, they're not enough.
 
 Because of that Nico Boehr wrote a very simple widget, that fetches events from a public google
 calendar and nicely displays them in form of a widget, allowing you to apply all kinds of CSS.
@@ -29,15 +29,15 @@ with a bootstrap 4 list.
 * Output in unorderd list with Bootstrap 4 listgroup classes and toggle for details.
 
 == Installation ==
-* Do the usual setup procedure… you know… downloading… unpacking… uploading… activating. 
+* Do the usual setup procedure... you know... downloading... unpacking... uploading... activating. 
 Or just install it through the wordpress plugin directory.
-* As soon as you activated the plugin, you should see a new widget under Design › Widgets.
+* As soon as you activated the plugin, you should see a new widget under Design â€º Widgets.
 Just drag it into your sidebar.
 * Fill out all the necessary configuration fields.
  Under Calendar ID enter the calendar ID displayed by Google Calendar, or complete url of a
  Google calendar or other iCal file.
- You can find Google calendar ID by going to Calendar Settings › Calendars, clicking on the appropriate calendar, scrolling all the way down to “Calendar address”. There’s your calendar id.
-* You’re done!
+ You can find Google calendar ID by going to Calendar Settings â€º Calendars, clicking on the appropriate calendar, scrolling all the way down to â€œCalendar addressâ€�. There's your calendar id.
+* You're done!
 
 == Documentation ==
 * Gets calendar events via iCal url of google calendar ID
@@ -84,6 +84,7 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 
 == Changelog ==
 
+* 1.0.2 Adjustments for multiline Description, summary or location. Tested with wp 5.2.1.
 * 1.0.1 PHP 7.2 deprecated create_function chand in anonymous function in widget_init. Tested with wp 5.0.3
 * 1.0.0 first version in WP plugin directory, directory and start php renamed after slug simple-google-icalendar-widget
 * 0.7.0 BYDAY with DAILY frequency tested. Test code deleted. Present as RC to wordpress.

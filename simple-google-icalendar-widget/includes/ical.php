@@ -7,7 +7,8 @@ class IcsParsingException extends Exception {}
  *
  * note that this class does not implement all ICS functionality.
  *   bw 20171109 enkele verbeteringen voor start en end in ical.php
- * Version: 1.0.0
+ *   bw 20190526 v1.0.2 some adjustments for longer Description or Summary or LOCATION
+ * Version: 1.0.2
 
  */
 class IcsParser {
@@ -404,6 +405,7 @@ class IcsParser {
     public function parseVevent($eventStr) {
         $lines = explode("\n", $eventStr);
         $eventObj = new StdClass;
+		$tokenprev = "";
 
         foreach($lines as $l) { 
 
@@ -427,36 +429,50 @@ class IcsParser {
                 // trim() to remove \r
                 $value = trim($list[1]);
                 $desc = str_replace(array('\;', '\,', '\r\n', '\n', '\r'), array(';', ',', '<br>', '<br>', '<br>'), htmlspecialchars($value));
-            }
-            switch($token) {
-                case "SUMMARY":
-                	$eventObj->summary = $desc;
-                    break;
-                case "DESCRIPTION":
-                	$eventObj->description = $desc;
-                    break;
-                case "LOCATION":
-                	$eventObj->location = $desc;
-                    break;
-                case "DTSTART":
-                    $eventObj->start = $this->parseIcsDateTime($value, $tzid);
-                    if ($tzid > ' ') {
-                    	$eventObj->tzid = $tzid;
-                    }
-                    break;
-                case "DTEND":
-                    $eventObj->end = $this->parseIcsDateTime($value, $tzid);
-                    break;
-                    // bw 20171108 toegevoegd UID RRULE
-               case "UID":
-                    $eventObj->uid = $value;
-                    break;
-               case "RRULE":
-               		$eventObj->rrule = $value;
-               	break;
-               	
-            }
-
+				$tokenprev = $token;
+				switch($token) {
+					case "SUMMARY":
+						$eventObj->summary = $desc;
+						break;
+					case "DESCRIPTION":
+						$eventObj->description = $desc;
+						break;
+					case "LOCATION":
+						$eventObj->location = $desc;
+						break;
+					case "DTSTART":
+						$eventObj->start = $this->parseIcsDateTime($value, $tzid);
+						if ($tzid > ' ') {
+							$eventObj->tzid = $tzid;
+						}
+						break;
+					case "DTEND":
+						$eventObj->end = $this->parseIcsDateTime($value, $tzid);
+						break;
+						// bw 20171108 toegevoegd UID RRULE
+					case "UID":
+						$eventObj->uid = $value;
+						break;
+					case "RRULE":
+						$eventObj->rrule = $value;
+					break;
+				}
+            }else { // count($list) <= 1
+                $desc = str_replace(array('\;', '\,', '\r\n', '\n', '\r'), array(';', ',', '<br>', '<br>', '<br>'), htmlspecialchars(trim($token)));
+				switch($tokenprev) {
+					case "SUMMARY":
+						$eventObj->summary .= $desc;
+						break;
+					case "DESCRIPTION":
+						$eventObj->description .= $desc;
+						break;
+					case "LOCATION":
+						$eventObj->location .= $desc;
+						break;
+				}
+			}
+			
+			
         }
 
         return $eventObj;
