@@ -31,12 +31,13 @@ with a bootstrap 4 list.
 == Installation ==
 * Do the usual setup procedure... you know... downloading... unpacking... uploading... activating. 
 Or just install it through the wordpress plugin directory.
-* As soon as you activated the plugin, you should see a new widget under Design â€º Widgets.
+* As soon as you activated the plugin, you should see a new widget under Design / Widgets.
 Just drag it into your sidebar.
 * Fill out all the necessary configuration fields.
  Under Calendar ID enter the calendar ID displayed by Google Calendar, or complete url of a
  Google calendar or other iCal file.
- You can find Google calendar ID by going to Calendar Settings â€º Calendars, clicking on the appropriate calendar, scrolling all the way down to â€œCalendar addressâ€�. There's your calendar id.
+ You can find Google calendar ID by going to Calendar Settings & Calendars, clicking on the appropriate calendar, scrolling all the way down to
+ find the Calendar ID at the bottom under the Integrate Calendar section. There's your calendar id.
 * You're done!
 
 == Documentation ==
@@ -84,6 +85,8 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 
 == Changelog ==
 
+* 1.0.3 trim only "\n\r\0" and first space but keep last space in Description Summary and Location lines.
+        adjustments to correct timezone that is ignored in new datetime when the $time parameter is a UNIX timestamp (e.g. @946684800) 
 * 1.0.2 Adjustments for multiline Description, summary or location. Tested with wp 5.2.1.
 * 1.0.1 PHP 7.2 deprecated create_function chand in anonymous function in widget_init. Tested with wp 5.0.3
 * 1.0.0 first version in WP plugin directory, directory and start php renamed after slug simple-google-icalendar-widget

@@ -8,7 +8,9 @@ class IcsParsingException extends Exception {}
  * note that this class does not implement all ICS functionality.
  *   bw 20171109 enkele verbeteringen voor start en end in ical.php
  *   bw 20190526 v1.0.2 some adjustments for longer Description or Summary or LOCATION
- * Version: 1.0.2
+ *   bw 20190529 v1.0.3 trim only "\n\r\0" and first space but keep last space in Description Summary and Location lines.
+ *               adjustments to correct timezone that is ignored in new datetime when the $time parameter is a UNIX timestamp (e.g. @946684800) 
+ * Version: 1.0.3
 
  */
 class IcsParser {
@@ -32,8 +34,6 @@ class IcsParser {
         		'SA' => 'saturday',
         		'SU' => 'sunday',
         );
-        
-        
 
         do {
             $startpos = strpos($curstr, self::TOKEN_BEGIN_VEVENT);
@@ -71,9 +71,9 @@ class IcsParser {
  * FREQ=DAILY;COUNT=5;INTERVAL=7 Every 7 days,5 times
 
  */
-		
 			$timezone = new DateTimeZone((isset($e->tzid)&& $e->tzid !== '') ? $e->tzid : get_option('timezone_string'));
-			$edtstart = new DateTime('@' . $e->start, $timezone);
+			$edtstart = new DateTime('@' . $e->start);
+			$edtstart->setTimezone($timezone);
 			$edtstartmday = $edtstart->format('j');
 			$edtstartmon = $edtstart->format('n');
 			$egdstart = getdate($e->start);
@@ -81,7 +81,8 @@ class IcsParser {
 			// 		$egdstart['weekday'] 'Monday' - 'Sunday' example 'Thursday'
 			//		$egdstart['mon']  monthnr in year 1 - 12 example 11  (november) 
 			//		$egdstart['mday'] day in the month 1 - 31 example 16
-			$edtendd   = new DateTime('@' . $e->end, $timezone);
+			$edtendd   = new DateTime('@' . $e->end);
+			$edtendd->setTimezone($timezone);
 			$eduration = $edtstart->diff($edtendd);
 
 			
@@ -137,11 +138,12 @@ class IcsParser {
            				{   // first FREQ loop on dtstart will only output new events
                				// created by a BY... clause
                				$test = '';
-               				$fd = $freqstart->format('d');
-               				$fY = $freqstart->format('Y');
-               				$fH = $freqstart->format('H'); 
-               				$fi = $freqstart->format('i');
-               				$fdays = $freqstart->format('t');
+               				$fd = $freqstart->format('d'); // Day of the month, 2 digits with leading zeros
+               				$fn = $freqstart->format('n'); // Month, without leading zeros
+               				$fY = $freqstart->format('Y'); // Year, 4 digits	
+               				$fH = $freqstart->format('H'); // 24-hour format of an hour with leading zeros
+               				$fi = $freqstart->format('i'); // Minutes with leading zeros	
+               				$fdays = $freqstart->format('t'); // Number of days in the given month	
                				$expand = false;
 // bymonth               				
                				if (isset($rrules['bymonth'])) {
@@ -426,9 +428,9 @@ class IcsParser {
             	}
             }
             if (count($list) > 1) {
-                // trim() to remove \r
+                // trim() to remove \n\r\0 
                 $value = trim($list[1]);
-                $desc = str_replace(array('\;', '\,', '\r\n', '\n', '\r'), array(';', ',', '<br>', '<br>', '<br>'), htmlspecialchars($value));
+                $desc = str_replace(array('\;', '\,', '\r\n', '\n', '\r'), array(';', ',', '<br>', '<br>', '<br>'), htmlspecialchars(trim($list[1], "\n\r\0")));
 				$tokenprev = $token;
 				switch($token) {
 					case "SUMMARY":
@@ -458,20 +460,22 @@ class IcsParser {
 					break;
 				}
             }else { // count($list) <= 1
-                $desc = str_replace(array('\;', '\,', '\r\n', '\n', '\r'), array(';', ',', '<br>', '<br>', '<br>'), htmlspecialchars(trim($token)));
-				switch($tokenprev) {
-					case "SUMMARY":
-						$eventObj->summary .= $desc;
-						break;
-					case "DESCRIPTION":
-						$eventObj->description .= $desc;
-						break;
-					case "LOCATION":
-						$eventObj->location .= $desc;
-						break;
-				}
-			}
-			
+                if (strlen($token) > 1) {
+                    $desc = str_replace(array('\;', '\,', '\r\n', '\n', '\r'), array(';', ',', '<br>', '<br>', '<br>'), htmlspecialchars(trim(substr($token,1), "\n\r\0")));
+                    switch($tokenprev) {
+                        case "SUMMARY":
+                            $eventObj->summary .= $desc;
+                            break;
+                        case "DESCRIPTION":
+                            $eventObj->description .= $desc;
+                            break;
+                        case "LOCATION":
+                            $eventObj->location .= $desc;
+                            break;
+                    }
+                }
+            }
+                
 			
         }
 
