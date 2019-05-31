@@ -15,7 +15,7 @@ Domain Path:  /languages
 /*
     Simple Google calendar widget for Wordpress
     Copyright (C) Bram Waasdorp 2017 - 2019
-    2019-01-13 8:37
+    2019-05-31
     Forked from Simple Google Calendar Widget v 0.7 by Nico Boehr
  
     This program is free software: you can redistribute it and/or modify
@@ -307,10 +307,10 @@ class Simple_iCal_Widget extends WP_Widget
           <input class="widefat" id="<?php echo $this->get_field_id('suffix_lgia_class'); ?>" name="<?php echo $this->get_field_name('suffix_lgia_class'); ?>" type="text" value="<?php echo esc_attr($instance['suffix_lgia_class']); ?>" />
         </p>
         <p>
-            <?php _e('Need <a href="', 'simple_ical');
-            echo admin_url('admin.php?page=simple_ical_info'); 
-                _e('" target="_blank">help</a>?', 'simple_ical'); ?>
- 
+            <?php echo '<a href="' . admin_url('admin.php?page=simple_ical_info') . '" target="_blank">' ; 
+                _e('Need help?', 'simple_ical'); 
+                echo '</a>';
+                ?>
         </p>
         <?php
 	return '';    
