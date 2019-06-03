@@ -53,6 +53,7 @@ Just drag it into your sidebar.
   (not parsed: BYYEARDAY, BYSETPOS, BYHOUR, BYMINUTE, WKST)
 * Respects Timezone and Day Light Saving time 
 
+    
     .____________._________.________._________.________.
     |            |DAILY    |WEEKLY  |MONTHLY  |YEARLY  |
     |____________|_________|________|_________|________|   
