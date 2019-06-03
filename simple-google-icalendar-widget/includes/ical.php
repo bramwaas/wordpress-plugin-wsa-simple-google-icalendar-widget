@@ -358,7 +358,7 @@ class IcsParser {
         $now = time();
         
         foreach ($this->events as $e) {
-            if ((($e->start >= $now) || ($e->end >= $now))
+            if ((($e->start >= $now) || (!empty($e->end) && $e->end >= $now))
                 && $e->start <= $penddate) {
                     $newEvents[] = $e;
                 }
