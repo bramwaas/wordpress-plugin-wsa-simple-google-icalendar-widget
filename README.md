@@ -46,14 +46,14 @@ Just drag it into your sidebar.
 * Displays event start-date and summary; toggle details, description, start-, end-time, location. 
 *   see http://www.ietf.org/rfc/rfc5545.txt for specification of te ical format.
 * Displays most common repeating events 
-(see 3.3.10. [Page 38] Recurrence Rule in specification
+  (see 3.3.10. [Page 38] Recurrence Rule in specification
 * Frequency Yearly, Monthly, Weekly, Dayly (not parsed Hourly, Minutely ...)
 * End of repeating by COUNT or UNTIL
 * By day month or by monthday (BYDAY, BYMONTH, BYMONTHDAY) no other by
   (not parsed: BYYEARDAY, BYSETPOS, BYHOUR, BYMINUTE, WKST)
 * Respects Timezone and Day Light Saving time 
 
-    
+
     .____________._________.________._________.________.
     |            |DAILY    |WEEKLY  |MONTHLY  |YEARLY  |
     |____________|_________|________|_________|________|   
