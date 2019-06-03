@@ -54,17 +54,15 @@ Just drag it into your sidebar.
   (not parsed: BYYEARDAY, BYSETPOS, BYHOUR, BYMINUTE, WKST)
 * Respects Timezone and Day Light Saving time 
 
-   +----------+-------+------+-------+------+
-   |          |DAILY  |WEEKLY|MONTHLY|YEARLY|
-   +----------+-------+------+-------+------+(This widget is a Fork of version 0.7 of that simple google calendar widget by NBoehr
-https://nl.wordpress.org/plugins/simple-google-calendar-widget/)
-   
-   |BYMONTH   |Limit  |Limit |Limit  |Expand|
-   +----------+-------+------+-------+------+
-   |BYMONTHDAY|Limit  |N/A   |Expand |Expand|
-   +----------+-------+------+-------+------+
-   |BYDAY     |Limit  |Expand|Note 1 |Note 2|
-   +----------+-------+------+-------+------+
+   .____________._________.________._________.________.
+   |            |DAILY    |WEEKLY  |MONTHLY  |YEARLY  |
+   |____________|_________|________|_________|________|   
+   |BYMONTH     |Limit    |Limit   |Limit    |Expand  |
+   |____________|_________|________|_________|________|
+   |BYMONTHDAY  |Limit    |N/A     |Expand   |Expand  |
+   |____________|_________|________|_________|________|
+   |BYDAY       |Limit    |Expand  |Note 1   |Note 2  |
+   |____________|_________|________|_________|________|
    
       Note 1:  Limit if BYMONTHDAY is present; otherwise, special expand
                for MONTHLY.
