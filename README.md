@@ -53,7 +53,7 @@ Just drag it into your sidebar.
   (not parsed: BYYEARDAY, BYSETPOS, BYHOUR, BYMINUTE, WKST)
 * Respects Timezone and Day Light Saving time 
 
-
+~~~
     .____________._________.________._________.________.
     |            |DAILY    |WEEKLY  |MONTHLY  |YEARLY  |
     |____________|_________|________|_________|________|   
@@ -71,10 +71,9 @@ Just drag it into your sidebar.
                special expand for WEEKLY if BYWEEKNO present; otherwise,
                special expand for MONTHLY if BYMONTH present; otherwise,
                special expand for YEARLY.
-
+~~~
 (This widget is a Fork of version 0.7 of that simple google calendar widget by NBoehr
 https://nl.wordpress.org/plugins/simple-google-calendar-widget/)
-
 
 == Copyright and License ==
 
