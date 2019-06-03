@@ -10,8 +10,8 @@ class IcsParsingException extends Exception {}
  *   bw 20190526 v1.0.2 some adjustments for longer Description or Summary or LOCATION
  *   bw 20190529 v1.0.3 trim only "\n\r\0" and first space but keep last space in Description Summary and Location lines.
  *               adjustments to correct timezone that is ignored in new datetime when the $time parameter is a UNIX timestamp (e.g. @946684800)
- *   bw 20190603 exdate's parsed in event object
- * Version: 1.0.3
+ *   bw 20190603 v1.1.0 parse exdate's to exclude events from repeat
+ * Version: 1.1.0
  
  */
 class IcsParser {
@@ -293,6 +293,7 @@ class IcsParser {
                                                     || $newstart->format('Ymd') != $edtstart->format('Ymd'))
                                                 && ($count == 0 || $i < $count)
                                                 && $newstart->getTimestamp() < $until
+                                                && !(!empty($e->exdate) && in_array($newstart->getTimestamp(), $e->exdate))
                                                 && $newstart> $edtstart) { // count events after dtstart
                                                     if ($newstart->getTimestamp() >= $now
                                                         ) { // copy only events after now

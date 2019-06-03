@@ -49,6 +49,7 @@ Just drag it into your sidebar.
   (see 3.3.10. [Page 38] Recurrence Rule in specification
 * Frequency Yearly, Monthly, Weekly, Dayly (not parsed Hourly, Minutely ...)
 * End of repeating by COUNT or UNTIL
+* Exclude events on EXDATE from repeat 
 * By day month or by monthday (BYDAY, BYMONTH, BYMONTHDAY) no other by
   (not parsed: BYYEARDAY, BYSETPOS, BYHOUR, BYMINUTE, WKST)
 * Respects Timezone and Day Light Saving time 
@@ -82,6 +83,7 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 
 == Changelog ==
 
+* 1.1.0 parse EXDATE to exclude events from repeat
 * 1.0.3 trim only "\n\r\0" and first space but keep last space in Description Summary and Location lines.
         adjustments to correct timezone that is ignored in new datetime when the $time parameter is a UNIX timestamp (e.g. @946684800) 
 * 1.0.2 Adjustments for multiline Description, summary or location. Tested with wp 5.2.1.
