@@ -54,15 +54,15 @@ Just drag it into your sidebar.
   (not parsed: BYYEARDAY, BYSETPOS, BYHOUR, BYMINUTE, WKST)
 * Respects Timezone and Day Light Saving time 
 
-   .____________._________.________._________.________.
-   |            |DAILY    |WEEKLY  |MONTHLY  |YEARLY  |
-   |____________|_________|________|_________|________|   
-   |BYMONTH     |Limit    |Limit   |Limit    |Expand  |
-   |____________|_________|________|_________|________|
-   |BYMONTHDAY  |Limit    |N/A     |Expand   |Expand  |
-   |____________|_________|________|_________|________|
-   |BYDAY       |Limit    |Expand  |Note 1   |Note 2  |
-   |____________|_________|________|_________|________|
+    .____________._________.________._________.________.
+    |            |DAILY    |WEEKLY  |MONTHLY  |YEARLY  |
+    |____________|_________|________|_________|________|   
+    |BYMONTH     |Limit    |Limit   |Limit    |Expand  |
+    |____________|_________|________|_________|________|
+    |BYMONTHDAY  |Limit    |N/A     |Expand   |Expand  |
+    |____________|_________|________|_________|________|
+    |BYDAY       |Limit    |Expand  |Note 1   |Note 2  |
+    |____________|_________|________|_________|________|
    
       Note 1:  Limit if BYMONTHDAY is present; otherwise, special expand
                for MONTHLY.
