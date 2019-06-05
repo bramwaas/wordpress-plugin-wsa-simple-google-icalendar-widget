@@ -12,15 +12,16 @@ Widget that displays events from a public google calendar or iCal file.
  
 == Description ==
 
-Google offers some HTML snippets to embed your public Google Calendar into your website.
-These are great, but as soon as you want to make a few adjustments to the styling,
-that goes beyond changing some colors, they're not enough.
 
-Because of that Nico Boehr wrote a very simple widget, that fetches events from a public google
-calendar and nicely displays them in form of a widget, allowing you to apply all kinds of CSS.
-I needed support for repeating events so I extended the widget to give limited support for repaeting
-events, improved the support for timezones and day-light saving, and made the deafult output in line
-with a bootstrap 4 list.
+Simple widget to display events from a public google calendar, or another iCal file, in the style of your website.
+
+(Eenvoudige widget om gebeurtenissen van een openbare google agenda, of een ander iCal bestand, te tonen in de style van je website.) 
+
+Google offers some HTML snippets to embed your public Google Calendar into your website.
+These are great, but as soon as you want to make a few adjustments to the styling, that goes beyond changing some colors, they're not enough.
+
+Because of that Nico Boehr wrote a very simple widget, that fetches events from a public google calendar and nicely displays them in form of a widget, allowing you to apply all kinds of CSS.
+I needed support for repeating events so I extended the widget to give limited support for repaeting events, improved the support for timezones and day-light saving, and made the deafult output in line with a bootstrap 4 list.
 
 == Plugin Features ==
 
@@ -34,19 +35,16 @@ Or just install it through the wordpress plugin directory.
 * As soon as you activated the plugin, you should see a new widget under Design / Widgets.
 Just drag it into your sidebar.
 * Fill out all the necessary configuration fields.
- Under Calendar ID enter the calendar ID displayed by Google Calendar, or complete url of a
- Google calendar or other iCal file.
- You can find Google calendar ID by going to Calendar Settings / Calendars, clicking on the appropriate calendar, scrolling all the way down to
- find the Calendar ID at the bottom under the Integrate Calendar section. There's your calendar id.
+ Under Calendar ID enter the calendar ID displayed by Google Calendar, or complete url of a  Google calendar or other iCal file.
+ You can find Google calendar ID by going to Calendar Settings / Calendars, clicking on the appropriate calendar, scrolling all the way down to find the Calendar ID at the bottom under the Integrate Calendar section. There's your calendar id.
 * You're done!
 
 == Documentation ==
-* Gets calendar events via iCal url of google calendar ID
+
+* Gets calendar events via iCal url or google calendar ID
 * Displays selected number of events, or events in a selected period from now as listgroup-items
 * Displays event start-date and summary; toggle details, description, start-, end-time, location. 
-*   see http://www.ietf.org/rfc/rfc5545.txt for specification of te ical format.
 * Displays most common repeating events 
-  (see 3.3.10. [Page 38] Recurrence Rule in specification
 * Frequency Yearly, Monthly, Weekly, Dayly (not parsed Hourly, Minutely ...)
 * End of repeating by COUNT or UNTIL
 * Exclude events on EXDATE from repeat 
@@ -55,23 +53,25 @@ Just drag it into your sidebar.
 * Respects Timezone and Day Light Saving time 
 
 ~~~
-    .____________._________.________._________.________.
-    |            |DAILY    |WEEKLY  |MONTHLY  |YEARLY  |
-    |____________|_________|________|_________|________|   
-    |BYMONTH     |Limit    |Limit   |Limit    |Expand  |
-    |____________|_________|________|_________|________|
-    |BYMONTHDAY  |Limit    |N/A     |Expand   |Expand  |
-    |____________|_________|________|_________|________|
-    |BYDAY       |Limit    |Expand  |Note 1   |Note 2  |
-    |____________|_________|________|_________|________|
-   
-      Note 1:  Limit if BYMONTHDAY is present; otherwise, special expand
-               for MONTHLY.
+see http://www.ietf.org/rfc/rfc5545.txt for specification of te ical format.
+(see 3.3.10. [Page 38] Recurrence Rule in specification
+  .____________._________.________._________.________.
+  |            |DAILY    |WEEKLY  |MONTHLY  |YEARLY  |
+  |____________|_________|________|_________|________|   
+  |BYMONTH     |Limit    |Limit   |Limit    |Expand  |
+  |____________|_________|________|_________|________|
+  |BYMONTHDAY  |Limit    |N/A     |Expand   |Expand  |
+  |____________|_________|________|_________|________|
+  |BYDAY       |Limit    |Expand  |Note 1   |Note 2  |
+  |____________|_________|________|_________|________|
+ 
+    Note 1:  Limit if BYMONTHDAY is present; 
+             otherwise, special expand for MONTHLY.
 
-      Note 2:  Limit if BYYEARDAY or BYMONTHDAY is present; otherwise,
-               special expand for WEEKLY if BYWEEKNO present; otherwise,
-               special expand for MONTHLY if BYMONTH present; otherwise,
-               special expand for YEARLY.
+    Note 2:  Limit if BYYEARDAY or BYMONTHDAY is present; otherwise,
+             special expand for WEEKLY if BYWEEKNO present; otherwise,
+             special expand for MONTHLY if BYMONTH present; otherwise,
+             special expand for YEARLY.
 ~~~
 (This widget is a Fork of version 0.7 of that simple google calendar widget by NBoehr
 https://nl.wordpress.org/plugins/simple-google-calendar-widget/)
