@@ -11,7 +11,9 @@ class IcsParsingException extends Exception {}
  *   bw 20190529 v1.0.3 trim only "\n\r\0" and first space but keep last space in Description Summary and Location lines.
  *               adjustments to correct timezone that is ignored in new datetime when the $time parameter is a UNIX timestamp (e.g. @946684800)
  *   bw 20190603 v1.1.0 parse exdate's to exclude events from repeat
- * Version: 1.1.0
+ *   bw 20201122 v1.2.0 find solution for DTSTART and DTEND without time by explicit using isDate and only displaying times when isDate === false.;
+ *               found a problem with UID in first line when line-ends are \n in stead of \r\n solved by better calculation of start of EventStr.
+ * Version: 1.2.0
  
  */
 class IcsParser {
@@ -40,10 +42,10 @@ class IcsParser {
             $startpos = strpos($curstr, self::TOKEN_BEGIN_VEVENT);
             if ($startpos !== false) {
                 // remove BEGIN_VEVENT and END:VEVENT
-                // +2: because \r\n at the end
-                $eventStrStart = $startpos + strlen(self::TOKEN_BEGIN_VEVENT) + 2;
+                // +1: because \r\n or \n at the end. if \r\n remove remaining \n
+                $eventStrStart = $startpos + strlen(self::TOKEN_BEGIN_VEVENT) + 1;
                 $eventStr = substr($curstr, $eventStrStart);
-                
+                if (substr($eventStr,0,1) == "\n") {$eventStr = substr($eventStr,1); }
                 $endpos = strpos($eventStr, self::TOKEN_END_VEVENT) - 1;
                 
                 if ($endpos === false) {
@@ -417,6 +419,7 @@ class IcsParser {
             $token = "";
             $value = "";
             $tzid = '';
+            $isdate = false;
             //bw 20171108 added, because sometimes there is timezone or other info after DTSTART, or DTEND
             //     eg. DTSTART;TZID=Europe/Amsterdam, or  DTSTART;VALUE=DATE:20171203
             $tl = explode(";", $list[0]);
@@ -424,8 +427,13 @@ class IcsParser {
             if (count($tl) > 1 ){
                 $dtl = explode("=", $tl[1]);
                 if (count($dtl) > 1 ){
-                    if ($dtl[0] == 'TZID') {
+                    switch($dtl[0]) {
+                    case 'TZID':
                         $tzid = $dtl[1];
+                        break;
+                    case 'VALUE':
+                        $isdate = (substr( $dtl[1],0,4) == 'DATE');
+                        break;
                     }
                 }
             }
@@ -445,15 +453,16 @@ class IcsParser {
                         $eventObj->location = $desc;
                         break;
                     case "DTSTART":
+                        $eventObj->startisdate = $isdate;
                         $eventObj->start = $this->parseIcsDateTime($value, $tzid);
                         if ($tzid > ' ') {
                             $eventObj->tzid = $tzid;
                         }
                         break;
                     case "DTEND":
+                        $eventObj->endisdate = $isdate;
                         $eventObj->end = $this->parseIcsDateTime($value, $tzid);
                         break;
-                        // bw 20171108 toegevoegd UID RRULE
                     case "UID":
                         $eventObj->uid = $value;
                         break;

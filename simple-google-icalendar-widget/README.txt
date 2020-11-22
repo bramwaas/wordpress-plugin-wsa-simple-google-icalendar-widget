@@ -2,7 +2,7 @@
 Contributors: bramwaas
 Tags: ical iCalendar GoogleCalendar
 Requires at least: 4.8.4
-Tested up to: 5.2.1
+Tested up to: 5.5.3
 Requires PHP: 5.3.0
 Stable tag: trunk
 License: GPLv2 or later
@@ -81,6 +81,11 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 
 == Changelog ==
 
+* 1.2.0 adjustment not to display time on events that have DTSTART in DATE format instead of DATETIME format after a comment of TrojanObelix.
+		found that date_i18n($format, $timestamp) formats according to the locale, but not the timezone so times and sometimes also dates 
+		went wrong, but the newer function wp_date() does, so date_i18n() replaced bij wp_date()
+		adjusted use of ID's for the events also to work when lineseperator is \n  in stead of \r\n after seeing example by of TrojanObelix.
+		Tested with WP 5.5.3.		
 * 1.1.0 parse EXDATE to exclude events from repeat
 * 1.0.3 trim only "\n\r\0" and first space but keep last space in Description Summary and Location lines.
         adjustments to correct timezone that is ignored in new datetime when the $time parameter is a UNIX timestamp (e.g. @946684800) 

@@ -4,18 +4,20 @@ Plugin Name: Simple Google iCalendar Widget
 Description: Widget that displays events from a public google calendar
 Plugin URI: https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
 Author: Bram Waasdorp
-Version: 1.1.0
+Version: 1.2.0
 License: GPL3
-Tested up to: 5.2.1
+Tested up to: 5.5.3
 Requires PHP:  5.3.0 tested with 7.2
 Text Domain:  simple_ical
 Domain Path:  /languages
-
+ *   bw 20201122 v1.2.0 find solution for DTSTART and DTEND without time by explicit using isDate and only displaying times when isDate === false.;
+ *               found that date_i18n($format, $timestamp) formats according to the locale, but not the timezone but the newer function wp_date() does, 
+ *               so date_i18n() replaced bij wp_date()
 */
 /*
     Simple Google calendar widget for Wordpress
-    Copyright (C) Bram Waasdorp 2017 - 2019
-    2019-06-03
+    Copyright (C) Bram Waasdorp 2017 - 2020
+    2020-11-22
     Forked from Simple Google Calendar Widget v 0.7 by Nico Boehr
  
     This program is free software: you can redistribute it and/or modify
@@ -153,21 +155,20 @@ class Simple_iCal_Widget extends WP_Widget
         if (!empty($data) && is_array($data)) {
            date_default_timezone_set(get_option('timezone_string'));
            echo '<ul class="list-group' .  $sflg . ' simple-ical-widget">';
-           $prevdate = '';
+           $curdate = '';
             foreach($data as $e) {
             	$idlist = explode("@", esc_attr($e->uid) );
             	$itemid = $this->id  . '_' . $idlist[0];
-            	/* of dateformat  =  'l ' . get_option( 'date_format' ) */
             	echo '<li class="list-group-item' .  $sflgi . ' ical-date">';
-            	if ($prevdate !=  ucfirst(date_i18n( $dflg, $e->start, false ))) {
-            		$prevdate =  ucfirst(date_i18n( $dflg, $e->start, false ));
-            		echo $prevdate, '<br>';
+            	if ($curdate !=  ucfirst(wp_date( $dflg, $e->start))) {
+            	    $curdate =  ucfirst(wp_date( $dflg, $e->start ));
+            		echo $curdate, '<br>';
             	}
                 echo  '<a class="ical_summary' .  $sflgia . '" data-toggle="collapse" href="#',
                    	$itemid, '" aria-expanded="false" aria-controls="', 
                    	$itemid, '">';
-                   	if (date('z', $e->start) === date('z', $e->end))	{
-                   		echo date_i18n( 'G:i ', $e->start, false ); 
+                   	if ($e->startisdate === false)	{
+                   	    echo wp_date( 'G:i ', $e->start); 
                    	}
                 if(!empty($e->summary)) {
                   	echo $e->summary;
@@ -178,14 +179,14 @@ class Simple_iCal_Widget extends WP_Widget
                	echo   $e->description
                     ,'<br>';
                 }
-                if (date('z', $e->start) === date('z', $e->end))	{    
-             echo '<span class="time">', date_i18n( 'G:i', $e->start, false ), 
-		  '</span> - <span class="time">', date_i18n( 'G:i', $e->end, false ), '</span>' ;
+                if ($e->startisdate === false && date('z', $e->start) === date('z', $e->end))	{    
+                    echo '<span class="time">', wp_date( 'G:i', $e->start ), 
+             '</span> - <span class="time">', wp_date( 'G:i', $e->end ), '</span> ' ;
 	     } else {
-		echo '-';      
+		echo '';      
 	     }
               if(!empty($e->location)) {
-                    echo  ' ',  $e->location;
+                  echo  '<span class="location">', $e->location , '</span>'; 
                 }
 
  
