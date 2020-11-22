@@ -1,7 +1,7 @@
 === Simple Google iCalendar Widget ===
 Contributors: bramwaas
 Tags: ical iCalendar GoogleCalendar
-Requires at least: 4.8.4
+Requires at least: 5.3.0
 Tested up to: 5.5.3
 Requires PHP: 5.3.0
 Stable tag: trunk
