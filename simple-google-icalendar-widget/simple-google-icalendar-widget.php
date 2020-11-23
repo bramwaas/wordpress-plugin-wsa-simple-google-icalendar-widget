@@ -4,7 +4,7 @@
  Description: Widget that displays events from a public google calendar
  Plugin URI: https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  Author: Bram Waasdorp
- Version: 1.2.1
+ Version: 1.2.2
  License: GPL3
  Tested up to: 5.5.3
  Requires PHP:  5.3.0 tested with 7.2
@@ -13,6 +13,7 @@
  *   bw 20201122 v1.2.0 find solution for DTSTART and DTEND without time by explicit using isDate and only displaying times when isDate === false.;
  *               found that date_i18n($format, $timestamp) formats according to the locale, but not the timezone but the newer function wp_date() does,
  *               so date_i18n() replaced bij wp_date()
+ *   bw 20201123 V1.2.2 added a checkbox to clear cache before expiration.            
  */
 /*
  Simple Google calendar widget for Wordpress
@@ -231,7 +232,7 @@ class Simple_iCal_Widget extends WP_Widget
         }
         
         $instance['event_count'] = $new_instance['event_count'];
-        if(is_numeric($new_instance['event_count']) && $new_instance['event_count'] > 1) {
+        if(is_numeric($new_instance['event_count']) && $new_instance['event_count'] > 0) {
             $instance['event_count'] = $new_instance['event_count'];
         } else {
             $instance['event_count'] = 5;
@@ -242,8 +243,14 @@ class Simple_iCal_Widget extends WP_Widget
         $instance['suffix_lgi_class'] = strip_tags($new_instance['suffix_lgi_class']);
         $instance['suffix_lgia_class'] = strip_tags($new_instance['suffix_lgia_class']);
         
-        // delete our transient cache
-        $this->clearData();
+
+        if (!empty($new_instance['clear_cache_now'])){
+            // delete our transient cache
+            $this->clearData();
+            $instance['clear_cache_now'] = $new_instance['clear_cache_now'];
+        } else {
+            $instance['clear_cache_now'] = 'no' ;
+        }
         
         return $instance;
     }
@@ -266,7 +273,7 @@ class Simple_iCal_Widget extends WP_Widget
             'suffix_lg_class' => '',
             'suffix_lgi_class' => ' py-0',
             'suffix_lgia_class' => '',
-            
+            'clear_cache_now' => 'no',
         );
         $instance = wp_parse_args((array) $instance, $default);
         
@@ -306,6 +313,10 @@ class Simple_iCal_Widget extends WP_Widget
         <p>
           <label for="<?php echo $this->get_field_id('suffix_lgia_class'); ?>"><?php _e('Suffix event details class:', 'simple_ical'); ?></label> 
           <input class="widefat" id="<?php echo $this->get_field_id('suffix_lgia_class'); ?>" name="<?php echo $this->get_field_name('suffix_lgia_class'); ?>" type="text" value="<?php echo esc_attr($instance['suffix_lgia_class']); ?>" />
+        </p>
+        <p>
+          <input class="checkbox" id="<?php echo $this->get_field_id('clear_cache_now'); ?>" name="<?php echo $this->get_field_name('clear_cache_now'); ?>" type="checkbox" value='yes' />
+          <label for="<?php echo $this->get_field_id('clear_cache_now'); ?>"><?php _e(' clear cache on save.', 'simple_ical'); ?></label> 
         </p>
         <p>
             <?php echo '<a href="' . admin_url('admin.php?page=simple_ical_info') . '" target="_blank">' ; 
