@@ -9,7 +9,7 @@
  * @copyright  Copyright (c)  2017 -2019, Bram Waasdorp
  * @link       https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  * @license    http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * Version: 1.1.0
+ * Version: 1.2.2
 */
 class Simple_iCal_Admin {
 //menu items
@@ -62,7 +62,7 @@ public function simple_ical_info () {
 	_e('<p>Minimal time in minutes between reads from source.</p>', 'simple_ical');
 	
 	_e('<p><strong>Date format first line</strong></p>', 'simple_ical');
-	_e('<p>Date format first line default: l jS \of F,<br>l = day of the week (Monday); j =  day of the month (25) F = name of month (december)<br>y or Y = Year (17 or 2017); see also php.net/manual/en/function.date.php .</p>', 'simple_ical');
+	_e('<p>Date format first line. Default: l jS \of F,<br>l = day of the week (Monday); j =  day of the month (25) F = name of month (december)<br>y or Y = Year (17 or 2017); see also php.net/manual/en/function.date.php .</p>', 'simple_ical');
 	
 	_e('<p><strong>Suffix group class</strong></p>', 'simple_ical');
 	_e('<p>Suffix to add after css-class around the event (list-group),<br>start with space to keep the original class and add another class.</p>', 'simple_ical');
@@ -73,11 +73,12 @@ public function simple_ical_info () {
 	_e('<p><strong>Suffix event details classs</strong></p>', 'simple_ical');
 	_e('<p>Suffix to add after the css-class around the event details link (ical_details),<br>start with space to keep the original class and add another class.</p>', 'simple_ical');
 	
+	_e('<p><strong>Checkbox clear cache on save.</strong></p>', 'simple_ical');
+	_e('<p>Check checkbox to clear cache on save, otherwise it will be cleared after cache time is expired.</p>', 'simple_ical');
+	
+	
 	echo('</div>');
 	
 }
 // info in admin-menu
 }
-
-
-
