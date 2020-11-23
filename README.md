@@ -82,7 +82,8 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 2017&thinsp;&ndash;&thinsp;2019 &copy; [Bram Waasdorp](http://www.waasdorpsoekhan.nl).
 
 == Changelog ==
-
+* 1.2.1 handle not available DTEND => !isset($e->end) in response to a comment of lillyberger (@lillyberger) on the plugin page, by defaulting $e->end to DTSTART value.
+        tested with https://p24-calendars.icloud.com/holiday/NL_nl.ics
 * 1.2.0 adjustment not to display time on events that have DTSTART in DATE format instead of DATETIME format after a comment of TrojanObelix.
 		found that date_i18n($format, $timestamp) formats according to the locale, but not the timezone so times and sometimes also dates 
 		went wrong, but the newer function wp_date() does, so date_i18n() replaced bij wp_date()

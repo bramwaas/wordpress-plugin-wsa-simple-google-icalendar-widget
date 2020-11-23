@@ -1,43 +1,43 @@
 <?php
 /*
-Plugin Name: Simple Google iCalendar Widget
-Description: Widget that displays events from a public google calendar
-Plugin URI: https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
-Author: Bram Waasdorp
-Version: 1.2.0
-License: GPL3
-Tested up to: 5.5.3
-Requires PHP:  5.3.0 tested with 7.2
-Text Domain:  simple_ical
-Domain Path:  /languages
+ Plugin Name: Simple Google iCalendar Widget
+ Description: Widget that displays events from a public google calendar
+ Plugin URI: https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
+ Author: Bram Waasdorp
+ Version: 1.2.1
+ License: GPL3
+ Tested up to: 5.5.3
+ Requires PHP:  5.3.0 tested with 7.2
+ Text Domain:  simple_ical
+ Domain Path:  /languages
  *   bw 20201122 v1.2.0 find solution for DTSTART and DTEND without time by explicit using isDate and only displaying times when isDate === false.;
- *               found that date_i18n($format, $timestamp) formats according to the locale, but not the timezone but the newer function wp_date() does, 
+ *               found that date_i18n($format, $timestamp) formats according to the locale, but not the timezone but the newer function wp_date() does,
  *               so date_i18n() replaced bij wp_date()
-*/
+ */
 /*
-    Simple Google calendar widget for Wordpress
-    Copyright (C) Bram Waasdorp 2017 - 2020
-    2020-11-22
-    Forked from Simple Google Calendar Widget v 0.7 by Nico Boehr
+ Simple Google calendar widget for Wordpress
+ Copyright (C) Bram Waasdorp 2017 - 2020
+ 2020-11-22
+ Forked from Simple Google Calendar Widget v 0.7 by Nico Boehr
  
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ 
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 require_once( 'includes/ical.php' );
 require_once('includes/widget-admin.php');
 
 
-class Simple_iCal_Widget extends WP_Widget 
+class Simple_iCal_Widget extends WP_Widget
 {
     
     public function __construct()
@@ -46,25 +46,25 @@ class Simple_iCal_Widget extends WP_Widget
         load_plugin_textdomain('simple_ical', false, basename( dirname( __FILE__ ) ) . '/languages' );
         
         parent::__construct('simple_ical_widget', // Base ID
-			    'Simple Google iCalendar Widget', // Name
-			    array( // Args
-				   'classname' => 'Simple_iCal_Widget', 
-				   'description' => __('Displays events from a public Google Calendar or other iCal source', 'simple_ical'),
-			          )
-        		);
+            'Simple Google iCalendar Widget', // Name
+            array( // Args
+                'classname' => 'Simple_iCal_Widget',
+                'description' => __('Displays events from a public Google Calendar or other iCal source', 'simple_ical'),
+            )
+            );
     }
- 
-   private function getTransientId()
+    
+    private function getTransientId()
     {
         return 'wp_ical_widget_'.$this->id;
     }
     
     private function getCalendarUrl($calId)
     {
-    	if (substr($calId, 0, 4) == 'http')
-    	{ return $calId; }
-    	else 
-    	{ return 'https://www.google.com/calendar/ical/'.$calId.'/public/basic.ics'; }
+        if (substr($calId, 0, 4) == 'http')
+        { return $calId; }
+        else
+        { return 'https://www.google.com/calendar/ical/'.$calId.'/public/basic.ics'; }
     }
     
     private function getData($instance)
@@ -74,8 +74,8 @@ class Simple_iCal_Widget extends WP_Widget
         $transientId = $this->getTransientId();
         
         if(false === ($data = get_transient($transientId))) {
-        	$data = $this->fetch($calId, $instance['event_count'], $instance['event_period']);
-
+            $data = $this->fetch($calId, $instance['event_count'], $instance['event_period']);
+            
             // do not cache data if fetching failed
             if ($data) {
                 set_transient($transientId, $data, $instance['cache_time']*60);
@@ -89,21 +89,21 @@ class Simple_iCal_Widget extends WP_Widget
     {
         return delete_transient($this->getTransientId());
     }
-
-    private function limitArray($arr, $limit) 
+    
+    private function limitArray($arr, $limit)
     {
         $i = 0;
-
+        
         $out = array();
         foreach ($arr as $e) {
             $i++;
-
+            
             if ($i > $limit) {
                 break;
             }
             $out[] = $e;
         }
-
+        
         return $out;
     }
     
@@ -120,30 +120,30 @@ class Simple_iCal_Widget extends WP_Widget
         if(!is_array($httpData) || !array_key_exists('body', $httpData)) {
             return false;
         }
-
+        
         try {
-        	$penddate = strtotime("+$period day");
-        	$parser = new IcsParser();
-        	$parser->parse($httpData['body'], $penddate,  $count);
-
-        	$events = $parser->getFutureEvents($penddate);
+            $penddate = strtotime("+$period day");
+            $parser = new IcsParser();
+            $parser->parse($httpData['body'], $penddate,  $count);
+            
+            $events = $parser->getFutureEvents($penddate);
             return $this->limitArray($events, $count);
         } catch(IcsParsingException $e) {
             return null;
         }
     }
-	/**
-	 * Front-end display of widget.
-	 *
-	 * @see WP_Widget::widget()
-	 *
-	 * @param array $args     Widget arguments.
-	 * @param array $instance Saved values from database.
-	 */
-    public function widget($args, $instance) 
+    /**
+     * Front-end display of widget.
+     *
+     * @see WP_Widget::widget()
+     *
+     * @param array $args     Widget arguments.
+     * @param array $instance Saved values from database.
+     */
+    public function widget($args, $instance)
     {
         $title = apply_filters('widget_title', $instance['title']);
-        echo $args['before_widget']; 
+        echo $args['before_widget'];
         if(isset($instance['title'])) {
             echo $args['before_title'], $instance['title'], $args['after_title'];
         }
@@ -153,63 +153,63 @@ class Simple_iCal_Widget extends WP_Widget
         $sflgia = (isset($instance['suffix_lgia_class'])) ? $instance['suffix_lgia_class'] : '' ;
         $data = $this->getData($instance);
         if (!empty($data) && is_array($data)) {
-           date_default_timezone_set(get_option('timezone_string'));
-           echo '<ul class="list-group' .  $sflg . ' simple-ical-widget">';
-           $curdate = '';
+            date_default_timezone_set(get_option('timezone_string'));
+            echo '<ul class="list-group' .  $sflg . ' simple-ical-widget">';
+            $curdate = '';
             foreach($data as $e) {
-            	$idlist = explode("@", esc_attr($e->uid) );
-            	$itemid = $this->id  . '_' . $idlist[0];
-            	echo '<li class="list-group-item' .  $sflgi . ' ical-date">';
-            	if ($curdate !=  ucfirst(wp_date( $dflg, $e->start))) {
-            	    $curdate =  ucfirst(wp_date( $dflg, $e->start ));
-            		echo $curdate, '<br>';
-            	}
+                $idlist = explode("@", esc_attr($e->uid) );
+                $itemid = $this->id  . '_' . $idlist[0];
+                echo '<li class="list-group-item' .  $sflgi . ' ical-date">';
+                if ($curdate !=  ucfirst(wp_date( $dflg, $e->start))) {
+                    $curdate =  ucfirst(wp_date( $dflg, $e->start ));
+                    echo $curdate, '<br>';
+                }
                 echo  '<a class="ical_summary' .  $sflgia . '" data-toggle="collapse" href="#',
-                   	$itemid, '" aria-expanded="false" aria-controls="', 
-                   	$itemid, '">';
-                   	if ($e->startisdate === false)	{
-                   	    echo wp_date( 'G:i ', $e->start); 
-                   	}
+                $itemid, '" aria-expanded="false" aria-controls="',
+                $itemid, '">';
+                if ($e->startisdate === false)	{
+                    echo wp_date( 'G:i ', $e->start);
+                }
                 if(!empty($e->summary)) {
-                  	echo $e->summary;
-                }	
+                    echo $e->summary;
+                }
                 echo	'</a>' ;
-                echo '<div class="collapse ical_details' .  $sflgia . '" id="',  $itemid, '">';	    
-               if(!empty($e->description)) {
-               	echo   $e->description
+                echo '<div class="collapse ical_details' .  $sflgia . '" id="',  $itemid, '">';
+                if(!empty($e->description)) {
+                    echo   $e->description
                     ,'<br>';
                 }
-                if ($e->startisdate === false && date('z', $e->start) === date('z', $e->end))	{    
-                    echo '<span class="time">', wp_date( 'G:i', $e->start ), 
-             '</span> - <span class="time">', wp_date( 'G:i', $e->end ), '</span> ' ;
-	     } else {
-		echo '';      
-	     }
-              if(!empty($e->location)) {
-                  echo  '<span class="location">', $e->location , '</span>'; 
+                if ($e->startisdate === false && date('z', $e->start) === date('z', $e->end))	{
+                    echo '<span class="time">', wp_date( 'G:i', $e->start ),
+                    '</span> - <span class="time">', wp_date( 'G:i', $e->end ), '</span> ' ;
+                } else {
+                    echo '';
                 }
-
- 
-            echo '</div></li>';
+                if(!empty($e->location)) {
+                    echo  '<span class="location">', $e->location , '</span>';
+                }
+                
+                
+                echo '</div></li>';
             }
-	echo '</ul>';
+            echo '</ul>';
             date_default_timezone_set('UTC');
         }
-
+        
         echo '<br class="clear" />';
-        echo $args['after_widget']; 
+        echo $args['after_widget'];
     }
-	/**
-	 * Sanitize widget form values as they are saved.
-	 *
-	 * @see WP_Widget::update()
-	 *
-	 * @param array $new_instance Values just sent to be saved.
-	 * @param array $old_instance Previously saved values from database.
-	 *
-	 * @return array Updated safe values to be saved.
-	 */
-    public function update($new_instance, $old_instance) 
+    /**
+     * Sanitize widget form values as they are saved.
+     *
+     * @see WP_Widget::update()
+     *
+     * @param array $new_instance Values just sent to be saved.
+     * @param array $old_instance Previously saved values from database.
+     *
+     * @return array Updated safe values to be saved.
+     */
+    public function update($new_instance, $old_instance)
     {
         $instance = $old_instance;
         $instance['title'] = strip_tags($new_instance['title']);
@@ -232,41 +232,41 @@ class Simple_iCal_Widget extends WP_Widget
         
         $instance['event_count'] = $new_instance['event_count'];
         if(is_numeric($new_instance['event_count']) && $new_instance['event_count'] > 1) {
-        	$instance['event_count'] = $new_instance['event_count'];
+            $instance['event_count'] = $new_instance['event_count'];
         } else {
-        	$instance['event_count'] = 5;
+            $instance['event_count'] = 5;
         }
         // using strip_tags because it can start with space or contain more classe seperated by spaces
-        $instance['dateformat_lg'] = strip_tags($new_instance['dateformat_lg']);  
-        $instance['suffix_lg_class'] = strip_tags($new_instance['suffix_lg_class']);  
-        $instance['suffix_lgi_class'] = strip_tags($new_instance['suffix_lgi_class']);  
-        $instance['suffix_lgia_class'] = strip_tags($new_instance['suffix_lgia_class']); 
+        $instance['dateformat_lg'] = strip_tags($new_instance['dateformat_lg']);
+        $instance['suffix_lg_class'] = strip_tags($new_instance['suffix_lg_class']);
+        $instance['suffix_lgi_class'] = strip_tags($new_instance['suffix_lgi_class']);
+        $instance['suffix_lgia_class'] = strip_tags($new_instance['suffix_lgia_class']);
         
         // delete our transient cache
         $this->clearData();
         
         return $instance;
     }
-	/**
-	 * Back-end widget form.
-	 *
-	 * @see WP_Widget::form()
-	 *
-	 * @param array $instance Previously saved values from database.
-	 */
-    public function form($instance) 
+    /**
+     * Back-end widget form.
+     *
+     * @see WP_Widget::form()
+     *
+     * @param array $instance Previously saved values from database.
+     */
+    public function form($instance)
     {
         $default = array(
             'title' => __('Events', 'simple_ical'),
-   	    'calendar_id' => '',	
-	    'event_count' => 10,
-	    'event_period' => 92,	
-        		'cache_time' => 60,
-			'dateformat_lg' => 'l jS \of F',
-        		'suffix_lg_class' => '',
-        		'suffix_lgi_class' => ' py-0',
-        		'suffix_lgia_class' => '',
-        		
+            'calendar_id' => '',
+            'event_count' => 10,
+            'event_period' => 92,
+            'cache_time' => 60,
+            'dateformat_lg' => 'l jS \of F',
+            'suffix_lg_class' => '',
+            'suffix_lgi_class' => ' py-0',
+            'suffix_lgia_class' => '',
+            
         );
         $instance = wp_parse_args((array) $instance, $default);
         

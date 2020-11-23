@@ -13,7 +13,8 @@ class IcsParsingException extends Exception {}
  *   bw 20190603 v1.1.0 parse exdate's to exclude events from repeat
  *   bw 20201122 v1.2.0 find solution for DTSTART and DTEND without time by explicit using isDate and only displaying times when isDate === false.;
  *               found a problem with UID in first line when line-ends are \n in stead of \r\n solved by better calculation of start of EventStr.
- * Version: 1.2.0
+ *   bw 20201123 handle not available DTEND => !isset($e->end) in response to a comment of lillyberger (@lillyberger) on the plugin page.
+ * Version: 1.2.1
  
  */
 class IcsParser {
@@ -458,6 +459,10 @@ class IcsParser {
                         if ($tzid > ' ') {
                             $eventObj->tzid = $tzid;
                         }
+                        if (!isset($eventObj->end)) { // because I am not sure the order is alway DTSTART before DTEND
+                            $eventObj->endisdate = $isdate;
+                            $eventObj->end = $eventObj->start;
+                        }                        
                         break;
                     case "DTEND":
                         $eventObj->endisdate = $isdate;
