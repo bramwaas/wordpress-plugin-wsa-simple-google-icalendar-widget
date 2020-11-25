@@ -14,7 +14,7 @@ class IcsParsingException extends Exception {}
  *   bw 20201122 v1.2.0 find solution for DTSTART and DTEND without time by explicit using isDate and only displaying times when isDate === false.;
  *               found a problem with UID in first line when line-ends are \n in stead of \r\n solved by better calculation of start of EventStr.
  *   bw 20201123 handle not available DTEND => !isset($e->end) in response to a comment of lillyberger (@lillyberger) on the plugin page.
- * Version: 1.2.1
+ * Version: 1.2.2
  
  */
 class IcsParser {
@@ -107,18 +107,18 @@ class IcsParser {
                     switch ($frequency){
                         case "YEARLY"	:
                             $freqendloop = $freqendloop + (31622400 * $interval); // 366 days in sec
-                            continue;
+                            break;
                         case "MONTHLY"	:
                             $freqendloop = $freqendloop + (2678400 * $interval); // 31 days in sec
-                            continue;
+                            break;
                             
                         case "WEEKLY"	:
                             $freqendloop = $freqendloop + (604800 * $interval); // 7 days in sec
-                            continue;
+                            break;
                             
                         case "DAILY"	:
                             $freqendloop = $freqendloop + (86400 * $interval); // 1 days in sec
-                            continue;
+                            break;
                             
                     }
                     $count = (isset($rrules['count'])) ? $rrules['count'] : 0;
