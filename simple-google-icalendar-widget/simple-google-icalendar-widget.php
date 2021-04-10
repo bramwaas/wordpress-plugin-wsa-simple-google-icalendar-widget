@@ -151,6 +151,9 @@ class Simple_iCal_Widget extends WP_Widget
             echo $args['before_title'], $instance['title'], $args['after_title'];
         }
         $dflg = (isset($instance['dateformat_lg'])) ? $instance['dateformat_lg'] : 'l jS \of F' ;
+        $dftsum = (isset($instance['dateformat_tsum'])) ? $instance['dateformat_tsum'] : 'G:i ' ;
+        $dftstart = (isset($instance['dateformat_tstart'])) ? $instance['dateformat_tstart'] : 'G:i' ;
+        $dftend = (isset($instance['dateformat_tend'])) ? $instance['dateformat_tend'] : ' - G:i ' ;
         $sflg = (isset($instance['suffix_lg_class'])) ? $instance['suffix_lg_class'] : '' ;
         $sflgi = (isset($instance['suffix_lgi_class'])) ? $instance['suffix_lgi_class'] : '' ;
         $sflgia = (isset($instance['suffix_lgia_class'])) ? $instance['suffix_lgia_class'] : '' ;
@@ -171,7 +174,7 @@ class Simple_iCal_Widget extends WP_Widget
                 $itemid, '" aria-expanded="false" aria-controls="',
                 $itemid, '">';
                 if ($e->startisdate === false)	{
-                    echo wp_date( dateformat_tsum, $e->start);
+                    echo wp_date( $dftsum, $e->start);
                 }
                 if(!empty($e->summary)) {
                     echo $e->summary;
@@ -183,8 +186,8 @@ class Simple_iCal_Widget extends WP_Widget
                     ,'<br>';
                 }
                 if ($e->startisdate === false && date('z', $e->start) === date('z', $e->end))	{
-                    echo '<span class="time">', wp_date( dateformat_tstart, $e->start ),
-                    '</span> - <span class="time">', wp_date( dateformat_tend, $e->end ), '</span> ' ;
+                    echo '<span class="time">', wp_date( $dftstart, $e->start ),
+                    '</span><span class="time">', wp_date( $dftend, $e->end ), '</span> ' ;
                 } else {
                     echo '';
                 }
@@ -275,9 +278,9 @@ class Simple_iCal_Widget extends WP_Widget
             'event_period' => 92,
             'cache_time' => 60,
             'dateformat_lg' => 'l jS \of F',
-            'dateformat_tsum' => 'G:i',
+            'dateformat_tsum' => 'G:i ',
             'dateformat_tstart' => 'G:i',
-            'dateformat_tend' => ' - G:i',
+            'dateformat_tend' => ' - G:i ',
             'suffix_lg_class' => '',
             'suffix_lgi_class' => ' py-0',
             'suffix_lgia_class' => '',
