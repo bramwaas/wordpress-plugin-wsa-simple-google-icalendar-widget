@@ -85,7 +85,7 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 
 == Changelog ==
 
-* 1.3.0 made time formats of appointment/event times configurable tested with wordpress 5.7
+* 1.3.0 made time formats of appointment/event times configurable in response to a comment of carolynclarkdfw (@carolynclarkdfw) on the plugin page. Tested with wordpress 5.7
 * 1.2.2 added a checkbox to clear cache before expiration in response to a comment of TrojanObelix. 
 * 1.2.1 handle not available DTEND => !isset($e->end) in response to a comment of lillyberger (@lillyberger) on the plugin page, by defaulting $e->end to DTSTART value.
         tested with https://p24-calendars.icloud.com/holiday/NL_nl.ics
