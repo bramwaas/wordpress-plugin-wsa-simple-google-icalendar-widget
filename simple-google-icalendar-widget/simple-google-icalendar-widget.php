@@ -4,21 +4,23 @@
  Description: Widget that displays events from a public google calendar
  Plugin URI: https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  Author: Bram Waasdorp
- Version: 1.2.2
+ Version: 1.3.0
  License: GPL3
- Tested up to: 5.5.3
+ Tested up to: 5.7
  Requires PHP:  5.3.0 tested with 7.2
  Text Domain:  simple_ical
  Domain Path:  /languages
  *   bw 20201122 v1.2.0 find solution for DTSTART and DTEND without time by explicit using isDate and only displaying times when isDate === false.;
  *               found that date_i18n($format, $timestamp) formats according to the locale, but not the timezone but the newer function wp_date() does,
  *               so date_i18n() replaced bij wp_date()
- *   bw 20201123 V1.2.2 added a checkbox to clear cache before expiration.            
+ *   bw 20201123 V1.2.2 added a checkbox to clear cache before expiration. 
+ *   bw 20210408 V1.3.0 made time formats configurable. 
+ *              
  */
 /*
  Simple Google calendar widget for Wordpress
- Copyright (C) Bram Waasdorp 2017 - 2020
- 2020-11-22
+ Copyright (C) Bram Waasdorp 2017 - 2021
+ 2021-04-22
  Forked from Simple Google Calendar Widget v 0.7 by Nico Boehr
  
  This program is free software: you can redistribute it and/or modify
@@ -149,6 +151,9 @@ class Simple_iCal_Widget extends WP_Widget
             echo $args['before_title'], $instance['title'], $args['after_title'];
         }
         $dflg = (isset($instance['dateformat_lg'])) ? $instance['dateformat_lg'] : 'l jS \of F' ;
+        $dftsum = (isset($instance['dateformat_tsum'])) ? $instance['dateformat_tsum'] : 'G:i ' ;
+        $dftstart = (isset($instance['dateformat_tstart'])) ? $instance['dateformat_tstart'] : 'G:i' ;
+        $dftend = (isset($instance['dateformat_tend'])) ? $instance['dateformat_tend'] : ' - G:i ' ;
         $sflg = (isset($instance['suffix_lg_class'])) ? $instance['suffix_lg_class'] : '' ;
         $sflgi = (isset($instance['suffix_lgi_class'])) ? $instance['suffix_lgi_class'] : '' ;
         $sflgia = (isset($instance['suffix_lgia_class'])) ? $instance['suffix_lgia_class'] : '' ;
@@ -169,7 +174,7 @@ class Simple_iCal_Widget extends WP_Widget
                 $itemid, '" aria-expanded="false" aria-controls="',
                 $itemid, '">';
                 if ($e->startisdate === false)	{
-                    echo wp_date( 'G:i ', $e->start);
+                    echo wp_date( $dftsum, $e->start);
                 }
                 if(!empty($e->summary)) {
                     echo $e->summary;
@@ -181,8 +186,8 @@ class Simple_iCal_Widget extends WP_Widget
                     ,'<br>';
                 }
                 if ($e->startisdate === false && date('z', $e->start) === date('z', $e->end))	{
-                    echo '<span class="time">', wp_date( 'G:i', $e->start ),
-                    '</span> - <span class="time">', wp_date( 'G:i', $e->end ), '</span> ' ;
+                    echo '<span class="time">', wp_date( $dftstart, $e->start ),
+                    '</span><span class="time">', wp_date( $dftend, $e->end ), '</span> ' ;
                 } else {
                     echo '';
                 }
@@ -239,6 +244,9 @@ class Simple_iCal_Widget extends WP_Widget
         }
         // using strip_tags because it can start with space or contain more classe seperated by spaces
         $instance['dateformat_lg'] = strip_tags($new_instance['dateformat_lg']);
+        $instance['dateformat_tsum'] = strip_tags($new_instance['dateformat_tsum']);
+        $instance['dateformat_tstart'] = strip_tags($new_instance['dateformat_tstart']);
+        $instance['dateformat_tend'] = strip_tags($new_instance['dateformat_tend']);
         $instance['suffix_lg_class'] = strip_tags($new_instance['suffix_lg_class']);
         $instance['suffix_lgi_class'] = strip_tags($new_instance['suffix_lgi_class']);
         $instance['suffix_lgia_class'] = strip_tags($new_instance['suffix_lgia_class']);
@@ -270,6 +278,9 @@ class Simple_iCal_Widget extends WP_Widget
             'event_period' => 92,
             'cache_time' => 60,
             'dateformat_lg' => 'l jS \of F',
+            'dateformat_tsum' => 'G:i ',
+            'dateformat_tstart' => 'G:i',
+            'dateformat_tend' => ' - G:i ',
             'suffix_lg_class' => '',
             'suffix_lgi_class' => ' py-0',
             'suffix_lgia_class' => '',
@@ -301,6 +312,18 @@ class Simple_iCal_Widget extends WP_Widget
         <p>
           <label for="<?php echo $this->get_field_id('dateformat_lg'); ?>"><?php _e('Date format first line:', 'simple_ical'); ?></label> 
           <input class="widefat" id="<?php echo $this->get_field_id('dateformat_lg'); ?>" name="<?php echo $this->get_field_name('dateformat_lg'); ?>" type="text" value="<?php echo esc_attr($instance['dateformat_lg']); ?>" />
+        </p>
+        <p>
+          <label for="<?php echo $this->get_field_id('dateformat_tsum'); ?>"><?php _e('Time format time summary line:', 'simple_ical'); ?></label> 
+          <input class="widefat" id="<?php echo $this->get_field_id('dateformat_tsum'); ?>" name="<?php echo $this->get_field_name('dateformat_tsum'); ?>" type="text" value="<?php echo esc_attr($instance['dateformat_tsum']); ?>" />
+        </p>
+        <p>
+          <label for="<?php echo $this->get_field_id('dateformat_tstart'); ?>"><?php _e('Time format start time:', 'simple_ical'); ?></label> 
+          <input class="widefat" id="<?php echo $this->get_field_id('dateformat_tstart'); ?>" name="<?php echo $this->get_field_name('dateformat_tstart'); ?>" type="text" value="<?php echo esc_attr($instance['dateformat_tstart']); ?>" />
+        </p>
+        <p>
+          <label for="<?php echo $this->get_field_id('dateformat_tend'); ?>"><?php _e('Time format end time:', 'simple_ical'); ?></label> 
+          <input class="widefat" id="<?php echo $this->get_field_id('dateformat_tend'); ?>" name="<?php echo $this->get_field_name('dateformat_tend'); ?>" type="text" value="<?php echo esc_attr($instance['dateformat_tend']); ?>" />
         </p>
         <p>
           <label for="<?php echo $this->get_field_id('suffix_lg_class'); ?>"><?php _e('Suffix group class:', 'simple_ical'); ?></label> 
