@@ -14,7 +14,7 @@ class IcsParsingException extends Exception {}
  *   bw 20201122 v1.2.0 find solution for DTSTART and DTEND without time by explicit using isDate and only displaying times when isDate === false.;
  *               found a problem with UID in first line when line-ends are \n in stead of \r\n solved by better calculation of start of EventStr.
  *   bw 20201123 handle not available DTEND => !isset($e->end) in response to a comment of lillyberger (@lillyberger) on the plugin page.
- * Version: 1.2.2
+ * Version: 1.3.0
  
  */
 class IcsParser {

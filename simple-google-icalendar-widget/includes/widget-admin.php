@@ -6,10 +6,10 @@
  * @package    Simple Google iCalendar Widget
  * @subpackage Admin
  * @author     Bram Waasdorp <bram@waasdorpsoekhan.nl>
- * @copyright  Copyright (c)  2017 -2019, Bram Waasdorp
+ * @copyright  Copyright (c)  2017 - 2021, Bram Waasdorp
  * @link       https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  * @license    http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * Version: 1.2.2
+ * Version: 1.3.0
 */
 class Simple_iCal_Admin {
 //menu items
@@ -62,7 +62,16 @@ public function simple_ical_info () {
 	_e('<p>Minimal time in minutes between reads from source.</p>', 'simple_ical');
 	
 	_e('<p><strong>Date format first line</strong></p>', 'simple_ical');
-	_e('<p>Date format first line. Default: l jS \of F,<br>l = day of the week (Monday); j =  day of the month (25) F = name of month (december)<br>y or Y = Year (17 or 2017); see also php.net/manual/en/function.date.php .</p>', 'simple_ical');
+	_e('<p>Date format first line. Default: l jS \of F,<br>l = day of the week (Monday); j =  day of the month (25) F = name of month (december)<br>y or Y = Year (17 or 2017); see also https://www.php.net/manual/en/datetime.format.php .</p>', 'simple_ical');
+	
+	_e('<p><strong>Time format time summary line</strong></p>', 'simple_ical');
+	_e('<p>Time format summary line. Default: G:i ,<br>G or g = 24 or 12 hour format of an hour without leading zeros<br>i = Minutes with leading zeros<br>a or A = Lowercase or Uppercase Ante meridiem and Post meridiem<br>make empty if you don\'t want to show time.</p>', 'simple_ical');
+	
+	_e('<p><strong>Time format start time</strong></p>', 'simple_ical');
+	_e('<p>Time format start time. Default: G:i,<br>G or g = 24 or 12 hour format of an hour without leading zeros<br>i = Minutes with leading zeros<br>a or A = Lowercase or Uppercase Ante meridiem and Post meridiem<br>make empty if you don\'t want to show start time.<br>You can also use other text to embellish it<br>escape characters with special meaning with a slash(\) e.g.:\F\r\o\m G:i .</p>', 'simple_ical');
+	
+	_e('<p><strong>Time format end time</strong></p>', 'simple_ical');
+	_e('<p>Time format separator and end time. Default:  - G:i,<br>G or g = 24 or 12 hour format of an hour without leading zeros<br>i = Minutes with leading zeros<br>a or A = Lowercase or Uppercase Ante meridiem and Post meridiem<br>make empty if you don\'t want to show end time.<br>You can also use other text to embellish it<br>escape characters with special meaning with a slash(\)e.g.: \t\o G:i .</p>', 'simple_ical');
 	
 	_e('<p><strong>Suffix group class</strong></p>', 'simple_ical');
 	_e('<p>Suffix to add after css-class around the event (list-group),<br>start with space to keep the original class and add another class.</p>', 'simple_ical');

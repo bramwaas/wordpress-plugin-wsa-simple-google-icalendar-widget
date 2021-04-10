@@ -314,15 +314,15 @@ class Simple_iCal_Widget extends WP_Widget
           <input class="widefat" id="<?php echo $this->get_field_id('dateformat_lg'); ?>" name="<?php echo $this->get_field_name('dateformat_lg'); ?>" type="text" value="<?php echo esc_attr($instance['dateformat_lg']); ?>" />
         </p>
         <p>
-          <label for="<?php echo $this->get_field_id('dateformat_tsum'); ?>"><?php _e('Time format time before summary:', 'simple_ical'); ?></label> 
+          <label for="<?php echo $this->get_field_id('dateformat_tsum'); ?>"><?php _e('Time format time summary line:', 'simple_ical'); ?></label> 
           <input class="widefat" id="<?php echo $this->get_field_id('dateformat_tsum'); ?>" name="<?php echo $this->get_field_name('dateformat_tsum'); ?>" type="text" value="<?php echo esc_attr($instance['dateformat_tsum']); ?>" />
         </p>
         <p>
-          <label for="<?php echo $this->get_field_id('dateformat_tstart'); ?>"><?php _e('Time format time start:', 'simple_ical'); ?></label> 
+          <label for="<?php echo $this->get_field_id('dateformat_tstart'); ?>"><?php _e('Time format start time:', 'simple_ical'); ?></label> 
           <input class="widefat" id="<?php echo $this->get_field_id('dateformat_tstart'); ?>" name="<?php echo $this->get_field_name('dateformat_tstart'); ?>" type="text" value="<?php echo esc_attr($instance['dateformat_tstart']); ?>" />
         </p>
         <p>
-          <label for="<?php echo $this->get_field_id('dateformat_tend'); ?>"><?php _e('Time format time end:', 'simple_ical'); ?></label> 
+          <label for="<?php echo $this->get_field_id('dateformat_tend'); ?>"><?php _e('Time format end time:', 'simple_ical'); ?></label> 
           <input class="widefat" id="<?php echo $this->get_field_id('dateformat_tend'); ?>" name="<?php echo $this->get_field_name('dateformat_tend'); ?>" type="text" value="<?php echo esc_attr($instance['dateformat_tend']); ?>" />
         </p>
         <p>

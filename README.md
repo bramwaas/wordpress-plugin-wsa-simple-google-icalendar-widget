@@ -3,7 +3,7 @@ Plugin name: Simple Google iCalendar Widget
 Contributors: bramwaas
 Tags: ical iCalendar GoogleCalendar
 Requires at least: 5.3.0
-Tested up to: 5.5
+Tested up to: 5.7
 Requires PHP: 5.3.0
 Stable tag: trunk
 License: GPLv2 or later
@@ -77,7 +77,7 @@ https://nl.wordpress.org/plugins/simple-google-calendar-widget/)
 == Copyright and License ==
 
 This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-licenses/gpl-2.0.html), version 2 or later.
-2017&thinsp;&ndash;&thinsp;2020 &copy; [Bram Waasdorp](http://www.waasdorpsoekhan.nl).
+2017&thinsp;&ndash;&thinsp;2021 &copy; [Bram Waasdorp](http://www.waasdorpsoekhan.nl).
 
 == Upgrade Notice ==
 
@@ -85,6 +85,7 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 
 == Changelog ==
 
+* 1.3.0 made time formats of appointment/event times configurable tested with wordpress 5.7
 * 1.2.2 added a checkbox to clear cache before expiration in response to a comment of TrojanObelix. 
 * 1.2.1 handle not available DTEND => !isset($e->end) in response to a comment of lillyberger (@lillyberger) on the plugin page, by defaulting $e->end to DTSTART value.
         tested with https://p24-calendars.icloud.com/holiday/NL_nl.ics
