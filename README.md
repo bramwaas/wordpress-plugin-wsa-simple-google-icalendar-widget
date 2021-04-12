@@ -1,7 +1,7 @@
 === Simple Google iCalendar Widget ===
 Plugin name: Simple Google iCalendar Widget
 Contributors: bramwaas
-Tags: ical iCalendar GoogleCalendar
+Tags: Calendar, Event Calendar, Google Calendar, iCal, Events, iCalendar, Outlook
 Requires at least: 5.3.0
 Tested up to: 5.7
 Requires PHP: 5.3.0
@@ -15,16 +15,18 @@ Widget that displays events from a public google calendar or iCal file.
 
 Simple widget to display events from a public google calendar, or an other iCal file, in the style of your website.
 
+This simple widget fetches events from a public google calendar (or other calendar in iCal format) and displays them in simple list allowing you to fully adapt to your website by applying all kinds of CSS. 
 Google offers some HTML snippets to embed your public Google Calendar into your website.
 These are great, but as soon as you want to make a few adjustments to the styling, that goes beyond changing some colors, they're not enough.
-This simple widget fetches events from a public google calendar (or other calendar in iCal format) and displays them in simple list allowing you to apply all kinds of CSS. 
 
 == Plugin Features ==
 
 * Calendar widget to display appointments/events of a public Google calendar or other iCal file.
 * Small footprint, uses only Google ID of the calendar to get event information via iCal
+* Manage events in Google Calendar, or other iCalendar source.
+* Fully adaptable to your website with CSS. Output in unorderd list with Bootstrap 4 listgroup classes and toggle for details.
+* Choose date / time format in admin screen that best suits your website.
 * Displays per event DTSTART, DTEND, SUMMARY, LOCATION and DESCRIPTION. DTSTART is required other components are optional. 
-* Output in unorderd list with Bootstrap 4 listgroup classes and toggle for details.
 
 == Installation ==
 
@@ -36,6 +38,24 @@ Just drag it into your sidebar.
  Under Calendar ID enter the calendar ID displayed by Google Calendar, or complete url of a  Google calendar or other iCal file.
  You can find Google calendar ID by going to Calendar Settings / Calendars, clicking on the appropriate calendar, scrolling all the way down to find the Calendar ID at the bottom under the Integrate Calendar section. There's your calendar id.
 * You're done!
+
+== Frequently Asked Questions ==
+
+= Where do I find Google Calendar Id? =
+
+ You can find Google calendar ID by going to Calendar Settings / Calendars, clicking on the appropriate calendar, scrolling all the way down to find the Calendar ID at the bottom under the Integrate Calendar section. There's your calendar id.
+
+= Can I use an event calendar that only uses days, not times, like a holiday calendar? =
+
+ Yes you can, since v1.2.0, I have tested with [https://p24-calendars.icloud.com/holiday/NL_nl.ics](https://p24-calendars.icloud.com/holiday/NL_nl.ics) .
+
+= How do I contribute to Simple Google iCalendar Widget? =
+
+We'd love your help! Here's a few things you can do:
+
+* [Rate our plugin](https://wordpress.org/support/view/plugin-reviews/simple-google-icalendar-widget?postform#postform) and help spread the word!
+* report bugs or help answer questions in our [community support forum](https://wordpress.org/support/plugin/simple-google-icalendar-widget).
+* Help add or update a [plugin translation](https://translate.wordpress.org/projects/wp-plugins/simple-google-icalendar-widget).
 
 == Documentation ==
 
@@ -77,7 +97,7 @@ https://nl.wordpress.org/plugins/simple-google-calendar-widget/)
 == Copyright and License ==
 
 This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-licenses/gpl-2.0.html), version 2 or later.
-2017&thinsp;&ndash;&thinsp;2021 &copy; [Bram Waasdorp](http://www.waasdorpsoekhan.nl).
+2017&thinsp;&ndash;&thinsp;2020 &copy; [Bram Waasdorp](http://www.waasdorpsoekhan.nl).
 
 == Upgrade Notice ==
 
