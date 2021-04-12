@@ -1,5 +1,5 @@
-=== Simple Google iCalendar Widget ===
-Plugin name: Simple Google iCalendar Widget
+=== Simple Google Calendar Events Wordpress Widget ===
+Plugin name: Simple Google Calendar Events Wordpress Widget
 Contributors: bramwaas
 Tags: Calendar, Event Calendar, Google Calendar, iCal, Events, iCalendar, Outlook
 Requires at least: 5.3.0
