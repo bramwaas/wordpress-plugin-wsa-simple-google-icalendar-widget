@@ -41,9 +41,32 @@ Just drag it into your sidebar.
 
 == Frequently Asked Questions ==
 
-= Where do I find Google Calendar Id? =
+= How to use Google Calendar? =
+
+First you have to share your calendar to make it public available, or to create a public calendar. Private calendars cannot be accessed by this plugin.
+Then use the public iCal address or the Google calendar ID.
+[More details on Google support](https://support.google.com/calendar/answer/37083)
+
+= Where do I find the Google Calendar Id? =
 
  You can find Google calendar ID by going to Calendar Settings / Calendars, clicking on the appropriate calendar, scrolling all the way down to find the Calendar ID at the bottom under the Integrate Calendar section. There's your calendar id.
+ [More details on Google support](https://support.google.com/calendar/answer/37083#link)
+
+= How to use Microsoft Outlook Calendar? =
+
+First you have to share your calendar to make it public available, or to create and share a public calendar. Private calendars cannot be accessed by this plugin.
+Then publish it as  an ICS link and use this link address. (something like https://outlook.live.com/owa/calendar/00000000-0000-0000-0000-000000000000/.../cid-.../calendar.ics)
+[More details on Microsoft Office support](https://support.office.com/en-us/article/share-your-calendar-in-outlook-on-the-web-7ecef8ae-139c-40d9-bae2-a23977ee58d5)
+
+= How to use Apple Calendar (iCloud Mac/ios)? =
+
+First you have to make your calendar public, or to create a public calendar private calendars cannot be accessed by this plugin.
+Then use the public iCal address. 
+[More details on the MacObserver](https://www.macobserver.com/tips/quick-tip/icloud-configure-public-calendar)
+
+= Error: cURL error 28: Operation timed out after 5000 milliseconds with 0 bytes received =
+
+Probably the calendar is not public (yet), you can copy the link before the agenda is actually published. Check if the agenda has already been published and try again.
 
 = Can I use an event calendar that only uses days, not times, like a holiday calendar? =
 

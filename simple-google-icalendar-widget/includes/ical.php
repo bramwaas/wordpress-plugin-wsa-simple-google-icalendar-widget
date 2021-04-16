@@ -14,13 +14,164 @@ class IcsParsingException extends Exception {}
  *   bw 20201122 v1.2.0 find solution for DTSTART and DTEND without time by explicit using isDate and only displaying times when isDate === false.;
  *               found a problem with UID in first line when line-ends are \n in stead of \r\n solved by better calculation of start of EventStr.
  *   bw 20201123 handle not available DTEND => !isset($e->end) in response to a comment of lillyberger (@lillyberger) on the plugin page.
- * Version: 1.3.0
+ *   bw 20210415 added windows to Iana timezone-array from ics-calendar.7.2.0, to solve erro with outlook agenda. 
+ * Version: 1.3.1
  
  */
 class IcsParser {
     
     const TOKEN_BEGIN_VEVENT = "\nBEGIN:VEVENT";
     const TOKEN_END_VEVENT = "\nEND:VEVENT";
+    const TOKEN_BEGIN_VTIMEZONE = "\nBEGIN:VTIMEZONE";
+    const TOKEN_END_VTIMEZONE = "\nEND:VTIMEZONE";
+    
+    /**
+     * Maps Windows (non-CLDR) time zone ID to IANA ID. This is pragmatic but not 100% precise as one Windows zone ID
+     * maps to multiple IANA IDs (one for each territory). For all practical purposes this should be good enough, though.
+     *
+     * Source: http://unicode.org/repos/cldr/trunk/common/supplemental/windowsZones.xml
+     * originally copied from ics-calendar.7.2.0
+     *
+     * @var array
+     */
+    private static $windowsTimeZonesMap = array(
+        'AUS Central Standard Time'       => 'Australia/Darwin',
+        'AUS Eastern Standard Time'       => 'Australia/Sydney',
+        'Afghanistan Standard Time'       => 'Asia/Kabul',
+        'Alaskan Standard Time'           => 'America/Anchorage',
+        'Aleutian Standard Time'          => 'America/Adak',
+        'Altai Standard Time'             => 'Asia/Barnaul',
+        'Arab Standard Time'              => 'Asia/Riyadh',
+        'Arabian Standard Time'           => 'Asia/Dubai',
+        'Arabic Standard Time'            => 'Asia/Baghdad',
+        'Argentina Standard Time'         => 'America/Buenos_Aires',
+        'Astrakhan Standard Time'         => 'Europe/Astrakhan',
+        'Atlantic Standard Time'          => 'America/Halifax',
+        'Aus Central W. Standard Time'    => 'Australia/Eucla',
+        'Azerbaijan Standard Time'        => 'Asia/Baku',
+        'Azores Standard Time'            => 'Atlantic/Azores',
+        'Bahia Standard Time'             => 'America/Bahia',
+        'Bangladesh Standard Time'        => 'Asia/Dhaka',
+        'Belarus Standard Time'           => 'Europe/Minsk',
+        'Bougainville Standard Time'      => 'Pacific/Bougainville',
+        'Canada Central Standard Time'    => 'America/Regina',
+        'Cape Verde Standard Time'        => 'Atlantic/Cape_Verde',
+        'Caucasus Standard Time'          => 'Asia/Yerevan',
+        'Cen. Australia Standard Time'    => 'Australia/Adelaide',
+        'Central America Standard Time'   => 'America/Guatemala',
+        'Central Asia Standard Time'      => 'Asia/Almaty',
+        'Central Brazilian Standard Time' => 'America/Cuiaba',
+        'Central Europe Standard Time'    => 'Europe/Budapest',
+        'Central European Standard Time'  => 'Europe/Warsaw',
+        'Central Pacific Standard Time'   => 'Pacific/Guadalcanal',
+        'Central Standard Time (Mexico)'  => 'America/Mexico_City',
+        'Central Standard Time'           => 'America/Chicago',
+        'Chatham Islands Standard Time'   => 'Pacific/Chatham',
+        'China Standard Time'             => 'Asia/Shanghai',
+        'Cuba Standard Time'              => 'America/Havana',
+        'Dateline Standard Time'          => 'Etc/GMT+12',
+        'E. Africa Standard Time'         => 'Africa/Nairobi',
+        'E. Australia Standard Time'      => 'Australia/Brisbane',
+        'E. Europe Standard Time'         => 'Europe/Chisinau',
+        'E. South America Standard Time'  => 'America/Sao_Paulo',
+        'Easter Island Standard Time'     => 'Pacific/Easter',
+        'Eastern Standard Time (Mexico)'  => 'America/Cancun',
+        'Eastern Standard Time'           => 'America/New_York',
+        'Egypt Standard Time'             => 'Africa/Cairo',
+        'Ekaterinburg Standard Time'      => 'Asia/Yekaterinburg',
+        'FLE Standard Time'               => 'Europe/Kiev',
+        'Fiji Standard Time'              => 'Pacific/Fiji',
+        'GMT Standard Time'               => 'Europe/London',
+        'GTB Standard Time'               => 'Europe/Bucharest',
+        'Georgian Standard Time'          => 'Asia/Tbilisi',
+        'Greenland Standard Time'         => 'America/Godthab',
+        'Greenwich Standard Time'         => 'Atlantic/Reykjavik',
+        'Haiti Standard Time'             => 'America/Port-au-Prince',
+        'Hawaiian Standard Time'          => 'Pacific/Honolulu',
+        'India Standard Time'             => 'Asia/Calcutta',
+        'Iran Standard Time'              => 'Asia/Tehran',
+        'Israel Standard Time'            => 'Asia/Jerusalem',
+        'Jordan Standard Time'            => 'Asia/Amman',
+        'Kaliningrad Standard Time'       => 'Europe/Kaliningrad',
+        'Korea Standard Time'             => 'Asia/Seoul',
+        'Libya Standard Time'             => 'Africa/Tripoli',
+        'Line Islands Standard Time'      => 'Pacific/Kiritimati',
+        'Lord Howe Standard Time'         => 'Australia/Lord_Howe',
+        'Magadan Standard Time'           => 'Asia/Magadan',
+        'Magallanes Standard Time'        => 'America/Punta_Arenas',
+        'Marquesas Standard Time'         => 'Pacific/Marquesas',
+        'Mauritius Standard Time'         => 'Indian/Mauritius',
+        'Middle East Standard Time'       => 'Asia/Beirut',
+        'Montevideo Standard Time'        => 'America/Montevideo',
+        'Morocco Standard Time'           => 'Africa/Casablanca',
+        'Mountain Standard Time (Mexico)' => 'America/Chihuahua',
+        'Mountain Standard Time'          => 'America/Denver',
+        'Myanmar Standard Time'           => 'Asia/Rangoon',
+        'N. Central Asia Standard Time'   => 'Asia/Novosibirsk',
+        'Namibia Standard Time'           => 'Africa/Windhoek',
+        'Nepal Standard Time'             => 'Asia/Katmandu',
+        'New Zealand Standard Time'       => 'Pacific/Auckland',
+        'Newfoundland Standard Time'      => 'America/St_Johns',
+        'Norfolk Standard Time'           => 'Pacific/Norfolk',
+        'North Asia East Standard Time'   => 'Asia/Irkutsk',
+        'North Asia Standard Time'        => 'Asia/Krasnoyarsk',
+        'North Korea Standard Time'       => 'Asia/Pyongyang',
+        'Omsk Standard Time'              => 'Asia/Omsk',
+        'Pacific SA Standard Time'        => 'America/Santiago',
+        'Pacific Standard Time (Mexico)'  => 'America/Tijuana',
+        'Pacific Standard Time'           => 'America/Los_Angeles',
+        'Pakistan Standard Time'          => 'Asia/Karachi',
+        'Paraguay Standard Time'          => 'America/Asuncion',
+        'Romance Standard Time'           => 'Europe/Paris',
+        'Russia Time Zone 10'             => 'Asia/Srednekolymsk',
+        'Russia Time Zone 11'             => 'Asia/Kamchatka',
+        'Russia Time Zone 3'              => 'Europe/Samara',
+        'Russian Standard Time'           => 'Europe/Moscow',
+        'SA Eastern Standard Time'        => 'America/Cayenne',
+        'SA Pacific Standard Time'        => 'America/Bogota',
+        'SA Western Standard Time'        => 'America/La_Paz',
+        'SE Asia Standard Time'           => 'Asia/Bangkok',
+        'Saint Pierre Standard Time'      => 'America/Miquelon',
+        'Sakhalin Standard Time'          => 'Asia/Sakhalin',
+        'Samoa Standard Time'             => 'Pacific/Apia',
+        'Sao Tome Standard Time'          => 'Africa/Sao_Tome',
+        'Saratov Standard Time'           => 'Europe/Saratov',
+        'Singapore Standard Time'         => 'Asia/Singapore',
+        'South Africa Standard Time'      => 'Africa/Johannesburg',
+        'Sri Lanka Standard Time'         => 'Asia/Colombo',
+        'Sudan Standard Time'             => 'Africa/Tripoli',
+        'Syria Standard Time'             => 'Asia/Damascus',
+        'Taipei Standard Time'            => 'Asia/Taipei',
+        'Tasmania Standard Time'          => 'Australia/Hobart',
+        'Tocantins Standard Time'         => 'America/Araguaina',
+        'Tokyo Standard Time'             => 'Asia/Tokyo',
+        'Tomsk Standard Time'             => 'Asia/Tomsk',
+        'Tonga Standard Time'             => 'Pacific/Tongatapu',
+        'Transbaikal Standard Time'       => 'Asia/Chita',
+        'Turkey Standard Time'            => 'Europe/Istanbul',
+        'Turks And Caicos Standard Time'  => 'America/Grand_Turk',
+        'US Eastern Standard Time'        => 'America/Indianapolis',
+        'US Mountain Standard Time'       => 'America/Phoenix',
+        'UTC'                             => 'Etc/GMT',
+        'UTC+12'                          => 'Etc/GMT-12',
+        'UTC+13'                          => 'Etc/GMT-13',
+        'UTC-02'                          => 'Etc/GMT+2',
+        'UTC-08'                          => 'Etc/GMT+8',
+        'UTC-09'                          => 'Etc/GMT+9',
+        'UTC-11'                          => 'Etc/GMT+11',
+        'Ulaanbaatar Standard Time'       => 'Asia/Ulaanbaatar',
+        'Venezuela Standard Time'         => 'America/Caracas',
+        'Vladivostok Standard Time'       => 'Asia/Vladivostok',
+        'W. Australia Standard Time'      => 'Australia/Perth',
+        'W. Central Africa Standard Time' => 'Africa/Lagos',
+        'W. Europe Standard Time'         => 'Europe/Berlin',
+        'W. Mongolia Standard Time'       => 'Asia/Hovd',
+        'West Asia Standard Time'         => 'Asia/Tashkent',
+        'West Bank Standard Time'         => 'Asia/Hebron',
+        'West Pacific Standard Time'      => 'Pacific/Port_Moresby',
+        'Yakutsk Standard Time'           => 'Asia/Yakutsk',
+    );
+    
     
     public function parse($str ,  $penddate,  $pcount) {
         
@@ -390,13 +541,42 @@ class IcsParser {
         if ($lastChar == 'Z') {
             $tzid = 'UTC';
         } else  {
-            $tzid = ($tzid > ' ') ? $tzid : get_option('timezone_string');
+            $tzid = $this->parseIanaTimezoneid ($tzid)->getName();
         }
-        $date = date_create_from_format('Ymd His e', substr($datetime,0,8) . ' ' . $hms. ' ' . $tzid);
-        $time = $date->getTimestamp();
-        
-        
-        return $time;
+        $date = \DateTime::createFromFormat('Ymd His e', substr($datetime,0,8) . ' ' . $hms. ' ' . $tzid);
+        $timestamp = $date->getTimestamp();
+        return $timestamp;
+    }
+    /**
+     * Checks if a time zone is a recognised Windows (non-CLDR) time zone
+     *
+     * @param  string $timeZone
+     * @return boolean
+     */
+    public function isValidWindowsTimeZoneId($timeZone)
+    {
+        return array_key_exists(html_entity_decode($timeZone), self::$windowsTimeZonesMap);
+    }
+    /**
+     * Checks if a time zone ID is a Iana timezone then return this timezone.
+     * If empty return timezone from WP
+     * Checks if time zone ID is windows timezone then return this timezone
+     * If nthing istrue return timezone from WP
+     * 
+     * @param  string $ptzid (timezone ID)
+     * @return DateTimeZone object
+     */
+    
+    private function parseIanaTimezoneid ($ptzid = '') {
+        try {
+                $timezone = new \DateTimeZone((isset($ptzid)&& $ptzid !== '') ? $ptzid : get_option('timezone_string'));
+            } catch (Exception $exc) {}
+        if (isset($timezone)) return $timezone;
+        try {
+                if (isset(self::$windowsTimeZonesMap[$ptzid])) $timezone = new \DateTimeZone(self::$windowsTimeZonesMap[$ptzid]);
+            } catch (Exception $exc) {}
+        if (isset($timezone)) return $timezone;
+        return new \DateTimeZone(get_option('timezone_string'));
     }
     
     private function eventSortComparer($a, $b) {
@@ -454,11 +634,11 @@ class IcsParser {
                         $eventObj->location = $desc;
                         break;
                     case "DTSTART":
+                        $tz = $this->parseIanaTimezoneid ($tzid);
+                        $tzid = $tz->getName();
+                        $eventObj->tzid = $tzid;
                         $eventObj->startisdate = $isdate;
                         $eventObj->start = $this->parseIcsDateTime($value, $tzid);
-                        if ($tzid > ' ') {
-                            $eventObj->tzid = $tzid;
-                        }
                         if (!isset($eventObj->end)) { // because I am not sure the order is alway DTSTART before DTEND
                             $eventObj->endisdate = $isdate;
                             $eventObj->end = $eventObj->start;
