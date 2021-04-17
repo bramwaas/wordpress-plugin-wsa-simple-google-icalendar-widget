@@ -15,6 +15,7 @@ class IcsParsingException extends Exception {}
  *               found a problem with UID in first line when line-ends are \n in stead of \r\n solved by better calculation of start of EventStr.
  *   bw 20201123 handle not available DTEND => !isset($e->end) in response to a comment of lillyberger (@lillyberger) on the plugin page.
  *   bw 20210415 added windows to Iana timezone-array from ics-calendar.7.2.0, to solve erro with outlook agenda. 
+ *               found a solution for colon in description or summary, special attention to colon in second or later line.
  * Version: 1.3.1
  
  */
@@ -618,10 +619,10 @@ class IcsParser {
                     }
                 }
             }
-            if (count($list) > 1) {
+            if (count($list) > 1 && strlen($token) > 1 && substr($token, 0, 1) > ' ') { //all tokens start with a alphabetic char , otherwise it is a continuation of a description with a colon in it.
                 // trim() to remove \n\r\0
                 $value = trim($list[1]);
-                $desc = str_replace(array('\;', '\,', '\r\n', '\n', '\r'), array(';', ',', '<br>', '<br>', '<br>'), htmlspecialchars(trim($list[1], "\n\r\0")));
+                $desc = str_replace(array('\;', '\,', '\r\n', '\n', '\r'), array(';', ',', '<br>', '<br>', '<br>'), htmlspecialchars(trim(substr($l,strlen($list[0])+ 1), "\n\r\0")));
                 $tokenprev = $token;
                 switch($token) {
                     case "SUMMARY":
@@ -662,8 +663,8 @@ class IcsParser {
                         break;
                 }
             }else { // count($list) <= 1
-                if (strlen($token) > 1) {
-                    $desc = str_replace(array('\;', '\,', '\r\n', '\n', '\r'), array(';', ',', '<br>', '<br>', '<br>'), htmlspecialchars(trim(substr($token,1), "\n\r\0")));
+                if (strlen($l) > 1) {
+                    $desc = str_replace(array('\;', '\,', '\r\n', '\n', '\r'), array(';', ',', '<br>', '<br>', '<br>'), htmlspecialchars(trim(substr($l,1), "\n\r\0")));
                     switch($tokenprev) {
                         case "SUMMARY":
                             $eventObj->summary .= $desc;

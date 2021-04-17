@@ -1,5 +1,5 @@
-=== Simple Google Calendar Events Wordpress Widget ===
-Plugin name: Simple Google Calendar Events Wordpress Widget
+=== Simple Google Calendar Outlook Events Widget ===
+Plugin name: Simple Google Calendar Outlook Events Widget
 Contributors: bramwaas
 Tags: Calendar, Event Calendar, Google Calendar, iCal, Events, iCalendar, Outlook
 Requires at least: 5.3.0
@@ -13,7 +13,7 @@ Widget that displays events from a public google calendar or iCal file.
  
 == Description ==
 
-Simple widget to display events from a public google calendar, or an other iCal file, in the style of your website.
+Simple widget to display events from a public google calendar, microsoft office outlook calendar or an other iCal file, in the style of your website.
 
 This simple widget fetches events from a public google calendar (or other calendar in iCal format) and displays them in simple list allowing you to fully adapt to your website by applying all kinds of CSS. 
 Google offers some HTML snippets to embed your public Google Calendar into your website.
@@ -22,7 +22,7 @@ These are great, but as soon as you want to make a few adjustments to the stylin
 == Plugin Features ==
 
 * Calendar widget to display appointments/events of a public Google calendar or other iCal file.
-* Small footprint, uses only Google ID of the calendar to get event information via iCal
+* Small footprint, uses only Google ID of the calendar, or ICS link for Outlook, or Url of iCal file, to get event information via iCal
 * Manage events in Google Calendar, or other iCalendar source.
 * Fully adaptable to your website with CSS. Output in unorderd list with Bootstrap 4 listgroup classes and toggle for details.
 * Choose date / time format in admin screen that best suits your website.
@@ -52,7 +52,7 @@ Then use the public iCal address or the Google calendar ID.
  You can find Google calendar ID by going to Calendar Settings / Calendars, clicking on the appropriate calendar, scrolling all the way down to find the Calendar ID at the bottom under the Integrate Calendar section. There's your calendar id.
  [More details on Google support](https://support.google.com/calendar/answer/37083#link)
 
-= How to use Microsoft Outlook Calendar? =
+= How to use Microsoft Office Outlook Calendar? =
 
 First you have to share your calendar to make it public available, or to create and share a public calendar. Private calendars cannot be accessed by this plugin.
 Then publish it as  an ICS link and use this link address. (something like https://outlook.live.com/owa/calendar/00000000-0000-0000-0000-000000000000/.../cid-.../calendar.ics)
@@ -72,7 +72,7 @@ Probably the calendar is not public (yet), you can copy the link before the agen
 
  Yes you can, since v1.2.0, I have tested with [https://p24-calendars.icloud.com/holiday/NL_nl.ics](https://p24-calendars.icloud.com/holiday/NL_nl.ics) .
 
-= How do I contribute to Simple Google iCalendar Widget? =
+= How do I contribute to Simple Google Calendar Outlook Events Widget? =
 
 We'd love your help! Here's a few things you can do:
 
@@ -91,7 +91,7 @@ We'd love your help! Here's a few things you can do:
 * Exclude events on EXDATE from repeat 
 * By day month or by monthday (BYDAY, BYMONTH, BYMONTHDAY) no other by
   (not parsed: BYYEARDAY, BYSETPOS, BYHOUR, BYMINUTE, WKST)
-* Respects Timezone and Day Light Saving time 
+* Respects Timezone and Day Light Saving time, build and tested with Iana timezones as used in php and by Google, now also tested with Microsoft timezones and unknown timezones. For unknown timezone-names using the default timezone of Wordpress (probably the local timezone).  
 
 ~~~
 see http://www.ietf.org/rfc/rfc5545.txt for specification of te ical format.
@@ -127,7 +127,8 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 * since v1.2.0 Wordpress version 5.3.0 is required because of the use of wp_date() 
 
 == Changelog ==
-
+* 1.3.1 tested with Outlook and found that different timezones were a problem, solved by using a conversion tabel between Microsoft timezones and Iana timezones and using local (Wordpress configuration) timezone when timezone is unknown.
+Also found that colon ended description and summary. Found a solution for that so now you can use a colon in a description or a summay
 * 1.3.0 made time formats of appointment/event times configurable in response to a comment of carolynclarkdfw (@carolynclarkdfw) on the plugin page. Tested with wordpress 5.7
 * 1.2.2 added a checkbox to clear cache before expiration in response to a comment of TrojanObelix. 
 * 1.2.1 handle not available DTEND => !isset($e->end) in response to a comment of lillyberger (@lillyberger) on the plugin page, by defaulting $e->end to DTSTART value.
