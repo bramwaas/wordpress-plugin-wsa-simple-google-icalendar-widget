@@ -55,18 +55,22 @@ Then use the public iCal address or the Google calendar ID.
 = How to use Microsoft Office Outlook Calendar? =
 
 First you have to share your calendar to make it public available, or to create and share a public calendar. Private calendars cannot be accessed by this plugin.
-Then publish it as  an ICS link and use this link address. (something like https://outlook.live.com/owa/calendar/00000000-0000-0000-0000-000000000000/.../cid-.../calendar.ics)
+Then publish it as  an ICS link and use this link address. (something like https://outlook.live.com/owa/calendar/00000000-0000-0000-0000-000000000000/.../cid-.../calendar.ics) (works from version 1.3.1 of this widget)
 [More details on Microsoft Office support](https://support.office.com/en-us/article/share-your-calendar-in-outlook-on-the-web-7ecef8ae-139c-40d9-bae2-a23977ee58d5)
 
 = How to use Apple Calendar (iCloud Mac/ios)? =
-
-First you have to make your calendar public, or to create a public calendar private calendars cannot be accessed by this plugin.
-Then use the public iCal address. 
+Choose the calendar you want to share. On the line of that calendar click on the radio symbol (a dot with three quart circles) right in that line. In the pop up Calendar Sharing check the box Public Calendar. You see the url below something like webcal://p59-caldav.icloud.com/published/2/MTQxNzk0NDA2NjE0MTc5AAAAAXt2Dy6XXXXXPXXxuZnTLDV9xr6A6_m3r_GU33Qj. Click on Copy Link and OK. Paste that in the "Calendar ID, or iCal URL" field of the widget (before version 1.3.1 you have to change webcal in https)
 [More details on the MacObserver](https://www.macobserver.com/tips/quick-tip/icloud-configure-public-calendar)
 
 = Error: cURL error 28: Operation timed out after 5000 milliseconds with 0 bytes received =
 
 Probably the calendar is not public (yet), you can copy the link before the agenda is actually published. Check if the agenda has already been published and try again.
+
+= I only see the headline of the calendar, but no events =
+
+There are no events found within the selection. Test e.g. with an appointment for the next day and refresh the cache or wait till the cache is refreshed.
+Check if you can download the ics file you have designated in the widget with a browser. At least if it is a text file with the first line "BEGIN:VCALENDAR" and further lines "BEGIN:VEVENT" and lines "END:VEVENT". If you cannot resolve it, you can of course report an error / question in our
+[community support forum](https://wordpress.org/support/plugin/simple-google-icalendar-widget)
 
 = Can I use an event calendar that only uses days, not times, like a holiday calendar? =
 
@@ -91,7 +95,7 @@ We'd love your help! Here's a few things you can do:
 * Exclude events on EXDATE from repeat 
 * By day month or by monthday (BYDAY, BYMONTH, BYMONTHDAY) no other by
   (not parsed: BYYEARDAY, BYSETPOS, BYHOUR, BYMINUTE, WKST)
-* Respects Timezone and Day Light Saving time, build and tested with Iana timezones as used in php and by Google, now also tested with Microsoft timezones and unknown timezones. For unknown timezone-names using the default timezone of Wordpress (probably the local timezone).  
+* Respects Timezone and Day Light Saving time. Build and tested with Iana timezones as used in php, Google, and Apple now also tested with Microsoft timezones and unknown timezones. For unknown timezone-names using the default timezone of Wordpress (probably the local timezone).  
 
 ~~~
 see http://www.ietf.org/rfc/rfc5545.txt for specification of te ical format.
@@ -128,7 +132,9 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 
 == Changelog ==
 * 1.3.1 tested with Outlook and found that different timezones were a problem, solved by using a conversion tabel between Microsoft timezones and Iana timezones and using local (Wordpress configuration) timezone when timezone is unknown.
-Also found that colon ended description and summary. Found a solution for that so now you can use a colon in a description or a summay
+Also found that colon ended description and summary. Found a solution for that so now you can use a colon in a description or a summay.
+Tested with iCloud Apple Calendar, timezones seem to be Iana. Issue with url starting with webcal in stead of http, work around is substituting webcal with https:, but solved by change in url check and stricter validation Google Id.
+Added message between html comment when url is not valide.
 * 1.3.0 made time formats of appointment/event times configurable in response to a comment of carolynclarkdfw (@carolynclarkdfw) on the plugin page. Tested with wordpress 5.7
 * 1.2.2 added a checkbox to clear cache before expiration in response to a comment of TrojanObelix. 
 * 1.2.1 handle not available DTEND => !isset($e->end) in response to a comment of lillyberger (@lillyberger) on the plugin page, by defaulting $e->end to DTSTART value.
