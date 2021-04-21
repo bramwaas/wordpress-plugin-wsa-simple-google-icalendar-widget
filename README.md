@@ -1,7 +1,7 @@
 === Simple Google Calendar Outlook Events Widget ===
 Plugin name: Simple Google Calendar Outlook Events Widget
 Contributors: bramwaas
-Tags: Calendar, Event Calendar, Google Calendar, iCal, Events, iCalendar, Outlook
+Tags: Calendar, Event Calendar, Google Calendar, iCal, Events, iCalendar, Outlook, iCloud
 Requires at least: 5.3.0
 Tested up to: 5.7
 Requires PHP: 5.3.0
@@ -133,8 +133,7 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 == Changelog ==
 * 1.3.1 tested with Outlook and found that different timezones were a problem, solved by using a conversion tabel between Microsoft timezones and Iana timezones and using local (Wordpress configuration) timezone when timezone is unknown.
 Also found that colon ended description and summary. Found a solution for that so now you can use a colon in a description or a summay.
-Tested with iCloud Apple Calendar, timezones seem to be Iana. Issue with url starting with webcal in stead of http, work around is substituting webcal with https:, but solved by change in url check and stricter validation Google Id.
-Added message between html comment when url is not valide.
+Tested with iCloud Apple Calendar, timezones seem to be Iana. Issue with url starting with webcal protocol in stead of http or https, work around is substituting webcal with https:, but solved by change in url check and stricter validation Google Id.
 * 1.3.0 made time formats of appointment/event times configurable in response to a comment of carolynclarkdfw (@carolynclarkdfw) on the plugin page. Tested with wordpress 5.7
 * 1.2.2 added a checkbox to clear cache before expiration in response to a comment of TrojanObelix. 
 * 1.2.1 handle not available DTEND => !isset($e->end) in response to a comment of lillyberger (@lillyberger) on the plugin page, by defaulting $e->end to DTSTART value.

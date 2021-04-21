@@ -1,7 +1,7 @@
-=== Simple Google Calendar Events Wordpress Widget ===
-Plugin name: Simple Google Calendar Events Wordpress Widget
+=== Simple Google Calendar Outlook Events Widget ===
+Plugin name: Simple Google Calendar Outlook Events Widget
 Contributors: bramwaas
-Tags: Calendar, Event Calendar, Google Calendar, iCal, Events, iCalendar, Outlook
+Tags: Calendar, Event Calendar, Google Calendar, iCal, Events, iCalendar, Outlook, iCloud
 Requires at least: 5.3.0
 Tested up to: 5.7
 Requires PHP: 5.3.0
@@ -13,7 +13,7 @@ Widget that displays events from a public google calendar or iCal file.
  
 == Description ==
 
-Simple widget to display events from a public google calendar, or an other iCal file, in the style of your website.
+Simple widget to display events from a public google calendar, microsoft office outlook calendar or an other iCal file, in the style of your website.
 
 This simple widget fetches events from a public google calendar (or other calendar in iCal format) and displays them in simple list allowing you to fully adapt to your website by applying all kinds of CSS. 
 Google offers some HTML snippets to embed your public Google Calendar into your website.
@@ -22,7 +22,7 @@ These are great, but as soon as you want to make a few adjustments to the stylin
 == Plugin Features ==
 
 * Calendar widget to display appointments/events of a public Google calendar or other iCal file.
-* Small footprint, uses only Google ID of the calendar to get event information via iCal
+* Small footprint, uses only Google ID of the calendar, or ICS link for Outlook, or Url of iCal file, to get event information via iCal
 * Manage events in Google Calendar, or other iCalendar source.
 * Fully adaptable to your website with CSS. Output in unorderd list with Bootstrap 4 listgroup classes and toggle for details.
 * Choose date / time format in admin screen that best suits your website.
@@ -41,15 +41,42 @@ Just drag it into your sidebar.
 
 == Frequently Asked Questions ==
 
-= Where do I find Google Calendar Id? =
+= How to use Google Calendar? =
+
+First you have to share your calendar to make it public available, or to create a public calendar. Private calendars cannot be accessed by this plugin.
+Then use the public iCal address or the Google calendar ID.
+[More details on Google support](https://support.google.com/calendar/answer/37083)
+
+= Where do I find the Google Calendar Id? =
 
  You can find Google calendar ID by going to Calendar Settings / Calendars, clicking on the appropriate calendar, scrolling all the way down to find the Calendar ID at the bottom under the Integrate Calendar section. There's your calendar id.
+ [More details on Google support](https://support.google.com/calendar/answer/37083#link)
+
+= How to use Microsoft Office Outlook Calendar? =
+
+First you have to share your calendar to make it public available, or to create and share a public calendar. Private calendars cannot be accessed by this plugin.
+Then publish it as  an ICS link and use this link address. (something like https://outlook.live.com/owa/calendar/00000000-0000-0000-0000-000000000000/.../cid-.../calendar.ics) (works from version 1.3.1 of this widget)
+[More details on Microsoft Office support](https://support.office.com/en-us/article/share-your-calendar-in-outlook-on-the-web-7ecef8ae-139c-40d9-bae2-a23977ee58d5)
+
+= How to use Apple Calendar (iCloud Mac/ios)? =
+Choose the calendar you want to share. On the line of that calendar click on the radio symbol (a dot with three quart circles) right in that line. In the pop up Calendar Sharing check the box Public Calendar. You see the url below something like webcal://p59-caldav.icloud.com/published/2/MTQxNzk0NDA2NjE0MTc5AAAAAXt2Dy6XXXXXPXXxuZnTLDV9xr6A6_m3r_GU33Qj. Click on Copy Link and OK. Paste that in the "Calendar ID, or iCal URL" field of the widget (before version 1.3.1 you have to change webcal in https)
+[More details on the MacObserver](https://www.macobserver.com/tips/quick-tip/icloud-configure-public-calendar)
+
+= Error: cURL error 28: Operation timed out after 5000 milliseconds with 0 bytes received =
+
+Probably the calendar is not public (yet), you can copy the link before the agenda is actually published. Check if the agenda has already been published and try again.
+
+= I only see the headline of the calendar, but no events =
+
+There are no events found within the selection. Test e.g. with an appointment for the next day and refresh the cache or wait till the cache is refreshed.
+Check if you can download the ics file you have designated in the widget with a browser. At least if it is a text file with the first line "BEGIN:VCALENDAR" and further lines "BEGIN:VEVENT" and lines "END:VEVENT". If you cannot resolve it, you can of course report an error / question in our
+[community support forum](https://wordpress.org/support/plugin/simple-google-icalendar-widget)
 
 = Can I use an event calendar that only uses days, not times, like a holiday calendar? =
 
  Yes you can, since v1.2.0, I have tested with [https://p24-calendars.icloud.com/holiday/NL_nl.ics](https://p24-calendars.icloud.com/holiday/NL_nl.ics) .
 
-= How do I contribute to Simple Google iCalendar Widget? =
+= How do I contribute to Simple Google Calendar Outlook Events Widget? =
 
 We'd love your help! Here's a few things you can do:
 
@@ -68,7 +95,7 @@ We'd love your help! Here's a few things you can do:
 * Exclude events on EXDATE from repeat 
 * By day month or by monthday (BYDAY, BYMONTH, BYMONTHDAY) no other by
   (not parsed: BYYEARDAY, BYSETPOS, BYHOUR, BYMINUTE, WKST)
-* Respects Timezone and Day Light Saving time 
+* Respects Timezone and Day Light Saving time. Build and tested with Iana timezones as used in php, Google, and Apple now also tested with Microsoft timezones and unknown timezones. For unknown timezone-names using the default timezone of Wordpress (probably the local timezone).  
 
 ~~~
 see http://www.ietf.org/rfc/rfc5545.txt for specification of te ical format.
@@ -104,7 +131,9 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 * since v1.2.0 Wordpress version 5.3.0 is required because of the use of wp_date() 
 
 == Changelog ==
-
+* 1.3.1 tested with Outlook and found that different timezones were a problem, solved by using a conversion tabel between Microsoft timezones and Iana timezones and using local (Wordpress configuration) timezone when timezone is unknown.
+Also found that colon ended description and summary. Found a solution for that so now you can use a colon in a description or a summay.
+Tested with iCloud Apple Calendar, timezones seem to be Iana. Issue with url starting with webcal protocol in stead of http or https, work around is substituting webcal with https:, but solved by change in url check and stricter validation Google Id.
 * 1.3.0 made time formats of appointment/event times configurable in response to a comment of carolynclarkdfw (@carolynclarkdfw) on the plugin page. Tested with wordpress 5.7
 * 1.2.2 added a checkbox to clear cache before expiration in response to a comment of TrojanObelix. 
 * 1.2.1 handle not available DTEND => !isset($e->end) in response to a comment of lillyberger (@lillyberger) on the plugin page, by defaulting $e->end to DTSTART value.

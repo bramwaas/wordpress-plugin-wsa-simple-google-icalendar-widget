@@ -1,7 +1,7 @@
 <?php
 /*
  Plugin Name: Simple Google Calendar Outlook Events Widget
- Description: Widget that displays events from a public google calendar
+ Description: Widget that displays events from a public google calendar or iCal file
  Plugin URI: https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  Author: Bram Waasdorp
  Version: 1.3.1
@@ -15,10 +15,10 @@
  *               so date_i18n() replaced bij wp_date()
  *   bw 20201123 V1.2.2 added a checkbox to clear cache before expiration. 
  *   bw 20210408 V1.3.0 made time formats configurable. 
- *              
+ *   bw 20210421 v1.3.1 test for http changed in test with esc_url_raw() to accomodate webcal protocol e.g for iCloud            
  */
 /*
- Simple Google calendar widget for Wordpress
+ Simple Google Calendar Outlook Events Widget
  Copyright (C) Bram Waasdorp 2017 - 2021
  2021-04-22
  Forked from Simple Google Calendar Widget v 0.7 by Nico Boehr
@@ -64,7 +64,9 @@ class Simple_iCal_Widget extends WP_Widget
     
     private function getCalendarUrl($calId)
     {
-        if (substr($calId, 0, 4) == 'http')
+        
+        $protocol = strtolower(explode('://', $calId)[0]);
+        if (array_search($protocol, array('http', 'https', 'webcal')))
         { return $calId; }
         else
         { return 'https://www.google.com/calendar/ical/'.$calId.'/public/basic.ics'; }
@@ -116,8 +118,12 @@ class Simple_iCal_Widget extends WP_Widget
         $httpData = wp_remote_get($url);
         
         if(is_wp_error($httpData)) {
-            echo 'Simple Google Calendar: ', $httpData->get_error_message();
-            return false;
+            echo '<!-- ' . $url . ' not found ' . 'fall back to https:// -->'; 
+            $httpData = wp_remote_get('https://' . explode('://', $url)[1]);
+            if(is_wp_error($httpData)) {
+                echo 'Simple Google Calendar: ', $httpData->get_error_message();
+                return false;
+            }
         }
         
         if(!is_array($httpData) || !array_key_exists('body', $httpData)) {
@@ -182,9 +188,8 @@ class Simple_iCal_Widget extends WP_Widget
                 echo	'</a>' ;
                 echo '<div class="collapse ical_details' .  $sflgia . '" id="',  $itemid, '">';
                 if(!empty($e->description)) {
-                    echo   $e->description
-                    ,'<br>';
-                }
+                    echo   $e->description ,(strrpos($e->description, '<br>') == (strlen($e->description) - 5)) ? '' : '<br>';
+                 }
                 if ($e->startisdate === false && date('z', $e->start) === date('z', $e->end))	{
                     echo '<span class="time">', wp_date( $dftstart, $e->start ),
                     '</span><span class="time">', wp_date( $dftend, $e->end ), '</span> ' ;
