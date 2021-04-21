@@ -187,7 +187,7 @@ class Simple_iCal_Widget extends WP_Widget
                 }
                 echo	'</a>' ;
                 echo '<div class="collapse ical_details' .  $sflgia . '" id="',  $itemid, '">';
-                if(!empty($e->description)) {
+                if(!empty($e->description) && trim($e->description) > '' ) {
                     echo   $e->description ,(strrpos($e->description, '<br>') == (strlen($e->description) - 5)) ? '' : '<br>';
                  }
                 if ($e->startisdate === false && date('z', $e->start) === date('z', $e->end))	{
