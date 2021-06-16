@@ -9,7 +9,7 @@
  * @copyright  Copyright (c)  2017 - 2021, Bram Waasdorp
  * @link       https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  * @license    http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * Version: 1.3.0
+ * Version: 1.4.0
 */
 class Simple_iCal_Admin {
 //menu items
@@ -72,6 +72,9 @@ public function simple_ical_info () {
 	
 	_e('<p><strong>Time format end time</strong></p>', 'simple_ical');
 	_e('<p>Time format separator and end time. Default:  - G:i,<br>G or g = 24 or 12 hour format of an hour without leading zeros<br>i = Minutes with leading zeros<br>a or A = Lowercase or Uppercase Ante meridiem and Post meridiem<br>make empty if you don\'t want to show end time.<br>You can also use other text to embellish it<br>escape characters with special meaning with a slash(\)e.g.: \t\o G:i .</p>', 'simple_ical');
+	
+	_e('<p><strong>Excerpt length</strong></p>', 'simple_ical');
+	_e('<p>Max length of the description in characters.<br>Note, not all characters have the same width, so the number of lines is not completely fixed by this. So you need additional CSS for that. Default: empty, all characters will be displayed</p>', 'simple_ical');
 	
 	_e('<p><strong>Suffix group class</strong></p>', 'simple_ical');
 	_e('<p>Suffix to add after css-class around the event (list-group),<br>start with space to keep the original class and add another class.</p>', 'simple_ical');

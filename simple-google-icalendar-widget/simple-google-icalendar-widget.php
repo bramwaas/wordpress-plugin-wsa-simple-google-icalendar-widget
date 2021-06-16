@@ -4,7 +4,7 @@
  Description: Widget that displays events from a public google calendar or iCal file
  Plugin URI: https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  Author: Bram Waasdorp
- Version: 1.3.1
+ Version: 1.4.0
  License: GPL3
  Tested up to: 5.7
  Requires PHP:  5.3.0 tested with 7.2
@@ -15,12 +15,13 @@
  *               so date_i18n() replaced bij wp_date()
  *   bw 20201123 V1.2.2 added a checkbox to clear cache before expiration. 
  *   bw 20210408 V1.3.0 made time formats configurable. 
- *   bw 20210421 v1.3.1 test for http changed in test with esc_url_raw() to accomodate webcal protocol e.g for iCloud            
+ *   bw 20210421 v1.3.1 test for http changed in test with esc_url_raw() to accomodate webcal protocol e.g for iCloud 
+ *   bw 20210616 V1.4.0 added parameter excerptlength to limit the length in characters of the description           
  */
 /*
  Simple Google Calendar Outlook Events Widget
  Copyright (C) Bram Waasdorp 2017 - 2021
- 2021-04-22
+ 2021-06-16
  Forked from Simple Google Calendar Widget v 0.7 by Nico Boehr
  
  This program is free software: you can redistribute it and/or modify
@@ -160,6 +161,7 @@ class Simple_iCal_Widget extends WP_Widget
         $dftsum = (isset($instance['dateformat_tsum'])) ? $instance['dateformat_tsum'] : 'G:i ' ;
         $dftstart = (isset($instance['dateformat_tstart'])) ? $instance['dateformat_tstart'] : 'G:i' ;
         $dftend = (isset($instance['dateformat_tend'])) ? $instance['dateformat_tend'] : ' - G:i ' ;
+        $excerptlength = (isset($instance['excerptlength'])) ? $instance['excerptlength'] : '' ;
         $sflg = (isset($instance['suffix_lg_class'])) ? $instance['suffix_lg_class'] : '' ;
         $sflgi = (isset($instance['suffix_lgi_class'])) ? $instance['suffix_lgi_class'] : '' ;
         $sflgia = (isset($instance['suffix_lgia_class'])) ? $instance['suffix_lgia_class'] : '' ;
@@ -187,7 +189,8 @@ class Simple_iCal_Widget extends WP_Widget
                 }
                 echo	'</a>' ;
                 echo '<div class="collapse ical_details' .  $sflgia . '" id="',  $itemid, '">';
-                if(!empty($e->description) && trim($e->description) > '' ) {
+                if(!empty($e->description) && trim($e->description) > '' && $excerptlength <> 0) {
+                    $e->description = ($excerptlength == '') ? $e->description : substr($e->description, 0, $excerptlength);
                     echo   $e->description ,(strrpos($e->description, '<br>') == (strlen($e->description) - 5)) ? '' : '<br>';
                  }
                 if ($e->startisdate === false && date('z', $e->start) === date('z', $e->end))	{
@@ -252,6 +255,13 @@ class Simple_iCal_Widget extends WP_Widget
         $instance['dateformat_tsum'] = strip_tags($new_instance['dateformat_tsum']);
         $instance['dateformat_tstart'] = strip_tags($new_instance['dateformat_tstart']);
         $instance['dateformat_tend'] = strip_tags($new_instance['dateformat_tend']);
+        $instance['cache_time'] = strip_tags($new_instance['cache_time']);
+        if(is_numeric($new_instance['excerptlength']) && $new_instance['excerptlength'] >= 0) {
+            $instance['excerptlength'] = intval($new_instance['excerptlength']);
+        } else {
+            $instance['excerptlength'] = '';
+        }
+        
         $instance['suffix_lg_class'] = strip_tags($new_instance['suffix_lg_class']);
         $instance['suffix_lgi_class'] = strip_tags($new_instance['suffix_lgi_class']);
         $instance['suffix_lgia_class'] = strip_tags($new_instance['suffix_lgia_class']);
@@ -286,6 +296,7 @@ class Simple_iCal_Widget extends WP_Widget
             'dateformat_tsum' => 'G:i ',
             'dateformat_tstart' => 'G:i',
             'dateformat_tend' => ' - G:i ',
+            'excerptlength' => '',
             'suffix_lg_class' => '',
             'suffix_lgi_class' => ' py-0',
             'suffix_lgia_class' => '',
@@ -329,6 +340,10 @@ class Simple_iCal_Widget extends WP_Widget
         <p>
           <label for="<?php echo $this->get_field_id('dateformat_tend'); ?>"><?php _e('Time format end time:', 'simple_ical'); ?></label> 
           <input class="widefat" id="<?php echo $this->get_field_id('dateformat_tend'); ?>" name="<?php echo $this->get_field_name('dateformat_tend'); ?>" type="text" value="<?php echo esc_attr($instance['dateformat_tend']); ?>" />
+        </p>
+        <p>
+          <label for="<?php echo $this->get_field_id('excerptlength'); ?>"><?php _e('Excerpt length, max length of description:', 'simple_ical'); ?></label> 
+          <input class="widefat" id="<?php echo $this->get_field_id('excerptlength'); ?>" name="<?php echo $this->get_field_name('excerptlength'); ?>" type="text" value="<?php echo esc_attr($instance['excerptlength']); ?>" />
         </p>
         <p>
           <label for="<?php echo $this->get_field_id('suffix_lg_class'); ?>"><?php _e('Suffix group class:', 'simple_ical'); ?></label> 
