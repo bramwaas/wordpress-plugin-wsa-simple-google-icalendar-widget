@@ -133,7 +133,7 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 == Changelog ==
 * 1.4.0 added parameter excerptlength to limit the length in characters of the description in respons to a comment of justmigrating (@justmigrating).
 * 1.3.1 tested with Outlook and found that different timezones were a problem, solved by using a conversion tabel between Microsoft timezones and Iana timezones and using local (Wordpress configuration) timezone when timezone is unknown.
-Also found that colon ended description and summary. Found a solution for that so now you can use a colon in a description or a summay.
+Also found that colon ended description and summary. Found a solution for that so now you can use a colon in a description or a summary.
 Tested with iCloud Apple Calendar, timezones seem to be Iana. Issue with url starting with webcal protocol in stead of http or https, work around is substituting webcal with https:, but solved by change in url check and stricter validation Google Id.
 * 1.3.0 made time formats of appointment/event times configurable in response to a comment of carolynclarkdfw (@carolynclarkdfw) on the plugin page. Tested with wordpress 5.7
 * 1.2.2 added a checkbox to clear cache before expiration in response to a comment of TrojanObelix. 
