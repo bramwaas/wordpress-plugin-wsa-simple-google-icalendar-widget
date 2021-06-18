@@ -14,9 +14,10 @@ class IcsParsingException extends Exception {}
  *   bw 20201122 v1.2.0 find solution for DTSTART and DTEND without time by explicit using isDate and only displaying times when isDate === false.;
  *               found a problem with UID in first line when line-ends are \n in stead of \r\n solved by better calculation of start of EventStr.
  *   bw 20201123 handle not available DTEND => !isset($e->end) in response to a comment of lillyberger (@lillyberger) on the plugin page.
- *   bw 20210415 added windows to Iana timezone-array from ics-calendar.7.2.0, to solve erro with outlook agenda. 
+ *   bw 20210415 added windows to Iana timezone-array from ics-calendar.7.2.0, to solve erro with outlook agenda.
  *               found a solution for colon in description or summary, special attention to colon in second or later line.
- * Version: 1.3.1
+ *   bw 20210618 replace EOL <br> by \n in Multiline elements Description and Summary to make it easier to trim to excerptlength
+ * Version: 1.4.0
  
  */
 class IcsParser {
@@ -563,19 +564,19 @@ class IcsParser {
      * If empty return timezone from WP
      * Checks if time zone ID is windows timezone then return this timezone
      * If nthing istrue return timezone from WP
-     * 
+     *
      * @param  string $ptzid (timezone ID)
      * @return DateTimeZone object
      */
     
     private function parseIanaTimezoneid ($ptzid = '') {
         try {
-                $timezone = new \DateTimeZone((isset($ptzid)&& $ptzid !== '') ? $ptzid : get_option('timezone_string'));
-            } catch (Exception $exc) {}
+            $timezone = new \DateTimeZone((isset($ptzid)&& $ptzid !== '') ? $ptzid : get_option('timezone_string'));
+        } catch (Exception $exc) {}
         if (isset($timezone)) return $timezone;
         try {
-                if (isset(self::$windowsTimeZonesMap[$ptzid])) $timezone = new \DateTimeZone(self::$windowsTimeZonesMap[$ptzid]);
-            } catch (Exception $exc) {}
+            if (isset(self::$windowsTimeZonesMap[$ptzid])) $timezone = new \DateTimeZone(self::$windowsTimeZonesMap[$ptzid]);
+        } catch (Exception $exc) {}
         if (isset($timezone)) return $timezone;
         return new \DateTimeZone(get_option('timezone_string'));
     }
@@ -610,19 +611,19 @@ class IcsParser {
                 $dtl = explode("=", $tl[1]);
                 if (count($dtl) > 1 ){
                     switch($dtl[0]) {
-                    case 'TZID':
-                        $tzid = $dtl[1];
-                        break;
-                    case 'VALUE':
-                        $isdate = (substr( $dtl[1],0,4) == 'DATE');
-                        break;
+                        case 'TZID':
+                            $tzid = $dtl[1];
+                            break;
+                        case 'VALUE':
+                            $isdate = (substr( $dtl[1],0,4) == 'DATE');
+                            break;
                     }
                 }
             }
             if (count($list) > 1 && strlen($token) > 1 && substr($token, 0, 1) > ' ') { //all tokens start with a alphabetic char , otherwise it is a continuation of a description with a colon in it.
                 // trim() to remove \n\r\0
                 $value = trim($list[1]);
-                $desc = str_replace(array('\;', '\,', '\r\n', '\n', '\r'), array(';', ',', '<br>', '<br>', '<br>'), htmlspecialchars(trim($list[1], '\n\r\0')));
+                $desc = str_replace(array('\;', '\,', '\r\n', '\r'), array(';', ',', '\n', '\n'), htmlspecialchars(trim($list[1], '\n\r\0')));
                 $tokenprev = $token;
                 switch($token) {
                     case "SUMMARY":
@@ -643,7 +644,7 @@ class IcsParser {
                         if (!isset($eventObj->end)) { // because I am not sure the order is alway DTSTART before DTEND
                             $eventObj->endisdate = $isdate;
                             $eventObj->end = $eventObj->start;
-                        }                        
+                        }
                         break;
                     case "DTEND":
                         $eventObj->endisdate = $isdate;
@@ -664,7 +665,7 @@ class IcsParser {
                 }
             }else { // count($list) <= 1
                 if (strlen($l) > 1) {
-                    $desc = str_replace(array('\;', '\,', '\r\n', '\n', '\r'), array(';', ',', '<br>', '<br>', '<br>'), htmlspecialchars(trim(substr($l,1), '\n\r\0')));
+                    $desc = str_replace(array('\;', '\,', '\r\n', '\r'), array(';', ',', '\n', '\n'), htmlspecialchars(trim(substr($l,1), '\n\r\0')));
                     switch($tokenprev) {
                         case "SUMMARY":
                             $eventObj->summary .= $desc;
