@@ -16,7 +16,7 @@ class IcsParsingException extends Exception {}
  *   bw 20201123 handle not available DTEND => !isset($e->end) in response to a comment of lillyberger (@lillyberger) on the plugin page.
  *   bw 20210415 added windows to Iana timezone-array from ics-calendar.7.2.0, to solve erro with outlook agenda.
  *               found a solution for colon in description or summary, special attention to colon in second or later line.
- *   bw 20210618 replace EOL <br> by \n in Multiline elements Description and Summary to make it easier to trim to excerptlength
+ *   bw 20210618 replace EOL <br> by \n in Multiline elements Description and Summary to make it easier to trim to excerptlength.
  * Version: 1.4.0
  
  */
