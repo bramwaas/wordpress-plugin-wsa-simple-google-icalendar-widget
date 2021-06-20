@@ -16,14 +16,16 @@ class IcsParsingException extends Exception {}
  *   bw 20201123 handle not available DTEND => !isset($e->end) in response to a comment of lillyberger (@lillyberger) on the plugin page.
  *   bw 20210415 added windows to Iana timezone-array from ics-calendar.7.2.0, to solve erro with outlook agenda.
  *               found a solution for colon in description or summary, special attention to colon in second or later line.
- *   bw 20210618 replace EOL <br> by \n in Multiline elements Description and Summary to make it easier to trim to excerptlength.
+ *   bw 20210618 replace EOL <br> by newline ("\n") in Multiline elements Description and Summary to make it easier to trim to excerptlength
+ *               and do replacement of newline by <br> when displaying the line.
+ *               fixed a trim error that occurred in a previous version, revising the entire trimming so that both \r\n and \n end of lines are handled properly
  * Version: 1.4.0
  
  */
 class IcsParser {
     
-    const TOKEN_BEGIN_VEVENT = "\nBEGIN:VEVENT";
-    const TOKEN_END_VEVENT = "\nEND:VEVENT";
+    const TOKEN_BEGIN_VEVENT = "BEGIN:VEVENT";
+    const TOKEN_END_VEVENT = "END:VEVENT";
     const TOKEN_BEGIN_VTIMEZONE = "\nBEGIN:VTIMEZONE";
     const TOKEN_END_VTIMEZONE = "\nEND:VTIMEZONE";
     
@@ -195,18 +197,16 @@ class IcsParser {
         do {
             $startpos = strpos($curstr, self::TOKEN_BEGIN_VEVENT);
             if ($startpos !== false) {
-                // remove BEGIN_VEVENT and END:VEVENT
-                // +1: because \r\n or \n at the end. if \r\n remove remaining \n
-                $eventStrStart = $startpos + strlen(self::TOKEN_BEGIN_VEVENT) + 1;
+                // remove BEGIN_VEVENT and END:VEVENT and EOL character(s) \r\n or \n
+                $eventStrStart = $startpos + strlen(self::TOKEN_BEGIN_VEVENT);
                 $eventStr = substr($curstr, $eventStrStart);
-                if (substr($eventStr,0,1) == "\n") {$eventStr = substr($eventStr,1); }
-                $endpos = strpos($eventStr, self::TOKEN_END_VEVENT) - 1;
+                $endpos = strpos($eventStr, self::TOKEN_END_VEVENT);
                 
                 if ($endpos === false) {
                     throw new IcsParsingException('No valid END:VEVENT found');
                 }
                 
-                $eventStr = substr($eventStr, 0, $endpos);
+                $eventStr = trim(substr($eventStr, 0, $endpos), "\n\r\0");
                 $e = $this->parseVevent($eventStr);
                 $events[] = $e;
                 // Recurring event?
@@ -597,7 +597,8 @@ class IcsParser {
         $tokenprev = "";
         
         foreach($lines as $l) {
-            
+            // trim() to remove \n\r\0 but not space to keep a clean line with any spaces at the beginning or end of the line
+            $l =trim($l, "\n\r\0");
             $list = explode(":", $l, 2);
             $token = "";
             $value = "";
@@ -623,7 +624,7 @@ class IcsParser {
             if (count($list) > 1 && strlen($token) > 1 && substr($token, 0, 1) > ' ') { //all tokens start with a alphabetic char , otherwise it is a continuation of a description with a colon in it.
                 // trim() to remove \n\r\0
                 $value = trim($list[1]);
-                $desc = str_replace(array('\;', '\,', '\r\n', '\r'), array(';', ',', '\n', '\n'), htmlspecialchars(trim($list[1], '\n\r\0')));
+                $desc = str_replace(array('\;', '\,', '\r\n','\n', '\r'), array(';', ',', "\n","\n","\n"), htmlspecialchars($list[1]));
                 $tokenprev = $token;
                 switch($token) {
                     case "SUMMARY":
@@ -665,7 +666,7 @@ class IcsParser {
                 }
             }else { // count($list) <= 1
                 if (strlen($l) > 1) {
-                    $desc = str_replace(array('\;', '\,', '\r\n', '\r'), array(';', ',', '\n', '\n'), htmlspecialchars(trim(substr($l,1), '\n\r\0')));
+                    $desc = str_replace(array('\;', '\,', '\r\n','\n', '\r'), array(';', ',', "\n","\n","\n"), htmlspecialchars(substr($l,1)));
                     switch($tokenprev) {
                         case "SUMMARY":
                             $eventObj->summary .= $desc;

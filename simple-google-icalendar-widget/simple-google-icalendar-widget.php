@@ -185,13 +185,21 @@ class Simple_iCal_Widget extends WP_Widget
                     echo wp_date( $dftsum, $e->start);
                 }
                 if(!empty($e->summary)) {
-                    echo $e->summary;
+                    echo str_replace("\n", '<br>',$e->summary);
                 }
                 echo	'</a>' ;
                 echo '<div class="collapse ical_details' .  $sflgia . '" id="',  $itemid, '">';
-                if(!empty($e->description) && trim($e->description) > '' && $excerptlength <> 0) {
-                    $e->description = ($excerptlength == '') ? $e->description : substr($e->description, 0, $excerptlength);
-                    echo   $e->description ,(strrpos($e->description, '<br>') == (strlen($e->description) - 5)) ? '' : '<br>';
+                if(!empty($e->description) && trim($e->description) > '' && $excerptlength !== 0) {
+                    if ($excerptlength !== '' && strlen($e->description) > $excerptlength) {$e->description = substr($e->description, 0, $excerptlength + 1);
+					    if (rtrim($e->description) !== $e->description) {$e->description = substr($e->description, 0, $excerptlength);}
+						else {if (strrpos($e->description, ' ', max(0,$excerptlength - 10))!== false OR strrpos($e->description, "\n", max(0,$excerptlength - 10))!== false )
+							{$e->description = substr($e->description, 0, max(strrpos($e->description, "\n", max(0,$excerptlength - 10)),strrpos($e->description, ' ', max(0,$excerptlength - 10))));
+							} else
+							{$e->description = substr($e->description, 0, $excerptlength);}
+						}
+					}
+					$e->description = str_replace("\n", '<br>', $e->description);
+                    echo   $e->description ,(strrpos($e->description, '<br>') == (strlen($e->description) - 4)) ? '' : '<br>';
                  }
                 if ($e->startisdate === false && date('z', $e->start) === date('z', $e->end))	{
                     echo '<span class="time">', wp_date( $dftstart, $e->start ),
@@ -200,7 +208,7 @@ class Simple_iCal_Widget extends WP_Widget
                     echo '';
                 }
                 if(!empty($e->location)) {
-                    echo  '<span class="location">', $e->location , '</span>';
+                    echo  '<span class="location">', str_replace("\n", '<br>',$e->location) , '</span>';
                 }
                 
                 
