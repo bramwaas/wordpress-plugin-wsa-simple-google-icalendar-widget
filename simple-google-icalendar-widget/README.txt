@@ -3,7 +3,7 @@ Plugin name: Simple Google Calendar Outlook Events Widget
 Contributors: bramwaas
 Tags: Calendar, Event Calendar, Google Calendar, iCal, Events, iCalendar, Outlook, iCloud
 Requires at least: 5.3.0
-Tested up to: 5.7
+Tested up to: 5.8
 Requires PHP: 5.3.0
 Stable tag: trunk
 License: GPLv2 or later
@@ -51,6 +51,13 @@ Then use the public iCal address or the Google calendar ID.
 
  You can find Google calendar ID by going to Calendar Settings / Calendars, clicking on the appropriate calendar, scrolling all the way down to find the Calendar ID at the bottom under the Integrate Calendar section. There's your calendar id.
  [More details on Google support](https://support.google.com/calendar/answer/37083#link)
+
+= Can I use HTML in the description of the appointement?  =
+
+ You can use HTML in the most Calendars, but the result in the plugin may not be what you expect.
+ First most calendars will only give the plain text in the Description in the iCal output.
+ Secondly this plugin filters the HTML to convert characters that have special significance in HTML to the corresponding HTML-entities. So if you manage to get the HTML in the description the output wil not be what you expect.
+ In case you have all kinds of HTML in your appointments a plugin that uses the API of te calendar-application might be a better choice for you. 
 
 = How to use Microsoft Office Outlook Calendar? =
 
@@ -133,6 +140,7 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 == Changelog ==
 * 1.4.0 added parameter excerptlength to limit the length in characters of the description in respons to a comment of justmigrating (@justmigrating).
         Fixed a trim error that occurred in a previous version, revising the entire trimming so that both \r\n and \n end of lines are handled properly
+        12-7-2021 tested with 5.8-RC2 and set tested up to to 5.8
 * 1.3.1 tested with Outlook and found that different timezones were a problem, solved by using a conversion tabel between Microsoft timezones and Iana timezones and using local (Wordpress configuration) timezone when timezone is unknown.
 Also found that colon ended description and summary. Found a solution for that so now you can use a colon in a description or a summary.
 Tested with iCloud Apple Calendar, timezones seem to be Iana. Issue with url starting with webcal protocol in stead of http or https, work around is substituting webcal with https:, but solved by change in url check and stricter validation Google Id.
