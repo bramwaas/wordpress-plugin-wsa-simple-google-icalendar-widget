@@ -13,15 +13,15 @@
  *   bw 20201122 v1.2.0 find solution for DTSTART and DTEND without time by explicit using isDate and only displaying times when isDate === false.;
  *               found that date_i18n($format, $timestamp) formats according to the locale, but not the timezone but the newer function wp_date() does,
  *               so date_i18n() replaced bij wp_date()
- *   bw 20201123 V1.2.2 added a checkbox to clear cache before expiration. 
- *   bw 20210408 V1.3.0 made time formats configurable. 
- *   bw 20210421 v1.3.1 test for http changed in test with esc_url_raw() to accomodate webcal protocol e.g for iCloud 
- *   bw 20210616 V1.4.0 added parameter excerptlength to limit the length in characters of the description 
- *   bw 20220223 fixed timezone error in response to a support topic of edwindekuiper (@edwindekuiper): If timezone appointment is empty or incorrect 
- *               timezone fall back was to new \DateTimeZone(get_option('timezone_string')) but with UTC+... UTC-... timezonesetting this string 
+ *   bw 20201123 V1.2.2 added a checkbox to clear cache before expiration.
+ *   bw 20210408 V1.3.0 made time formats configurable.
+ *   bw 20210421 v1.3.1 test for http changed in test with esc_url_raw() to accomodate webcal protocol e.g for iCloud
+ *   bw 20210616 V1.4.0 added parameter excerptlength to limit the length in characters of the description
+ *   bw 20220223 fixed timezone error in response to a support topic of edwindekuiper (@edwindekuiper): If timezone appointment is empty or incorrect
+ *               timezone fall back was to new \DateTimeZone(get_option('timezone_string')) but with UTC+... UTC-... timezonesetting this string
  *               is empty so I use now wp_timezone() and if even that fails fall back to new \DateTimeZone('UTC').
  *   bw 20220404 V1.5.0 in response to a support topic on github of fhennies added parameter allowhtml (htmlspecialchars) to allow Html
- *               in Description, Summary and Location added wp_kses('post') to output to keep preventing XSS            
+ *               in Description, Summary and Location added wp_kses('post') to output to keep preventing XSS
  */
 /*
  Simple Google Calendar Outlook Events Widget
@@ -86,7 +86,7 @@ class Simple_iCal_Widget extends WP_Widget
         
         if(false === ($data = get_transient($transientId))) {
             $data = $this->fetch($calId, $instance['event_count'], $instance['event_period'], $instance['allowhtml']
-            );
+                );
             
             // do not cache data if fetching failed
             if ($data) {
@@ -125,7 +125,7 @@ class Simple_iCal_Widget extends WP_Widget
         $httpData = wp_remote_get($url);
         
         if(is_wp_error($httpData)) {
-            echo '<!-- ' . $url . ' not found ' . 'fall back to https:// -->'; 
+            echo '<!-- ' . $url . ' not found ' . 'fall back to https:// -->';
             $httpData = wp_remote_get('https://' . explode('://', $url)[1]);
             if(is_wp_error($httpData)) {
                 echo 'Simple Google Calendar: ', $httpData->get_error_message();
@@ -197,16 +197,16 @@ class Simple_iCal_Widget extends WP_Widget
                 echo '<div class="collapse ical_details' .  $sflgia . '" id="',  $itemid, '">';
                 if(!empty($e->description) && trim($e->description) > '' && $excerptlength !== 0) {
                     if ($excerptlength !== '' && strlen($e->description) > $excerptlength) {$e->description = substr($e->description, 0, $excerptlength + 1);
-					    if (rtrim($e->description) !== $e->description) {$e->description = substr($e->description, 0, $excerptlength);}
-						else {if (strrpos($e->description, ' ', max(0,$excerptlength - 10))!== false OR strrpos($e->description, "\n", max(0,$excerptlength - 10))!== false )
-							{$e->description = substr($e->description, 0, max(strrpos($e->description, "\n", max(0,$excerptlength - 10)),strrpos($e->description, ' ', max(0,$excerptlength - 10))));
-							} else
-							{$e->description = substr($e->description, 0, $excerptlength);}
-						}
-					}
-					$e->description = str_replace("\n", '<br>', wp_kses($e->description,'post') );
-					echo   $e->description ,(strrpos($e->description, '<br>') == (strlen($e->description) - 4)) ? '' : '<br>';
-                 }
+                    if (rtrim($e->description) !== $e->description) {$e->description = substr($e->description, 0, $excerptlength);}
+                    else {if (strrpos($e->description, ' ', max(0,$excerptlength - 10))!== false OR strrpos($e->description, "\n", max(0,$excerptlength - 10))!== false )
+                    {$e->description = substr($e->description, 0, max(strrpos($e->description, "\n", max(0,$excerptlength - 10)),strrpos($e->description, ' ', max(0,$excerptlength - 10))));
+                    } else
+                    {$e->description = substr($e->description, 0, $excerptlength);}
+                    }
+                    }
+                    $e->description = str_replace("\n", '<br>', wp_kses($e->description,'post') );
+                    echo   $e->description ,(strrpos($e->description, '<br>') == (strlen($e->description) - 4)) ? '' : '<br>';
+                }
                 if ($e->startisdate === false && date('z', $e->start) === date('z', $e->end))	{
                     echo '<span class="time">', wp_date( $dftstart, $e->start ),
                     '</span><span class="time">', wp_date( $dftend, $e->end ), '</span> ' ;
@@ -281,7 +281,7 @@ class Simple_iCal_Widget extends WP_Widget
         $instance['suffix_lgia_class'] = strip_tags($new_instance['suffix_lgia_class']);
         $instance['allowhtml'] = $new_instance['allowhtml'];
         
-
+        
         if (!empty($new_instance['clear_cache_now'])){
             // delete our transient cache
             $this->clearData();
@@ -374,8 +374,8 @@ class Simple_iCal_Widget extends WP_Widget
           <input class="widefat" id="<?php echo $this->get_field_id('suffix_lgia_class'); ?>" name="<?php echo $this->get_field_name('suffix_lgia_class'); ?>" type="text" value="<?php echo esc_attr($instance['suffix_lgia_class']); ?>" />
         </p>
         <p>
+          <input class="checkbox" id="<?php echo $this->get_field_id('allowhtml'); ?>" name="<?php echo $this->get_field_name('allowhtml'); ?>" type="checkbox" value="1" <?php checked( '1', $instance['allowhtml'] ); ?> />
           <label for="<?php echo $this->get_field_id('allowhtml'); ?>"><?php _e('Allow safe html in description and summary.', 'simple_ical'); ?></label> 
-          <input class="checkbox" id="<?php echo $this->get_field_id('allowhtml'); ?>" name="<?php echo $this->get_field_name('allowhtml'); ?>" type="checkbox" value="<?php echo esc_attr($instance['allowhtml']); ?>" />
         </p>
          <p>
           <input class="checkbox" id="<?php echo $this->get_field_id('clear_cache_now'); ?>" name="<?php echo $this->get_field_name('clear_cache_now'); ?>" type="checkbox" value='yes' />

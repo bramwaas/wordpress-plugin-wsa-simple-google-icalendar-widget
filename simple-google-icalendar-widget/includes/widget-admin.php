@@ -84,6 +84,9 @@ class Simple_iCal_Admin {
         
         _e('<p><strong>Suffix event details classs</strong></p>', 'simple_ical');
         _e('<p>Suffix to add after the css-class around the event details link (ical_details),<br>start with space to keep the original class and add another class.</p>', 'simple_ical');
+
+        _e('<p><strong>Checkbox Allow safe html in description and summary.</strong></p>', 'simple_ical');
+        _e('<p>Check checkbox to allow the use of some safe html in description and summary, otherwise it will only be dispayed aas text.</p>', 'simple_ical');
         
         _e('<p><strong>Checkbox clear cache on save.</strong></p>', 'simple_ical');
         _e('<p>Check checkbox to clear cache on save, otherwise it will be cleared after cache time is expired.</p>', 'simple_ical');
