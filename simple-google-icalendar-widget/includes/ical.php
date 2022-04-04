@@ -181,7 +181,7 @@ class IcsParser {
     );
     
     
-    public function parse($str ,  $penddate,  $pcount, $pallowhtml = 'no'  ) {
+    public function parse($str ,  $penddate,  $pcount, $pallowhtml = 0  ) {
         
         $curstr = $str;
         $haveVevent = true;
@@ -633,7 +633,7 @@ class IcsParser {
             if (count($list) > 1 && strlen($token) > 1 && substr($token, 0, 1) > ' ') { //all tokens start with a alphabetic char , otherwise it is a continuation of a description with a colon in it.
                 // trim() to remove \n\r\0
                 $value = trim($list[1]);
-                $desc = ('yes' == $pallowhtml) ? $list[1] : htmlspecialchars($list[1]);
+                $desc = ( $pallowhtml) ? $list[1] : htmlspecialchars($list[1]);
                 $desc = str_replace(array('\;', '\,', '\r\n','\n', '\r'), array(';', ',', "\n","\n","\n"), $desc);
                 $tokenprev = $token;
                 switch($token) {
@@ -676,7 +676,7 @@ class IcsParser {
                 }
             }else { // count($list) <= 1
                 if (strlen($l) > 1) {
-                    $desc = ('yes' == $pallowhtml) ? $l : htmlspecialchars($l);
+                    $desc = ($pallowhtml) ? $l : htmlspecialchars($l);
                     $desc = str_replace(array('\;', '\,', '\r\n','\n', '\r'), array(';', ',', "\n","\n","\n"), substr($desc,1));
                     switch($tokenprev) {
                         case "SUMMARY":

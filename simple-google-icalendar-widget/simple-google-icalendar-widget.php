@@ -119,7 +119,7 @@ class Simple_iCal_Widget extends WP_Widget
         return $out;
     }
     
-    private function fetch($calId, $count, $period,  $allowhtml = 'no' )
+    private function fetch($calId, $count, $period,  $allowhtml = 0 )
     {
         $url = $this->getCalendarUrl($calId);
         $httpData = wp_remote_get($url);
@@ -191,7 +191,7 @@ class Simple_iCal_Widget extends WP_Widget
                     echo wp_date( $dftsum, $e->start);
                 }
                 if(!empty($e->summary)) {
-                    echo str_replace("\n", '<br>', wp_kses($e->summary),'post');
+                    echo str_replace("\n", '<br>', wp_kses($e->summary,'post'));
                 }
                 echo	'</a>' ;
                 echo '<div class="collapse ical_details' .  $sflgia . '" id="',  $itemid, '">';
@@ -279,7 +279,7 @@ class Simple_iCal_Widget extends WP_Widget
         $instance['suffix_lg_class'] = strip_tags($new_instance['suffix_lg_class']);
         $instance['suffix_lgi_class'] = strip_tags($new_instance['suffix_lgi_class']);
         $instance['suffix_lgia_class'] = strip_tags($new_instance['suffix_lgia_class']);
-        $instance['allowhtml'] = strip_tags($new_instance['allowhtml']);
+        $instance['allowhtml'] = $new_instance['allowhtml'];
         
 
         if (!empty($new_instance['clear_cache_now'])){
@@ -315,7 +315,7 @@ class Simple_iCal_Widget extends WP_Widget
             'suffix_lg_class' => '',
             'suffix_lgi_class' => ' py-0',
             'suffix_lgia_class' => '',
-            'allowhtml' => 'no',
+            'allowhtml' => 0,
             'clear_cache_now' => 'no',
         );
         $instance = wp_parse_args((array) $instance, $default);
