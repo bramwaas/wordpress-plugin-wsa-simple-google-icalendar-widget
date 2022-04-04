@@ -19,7 +19,11 @@ class IcsParsingException extends Exception {}
  *   bw 20210618 replace EOL <br> by newline ("\n") in Multiline elements Description and Summary to make it easier to trim to excerptlength
  *               and do replacement of newline by <br> when displaying the line.
  *               fixed a trim error that occurred in a previous version, revising the entire trimming so that both \r\n and \n end of lines are handled properly
- * Version: 1.4.0
+ *   bw 20220223 fixed timezone error in response to a support topic of edwindekuiper (@edwindekuiper): If timezone appointment is empty or incorrect 
+ *               timezone fall back was to new \DateTimeZone(get_option('timezone_string')) but with UTC+... UTC-... timezonesetting this string 
+ *               is empty so I use now wp_timezone() and if even that fails fall back to new \DateTimeZone('UTC').
+ *   bw 20220404 V1.5.0 added parameter allowhtml (htmlspecialchars) to allow Html in Description.            
+ * Version: 1.5.0
  
  */
 class IcsParser {
@@ -177,7 +181,7 @@ class IcsParser {
     );
     
     
-    public function parse($str ,  $penddate,  $pcount) {
+    public function parse($str ,  $penddate,  $pcount, $pallowhtml = 'no'  ) {
         
         $curstr = $str;
         $haveVevent = true;
@@ -207,7 +211,7 @@ class IcsParser {
                 }
                 
                 $eventStr = trim(substr($eventStr, 0, $endpos), "\n\r\0");
-                $e = $this->parseVevent($eventStr);
+                $e = $this->parseVevent($eventStr, $pallowhtml);
                 $events[] = $e;
                 // Recurring event?
                 if (isset($e->rrule) && $e->rrule !== '') {
@@ -563,7 +567,8 @@ class IcsParser {
      * Checks if a time zone ID is a Iana timezone then return this timezone.
      * If empty return timezone from WP
      * Checks if time zone ID is windows timezone then return this timezone
-     * If nthing istrue return timezone from WP
+     * If nothing istrue return timezone from WP
+     * If timezone string from WP doesn't make a good timezone return UTC timezone.
      *
      * @param  string $ptzid (timezone ID)
      * @return DateTimeZone object
@@ -571,14 +576,18 @@ class IcsParser {
     
     private function parseIanaTimezoneid ($ptzid = '') {
         try {
-            $timezone = new \DateTimeZone((isset($ptzid)&& $ptzid !== '') ? $ptzid : get_option('timezone_string'));
+            $timezone = (isset($ptzid)&& $ptzid !== '') ? new \DateTimeZone($ptzid) : wp_timezone();
         } catch (Exception $exc) {}
         if (isset($timezone)) return $timezone;
         try {
             if (isset(self::$windowsTimeZonesMap[$ptzid])) $timezone = new \DateTimeZone(self::$windowsTimeZonesMap[$ptzid]);
         } catch (Exception $exc) {}
         if (isset($timezone)) return $timezone;
-        return new \DateTimeZone(get_option('timezone_string'));
+        try {
+            $timezone = wp_timezone();
+        } catch (Exception $exc) { }
+        if (isset($timezone)) return $timezone;
+        return new \DateTimeZone('UTC');
     }
     
     private function eventSortComparer($a, $b) {
@@ -591,7 +600,7 @@ class IcsParser {
         }
     }
     
-    public function parseVevent($eventStr) {
+    public function parseVevent($eventStr, $pallowhtml) {
         $lines = explode("\n", $eventStr);
         $eventObj = new StdClass;
         $tokenprev = "";
@@ -624,7 +633,8 @@ class IcsParser {
             if (count($list) > 1 && strlen($token) > 1 && substr($token, 0, 1) > ' ') { //all tokens start with a alphabetic char , otherwise it is a continuation of a description with a colon in it.
                 // trim() to remove \n\r\0
                 $value = trim($list[1]);
-                $desc = str_replace(array('\;', '\,', '\r\n','\n', '\r'), array(';', ',', "\n","\n","\n"), htmlspecialchars($list[1]));
+                $desc = ('yes' == $pallowhtml) ? $list[1] : htmlspecialchars($list[1]);
+                $desc = str_replace(array('\;', '\,', '\r\n','\n', '\r'), array(';', ',', "\n","\n","\n"), $desc);
                 $tokenprev = $token;
                 switch($token) {
                     case "SUMMARY":
@@ -666,7 +676,8 @@ class IcsParser {
                 }
             }else { // count($list) <= 1
                 if (strlen($l) > 1) {
-                    $desc = str_replace(array('\;', '\,', '\r\n','\n', '\r'), array(';', ',', "\n","\n","\n"), htmlspecialchars(substr($l,1)));
+                    $desc = ('yes' == $pallowhtml) ? $l : htmlspecialchars($l);
+                    $desc = str_replace(array('\;', '\,', '\r\n','\n', '\r'), array(';', ',', "\n","\n","\n"), substr($desc,1));
                     switch($tokenprev) {
                         case "SUMMARY":
                             $eventObj->summary .= $desc;
