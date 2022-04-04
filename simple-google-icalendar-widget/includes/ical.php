@@ -14,15 +14,174 @@ class IcsParsingException extends Exception {}
  *   bw 20201122 v1.2.0 find solution for DTSTART and DTEND without time by explicit using isDate and only displaying times when isDate === false.;
  *               found a problem with UID in first line when line-ends are \n in stead of \r\n solved by better calculation of start of EventStr.
  *   bw 20201123 handle not available DTEND => !isset($e->end) in response to a comment of lillyberger (@lillyberger) on the plugin page.
- * Version: 1.3.0
+ *   bw 20210415 added windows to Iana timezone-array from ics-calendar.7.2.0, to solve erro with outlook agenda.
+ *               found a solution for colon in description or summary, special attention to colon in second or later line.
+ *   bw 20210618 replace EOL <br> by newline ("\n") in Multiline elements Description and Summary to make it easier to trim to excerptlength
+ *               and do replacement of newline by <br> when displaying the line.
+ *               fixed a trim error that occurred in a previous version, revising the entire trimming so that both \r\n and \n end of lines are handled properly
+ *   bw 20220223 fixed timezone error in response to a support topic of edwindekuiper (@edwindekuiper): If timezone appointment is empty or incorrect 
+ *               timezone fall back was to new \DateTimeZone(get_option('timezone_string')) but with UTC+... UTC-... timezonesetting this string 
+ *               is empty so I use now wp_timezone() and if even that fails fall back to new \DateTimeZone('UTC').
+ *   bw 20220404 V1.5.0 added parameter allowhtml (htmlspecialchars) to allow Html in Description.            
+ * Version: 1.5.0
  
  */
 class IcsParser {
     
-    const TOKEN_BEGIN_VEVENT = "\nBEGIN:VEVENT";
-    const TOKEN_END_VEVENT = "\nEND:VEVENT";
+    const TOKEN_BEGIN_VEVENT = "BEGIN:VEVENT";
+    const TOKEN_END_VEVENT = "END:VEVENT";
+    const TOKEN_BEGIN_VTIMEZONE = "\nBEGIN:VTIMEZONE";
+    const TOKEN_END_VTIMEZONE = "\nEND:VTIMEZONE";
     
-    public function parse($str ,  $penddate,  $pcount) {
+    /**
+     * Maps Windows (non-CLDR) time zone ID to IANA ID. This is pragmatic but not 100% precise as one Windows zone ID
+     * maps to multiple IANA IDs (one for each territory). For all practical purposes this should be good enough, though.
+     *
+     * Source: http://unicode.org/repos/cldr/trunk/common/supplemental/windowsZones.xml
+     * originally copied from ics-calendar.7.2.0
+     *
+     * @var array
+     */
+    private static $windowsTimeZonesMap = array(
+        'AUS Central Standard Time'       => 'Australia/Darwin',
+        'AUS Eastern Standard Time'       => 'Australia/Sydney',
+        'Afghanistan Standard Time'       => 'Asia/Kabul',
+        'Alaskan Standard Time'           => 'America/Anchorage',
+        'Aleutian Standard Time'          => 'America/Adak',
+        'Altai Standard Time'             => 'Asia/Barnaul',
+        'Arab Standard Time'              => 'Asia/Riyadh',
+        'Arabian Standard Time'           => 'Asia/Dubai',
+        'Arabic Standard Time'            => 'Asia/Baghdad',
+        'Argentina Standard Time'         => 'America/Buenos_Aires',
+        'Astrakhan Standard Time'         => 'Europe/Astrakhan',
+        'Atlantic Standard Time'          => 'America/Halifax',
+        'Aus Central W. Standard Time'    => 'Australia/Eucla',
+        'Azerbaijan Standard Time'        => 'Asia/Baku',
+        'Azores Standard Time'            => 'Atlantic/Azores',
+        'Bahia Standard Time'             => 'America/Bahia',
+        'Bangladesh Standard Time'        => 'Asia/Dhaka',
+        'Belarus Standard Time'           => 'Europe/Minsk',
+        'Bougainville Standard Time'      => 'Pacific/Bougainville',
+        'Canada Central Standard Time'    => 'America/Regina',
+        'Cape Verde Standard Time'        => 'Atlantic/Cape_Verde',
+        'Caucasus Standard Time'          => 'Asia/Yerevan',
+        'Cen. Australia Standard Time'    => 'Australia/Adelaide',
+        'Central America Standard Time'   => 'America/Guatemala',
+        'Central Asia Standard Time'      => 'Asia/Almaty',
+        'Central Brazilian Standard Time' => 'America/Cuiaba',
+        'Central Europe Standard Time'    => 'Europe/Budapest',
+        'Central European Standard Time'  => 'Europe/Warsaw',
+        'Central Pacific Standard Time'   => 'Pacific/Guadalcanal',
+        'Central Standard Time (Mexico)'  => 'America/Mexico_City',
+        'Central Standard Time'           => 'America/Chicago',
+        'Chatham Islands Standard Time'   => 'Pacific/Chatham',
+        'China Standard Time'             => 'Asia/Shanghai',
+        'Cuba Standard Time'              => 'America/Havana',
+        'Dateline Standard Time'          => 'Etc/GMT+12',
+        'E. Africa Standard Time'         => 'Africa/Nairobi',
+        'E. Australia Standard Time'      => 'Australia/Brisbane',
+        'E. Europe Standard Time'         => 'Europe/Chisinau',
+        'E. South America Standard Time'  => 'America/Sao_Paulo',
+        'Easter Island Standard Time'     => 'Pacific/Easter',
+        'Eastern Standard Time (Mexico)'  => 'America/Cancun',
+        'Eastern Standard Time'           => 'America/New_York',
+        'Egypt Standard Time'             => 'Africa/Cairo',
+        'Ekaterinburg Standard Time'      => 'Asia/Yekaterinburg',
+        'FLE Standard Time'               => 'Europe/Kiev',
+        'Fiji Standard Time'              => 'Pacific/Fiji',
+        'GMT Standard Time'               => 'Europe/London',
+        'GTB Standard Time'               => 'Europe/Bucharest',
+        'Georgian Standard Time'          => 'Asia/Tbilisi',
+        'Greenland Standard Time'         => 'America/Godthab',
+        'Greenwich Standard Time'         => 'Atlantic/Reykjavik',
+        'Haiti Standard Time'             => 'America/Port-au-Prince',
+        'Hawaiian Standard Time'          => 'Pacific/Honolulu',
+        'India Standard Time'             => 'Asia/Calcutta',
+        'Iran Standard Time'              => 'Asia/Tehran',
+        'Israel Standard Time'            => 'Asia/Jerusalem',
+        'Jordan Standard Time'            => 'Asia/Amman',
+        'Kaliningrad Standard Time'       => 'Europe/Kaliningrad',
+        'Korea Standard Time'             => 'Asia/Seoul',
+        'Libya Standard Time'             => 'Africa/Tripoli',
+        'Line Islands Standard Time'      => 'Pacific/Kiritimati',
+        'Lord Howe Standard Time'         => 'Australia/Lord_Howe',
+        'Magadan Standard Time'           => 'Asia/Magadan',
+        'Magallanes Standard Time'        => 'America/Punta_Arenas',
+        'Marquesas Standard Time'         => 'Pacific/Marquesas',
+        'Mauritius Standard Time'         => 'Indian/Mauritius',
+        'Middle East Standard Time'       => 'Asia/Beirut',
+        'Montevideo Standard Time'        => 'America/Montevideo',
+        'Morocco Standard Time'           => 'Africa/Casablanca',
+        'Mountain Standard Time (Mexico)' => 'America/Chihuahua',
+        'Mountain Standard Time'          => 'America/Denver',
+        'Myanmar Standard Time'           => 'Asia/Rangoon',
+        'N. Central Asia Standard Time'   => 'Asia/Novosibirsk',
+        'Namibia Standard Time'           => 'Africa/Windhoek',
+        'Nepal Standard Time'             => 'Asia/Katmandu',
+        'New Zealand Standard Time'       => 'Pacific/Auckland',
+        'Newfoundland Standard Time'      => 'America/St_Johns',
+        'Norfolk Standard Time'           => 'Pacific/Norfolk',
+        'North Asia East Standard Time'   => 'Asia/Irkutsk',
+        'North Asia Standard Time'        => 'Asia/Krasnoyarsk',
+        'North Korea Standard Time'       => 'Asia/Pyongyang',
+        'Omsk Standard Time'              => 'Asia/Omsk',
+        'Pacific SA Standard Time'        => 'America/Santiago',
+        'Pacific Standard Time (Mexico)'  => 'America/Tijuana',
+        'Pacific Standard Time'           => 'America/Los_Angeles',
+        'Pakistan Standard Time'          => 'Asia/Karachi',
+        'Paraguay Standard Time'          => 'America/Asuncion',
+        'Romance Standard Time'           => 'Europe/Paris',
+        'Russia Time Zone 10'             => 'Asia/Srednekolymsk',
+        'Russia Time Zone 11'             => 'Asia/Kamchatka',
+        'Russia Time Zone 3'              => 'Europe/Samara',
+        'Russian Standard Time'           => 'Europe/Moscow',
+        'SA Eastern Standard Time'        => 'America/Cayenne',
+        'SA Pacific Standard Time'        => 'America/Bogota',
+        'SA Western Standard Time'        => 'America/La_Paz',
+        'SE Asia Standard Time'           => 'Asia/Bangkok',
+        'Saint Pierre Standard Time'      => 'America/Miquelon',
+        'Sakhalin Standard Time'          => 'Asia/Sakhalin',
+        'Samoa Standard Time'             => 'Pacific/Apia',
+        'Sao Tome Standard Time'          => 'Africa/Sao_Tome',
+        'Saratov Standard Time'           => 'Europe/Saratov',
+        'Singapore Standard Time'         => 'Asia/Singapore',
+        'South Africa Standard Time'      => 'Africa/Johannesburg',
+        'Sri Lanka Standard Time'         => 'Asia/Colombo',
+        'Sudan Standard Time'             => 'Africa/Tripoli',
+        'Syria Standard Time'             => 'Asia/Damascus',
+        'Taipei Standard Time'            => 'Asia/Taipei',
+        'Tasmania Standard Time'          => 'Australia/Hobart',
+        'Tocantins Standard Time'         => 'America/Araguaina',
+        'Tokyo Standard Time'             => 'Asia/Tokyo',
+        'Tomsk Standard Time'             => 'Asia/Tomsk',
+        'Tonga Standard Time'             => 'Pacific/Tongatapu',
+        'Transbaikal Standard Time'       => 'Asia/Chita',
+        'Turkey Standard Time'            => 'Europe/Istanbul',
+        'Turks And Caicos Standard Time'  => 'America/Grand_Turk',
+        'US Eastern Standard Time'        => 'America/Indianapolis',
+        'US Mountain Standard Time'       => 'America/Phoenix',
+        'UTC'                             => 'Etc/GMT',
+        'UTC+12'                          => 'Etc/GMT-12',
+        'UTC+13'                          => 'Etc/GMT-13',
+        'UTC-02'                          => 'Etc/GMT+2',
+        'UTC-08'                          => 'Etc/GMT+8',
+        'UTC-09'                          => 'Etc/GMT+9',
+        'UTC-11'                          => 'Etc/GMT+11',
+        'Ulaanbaatar Standard Time'       => 'Asia/Ulaanbaatar',
+        'Venezuela Standard Time'         => 'America/Caracas',
+        'Vladivostok Standard Time'       => 'Asia/Vladivostok',
+        'W. Australia Standard Time'      => 'Australia/Perth',
+        'W. Central Africa Standard Time' => 'Africa/Lagos',
+        'W. Europe Standard Time'         => 'Europe/Berlin',
+        'W. Mongolia Standard Time'       => 'Asia/Hovd',
+        'West Asia Standard Time'         => 'Asia/Tashkent',
+        'West Bank Standard Time'         => 'Asia/Hebron',
+        'West Pacific Standard Time'      => 'Pacific/Port_Moresby',
+        'Yakutsk Standard Time'           => 'Asia/Yakutsk',
+    );
+    
+    
+    public function parse($str ,  $penddate,  $pcount, $pallowhtml = 0  ) {
         
         $curstr = $str;
         $haveVevent = true;
@@ -42,19 +201,17 @@ class IcsParser {
         do {
             $startpos = strpos($curstr, self::TOKEN_BEGIN_VEVENT);
             if ($startpos !== false) {
-                // remove BEGIN_VEVENT and END:VEVENT
-                // +1: because \r\n or \n at the end. if \r\n remove remaining \n
-                $eventStrStart = $startpos + strlen(self::TOKEN_BEGIN_VEVENT) + 1;
+                // remove BEGIN_VEVENT and END:VEVENT and EOL character(s) \r\n or \n
+                $eventStrStart = $startpos + strlen(self::TOKEN_BEGIN_VEVENT);
                 $eventStr = substr($curstr, $eventStrStart);
-                if (substr($eventStr,0,1) == "\n") {$eventStr = substr($eventStr,1); }
-                $endpos = strpos($eventStr, self::TOKEN_END_VEVENT) - 1;
+                $endpos = strpos($eventStr, self::TOKEN_END_VEVENT);
                 
                 if ($endpos === false) {
                     throw new IcsParsingException('No valid END:VEVENT found');
                 }
                 
-                $eventStr = substr($eventStr, 0, $endpos);
-                $e = $this->parseVevent($eventStr);
+                $eventStr = trim(substr($eventStr, 0, $endpos), "\n\r\0");
+                $e = $this->parseVevent($eventStr, $pallowhtml);
                 $events[] = $e;
                 // Recurring event?
                 if (isset($e->rrule) && $e->rrule !== '') {
@@ -390,13 +547,47 @@ class IcsParser {
         if ($lastChar == 'Z') {
             $tzid = 'UTC';
         } else  {
-            $tzid = ($tzid > ' ') ? $tzid : get_option('timezone_string');
+            $tzid = $this->parseIanaTimezoneid ($tzid)->getName();
         }
-        $date = date_create_from_format('Ymd His e', substr($datetime,0,8) . ' ' . $hms. ' ' . $tzid);
-        $time = $date->getTimestamp();
-        
-        
-        return $time;
+        $date = \DateTime::createFromFormat('Ymd His e', substr($datetime,0,8) . ' ' . $hms. ' ' . $tzid);
+        $timestamp = $date->getTimestamp();
+        return $timestamp;
+    }
+    /**
+     * Checks if a time zone is a recognised Windows (non-CLDR) time zone
+     *
+     * @param  string $timeZone
+     * @return boolean
+     */
+    public function isValidWindowsTimeZoneId($timeZone)
+    {
+        return array_key_exists(html_entity_decode($timeZone), self::$windowsTimeZonesMap);
+    }
+    /**
+     * Checks if a time zone ID is a Iana timezone then return this timezone.
+     * If empty return timezone from WP
+     * Checks if time zone ID is windows timezone then return this timezone
+     * If nothing istrue return timezone from WP
+     * If timezone string from WP doesn't make a good timezone return UTC timezone.
+     *
+     * @param  string $ptzid (timezone ID)
+     * @return DateTimeZone object
+     */
+    
+    private function parseIanaTimezoneid ($ptzid = '') {
+        try {
+            $timezone = (isset($ptzid)&& $ptzid !== '') ? new \DateTimeZone($ptzid) : wp_timezone();
+        } catch (Exception $exc) {}
+        if (isset($timezone)) return $timezone;
+        try {
+            if (isset(self::$windowsTimeZonesMap[$ptzid])) $timezone = new \DateTimeZone(self::$windowsTimeZonesMap[$ptzid]);
+        } catch (Exception $exc) {}
+        if (isset($timezone)) return $timezone;
+        try {
+            $timezone = wp_timezone();
+        } catch (Exception $exc) { }
+        if (isset($timezone)) return $timezone;
+        return new \DateTimeZone('UTC');
     }
     
     private function eventSortComparer($a, $b) {
@@ -409,14 +600,15 @@ class IcsParser {
         }
     }
     
-    public function parseVevent($eventStr) {
+    public function parseVevent($eventStr, $pallowhtml) {
         $lines = explode("\n", $eventStr);
         $eventObj = new StdClass;
         $tokenprev = "";
         
         foreach($lines as $l) {
-            
-            $list = explode(":", $l);
+            // trim() to remove \n\r\0 but not space to keep a clean line with any spaces at the beginning or end of the line
+            $l =trim($l, "\n\r\0");
+            $list = explode(":", $l, 2);
             $token = "";
             $value = "";
             $tzid = '';
@@ -429,19 +621,20 @@ class IcsParser {
                 $dtl = explode("=", $tl[1]);
                 if (count($dtl) > 1 ){
                     switch($dtl[0]) {
-                    case 'TZID':
-                        $tzid = $dtl[1];
-                        break;
-                    case 'VALUE':
-                        $isdate = (substr( $dtl[1],0,4) == 'DATE');
-                        break;
+                        case 'TZID':
+                            $tzid = $dtl[1];
+                            break;
+                        case 'VALUE':
+                            $isdate = (substr( $dtl[1],0,4) == 'DATE');
+                            break;
                     }
                 }
             }
-            if (count($list) > 1) {
+            if (count($list) > 1 && strlen($token) > 1 && substr($token, 0, 1) > ' ') { //all tokens start with a alphabetic char , otherwise it is a continuation of a description with a colon in it.
                 // trim() to remove \n\r\0
                 $value = trim($list[1]);
-                $desc = str_replace(array('\;', '\,', '\r\n', '\n', '\r'), array(';', ',', '<br>', '<br>', '<br>'), htmlspecialchars(trim($list[1], "\n\r\0")));
+                $desc = ( $pallowhtml) ? $list[1] : htmlspecialchars($list[1]);
+                $desc = str_replace(array('\;', '\,', '\r\n','\n', '\r'), array(';', ',', "\n","\n","\n"), $desc);
                 $tokenprev = $token;
                 switch($token) {
                     case "SUMMARY":
@@ -454,15 +647,15 @@ class IcsParser {
                         $eventObj->location = $desc;
                         break;
                     case "DTSTART":
+                        $tz = $this->parseIanaTimezoneid ($tzid);
+                        $tzid = $tz->getName();
+                        $eventObj->tzid = $tzid;
                         $eventObj->startisdate = $isdate;
                         $eventObj->start = $this->parseIcsDateTime($value, $tzid);
-                        if ($tzid > ' ') {
-                            $eventObj->tzid = $tzid;
-                        }
                         if (!isset($eventObj->end)) { // because I am not sure the order is alway DTSTART before DTEND
                             $eventObj->endisdate = $isdate;
                             $eventObj->end = $eventObj->start;
-                        }                        
+                        }
                         break;
                     case "DTEND":
                         $eventObj->endisdate = $isdate;
@@ -482,8 +675,9 @@ class IcsParser {
                         break;
                 }
             }else { // count($list) <= 1
-                if (strlen($token) > 1) {
-                    $desc = str_replace(array('\;', '\,', '\r\n', '\n', '\r'), array(';', ',', '<br>', '<br>', '<br>'), htmlspecialchars(trim(substr($token,1), "\n\r\0")));
+                if (strlen($l) > 1) {
+                    $desc = ($pallowhtml) ? $l : htmlspecialchars($l);
+                    $desc = str_replace(array('\;', '\,', '\r\n','\n', '\r'), array(';', ',', "\n","\n","\n"), substr($desc,1));
                     switch($tokenprev) {
                         case "SUMMARY":
                             $eventObj->summary .= $desc;

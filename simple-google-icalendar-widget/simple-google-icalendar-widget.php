@@ -1,10 +1,10 @@
 <?php
 /*
- Plugin Name: Simple Google iCalendar Widget
- Description: Widget that displays events from a public google calendar
+ Plugin Name: Simple Google Calendar Outlook Events Widget
+ Description: Widget that displays events from a public google calendar or iCal file
  Plugin URI: https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  Author: Bram Waasdorp
- Version: 1.3.0
+ Version: 1.5.0
  License: GPL3
  Tested up to: 5.7
  Requires PHP:  5.3.0 tested with 7.2
@@ -13,14 +13,20 @@
  *   bw 20201122 v1.2.0 find solution for DTSTART and DTEND without time by explicit using isDate and only displaying times when isDate === false.;
  *               found that date_i18n($format, $timestamp) formats according to the locale, but not the timezone but the newer function wp_date() does,
  *               so date_i18n() replaced bij wp_date()
- *   bw 20201123 V1.2.2 added a checkbox to clear cache before expiration. 
- *   bw 20210408 V1.3.0 made time formats configurable. 
- *              
+ *   bw 20201123 V1.2.2 added a checkbox to clear cache before expiration.
+ *   bw 20210408 V1.3.0 made time formats configurable.
+ *   bw 20210421 v1.3.1 test for http changed in test with esc_url_raw() to accomodate webcal protocol e.g for iCloud
+ *   bw 20210616 V1.4.0 added parameter excerptlength to limit the length in characters of the description
+ *   bw 20220223 fixed timezone error in response to a support topic of edwindekuiper (@edwindekuiper): If timezone appointment is empty or incorrect
+ *               timezone fall back was to new \DateTimeZone(get_option('timezone_string')) but with UTC+... UTC-... timezonesetting this string
+ *               is empty so I use now wp_timezone() and if even that fails fall back to new \DateTimeZone('UTC').
+ *   bw 20220404 V1.5.0 in response to a support topic on github of fhennies added parameter allowhtml (htmlspecialchars) to allow Html
+ *               in Description, Summary and Location added wp_kses('post') to output to keep preventing XSS
  */
 /*
- Simple Google calendar widget for Wordpress
- Copyright (C) Bram Waasdorp 2017 - 2021
- 2021-04-22
+ Simple Google Calendar Outlook Events Widget
+ Copyright (C) Bram Waasdorp 2017 - 2022
+ 2022-02-23
  Forked from Simple Google Calendar Widget v 0.7 by Nico Boehr
  
  This program is free software: you can redistribute it and/or modify
@@ -64,7 +70,9 @@ class Simple_iCal_Widget extends WP_Widget
     
     private function getCalendarUrl($calId)
     {
-        if (substr($calId, 0, 4) == 'http')
+        
+        $protocol = strtolower(explode('://', $calId)[0]);
+        if (array_search($protocol, array('http', 'https', 'webcal')))
         { return $calId; }
         else
         { return 'https://www.google.com/calendar/ical/'.$calId.'/public/basic.ics'; }
@@ -77,7 +85,8 @@ class Simple_iCal_Widget extends WP_Widget
         $transientId = $this->getTransientId();
         
         if(false === ($data = get_transient($transientId))) {
-            $data = $this->fetch($calId, $instance['event_count'], $instance['event_period']);
+            $data = $this->fetch($calId, $instance['event_count'], $instance['event_period'], $instance['allowhtml']
+                );
             
             // do not cache data if fetching failed
             if ($data) {
@@ -110,14 +119,18 @@ class Simple_iCal_Widget extends WP_Widget
         return $out;
     }
     
-    private function fetch($calId, $count, $period)
+    private function fetch($calId, $count, $period,  $allowhtml = 0 )
     {
         $url = $this->getCalendarUrl($calId);
         $httpData = wp_remote_get($url);
         
         if(is_wp_error($httpData)) {
-            echo 'Simple Google Calendar: ', $httpData->get_error_message();
-            return false;
+            echo '<!-- ' . $url . ' not found ' . 'fall back to https:// -->';
+            $httpData = wp_remote_get('https://' . explode('://', $url)[1]);
+            if(is_wp_error($httpData)) {
+                echo 'Simple Google Calendar: ', $httpData->get_error_message();
+                return false;
+            }
         }
         
         if(!is_array($httpData) || !array_key_exists('body', $httpData)) {
@@ -127,7 +140,7 @@ class Simple_iCal_Widget extends WP_Widget
         try {
             $penddate = strtotime("+$period day");
             $parser = new IcsParser();
-            $parser->parse($httpData['body'], $penddate,  $count);
+            $parser->parse($httpData['body'], $penddate,  $count,  $allowhtml );
             
             $events = $parser->getFutureEvents($penddate);
             return $this->limitArray($events, $count);
@@ -154,6 +167,7 @@ class Simple_iCal_Widget extends WP_Widget
         $dftsum = (isset($instance['dateformat_tsum'])) ? $instance['dateformat_tsum'] : 'G:i ' ;
         $dftstart = (isset($instance['dateformat_tstart'])) ? $instance['dateformat_tstart'] : 'G:i' ;
         $dftend = (isset($instance['dateformat_tend'])) ? $instance['dateformat_tend'] : ' - G:i ' ;
+        $excerptlength = (isset($instance['excerptlength'])) ? $instance['excerptlength'] : '' ;
         $sflg = (isset($instance['suffix_lg_class'])) ? $instance['suffix_lg_class'] : '' ;
         $sflgi = (isset($instance['suffix_lgi_class'])) ? $instance['suffix_lgi_class'] : '' ;
         $sflgia = (isset($instance['suffix_lgia_class'])) ? $instance['suffix_lgia_class'] : '' ;
@@ -177,13 +191,21 @@ class Simple_iCal_Widget extends WP_Widget
                     echo wp_date( $dftsum, $e->start);
                 }
                 if(!empty($e->summary)) {
-                    echo $e->summary;
+                    echo str_replace("\n", '<br>', wp_kses($e->summary,'post'));
                 }
                 echo	'</a>' ;
                 echo '<div class="collapse ical_details' .  $sflgia . '" id="',  $itemid, '">';
-                if(!empty($e->description)) {
-                    echo   $e->description
-                    ,'<br>';
+                if(!empty($e->description) && trim($e->description) > '' && $excerptlength !== 0) {
+                    if ($excerptlength !== '' && strlen($e->description) > $excerptlength) {$e->description = substr($e->description, 0, $excerptlength + 1);
+                    if (rtrim($e->description) !== $e->description) {$e->description = substr($e->description, 0, $excerptlength);}
+                    else {if (strrpos($e->description, ' ', max(0,$excerptlength - 10))!== false OR strrpos($e->description, "\n", max(0,$excerptlength - 10))!== false )
+                    {$e->description = substr($e->description, 0, max(strrpos($e->description, "\n", max(0,$excerptlength - 10)),strrpos($e->description, ' ', max(0,$excerptlength - 10))));
+                    } else
+                    {$e->description = substr($e->description, 0, $excerptlength);}
+                    }
+                    }
+                    $e->description = str_replace("\n", '<br>', wp_kses($e->description,'post') );
+                    echo   $e->description ,(strrpos($e->description, '<br>') == (strlen($e->description) - 4)) ? '' : '<br>';
                 }
                 if ($e->startisdate === false && date('z', $e->start) === date('z', $e->end))	{
                     echo '<span class="time">', wp_date( $dftstart, $e->start ),
@@ -192,7 +214,7 @@ class Simple_iCal_Widget extends WP_Widget
                     echo '';
                 }
                 if(!empty($e->location)) {
-                    echo  '<span class="location">', $e->location , '</span>';
+                    echo  '<span class="location">', str_replace("\n", '<br>', wp_kses($e->location,'post')) , '</span>';
                 }
                 
                 
@@ -247,11 +269,19 @@ class Simple_iCal_Widget extends WP_Widget
         $instance['dateformat_tsum'] = strip_tags($new_instance['dateformat_tsum']);
         $instance['dateformat_tstart'] = strip_tags($new_instance['dateformat_tstart']);
         $instance['dateformat_tend'] = strip_tags($new_instance['dateformat_tend']);
+        $instance['cache_time'] = strip_tags($new_instance['cache_time']);
+        if(is_numeric($new_instance['excerptlength']) && $new_instance['excerptlength'] >= 0) {
+            $instance['excerptlength'] = intval($new_instance['excerptlength']);
+        } else {
+            $instance['excerptlength'] = '';
+        }
+        
         $instance['suffix_lg_class'] = strip_tags($new_instance['suffix_lg_class']);
         $instance['suffix_lgi_class'] = strip_tags($new_instance['suffix_lgi_class']);
         $instance['suffix_lgia_class'] = strip_tags($new_instance['suffix_lgia_class']);
+        $instance['allowhtml'] = $new_instance['allowhtml'];
         
-
+        
         if (!empty($new_instance['clear_cache_now'])){
             // delete our transient cache
             $this->clearData();
@@ -281,9 +311,11 @@ class Simple_iCal_Widget extends WP_Widget
             'dateformat_tsum' => 'G:i ',
             'dateformat_tstart' => 'G:i',
             'dateformat_tend' => ' - G:i ',
+            'excerptlength' => '',
             'suffix_lg_class' => '',
             'suffix_lgi_class' => ' py-0',
             'suffix_lgia_class' => '',
+            'allowhtml' => 0,
             'clear_cache_now' => 'no',
         );
         $instance = wp_parse_args((array) $instance, $default);
@@ -326,6 +358,10 @@ class Simple_iCal_Widget extends WP_Widget
           <input class="widefat" id="<?php echo $this->get_field_id('dateformat_tend'); ?>" name="<?php echo $this->get_field_name('dateformat_tend'); ?>" type="text" value="<?php echo esc_attr($instance['dateformat_tend']); ?>" />
         </p>
         <p>
+          <label for="<?php echo $this->get_field_id('excerptlength'); ?>"><?php _e('Excerpt length, max length of description:', 'simple_ical'); ?></label> 
+          <input class="widefat" id="<?php echo $this->get_field_id('excerptlength'); ?>" name="<?php echo $this->get_field_name('excerptlength'); ?>" type="text" value="<?php echo esc_attr($instance['excerptlength']); ?>" />
+        </p>
+        <p>
           <label for="<?php echo $this->get_field_id('suffix_lg_class'); ?>"><?php _e('Suffix group class:', 'simple_ical'); ?></label> 
           <input class="widefat" id="<?php echo $this->get_field_id('suffix_lg_class'); ?>" name="<?php echo $this->get_field_name('suffix_lg_class'); ?>" type="text" value="<?php echo esc_attr($instance['suffix_lg_class']); ?>" />
         </p>
@@ -338,6 +374,10 @@ class Simple_iCal_Widget extends WP_Widget
           <input class="widefat" id="<?php echo $this->get_field_id('suffix_lgia_class'); ?>" name="<?php echo $this->get_field_name('suffix_lgia_class'); ?>" type="text" value="<?php echo esc_attr($instance['suffix_lgia_class']); ?>" />
         </p>
         <p>
+          <input class="checkbox" id="<?php echo $this->get_field_id('allowhtml'); ?>" name="<?php echo $this->get_field_name('allowhtml'); ?>" type="checkbox" value="1" <?php checked( '1', $instance['allowhtml'] ); ?> />
+          <label for="<?php echo $this->get_field_id('allowhtml'); ?>"><?php _e('Allow safe html in description and summary.', 'simple_ical'); ?></label> 
+        </p>
+         <p>
           <input class="checkbox" id="<?php echo $this->get_field_id('clear_cache_now'); ?>" name="<?php echo $this->get_field_name('clear_cache_now'); ?>" type="checkbox" value='yes' />
           <label for="<?php echo $this->get_field_id('clear_cache_now'); ?>"><?php _e(' clear cache on save.', 'simple_ical'); ?></label> 
         </p>
