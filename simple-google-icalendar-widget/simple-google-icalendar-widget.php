@@ -318,7 +318,7 @@ class Simple_iCal_Widget extends WP_Widget
             'suffix_lgi_class' => ' py-0',
             'suffix_lgia_class' => '',
             'allowhtml' => 0,
-            'processdst' => 0,
+            'processdst' => 1,
             'clear_cache_now' => 'no',
         );
         $instance = wp_parse_args((array) $instance, $default);
