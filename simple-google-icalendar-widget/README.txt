@@ -54,10 +54,15 @@ Then use the public iCal address or the Google calendar ID.
 
 = Can I use HTML in the description of the appointement?  =
 
- You can use HTML in the most Calendars, but the result in the plugin may not be what you expect.
- First most calendars will only give the plain text in the Description in the iCal output.
- Secondly this plugin filters the HTML to convert characters that have special significance in HTML to the corresponding HTML-entities. So if you manage to get the HTML in the description the output wil not be what you expect.
- In case you have all kinds of HTML in your appointments a plugin that uses the API of te calendar-application might be a better choice for you. 
+You can use HTML in the most Calendars, but the result in the plugin may not be what you expect.    
+First: The original iCalendar standard allowed only plain text as part of an event description. Thus probably most calendars will only give the plain text in the Description in the iCal output.   
+Secondly: For security reasons  this plugin filters the HTML to convert characters that have special significance in HTML to the corresponding HTML-entities.
+  
+But from version 1.5.0 of this widget if you trust the output of the calendar application you can set a checkbox to allow safe html in the output. So if you manage to get the HTML in the Description and you set the checkbox to allow safe html you can get that html in the output, with exception of the tags that are not considered safe like SCRIPT and unknown tags.          
+And with the current version  of Google Calendar you can put some HTML in the Description output. (April 2022) I saw the  &lt;a&gt; (link),  &lt;b&gt; (bold text),  &lt;i&gt; (italic text),  &lt;u&gt; (underlined text) and  &lt;br&gt; (linebreak) tags in a iCal description. They will all come through with "Allow safe html" checkbox on. Probably even more is possible, but Google can also decide to comply more to the standard.   
+With Microsoft Outlook the HTML tags were filtered away and did not reach the iCal description         
+
+In case you have all kinds of HTML in your appointments a plugin that uses the API of te calendar-application might be a better choice for you.     
 
 = How to use Microsoft Office Outlook Calendar? =
 
@@ -138,6 +143,7 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 * since v1.2.0 Wordpress version 5.3.0 is required because of the use of wp_date() 
 
 == Changelog ==
+* 1.5.0 in response to a github issue of fhennies added a checkbox to allow safe html in the output. Added wp_kses() function to run for description, digest and location, to echo only html considered safe for wordpress posts, thus preserving some security against XSS.  
 * 1.4.1 in response to a support topic of edwindekuiper (@edwindekuiper) fixed timezone error: If timezone appointment is empty or incorrect 
         timezone fall back was to new \DateTimeZone(get_option('timezone_string')) but with UTC+... UTC-... timezonesetting this string is empty
         so I use now wp_timezone() and if even that fails fall back to new \DateTimeZone('UTC').

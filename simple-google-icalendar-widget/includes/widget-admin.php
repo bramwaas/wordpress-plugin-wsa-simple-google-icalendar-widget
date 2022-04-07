@@ -74,7 +74,7 @@ class Simple_iCal_Admin {
         _e('<p>Time format separator and end time. Default:  - G:i,<br>G or g = 24 or 12 hour format of an hour without leading zeros<br>i = Minutes with leading zeros<br>a or A = Lowercase or Uppercase Ante meridiem and Post meridiem<br>make empty if you don\'t want to show end time.<br>You can also use other text to embellish it<br>escape characters with special meaning with a slash(\)e.g.: \t\o G:i .</p>', 'simple_ical');
         
         _e('<p><strong>Excerpt length</strong></p>', 'simple_ical');
-        _e('<p>Max length of the description in characters.<br>If there is a space or end-of-line character within 10 characters of this end, break there.<br>Note, not all characters have the same width, so the number of lines is not completely fixed by this. So you need additional CSS for that.<br> Default: empty, all characters will be displayed</p>', 'simple_ical');
+        _e('<p>Max length of the description in characters.<br>If there is a space or end-of-line character within 10 characters of this end, break there.<br>Note, not all characters have the same width, so the number of lines is not completely fixed by this. So you need additional CSS for that.<br><b>Warning:</b> If you allow html in the description, necessary end tags may disappear here.<br> Default: empty, all characters will be displayed</p>', 'simple_ical');
         
         _e('<p><strong>Suffix group class</strong></p>', 'simple_ical');
         _e('<p>Suffix to add after css-class around the event (list-group),<br>start with space to keep the original class and add another class.</p>', 'simple_ical');
@@ -86,7 +86,7 @@ class Simple_iCal_Admin {
         _e('<p>Suffix to add after the css-class around the event details link (ical_details),<br>start with space to keep the original class and add another class.</p>', 'simple_ical');
 
         _e('<p><strong>Checkbox Allow safe html in description and summary.</strong></p>', 'simple_ical');
-        _e('<p>Check checkbox to allow the use of some safe html in description and summary, otherwise it will only be dispayed aas text.</p>', 'simple_ical');
+        _e('<p>Check checkbox to allow the use of some safe html in description and summary,<br>otherwise it will only be displayed as text.</p>', 'simple_ical');
         
         _e('<p><strong>Checkbox clear cache on save.</strong></p>', 'simple_ical');
         _e('<p>Check checkbox to clear cache on save, otherwise it will be cleared after cache time is expired.</p>', 'simple_ical');

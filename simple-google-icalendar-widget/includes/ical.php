@@ -22,7 +22,8 @@ class IcsParsingException extends Exception {}
  *   bw 20220223 fixed timezone error in response to a support topic of edwindekuiper (@edwindekuiper): If timezone appointment is empty or incorrect 
  *               timezone fall back was to new \DateTimeZone(get_option('timezone_string')) but with UTC+... UTC-... timezonesetting this string 
  *               is empty so I use now wp_timezone() and if even that fails fall back to new \DateTimeZone('UTC').
- *   bw 20220404 V1.5.0 added parameter allowhtml (htmlspecialchars) to allow Html in Description.            
+ *   bw 20220404 V1.5.0 added parameter allowhtml (htmlspecialchars) to allow Html in Description. 
+ *   bw 20220407 Extra options for parser in array poptions and added temporary new option processdst to process differences in DST between start of series events and the current event.            
  * Version: 1.5.0
  
  */
@@ -180,8 +181,20 @@ class IcsParser {
         'Yakutsk Standard Time'           => 'Asia/Yakutsk',
     );
     
+    /**
+     * Parse ical string to individual events
+     *
+     * @param   string      $str the  content of the file to parse as a string. 
+     * @param   datetime    $penddate the max date for the last event to return. 
+     * @param   int         $pcount   the max number of events to return.
+     * @param   array       $instance array of options
+     *  
+     * @return  array       $this->events the parsed event objects.
+     * 
+     * @since 
+     */
     
-    public function parse($str ,  $penddate,  $pcount, $pallowhtml = 0  ) {
+    public function parse($str ,  $penddate,  $pcount, $instance  ) {
         
         $curstr = $str;
         $haveVevent = true;
@@ -211,7 +224,7 @@ class IcsParser {
                 }
                 
                 $eventStr = trim(substr($eventStr, 0, $endpos), "\n\r\0");
-                $e = $this->parseVevent($eventStr, $pallowhtml);
+                $e = $this->parseVevent($eventStr, $instance);
                 $events[] = $e;
                 // Recurring event?
                 if (isset($e->rrule) && $e->rrule !== '') {
@@ -458,14 +471,16 @@ class IcsParser {
                                                     if ($newstart->getTimestamp() >= $now
                                                         ) { // copy only events after now
                                                             $cen++;
-                                                            // process daylight saving time
-                                                            $tzadd = $tzoffsetedt - $timezone->getOffset ( $newstart);
-                                                            if ($tzadd != 0) {
-                                                                $tziv = new DateInterval('PT' . abs($tzadd) . 'S');
-                                                                if ($tzadd < 0) {
-                                                                    $tziv->invert = 1;
+                                                            if (!isset($instance['notprocessdst']) or !$instance['notprocessdst'] ) {
+                                                                // process daylight saving time
+                                                                $tzadd = $tzoffsetedt - $timezone->getOffset ( $newstart);
+                                                                if ($tzadd != 0) {
+                                                                    $tziv = new DateInterval('PT' . abs($tzadd) . 'S');
+                                                                    if ($tzadd < 0) {
+                                                                        $tziv->invert = 1;
+                                                                    }
+                                                                    $newstart->add($tziv);
                                                                 }
-                                                                $newstart->add($tziv);
                                                             }
                                                             
                                                             $en =  clone $e;
@@ -474,7 +489,7 @@ class IcsParser {
                                                             $newend->add($eduration);
                                                             $en->end = $newend->getTimestamp();
                                                             $en->uid = $i . '_' . $e->uid;
-                                                            if ($test > ' ') { 	$en->summary = $en->summary . '<br>Test:' . $test; 	}
+//                                                            if ($test > ' ') { 	$en->summary = $en->summary . '<br>Test:' . $test; 	}
                                                             $events[] = $en;
                                                     } // copy eevents
                                                     // next eventcount from $e->start
@@ -600,7 +615,7 @@ class IcsParser {
         }
     }
     
-    public function parseVevent($eventStr, $pallowhtml) {
+    public function parseVevent($eventStr, $instance) {
         $lines = explode("\n", $eventStr);
         $eventObj = new StdClass;
         $tokenprev = "";
@@ -633,7 +648,7 @@ class IcsParser {
             if (count($list) > 1 && strlen($token) > 1 && substr($token, 0, 1) > ' ') { //all tokens start with a alphabetic char , otherwise it is a continuation of a description with a colon in it.
                 // trim() to remove \n\r\0
                 $value = trim($list[1]);
-                $desc = ( $pallowhtml) ? $list[1] : htmlspecialchars($list[1]);
+                $desc = ( $instance['allowhtml']) ? $list[1] : htmlspecialchars($list[1]);
                 $desc = str_replace(array('\;', '\,', '\r\n','\n', '\r'), array(';', ',', "\n","\n","\n"), $desc);
                 $tokenprev = $token;
                 switch($token) {
@@ -676,7 +691,7 @@ class IcsParser {
                 }
             }else { // count($list) <= 1
                 if (strlen($l) > 1) {
-                    $desc = ($pallowhtml) ? $l : htmlspecialchars($l);
+                    $desc = ($instance['allowhtml']) ? $l : htmlspecialchars($l);
                     $desc = str_replace(array('\;', '\,', '\r\n','\n', '\r'), array(';', ',', "\n","\n","\n"), substr($desc,1));
                     switch($tokenprev) {
                         case "SUMMARY":
