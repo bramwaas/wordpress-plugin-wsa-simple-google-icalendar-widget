@@ -380,7 +380,7 @@ class Simple_iCal_Widget extends WP_Widget
         </p>
         <p>
           <input class="checkbox" id="<?php echo $this->get_field_id('notprocessdst'); ?>" name="<?php echo $this->get_field_name('notprocessdst'); ?>" type="checkbox" value="1" <?php checked( '1', $instance['notprocessdst'] ); ?> />
-          <label for="<?php echo $this->get_field_id('notprocessdst'); ?>"><?php _e('(temporary) Process DST in series events when not automatically processed.', 'simple_ical'); ?></label> 
+          <label for="<?php echo $this->get_field_id('notprocessdst'); ?>"><?php _e('(temporary) Do not process DST in series events when already automatically processed.', 'simple_ical'); ?></label> 
         </p>
          <p>
           <input class="checkbox" id="<?php echo $this->get_field_id('clear_cache_now'); ?>" name="<?php echo $this->get_field_name('clear_cache_now'); ?>" type="checkbox" value='yes' />
