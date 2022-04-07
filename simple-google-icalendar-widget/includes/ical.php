@@ -482,7 +482,6 @@ class IcsParser {
                                                                     $newstart->add($tziv);
                                                                 }
                                                             }
-                                                            $test = 'notprocessdst' . ((isset($instance['notprocessdst'])) ? ($instance['notprocessdst']): 'empty') . ' tzadd:' . $tzadd . ' newstart:' .   $newstart->format('D, d M Y H:i:s');
                                                             
                                                             $en =  clone $e;
                                                             $en->start = $newstart->getTimestamp();
@@ -490,7 +489,7 @@ class IcsParser {
                                                             $newend->add($eduration);
                                                             $en->end = $newend->getTimestamp();
                                                             $en->uid = $i . '_' . $e->uid;
-                                                            if ($test > ' ') { 	$en->summary = $en->summary . '<br>Test:' . $test; 	}
+//                                                            if ($test > ' ') { 	$en->summary = $en->summary . '<br>Test:' . $test; 	}
                                                             $events[] = $en;
                                                     } // copy eevents
                                                     // next eventcount from $e->start
