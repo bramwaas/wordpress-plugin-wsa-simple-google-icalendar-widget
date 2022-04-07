@@ -22,7 +22,7 @@
  *               is empty so I use now wp_timezone() and if even that fails fall back to new \DateTimeZone('UTC').
  *   bw 20220404 V1.5.0 in response to a support topic on github of fhennies added parameter allowhtml (htmlspecialchars) to allow Html
  *               in Description, Summary and Location added wp_kses('post') to output to keep preventing XSS
- *   bw 20220407 Extra options for parser in array poptions and added temporary new option processdst to process differences in DST between start of series events and the current event.             
+ *   bw 20220407 Extra options for parser in array poptions and added temporary new option notprocessdst to don't process differences in DST between start of series events and the current event.             
  */
 /*
  Simple Google Calendar Outlook Events Widget
@@ -84,10 +84,8 @@ class Simple_iCal_Widget extends WP_Widget
         $widgetId = $this->id;
         $calId = $instance['calendar_id'];
         $transientId = $this->getTransientId();
-        $poptions['allowhtml'] = $instance['allowhtml'];
-        $poptions['processdst'] = $instance['processdst'];
         if(false === ($data = get_transient($transientId))) {
-            $data = $this->fetch($calId, $instance['event_count'], $instance['event_period'], $poptions );
+            $data = $this->fetch($calId, $instance['event_count'], $instance['event_period'], $instance );
             
             // do not cache data if fetching failed
             if ($data) {
@@ -120,7 +118,7 @@ class Simple_iCal_Widget extends WP_Widget
         return $out;
     }
     
-    private function fetch($calId, $count, $period,  $poptions )
+    private function fetch($calId, $count, $period,  $instance )
     {
         $url = $this->getCalendarUrl($calId);
         $httpData = wp_remote_get($url);
@@ -141,7 +139,7 @@ class Simple_iCal_Widget extends WP_Widget
         try {
             $penddate = strtotime("+$period day");
             $parser = new IcsParser();
-            $parser->parse($httpData['body'], $penddate,  $count,  $poptions );
+            $parser->parse($httpData['body'], $penddate,  $count,  $instance );
             
             $events = $parser->getFutureEvents($penddate);
             return $this->limitArray($events, $count);
@@ -281,7 +279,7 @@ class Simple_iCal_Widget extends WP_Widget
         $instance['suffix_lgi_class'] = strip_tags($new_instance['suffix_lgi_class']);
         $instance['suffix_lgia_class'] = strip_tags($new_instance['suffix_lgia_class']);
         $instance['allowhtml'] = $new_instance['allowhtml'];
-        $instance['processdst'] = $new_instance['processdst'];
+        $instance['notprocessdst'] = $new_instance['notprocessdst'];
         
         
         if (!empty($new_instance['clear_cache_now'])){
@@ -318,7 +316,7 @@ class Simple_iCal_Widget extends WP_Widget
             'suffix_lgi_class' => ' py-0',
             'suffix_lgia_class' => '',
             'allowhtml' => 0,
-            'processdst' => 1,
+            'notprocessdst' => 1,
             'clear_cache_now' => 'no',
         );
         $instance = wp_parse_args((array) $instance, $default);
@@ -381,8 +379,8 @@ class Simple_iCal_Widget extends WP_Widget
           <label for="<?php echo $this->get_field_id('allowhtml'); ?>"><?php _e('Allow safe html in description and summary.', 'simple_ical'); ?></label> 
         </p>
         <p>
-          <input class="checkbox" id="<?php echo $this->get_field_id('processdst'); ?>" name="<?php echo $this->get_field_name('processdst'); ?>" type="checkbox" value="1" <?php checked( '1', $instance['processdst'] ); ?> />
-          <label for="<?php echo $this->get_field_id('processdst'); ?>"><?php _e('(temporary) Process DST in series events when not automatically processed.', 'simple_ical'); ?></label> 
+          <input class="checkbox" id="<?php echo $this->get_field_id('notprocessdst'); ?>" name="<?php echo $this->get_field_name('notprocessdst'); ?>" type="checkbox" value="1" <?php checked( '1', $instance['notprocessdst'] ); ?> />
+          <label for="<?php echo $this->get_field_id('notprocessdst'); ?>"><?php _e('(temporary) Process DST in series events when not automatically processed.', 'simple_ical'); ?></label> 
         </p>
          <p>
           <input class="checkbox" id="<?php echo $this->get_field_id('clear_cache_now'); ?>" name="<?php echo $this->get_field_name('clear_cache_now'); ?>" type="checkbox" value='yes' />
