@@ -471,7 +471,7 @@ class IcsParser {
                                                     if ($newstart->getTimestamp() >= $now
                                                         ) { // copy only events after now
                                                             $cen++;
-                                                            if ($instance['notprocessdst']) {
+                                                            if (!isset($instance['notprocessdst']) or !$instance['notprocessdst'] ) {
                                                                 // process daylight saving time
                                                                 $tzadd = $tzoffsetedt - $timezone->getOffset ( $newstart);
                                                                 if ($tzadd != 0) {
