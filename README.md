@@ -143,7 +143,9 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 * since v1.2.0 Wordpress version 5.3.0 is required because of the use of wp_date() 
 
 == Changelog ==
-* 1.5.0 in response to a github issue of fhennies added a checkbox to allow safe html in the output. Added wp_kses() function to run for description, digest and location, to echo only html considered safe for wordpress posts, thus preserving some security against XSS.  
+* 1.5.0 in response to a github issue of fhennies added a checkbox to allow safe html in the output. Added wp_kses() function to run for description, digest and location, to echo only html considered safe for wordpress posts, thus preserving some security against XSS.
+Extra options for parser in array $instance and added temporary new option notprocessdst to don't process differences in DST between start of series events and the current event. (in response to a WP support topic of @wurzelserver)
+   7-4-2022 tested with wordpress 5.9.1
 * 1.4.1 in response to a support topic of edwindekuiper (@edwindekuiper) fixed timezone error: If timezone appointment is empty or incorrect 
         timezone fall back was to new \DateTimeZone(get_option('timezone_string')) but with UTC+... UTC-... timezonesetting this string is empty
         so I use now wp_timezone() and if even that fails fall back to new \DateTimeZone('UTC').
