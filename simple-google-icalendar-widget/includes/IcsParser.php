@@ -582,7 +582,7 @@ class IcsParser {
      * If timezone string from WP doesn't make a good timezone return UTC timezone.
      *
      * @param  string $ptzid (timezone ID)
-     * @return DateTimeZone object
+     * @return \DateTimeZone object
      */
     
     private function parseIanaTimezoneid ($ptzid = '') {
