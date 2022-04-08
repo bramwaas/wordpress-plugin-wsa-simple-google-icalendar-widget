@@ -6,7 +6,7 @@
  Author: Bram Waasdorp
  Version: 1.5.0
  License: GPL3
- Tested up to: 5.7
+ Tested up to: 5.9
  Requires PHP:  5.3.0 tested with 7.2
  Text Domain:  simple_ical
  Domain Path:  /languages
@@ -43,7 +43,11 @@
  You should have received a copy of the GNU General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-require_once( 'includes/ical.php' );
+
+if (!class_exists('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget\IcsParser')) {
+    require_once( 'includes/IcsParser.php' );
+    class_alias('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget\IcsParser', 'IcsParser');
+}
 require_once('includes/widget-admin.php');
 
 

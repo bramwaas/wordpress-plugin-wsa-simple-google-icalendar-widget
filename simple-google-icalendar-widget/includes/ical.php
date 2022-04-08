@@ -1,7 +1,4 @@
 <?php
-
-class IcsParsingException extends Exception {}
-
 /**
  * a simple ICS parser.
  *
@@ -23,10 +20,13 @@ class IcsParsingException extends Exception {}
  *               timezone fall back was to new \DateTimeZone(get_option('timezone_string')) but with UTC+... UTC-... timezonesetting this string 
  *               is empty so I use now wp_timezone() and if even that fails fall back to new \DateTimeZone('UTC').
  *   bw 20220404 V1.5.0 added parameter allowhtml (htmlspecialchars) to allow Html in Description. 
- *   bw 20220407 Extra options for parser in array poptions and added temporary new option processdst to process differences in DST between start of series events and the current event.            
- * Version: 1.5.0
+ *   bw 20220407 Extra options for parser in array poptions and added temporary new option processdst to process differences in DST between start of series events and the current event.
+ *   bw 20220408 Improved overflow month.            
+ * Version: 1.5.1
  
  */
+namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget;
+
 class IcsParser {
     
     const TOKEN_BEGIN_VEVENT = "BEGIN:VEVENT";
@@ -193,9 +193,7 @@ class IcsParser {
      * 
      * @since 
      */
-    
     public function parse($str ,  $penddate,  $pcount, $instance  ) {
-        
         $curstr = $str;
         $haveVevent = true;
         $events = array();
@@ -210,7 +208,6 @@ class IcsParser {
             'SA' => 'saturday',
             'SU' => 'sunday',
         );
-        
         do {
             $startpos = strpos($curstr, self::TOKEN_BEGIN_VEVENT);
             if ($startpos !== false) {
@@ -218,11 +215,9 @@ class IcsParser {
                 $eventStrStart = $startpos + strlen(self::TOKEN_BEGIN_VEVENT);
                 $eventStr = substr($curstr, $eventStrStart);
                 $endpos = strpos($eventStr, self::TOKEN_END_VEVENT);
-                
                 if ($endpos === false) {
-                    throw new IcsParsingException('No valid END:VEVENT found');
+                    throw new Exception('IcsParser->parse: No valid END:VEVENT found.');
                 }
-                
                 $eventStr = trim(substr($eventStr, 0, $endpos), "\n\r\0");
                 $e = $this->parseVevent($eventStr, $instance);
                 $events[] = $e;
@@ -270,7 +265,7 @@ class IcsParser {
                     $frequency = $rrules['freq'];
                     $interval = (isset($rrules['interval']) && $rrules['interval'] !== '') ? $rrules['interval'] : 1;
                     $freqinterval = new DateInterval('P' . $interval . substr($frequency,0,1));
-                    $interval3day = new DateInterval('P3D');
+                    $intervalmonthend = new DateInterval('P3D');
                     $until = (isset($rrules['until'])) ? $this->parseIcsDateTime($rrules['until']) : $penddate;
                     $until = ($until < $penddate) ? $until : ($penddate - 1);
                     $freqendloop = ($until > $penddate) ? $until : $penddate;
@@ -503,11 +498,12 @@ class IcsParser {
                                 if  ($fmdayok &&
                                     in_array($frequency , array('MONTHLY', 'YEARLY')) &&
                                     $freqstart->format('j') !== $edtstartmday){
-                                        // eg 31 jan + 1 month = 3 mar; -3 days => 28 feb
-                                        $freqstart->sub($interval3day);
+                                        // eg 31 jan + 1 month = 3 mar; -3 days => 28 feb, 31 mar +  month = 1 may - 1 day => 30 april
+                                        $intervalmonthend =  new DateInterval('P' . $freqstart->format('j') .  'D');
+                                        $freqstart->sub($intervalmonthend);
                                         $fmdayok = false;
                                 } elseif (!$fmdayok ){
-                                    $freqstart->add($interval3day);
+                                    $freqstart->add($intervalmonthend);
                                     $fmdayok = true;
                                     
                                 }
@@ -706,12 +702,7 @@ class IcsParser {
                     }
                 }
             }
-            
-            
         }
-        
         return $eventObj;
     }
 }
-
-$p = new IcsParser();
