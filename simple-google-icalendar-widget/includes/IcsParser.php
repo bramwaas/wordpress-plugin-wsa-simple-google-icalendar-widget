@@ -16,12 +16,12 @@
  *   bw 20210618 replace EOL <br> by newline ("\n") in Multiline elements Description and Summary to make it easier to trim to excerptlength
  *               and do replacement of newline by <br> when displaying the line.
  *               fixed a trim error that occurred in a previous version, revising the entire trimming so that both \r\n and \n end of lines are handled properly
- *   bw 20220223 fixed timezone error in response to a support topic of edwindekuiper (@edwindekuiper): If timezone appointment is empty or incorrect 
- *               timezone fall back was to new \DateTimeZone(get_option('timezone_string')) but with UTC+... UTC-... timezonesetting this string 
+ *   bw 20220223 fixed timezone error in response to a support topic of edwindekuiper (@edwindekuiper): If timezone appointment is empty or incorrect
+ *               timezone fall back was to new \DateTimeZone(get_option('timezone_string')) but with UTC+... UTC-... timezonesetting this string
  *               is empty so I use now wp_timezone() and if even that fails fall back to new \DateTimeZone('UTC').
- *   bw 20220404 V1.5.0 added parameter allowhtml (htmlspecialchars) to allow Html in Description. 
+ *   bw 20220404 V1.5.0 added parameter allowhtml (htmlspecialchars) to allow Html in Description.
  *   bw 20220407 Extra options for parser in array poptions and added temporary new option processdst to process differences in DST between start of series events and the current event.
- *   bw 20220408 Improved overflow month.            
+ *   bw 20220408 Improved overflow month. Namespaced.
  * Version: 1.5.1
  
  */
@@ -184,14 +184,14 @@ class IcsParser {
     /**
      * Parse ical string to individual events
      *
-     * @param   string      $str the  content of the file to parse as a string. 
-     * @param   datetime    $penddate the max date for the last event to return. 
+     * @param   string      $str the  content of the file to parse as a string.
+     * @param   datetime    $penddate the max date for the last event to return.
      * @param   int         $pcount   the max number of events to return.
      * @param   array       $instance array of options
-     *  
+     *
      * @return  array       $this->events the parsed event objects.
-     * 
-     * @since 
+     *
+     * @since
      */
     public function parse($str ,  $penddate,  $pcount, $instance  ) {
         $curstr = $str;
@@ -216,7 +216,7 @@ class IcsParser {
                 $eventStr = substr($curstr, $eventStrStart);
                 $endpos = strpos($eventStr, self::TOKEN_END_VEVENT);
                 if ($endpos === false) {
-                    throw new Exception('IcsParser->parse: No valid END:VEVENT found.');
+                    thrownew \Exception('IcsParser->parse: No valid END:VEVENT found.');
                 }
                 $eventStr = trim(substr($eventStr, 0, $endpos), "\n\r\0");
                 $e = $this->parseVevent($eventStr, $instance);
@@ -240,8 +240,8 @@ class IcsParser {
                      * FREQ=DAILY;COUNT=5;INTERVAL=7 Every 7 days,5 times
                      
                      */
-                    $timezone = new DateTimeZone((isset($e->tzid)&& $e->tzid !== '') ? $e->tzid : get_option('timezone_string'));
-                    $edtstart = new DateTime('@' . $e->start);
+                    $timezone = new \DateTimeZone((isset($e->tzid)&& $e->tzid !== '') ? $e->tzid : get_option('timezone_string'));
+                    $edtstart = new \DateTime('@' . $e->start);
                     $edtstart->setTimezone($timezone);
                     $edtstartmday = $edtstart->format('j');
                     $edtstartmon = $edtstart->format('n');
@@ -250,7 +250,7 @@ class IcsParser {
                     // 		$egdstart['weekday'] 'Monday' - 'Sunday' example 'Thursday'
                     //		$egdstart['mon']  monthnr in year 1 - 12 example 11  (november)
                     //		$egdstart['mday'] day in the month 1 - 31 example 16
-                    $edtendd   = new DateTime('@' . $e->end);
+                    $edtendd   = new \DateTime('@' . $e->end);
                     $edtendd->setTimezone($timezone);
                     $eduration = $edtstart->diff($edtendd);
                     
@@ -264,8 +264,8 @@ class IcsParser {
                     // Get frequency and other values when set
                     $frequency = $rrules['freq'];
                     $interval = (isset($rrules['interval']) && $rrules['interval'] !== '') ? $rrules['interval'] : 1;
-                    $freqinterval = new DateInterval('P' . $interval . substr($frequency,0,1));
-                    $intervalmonthend = new DateInterval('P3D');
+                    $freqinterval =new \DateInterval('P' . $interval . substr($frequency,0,1));
+                    $intervalmonthend =new \DateInterval('P3D');
                     $until = (isset($rrules['until'])) ? $this->parseIcsDateTime($rrules['until']) : $penddate;
                     $until = ($until < $penddate) ? $until : ($penddate - 1);
                     $freqendloop = ($until > $penddate) ? $until : $penddate;
@@ -406,17 +406,17 @@ class IcsParser {
                                                             $wdf->setTime($fH, $fi);
                                                             $wdl->setTime($fH, $fi);
                                                             if ($byi > 0) {
-                                                                $wdf->add(new DateInterval('P' . ($byi - 1) . 'W'));
+                                                                $wdf->add(new \DateInterval('P' . ($byi - 1) . 'W'));
                                                                 $bydays[] = $wdf->getTimestamp();
                                                             } elseif ($byi < 0) {
-                                                                $wdl->sub(new DateInterval('P' . (- $byi - 1) . 'W'));
+                                                                $wdl->sub(new \DateInterval('P' . (- $byi - 1) . 'W'));
                                                                 $bydays[] = $wdl->getTimestamp();
                                                                 
                                                             }
                                                             else {
                                                                 while ($wdf <= $wdl) {
                                                                     $bydays[] = $wdf->getTimestamp();
-                                                                    $wdf->add(new DateInterval('P1W'));
+                                                                    $wdf->add(new \DateInterval('P1W'));
                                                                 }
                                                             }
                                                         } // Yearly or Monthly
@@ -424,10 +424,10 @@ class IcsParser {
                                                             $wdnrn = $newstart->format('N'); // Mo 1; Su 7
                                                             $wdnrb = array_search($byd,array_values($weekdays)) + 1;  // numeric index in weekdays
                                                             if ($wdnrb > $wdnrn) {
-                                                                $wdf->add (new DateInterval('P' . ($wdnrb - $wdnrn ) . 'D'));
+                                                                $wdf->add (new \DateInterval('P' . ($wdnrb - $wdnrn ) . 'D'));
                                                             }
                                                             if ($wdnrb < $wdnrn) {
-                                                                $wdf->sub (new DateInterval('P' . ($wdnrn - $wdnrb) . 'D'));
+                                                                $wdf->sub (new \DateInterval('P' . ($wdnrn - $wdnrb) . 'D'));
                                                                 
                                                             }
                                                             $bydays[] = $wdf->getTimestamp();
@@ -470,7 +470,7 @@ class IcsParser {
                                                                 // process daylight saving time
                                                                 $tzadd = $tzoffsetedt - $timezone->getOffset ( $newstart);
                                                                 if ($tzadd != 0) {
-                                                                    $tziv = new DateInterval('PT' . abs($tzadd) . 'S');
+                                                                    $tziv =new \DateInterval('PT' . abs($tzadd) . 'S');
                                                                     if ($tzadd < 0) {
                                                                         $tziv->invert = 1;
                                                                     }
@@ -484,7 +484,7 @@ class IcsParser {
                                                             $newend->add($eduration);
                                                             $en->end = $newend->getTimestamp();
                                                             $en->uid = $i . '_' . $e->uid;
-//                                                            if ($test > ' ') { 	$en->summary = $en->summary . '<br>Test:' . $test; 	}
+                                                            //                                                            if ($test > ' ') { 	$en->summary = $en->summary . '<br>Test:' . $test; 	}
                                                             $events[] = $en;
                                                     } // copy eevents
                                                     // next eventcount from $e->start
@@ -499,7 +499,7 @@ class IcsParser {
                                     in_array($frequency , array('MONTHLY', 'YEARLY')) &&
                                     $freqstart->format('j') !== $edtstartmday){
                                         // eg 31 jan + 1 month = 3 mar; -3 days => 28 feb, 31 mar +  month = 1 may - 1 day => 30 april
-                                        $intervalmonthend =  new DateInterval('P' . $freqstart->format('j') .  'D');
+                                        $intervalmonthend = new \DateInterval('P' . $freqstart->format('j') .  'D');
                                         $freqstart->sub($intervalmonthend);
                                         $fmdayok = false;
                                 } elseif (!$fmdayok ){
@@ -588,15 +588,15 @@ class IcsParser {
     private function parseIanaTimezoneid ($ptzid = '') {
         try {
             $timezone = (isset($ptzid)&& $ptzid !== '') ? new \DateTimeZone($ptzid) : wp_timezone();
-        } catch (Exception $exc) {}
+        } catch (\Exception $exc) {}
         if (isset($timezone)) return $timezone;
         try {
             if (isset(self::$windowsTimeZonesMap[$ptzid])) $timezone = new \DateTimeZone(self::$windowsTimeZonesMap[$ptzid]);
-        } catch (Exception $exc) {}
+        } catch (\Exception $exc) {}
         if (isset($timezone)) return $timezone;
         try {
             $timezone = wp_timezone();
-        } catch (Exception $exc) { }
+        } catch (\Exception $exc) { }
         if (isset($timezone)) return $timezone;
         return new \DateTimeZone('UTC');
     }
@@ -613,7 +613,7 @@ class IcsParser {
     
     public function parseVevent($eventStr, $instance) {
         $lines = explode("\n", $eventStr);
-        $eventObj = new StdClass;
+        $eventObj = new \StdClass;
         $tokenprev = "";
         
         foreach($lines as $l) {
