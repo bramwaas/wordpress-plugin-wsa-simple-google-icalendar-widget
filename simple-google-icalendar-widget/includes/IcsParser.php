@@ -21,7 +21,8 @@
  *               is empty so I use now wp_timezone() and if even that fails fall back to new \DateTimeZone('UTC').
  *   bw 20220404 V1.5.0 added parameter allowhtml (htmlspecialchars) to allow Html in Description.
  *   bw 20220407 Extra options for parser in array poptions and added temporary new option processdst to process differences in DST between start of series events and the current event.
- *   bw 20220408 Namespaced.
+ *   bw 20220408 Namespaced. Add difference in seconds to timestamp newstart to get timestamp newend instead of working with DateInterval.
+ *               This calculation better takes into account the deleted hour at the start of DST.
  * Version: 1.5.1
  
  */
@@ -244,16 +245,10 @@ class IcsParser {
                     $edtstart = new \DateTime('@' . $e->start);
                     $edtstart->setTimezone($timezone);
                     $edtstartmday = $edtstart->format('j');
-                    $edtstartmon = $edtstart->format('n');
-                    $egdstart = getdate($e->start);
-                    //      example 2017-11-16
-                    // 		$egdstart['weekday'] 'Monday' - 'Sunday' example 'Thursday'
-                    //		$egdstart['mon']  monthnr in year 1 - 12 example 11  (november)
-                    //		$egdstart['mday'] day in the month 1 - 31 example 16
                     $edtendd   = new \DateTime('@' . $e->end);
                     $edtendd->setTimezone($timezone);
-                    $eduration = $edtstart->diff($edtendd);
-                    
+//                    $eduration = $edtstart->diff($edtendd); wrong when Borderperide ST -> DST within event 
+                    $edurationsecs =  $e->end - $e->start;
                     
                     $rrules = array();
                     $rruleStrings = explode(';', $e->rrule);
@@ -469,11 +464,12 @@ class IcsParser {
                                                             
                                                             $en =  clone $e;
                                                             $en->start = $newstart->getTimestamp();
-                                                            $newend->setTimestamp($en->start) ;
-                                                            $newend->add($eduration);
-                                                            $en->end = $newend->getTimestamp();
+//                                                            $newend->setTimestamp($en->start) ;
+//                                                            $newend->add($eduration);
+//                                                            $en->end = $newend->getTimestamp();
+                                                            $en->end = $en->start + $edurationsecs;
                                                             $en->uid = $i . '_' . $e->uid;
-                                                            
+                                                            $test = 'Verschil=' . $edurationsecs;
                                                             if ($test > ' ') { 	$en->summary = $en->summary . '<br>Test:' . $test; 	}
                                                             $events[] = $en;
                                                     } // copy eevents
