@@ -1,6 +1,6 @@
 <?php
 /*
- * widget-admin.php
+ * SimpleicalWidgetAdmin.php
  * * Admin menus
  *
  * @package    Simple Google iCalendar Widget
@@ -9,14 +9,17 @@
  * @copyright  Copyright (c)  2017 - 2022, Bram Waasdorp
  * @link       https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  * @license    http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * Version: 1.5.0
+ * Version: 1.5.1
+ * 20220410 namespaced and renamed after classname.
  */
-class Simple_iCal_Admin {
+namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget;
+
+class SimpleicalWidgetAdmin {
     //menu items
     /**
      * Back-end sub menu item to display widget help page.
      *
-     * @see WP_Widget::form()
+     * @see \WP_Widget::form()
      *
      * @param .
      */
@@ -36,7 +39,7 @@ class Simple_iCal_Admin {
     /**
      * Back-end widget help page.
      *
-     * @see WP_Widget::form()
+     * @see \WP_Widget::form()
      *
      * @param .
      */

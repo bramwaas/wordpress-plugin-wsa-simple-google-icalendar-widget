@@ -466,17 +466,6 @@ class IcsParser {
                                                     if ($newstart->getTimestamp() >= $now
                                                         ) { // copy only events after now
                                                             $cen++;
-                                                            if (!isset($instance['notprocessdst']) or !$instance['notprocessdst'] ) {
-                                                                // process daylight saving time
-                                                                $tzadd = $tzoffsetedt - $timezone->getOffset ( $newstart);
-                                                                if ($tzadd != 0) {
-                                                                    $tziv =new \DateInterval('PT' . abs($tzadd) . 'S');
-                                                                    if ($tzadd < 0) {
-                                                                        $tziv->invert = 1;
-                                                                    }
-                                                                    $newstart->add($tziv);
-                                                                }
-                                                            }
                                                             
                                                             $en =  clone $e;
                                                             $en->start = $newstart->getTimestamp();
@@ -484,7 +473,8 @@ class IcsParser {
                                                             $newend->add($eduration);
                                                             $en->end = $newend->getTimestamp();
                                                             $en->uid = $i . '_' . $e->uid;
-                                                            //                                                            if ($test > ' ') { 	$en->summary = $en->summary . '<br>Test:' . $test; 	}
+                                                            
+                                                            if ($test > ' ') { 	$en->summary = $en->summary . '<br>Test:' . $test; 	}
                                                             $events[] = $en;
                                                     } // copy eevents
                                                     // next eventcount from $e->start
