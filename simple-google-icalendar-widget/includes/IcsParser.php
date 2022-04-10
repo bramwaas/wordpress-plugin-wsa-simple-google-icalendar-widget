@@ -21,7 +21,7 @@
  *               is empty so I use now wp_timezone() and if even that fails fall back to new \DateTimeZone('UTC').
  *   bw 20220404 V1.5.0 added parameter allowhtml (htmlspecialchars) to allow Html in Description.
  *   bw 20220407 Extra options for parser in array poptions and added temporary new option processdst to process differences in DST between start of series events and the current event.
- *   bw 20220408 Improved overflow month. Namespaced.
+ *   bw 20220408 Namespaced.
  * Version: 1.5.1
  
  */
@@ -265,7 +265,7 @@ class IcsParser {
                     $frequency = $rrules['freq'];
                     $interval = (isset($rrules['interval']) && $rrules['interval'] !== '') ? $rrules['interval'] : 1;
                     $freqinterval =new \DateInterval('P' . $interval . substr($frequency,0,1));
-                    $intervalmonthend =new \DateInterval('P3D');
+                    $interval3day =new \DateInterval('P3D');
                     $until = (isset($rrules['until'])) ? $this->parseIcsDateTime($rrules['until']) : $penddate;
                     $until = ($until < $penddate) ? $until : ($penddate - 1);
                     $freqendloop = ($until > $penddate) ? $until : $penddate;
@@ -498,12 +498,11 @@ class IcsParser {
                                 if  ($fmdayok &&
                                     in_array($frequency , array('MONTHLY', 'YEARLY')) &&
                                     $freqstart->format('j') !== $edtstartmday){
-                                        // eg 31 jan + 1 month = 3 mar; -3 days => 28 feb, 31 mar +  month = 1 may - 1 day => 30 april
-                                        $intervalmonthend = new \DateInterval('P' . $freqstart->format('j') .  'D');
-                                        $freqstart->sub($intervalmonthend);
+                                        // eg 31 jan + 1 month = 3 mar; 
+                                        $freqstart->sub($interval3day);
                                         $fmdayok = false;
                                 } elseif (!$fmdayok ){
-                                    $freqstart->add($intervalmonthend);
+                                    $freqstart->add($interval3day);
                                     $fmdayok = true;
                                     
                                 }
