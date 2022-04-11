@@ -246,9 +246,10 @@ class IcsParser {
                     $edtstart = new \DateTime('@' . $e->start);
                     $edtstart->setTimezone($timezone);
                     $edtstartmday = $edtstart->format('j');
-                    $edtstarttod = $edtstart->format('Hi');
+                    $edtstarttod = $edtstart->format('His');
                     $edtstarthour = (int) $edtstart->format('H');
                     $edtstartmin = (int) $edtstart->format('i');
+                    $edtstartsec = (int) $edtstart->format('s');
                     $edtendd   = new \DateTime('@' . $e->end);
                     $edtendd->setTimezone($timezone);
 //                    $eduration = $edtstart->diff($edtendd); wrong when Borderperide ST -> DST within event 
@@ -485,8 +486,8 @@ class IcsParser {
                                 } // end bymonth
                                 // next startdate by FREQ for loop < $until and <= $penddate
                                 $freqstart->add($freqinterval);
-                                if ($freqstart->format('Hi') != $edtstarttod) {// correction when time changed by ST to DST transition
-                                    $freqstart->setTime($edtstarthour, $edtstartmin);
+                                if ($freqstart->format('His') != $edtstarttod) {// correction when time changed by ST to DST transition
+                                    $freqstart->setTime($edtstarthour, $edtstartmin, $edtstartsec);
                                 }
                                 if  ($fmdayok &&
                                     in_array($frequency , array('MONTHLY', 'YEARLY')) &&
