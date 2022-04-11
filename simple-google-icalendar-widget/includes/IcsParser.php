@@ -23,6 +23,7 @@
  *   bw 20220407 Extra options for parser in array poptions and added temporary new option processdst to process differences in DST between start of series events and the current event.
  *   bw 20220408 Namespaced. Add difference in seconds to timestamp newstart to get timestamp newend instead of working with DateInterval.
  *               This calculation better takes into account the deleted hour at the start of DST.
+ *      20220411 Correction when time is changed by ST to DST transition set hour and minutes back to beginvalue (because time doesn't exist during changeperiod)         
  * Version: 1.5.1
  
  */
@@ -245,6 +246,9 @@ class IcsParser {
                     $edtstart = new \DateTime('@' . $e->start);
                     $edtstart->setTimezone($timezone);
                     $edtstartmday = $edtstart->format('j');
+                    $edtstarttod = $edtstart->format('Hi');
+                    $edtstarthour = (int) $edtstart->format('H');
+                    $edtstartmin = (int) $edtstart->format('i');
                     $edtendd   = new \DateTime('@' . $e->end);
                     $edtendd->setTimezone($timezone);
 //                    $eduration = $edtstart->diff($edtendd); wrong when Borderperide ST -> DST within event 
@@ -481,10 +485,12 @@ class IcsParser {
                                 } // end bymonth
                                 // next startdate by FREQ for loop < $until and <= $penddate
                                 $freqstart->add($freqinterval);
+                                if ($freqstart->format('Hi') != $edtstarttod) {// correction when time changed by ST to DST transition
+                                    $freqstart->setTime($edtstarthour, $edtstartmin);
+                                }
                                 if  ($fmdayok &&
                                     in_array($frequency , array('MONTHLY', 'YEARLY')) &&
-                                    $freqstart->format('j') !== $edtstartmday){
-                                        // eg 31 jan + 1 month = 3 mar; 
+                                    $freqstart->format('j') !== $edtstartmday){ // monthday changed eg 31 jan + 1 month = 3 mar; 
                                         $freqstart->sub($interval3day);
                                         $fmdayok = false;
                                 } elseif (!$fmdayok ){
