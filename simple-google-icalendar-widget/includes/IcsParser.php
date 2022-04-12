@@ -35,7 +35,19 @@ class IcsParser {
     const TOKEN_END_VEVENT = "END:VEVENT";
     const TOKEN_BEGIN_VTIMEZONE = "\nBEGIN:VTIMEZONE";
     const TOKEN_END_VTIMEZONE = "\nEND:VTIMEZONE";
-    
+    /**
+     *
+     * @var array english abbreviations and names of weekdays.
+     */
+    private static $weekdays = array(
+         'MO' => 'monday',
+        'TU' => 'tuesday',
+        'WE' => 'wednesday',
+        'TH' => 'thursday',
+        'FR' => 'friday',
+        'SA' => 'saturday',
+        'SU' => 'sunday',
+    );
     /**
      * Maps Windows (non-CLDR) time zone ID to IANA ID. This is pragmatic but not 100% precise as one Windows zone ID
      * maps to multiple IANA IDs (one for each territory). For all practical purposes this should be good enough, though.
@@ -182,12 +194,38 @@ class IcsParser {
         'West Pacific Standard Time'      => 'Pacific/Port_Moresby',
         'Yakutsk Standard Time'           => 'Asia/Yakutsk',
     );
+    /**
+     * The arry of events parsed from the ics file, initial set by parse function.
+     *
+     * @var    array array of event objects
+     * @since  1.5.1 
+     */
+    protected $events = [];
+    /**
+     * The start time fo parsing, set by parse function.
+     *
+     * @var    \DateTime
+     * @since  1.5.1
+     */
+    protected $now = NULL;
     
+    /**
+     * Constructor.
+     *
+     * @param
+     *
+     * @return  $this IcsParser object
+     *
+     * @since
+     */
+    public function __construct()
+    {
+    }
     /**
      * Parse ical string to individual events
      *
      * @param   string      $str the  content of the file to parse as a string.
-     * @param   datetime    $penddate the max date for the last event to return.
+     * @param   \datetime   $penddate the max date for the last event to return.
      * @param   int         $pcount   the max number of events to return.
      * @param   array       $instance array of options
      *
@@ -199,8 +237,10 @@ class IcsParser {
         $curstr = $str;
         $haveVevent = true;
         $events = array();
-        $now = time();
-        $penddate = (isset($penddate) && $penddate > $now) ? $penddate : $now;
+        $this->now = time();
+        $this->now = (new \DateTime('2022-01-01'))->getTimestamp();
+        
+        $penddate = (isset($penddate) && $penddate > $this->now) ? $penddate : $this->now;
         $weekdays = array (
             'MO' => 'monday',
             'TU' => 'tuesday',
@@ -463,7 +503,7 @@ class IcsParser {
                                                 && $newstart->getTimestamp() < $until
                                                 && !(!empty($e->exdate) && in_array($newstart->getTimestamp(), $e->exdate))
                                                 && $newstart> $edtstart) { // count events after dtstart
-                                                    if ($newstart->getTimestamp() >= $now
+                                                    if ($newstart->getTimestamp() >= $this->now
                                                         ) { // copy only events after now
                                                             $cen++;
                                                             
@@ -518,10 +558,10 @@ class IcsParser {
     public function getFutureEvents($penddate ) {
         // events are already sorted
         $newEvents = array();
-        $now = time();
+//        $this->now = time();
         
         foreach ($this->events as $e) {
-            if ((($e->start >= $now) || (!empty($e->end) && $e->end >= $now))
+            if ((($e->start > $this->now) || (!empty($e->end) && $e->end >= $this->now))
                 && $e->start <= $penddate) {
                     $newEvents[] = $e;
                 }

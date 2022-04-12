@@ -45,12 +45,13 @@
  You should have received a copy of the GNU General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget\IcsParser;
+use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget\SimpleicalWidgetAdmin;
 
 if (!class_exists('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget\IcsParser')) {
     require_once( 'includes/IcsParser.php' );
     class_alias('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget\IcsParser', 'IcsParser');
 }
-
 if (!class_exists('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget\SimpleicalWidgetAdmin')) {
     require_once('includes/SimpleicalWidgetAdmin.php');
     class_alias('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget\SimpleicalWidgetAdmin', 'SimpleicalWidgetAdmin');
@@ -152,7 +153,7 @@ class Simple_iCal_Widget extends WP_Widget
             
             $events = $parser->getFutureEvents($penddate);
             return $this->limitArray($events, $count);
-        } catch(IcsParsingException $e) {
+        } catch(\Exception $e) {
             return null;
         }
     }
