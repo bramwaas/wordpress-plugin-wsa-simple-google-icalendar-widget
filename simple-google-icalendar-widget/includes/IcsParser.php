@@ -239,7 +239,7 @@ class IcsParser {
         $haveVevent = true;
         $events = array();
         $this->now = time();
-        $this->now = (new \DateTime('2022-01-01'))->getTimestamp();
+//        $this->now = (new \DateTime('2022-01-01'))->getTimestamp();
         
         $penddate = (isset($penddate) && $penddate > $this->now) ? $penddate : $this->now;
         do {
