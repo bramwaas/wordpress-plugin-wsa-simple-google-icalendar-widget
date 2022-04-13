@@ -23,7 +23,8 @@
  *   bw 20220407 Extra options for parser in array poptions and added temporary new option processdst to process differences in DST between start of series events and the current event.
  *   bw 20220408 Namespaced. Add difference in seconds to timestamp newstart to get timestamp newend instead of working with DateInterval.
  *               This calculation better takes into account the deleted hour at the start of DST.
- *      20220411 Correction when time is changed by ST to DST transition set hour and minutes back to beginvalue (because time doesn't exist during changeperiod)         
+ *      20220411 Correction when time is changed by ST to DST transition set hour and minutes back to beginvalue (because time doesn't exist during changeperiod) 
+ *               Set event tzid to UTC when datetimesting ends with Z (zero date)        
  * Version: 1.5.1
  
  */
@@ -241,15 +242,6 @@ class IcsParser {
         $this->now = (new \DateTime('2022-01-01'))->getTimestamp();
         
         $penddate = (isset($penddate) && $penddate > $this->now) ? $penddate : $this->now;
-        $weekdays = array (
-            'MO' => 'monday',
-            'TU' => 'tuesday',
-            'WE' => 'wednesday',
-            'TH' => 'thursday',
-            'FR' => 'friday',
-            'SA' => 'saturday',
-            'SU' => 'sunday',
-        );
         do {
             $startpos = strpos($curstr, self::TOKEN_BEGIN_VEVENT);
             if ($startpos !== false) {
@@ -292,7 +284,6 @@ class IcsParser {
                     $edtstartsec = (int) $edtstart->format('s');
                     $edtendd   = new \DateTime('@' . $e->end);
                     $edtendd->setTimezone($timezone);
-//                    $eduration = $edtstart->diff($edtendd); wrong when Borderperide ST -> DST within event 
                     $edurationsecs =  $e->end - $e->start;
                     
                     $rrules = array();
@@ -431,7 +422,7 @@ class IcsParser {
                                                     $expand =true;
                                                     foreach ($byday as $by) {
                                                         // expand byday codes to bydays datetimes
-                                                        $byd = $weekdays[substr($by,-2)];
+                                                        $byd = self::$weekdays[substr($by,-2)];
                                                         if (!($byd > 'a')) continue; // if $by contains only number (not good ical)
                                                         $byi = intval($by);
                                                         $wdf = clone $newstart;
@@ -462,7 +453,7 @@ class IcsParser {
                                                         } // Yearly or Monthly
                                                         else  { // $frequency == 'WEEKLY' byi is not allowed so we dont parse it
                                                             $wdnrn = $newstart->format('N'); // Mo 1; Su 7
-                                                            $wdnrb = array_search($byd,array_values($weekdays)) + 1;  // numeric index in weekdays
+                                                            $wdnrb = array_search($byd,array_values(self::$weekdays)) + 1;  // numeric index in weekdays
                                                             if ($wdnrb > $wdnrn) {
                                                                 $wdf->add (new \DateInterval('P' . ($wdnrb - $wdnrn ) . 'D'));
                                                             }
@@ -573,6 +564,12 @@ class IcsParser {
     public function getAll() {
         return $this->events;
     }
+    /*
+    * Parse timestamp from date time string (with timezone ID)
+    * @param  string $datetime date time format YYYYMMDDTHHMMSSZ last letter ='Z' means Zero-time or 'UTC' time. overrides any timezone.
+    * @param  string $ptzid (timezone ID)
+    * @return \DateTimeZone object
+    */
     
     private function parseIcsDateTime($datetime, $tzid = '') {
         if (strlen($datetime) < 8) {
@@ -607,6 +604,7 @@ class IcsParser {
         return array_key_exists(html_entity_decode($timeZone), self::$windowsTimeZonesMap);
     }
     /**
+     * Checks if Zero time (timezone UTC)
      * Checks if a time zone ID is a Iana timezone then return this timezone.
      * If empty return timezone from WP
      * Checks if time zone ID is windows timezone then return this timezone
@@ -614,10 +612,12 @@ class IcsParser {
      * If timezone string from WP doesn't make a good timezone return UTC timezone.
      *
      * @param  string $ptzid (timezone ID)
+     * @param  string $datetime date time with format YYYYMMDDTHHMMSSZ last letter ='Z' means Zero-time (='UTC' time).
      * @return \DateTimeZone object
      */
     
-    private function parseIanaTimezoneid ($ptzid = '') {
+    private function parseIanaTimezoneid ($ptzid = '', $datetime = '') {
+        if (8 < strlen($datetime) && 'Z'== $datetime[strlen($datetime) - 1]) $ptzid = 'UTC';
         try {
             $timezone = (isset($ptzid)&& $ptzid !== '') ? new \DateTimeZone($ptzid) : wp_timezone();
         } catch (\Exception $exc) {}
@@ -642,7 +642,13 @@ class IcsParser {
             return -1;
         }
     }
-    
+    /**
+     * Parse an event string from an ical file to an event object.
+     *
+     * @param  string $eventStr
+     * @param  array  $instance array of options.
+     * @return \StdClass $eventObj
+     */
     public function parseVevent($eventStr, $instance) {
         $lines = explode("\n", $eventStr);
         $eventObj = new \StdClass;
@@ -690,7 +696,7 @@ class IcsParser {
                         $eventObj->location = $desc;
                         break;
                     case "DTSTART":
-                        $tz = $this->parseIanaTimezoneid ($tzid);
+                        $tz = $this->parseIanaTimezoneid ($tzid,$value);
                         $tzid = $tz->getName();
                         $eventObj->tzid = $tzid;
                         $eventObj->startisdate = $isdate;
