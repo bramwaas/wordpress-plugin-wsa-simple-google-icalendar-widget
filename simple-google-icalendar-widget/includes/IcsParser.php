@@ -11,7 +11,7 @@
  *   bw 20201122 v1.2.0 find solution for DTSTART and DTEND without time by explicit using isDate and only displaying times when isDate === false.;
  *               found a problem with UID in first line when line-ends are \n in stead of \r\n solved by better calculation of start of EventStr.
  *   bw 20201123 handle not available DTEND => !isset($e->end) in response to a comment of lillyberger (@lillyberger) on the plugin page.
- *   bw 20210415 added windows to Iana timezone-array from ics-calendar.7.2.0, to solve erro with outlook agenda.
+ *   bw 20210415 added windows to Iana timezone-array from ics-calendar.7.2.0, to solve error with outlook agenda.
  *               found a solution for colon in description or summary, special attention to colon in second or later line.
  *   bw 20210618 replace EOL <br> by newline ("\n") in Multiline elements Description and Summary to make it easier to trim to excerptlength
  *               and do replacement of newline by <br> when displaying the line.
@@ -21,10 +21,10 @@
  *               is empty so I use now wp_timezone() and if even that fails fall back to new \DateTimeZone('UTC').
  *   bw 20220404 V1.5.0 added parameter allowhtml (htmlspecialchars) to allow Html in Description.
  *   bw 20220407 Extra options for parser in array poptions and added temporary new option processdst to process differences in DST between start of series events and the current event.
- *   bw 20220408 Namespaced. Add difference in seconds to timestamp newstart to get timestamp newend instead of working with DateInterval.
+ *   bw 20220408 v1.5.1 Namespaced and some restructuration of code. Add difference in seconds to timestamp newstart to get timestamp newend instead of working with DateInterval.
  *               This calculation better takes into account the deleted hour at the start of DST.
- *      20220411 Correction when time is changed by ST to DST transition set hour and minutes back to beginvalue (because time doesn't exist during changeperiod) 
- *               Set event tzid to UTC when datetimesting ends with Z (zero date)        
+ *               Correction when time is changed by ST to DST transition set hour and minutes back to beginvalue (because time doesn't exist during changeperiod) 
+ *               Set event Timezoneid to UTC when datetimesting ends with Z (zero date)        
  * Version: 1.5.1
  
  */
