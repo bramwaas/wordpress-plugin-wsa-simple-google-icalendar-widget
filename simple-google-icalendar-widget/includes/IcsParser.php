@@ -500,12 +500,8 @@ class IcsParser {
                                                             
                                                             $en =  clone $e;
                                                             $en->start = $newstart->getTimestamp();
-//                                                            $newend->setTimestamp($en->start) ;
-//                                                            $newend->add($eduration);
-//                                                            $en->end = $newend->getTimestamp();
                                                             $en->end = $en->start + $edurationsecs;
                                                             $en->uid = $i . '_' . $e->uid;
-                                                            $test = 'Verschil=' . $edurationsecs;
                                                             if ($test > ' ') { 	$en->summary = $en->summary . '<br>Test:' . $test; 	}
                                                             $events[] = $en;
                                                     } // copy eevents

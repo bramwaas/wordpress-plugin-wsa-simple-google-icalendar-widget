@@ -125,7 +125,7 @@ Of course the same effect is achieved when you schedule the events in UTC time d
 In these cases, a special effect can be seen of using the same times twice in the transition from DST to ST. If an event lasts less than an hour. If the event starts in the last hour of DST then it ends in the first hour of ST in between the local clocks are turned back one hour. According to the local clock, the end time is therefore before the start time. And the widget shows it like this too. The same also applies to Google and Outlook calendar.   
 Theoretically this could als happen with recurrent events in the same timezone with DST. In my test I have seen this with Google calendar but not with the widget. PHP and therefore the widget uses the second occurence if the result of the calculation is a time that is twice available (at least in the version of PHP I use), but using the first occurence like Google does is just as good.    
 
-My test results and comparison with Google and Outlook calendar have been uploaded to the asset folder as DayLightSavingTime test.xlsx.
+Test results and comparison with Google and Outlook calendar have been uploaded as DayLightSavingTime test.xlsx.
   
 === From the ical specifications ===
 ~~~
