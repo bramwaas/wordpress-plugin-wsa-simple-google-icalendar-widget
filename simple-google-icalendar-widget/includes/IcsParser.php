@@ -1,7 +1,4 @@
 <?php
-
-class IcsParsingException extends Exception {}
-
 /**
  * a simple ICS parser.
  *
@@ -14,26 +11,44 @@ class IcsParsingException extends Exception {}
  *   bw 20201122 v1.2.0 find solution for DTSTART and DTEND without time by explicit using isDate and only displaying times when isDate === false.;
  *               found a problem with UID in first line when line-ends are \n in stead of \r\n solved by better calculation of start of EventStr.
  *   bw 20201123 handle not available DTEND => !isset($e->end) in response to a comment of lillyberger (@lillyberger) on the plugin page.
- *   bw 20210415 added windows to Iana timezone-array from ics-calendar.7.2.0, to solve erro with outlook agenda.
+ *   bw 20210415 added windows to Iana timezone-array from ics-calendar.7.2.0, to solve error with outlook agenda.
  *               found a solution for colon in description or summary, special attention to colon in second or later line.
  *   bw 20210618 replace EOL <br> by newline ("\n") in Multiline elements Description and Summary to make it easier to trim to excerptlength
  *               and do replacement of newline by <br> when displaying the line.
  *               fixed a trim error that occurred in a previous version, revising the entire trimming so that both \r\n and \n end of lines are handled properly
- *   bw 20220223 fixed timezone error in response to a support topic of edwindekuiper (@edwindekuiper): If timezone appointment is empty or incorrect 
- *               timezone fall back was to new \DateTimeZone(get_option('timezone_string')) but with UTC+... UTC-... timezonesetting this string 
+ *   bw 20220223 fixed timezone error in response to a support topic of edwindekuiper (@edwindekuiper): If timezone appointment is empty or incorrect
+ *               timezone fall back was to new \DateTimeZone(get_option('timezone_string')) but with UTC+... UTC-... timezonesetting this string
  *               is empty so I use now wp_timezone() and if even that fails fall back to new \DateTimeZone('UTC').
- *   bw 20220404 V1.5.0 added parameter allowhtml (htmlspecialchars) to allow Html in Description. 
- *   bw 20220407 Extra options for parser in array poptions and added temporary new option processdst to process differences in DST between start of series events and the current event.            
- * Version: 1.5.0
+ *   bw 20220404 V1.5.0 added parameter allowhtml (htmlspecialchars) to allow Html in Description.
+ *   bw 20220407 Extra options for parser in array poptions and added temporary new option processdst to process differences in DST between start of series events and the current event.
+ *   bw 20220408 v1.5.1 Namespaced and some restructuration of code. Add difference in seconds to timestamp newstart to get timestamp newend instead of working with DateInterval.
+ *               This calculation better takes into account the deleted hour at the start of DST.
+ *               Correction when time is changed by ST to DST transition set hour and minutes back to beginvalue (because time doesn't exist during changeperiod) 
+ *               Set event Timezoneid to UTC when datetimesting ends with Z (zero date)        
+ * Version: 1.5.1
  
  */
+namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget;
+
 class IcsParser {
     
     const TOKEN_BEGIN_VEVENT = "BEGIN:VEVENT";
     const TOKEN_END_VEVENT = "END:VEVENT";
     const TOKEN_BEGIN_VTIMEZONE = "\nBEGIN:VTIMEZONE";
     const TOKEN_END_VTIMEZONE = "\nEND:VTIMEZONE";
-    
+    /**
+     *
+     * @var array english abbreviations and names of weekdays.
+     */
+    private static $weekdays = array(
+         'MO' => 'monday',
+        'TU' => 'tuesday',
+        'WE' => 'wednesday',
+        'TH' => 'thursday',
+        'FR' => 'friday',
+        'SA' => 'saturday',
+        'SU' => 'sunday',
+    );
     /**
      * Maps Windows (non-CLDR) time zone ID to IANA ID. This is pragmatic but not 100% precise as one Windows zone ID
      * maps to multiple IANA IDs (one for each territory). For all practical purposes this should be good enough, though.
@@ -180,37 +195,53 @@ class IcsParser {
         'West Pacific Standard Time'      => 'Pacific/Port_Moresby',
         'Yakutsk Standard Time'           => 'Asia/Yakutsk',
     );
+    /**
+     * The arry of events parsed from the ics file, initial set by parse function.
+     *
+     * @var    array array of event objects
+     * @since  1.5.1 
+     */
+    protected $events = [];
+    /**
+     * The start time fo parsing, set by parse function.
+     *
+     * @var    \DateTime
+     * @since  1.5.1
+     */
+    protected $now = NULL;
     
+    /**
+     * Constructor.
+     *
+     * @param
+     *
+     * @return  $this IcsParser object
+     *
+     * @since
+     */
+    public function __construct()
+    {
+    }
     /**
      * Parse ical string to individual events
      *
-     * @param   string      $str the  content of the file to parse as a string. 
-     * @param   datetime    $penddate the max date for the last event to return. 
+     * @param   string      $str the  content of the file to parse as a string.
+     * @param   \datetime   $penddate the max date for the last event to return.
      * @param   int         $pcount   the max number of events to return.
      * @param   array       $instance array of options
-     *  
+     *
      * @return  array       $this->events the parsed event objects.
-     * 
-     * @since 
+     *
+     * @since
      */
-    
     public function parse($str ,  $penddate,  $pcount, $instance  ) {
-        
         $curstr = $str;
         $haveVevent = true;
         $events = array();
-        $now = time();
-        $penddate = (isset($penddate) && $penddate > $now) ? $penddate : $now;
-        $weekdays = array (
-            'MO' => 'monday',
-            'TU' => 'tuesday',
-            'WE' => 'wednesday',
-            'TH' => 'thursday',
-            'FR' => 'friday',
-            'SA' => 'saturday',
-            'SU' => 'sunday',
-        );
+        $this->now = time();
+//        $this->now = (new \DateTime('2022-01-01'))->getTimestamp();
         
+        $penddate = (isset($penddate) && $penddate > $this->now) ? $penddate : $this->now;
         do {
             $startpos = strpos($curstr, self::TOKEN_BEGIN_VEVENT);
             if ($startpos !== false) {
@@ -218,11 +249,9 @@ class IcsParser {
                 $eventStrStart = $startpos + strlen(self::TOKEN_BEGIN_VEVENT);
                 $eventStr = substr($curstr, $eventStrStart);
                 $endpos = strpos($eventStr, self::TOKEN_END_VEVENT);
-                
                 if ($endpos === false) {
-                    throw new IcsParsingException('No valid END:VEVENT found');
+                    thrownew \Exception('IcsParser->parse: No valid END:VEVENT found.');
                 }
-                
                 $eventStr = trim(substr($eventStr, 0, $endpos), "\n\r\0");
                 $e = $this->parseVevent($eventStr, $instance);
                 $events[] = $e;
@@ -245,20 +274,17 @@ class IcsParser {
                      * FREQ=DAILY;COUNT=5;INTERVAL=7 Every 7 days,5 times
                      
                      */
-                    $timezone = new DateTimeZone((isset($e->tzid)&& $e->tzid !== '') ? $e->tzid : get_option('timezone_string'));
-                    $edtstart = new DateTime('@' . $e->start);
+                    $timezone = new \DateTimeZone((isset($e->tzid)&& $e->tzid !== '') ? $e->tzid : get_option('timezone_string'));
+                    $edtstart = new \DateTime('@' . $e->start);
                     $edtstart->setTimezone($timezone);
                     $edtstartmday = $edtstart->format('j');
-                    $edtstartmon = $edtstart->format('n');
-                    $egdstart = getdate($e->start);
-                    //      example 2017-11-16
-                    // 		$egdstart['weekday'] 'Monday' - 'Sunday' example 'Thursday'
-                    //		$egdstart['mon']  monthnr in year 1 - 12 example 11  (november)
-                    //		$egdstart['mday'] day in the month 1 - 31 example 16
-                    $edtendd   = new DateTime('@' . $e->end);
+                    $edtstarttod = $edtstart->format('His');
+                    $edtstarthour = (int) $edtstart->format('H');
+                    $edtstartmin = (int) $edtstart->format('i');
+                    $edtstartsec = (int) $edtstart->format('s');
+                    $edtendd   = new \DateTime('@' . $e->end);
                     $edtendd->setTimezone($timezone);
-                    $eduration = $edtstart->diff($edtendd);
-                    
+                    $edurationsecs =  $e->end - $e->start;
                     
                     $rrules = array();
                     $rruleStrings = explode(';', $e->rrule);
@@ -269,8 +295,8 @@ class IcsParser {
                     // Get frequency and other values when set
                     $frequency = $rrules['freq'];
                     $interval = (isset($rrules['interval']) && $rrules['interval'] !== '') ? $rrules['interval'] : 1;
-                    $freqinterval = new DateInterval('P' . $interval . substr($frequency,0,1));
-                    $interval3day = new DateInterval('P3D');
+                    $freqinterval =new \DateInterval('P' . $interval . substr($frequency,0,1));
+                    $interval3day =new \DateInterval('P3D');
                     $until = (isset($rrules['until'])) ? $this->parseIcsDateTime($rrules['until']) : $penddate;
                     $until = ($until < $penddate) ? $until : ($penddate - 1);
                     $freqendloop = ($until > $penddate) ? $until : $penddate;
@@ -396,7 +422,7 @@ class IcsParser {
                                                     $expand =true;
                                                     foreach ($byday as $by) {
                                                         // expand byday codes to bydays datetimes
-                                                        $byd = $weekdays[substr($by,-2)];
+                                                        $byd = self::$weekdays[substr($by,-2)];
                                                         if (!($byd > 'a')) continue; // if $by contains only number (not good ical)
                                                         $byi = intval($by);
                                                         $wdf = clone $newstart;
@@ -411,28 +437,28 @@ class IcsParser {
                                                             $wdf->setTime($fH, $fi);
                                                             $wdl->setTime($fH, $fi);
                                                             if ($byi > 0) {
-                                                                $wdf->add(new DateInterval('P' . ($byi - 1) . 'W'));
+                                                                $wdf->add(new \DateInterval('P' . ($byi - 1) . 'W'));
                                                                 $bydays[] = $wdf->getTimestamp();
                                                             } elseif ($byi < 0) {
-                                                                $wdl->sub(new DateInterval('P' . (- $byi - 1) . 'W'));
+                                                                $wdl->sub(new \DateInterval('P' . (- $byi - 1) . 'W'));
                                                                 $bydays[] = $wdl->getTimestamp();
                                                                 
                                                             }
                                                             else {
                                                                 while ($wdf <= $wdl) {
                                                                     $bydays[] = $wdf->getTimestamp();
-                                                                    $wdf->add(new DateInterval('P1W'));
+                                                                    $wdf->add(new \DateInterval('P1W'));
                                                                 }
                                                             }
                                                         } // Yearly or Monthly
                                                         else  { // $frequency == 'WEEKLY' byi is not allowed so we dont parse it
                                                             $wdnrn = $newstart->format('N'); // Mo 1; Su 7
-                                                            $wdnrb = array_search($byd,array_values($weekdays)) + 1;  // numeric index in weekdays
+                                                            $wdnrb = array_search($byd,array_values(self::$weekdays)) + 1;  // numeric index in weekdays
                                                             if ($wdnrb > $wdnrn) {
-                                                                $wdf->add (new DateInterval('P' . ($wdnrb - $wdnrn ) . 'D'));
+                                                                $wdf->add (new \DateInterval('P' . ($wdnrb - $wdnrn ) . 'D'));
                                                             }
                                                             if ($wdnrb < $wdnrn) {
-                                                                $wdf->sub (new DateInterval('P' . ($wdnrn - $wdnrb) . 'D'));
+                                                                $wdf->sub (new \DateInterval('P' . ($wdnrn - $wdnrb) . 'D'));
                                                                 
                                                             }
                                                             $bydays[] = $wdf->getTimestamp();
@@ -468,28 +494,15 @@ class IcsParser {
                                                 && $newstart->getTimestamp() < $until
                                                 && !(!empty($e->exdate) && in_array($newstart->getTimestamp(), $e->exdate))
                                                 && $newstart> $edtstart) { // count events after dtstart
-                                                    if ($newstart->getTimestamp() >= $now
+                                                    if ($newstart->getTimestamp() >= $this->now
                                                         ) { // copy only events after now
                                                             $cen++;
-                                                            if (!isset($instance['notprocessdst']) or !$instance['notprocessdst'] ) {
-                                                                // process daylight saving time
-                                                                $tzadd = $tzoffsetedt - $timezone->getOffset ( $newstart);
-                                                                if ($tzadd != 0) {
-                                                                    $tziv = new DateInterval('PT' . abs($tzadd) . 'S');
-                                                                    if ($tzadd < 0) {
-                                                                        $tziv->invert = 1;
-                                                                    }
-                                                                    $newstart->add($tziv);
-                                                                }
-                                                            }
                                                             
                                                             $en =  clone $e;
                                                             $en->start = $newstart->getTimestamp();
-                                                            $newend->setTimestamp($en->start) ;
-                                                            $newend->add($eduration);
-                                                            $en->end = $newend->getTimestamp();
+                                                            $en->end = $en->start + $edurationsecs;
                                                             $en->uid = $i . '_' . $e->uid;
-//                                                            if ($test > ' ') { 	$en->summary = $en->summary . '<br>Test:' . $test; 	}
+                                                            if ($test > ' ') { 	$en->summary = $en->summary . '<br>Test:' . $test; 	}
                                                             $events[] = $en;
                                                     } // copy eevents
                                                     // next eventcount from $e->start
@@ -500,10 +513,12 @@ class IcsParser {
                                 } // end bymonth
                                 // next startdate by FREQ for loop < $until and <= $penddate
                                 $freqstart->add($freqinterval);
+                                if ($freqstart->format('His') != $edtstarttod) {// correction when time changed by ST to DST transition
+                                    $freqstart->setTime($edtstarthour, $edtstartmin, $edtstartsec);
+                                }
                                 if  ($fmdayok &&
                                     in_array($frequency , array('MONTHLY', 'YEARLY')) &&
-                                    $freqstart->format('j') !== $edtstartmday){
-                                        // eg 31 jan + 1 month = 3 mar; -3 days => 28 feb
+                                    $freqstart->format('j') !== $edtstartmday){ // monthday changed eg 31 jan + 1 month = 3 mar; 
                                         $freqstart->sub($interval3day);
                                         $fmdayok = false;
                                 } elseif (!$fmdayok ){
@@ -530,10 +545,10 @@ class IcsParser {
     public function getFutureEvents($penddate ) {
         // events are already sorted
         $newEvents = array();
-        $now = time();
+//        $this->now = time();
         
         foreach ($this->events as $e) {
-            if ((($e->start >= $now) || (!empty($e->end) && $e->end >= $now))
+            if ((($e->start > $this->now) || (!empty($e->end) && $e->end >= $this->now))
                 && $e->start <= $penddate) {
                     $newEvents[] = $e;
                 }
@@ -545,6 +560,12 @@ class IcsParser {
     public function getAll() {
         return $this->events;
     }
+    /*
+    * Parse timestamp from date time string (with timezone ID)
+    * @param  string $datetime date time format YYYYMMDDTHHMMSSZ last letter ='Z' means Zero-time or 'UTC' time. overrides any timezone.
+    * @param  string $ptzid (timezone ID)
+    * @return \DateTimeZone object
+    */
     
     private function parseIcsDateTime($datetime, $tzid = '') {
         if (strlen($datetime) < 8) {
@@ -579,6 +600,7 @@ class IcsParser {
         return array_key_exists(html_entity_decode($timeZone), self::$windowsTimeZonesMap);
     }
     /**
+     * Checks if Zero time (timezone UTC)
      * Checks if a time zone ID is a Iana timezone then return this timezone.
      * If empty return timezone from WP
      * Checks if time zone ID is windows timezone then return this timezone
@@ -586,21 +608,23 @@ class IcsParser {
      * If timezone string from WP doesn't make a good timezone return UTC timezone.
      *
      * @param  string $ptzid (timezone ID)
-     * @return DateTimeZone object
+     * @param  string $datetime date time with format YYYYMMDDTHHMMSSZ last letter ='Z' means Zero-time (='UTC' time).
+     * @return \DateTimeZone object
      */
     
-    private function parseIanaTimezoneid ($ptzid = '') {
+    private function parseIanaTimezoneid ($ptzid = '', $datetime = '') {
+        if (8 < strlen($datetime) && 'Z'== $datetime[strlen($datetime) - 1]) $ptzid = 'UTC';
         try {
             $timezone = (isset($ptzid)&& $ptzid !== '') ? new \DateTimeZone($ptzid) : wp_timezone();
-        } catch (Exception $exc) {}
+        } catch (\Exception $exc) {}
         if (isset($timezone)) return $timezone;
         try {
             if (isset(self::$windowsTimeZonesMap[$ptzid])) $timezone = new \DateTimeZone(self::$windowsTimeZonesMap[$ptzid]);
-        } catch (Exception $exc) {}
+        } catch (\Exception $exc) {}
         if (isset($timezone)) return $timezone;
         try {
             $timezone = wp_timezone();
-        } catch (Exception $exc) { }
+        } catch (\Exception $exc) { }
         if (isset($timezone)) return $timezone;
         return new \DateTimeZone('UTC');
     }
@@ -614,10 +638,16 @@ class IcsParser {
             return -1;
         }
     }
-    
+    /**
+     * Parse an event string from an ical file to an event object.
+     *
+     * @param  string $eventStr
+     * @param  array  $instance array of options.
+     * @return \StdClass $eventObj
+     */
     public function parseVevent($eventStr, $instance) {
         $lines = explode("\n", $eventStr);
-        $eventObj = new StdClass;
+        $eventObj = new \StdClass;
         $tokenprev = "";
         
         foreach($lines as $l) {
@@ -662,7 +692,7 @@ class IcsParser {
                         $eventObj->location = $desc;
                         break;
                     case "DTSTART":
-                        $tz = $this->parseIanaTimezoneid ($tzid);
+                        $tz = $this->parseIanaTimezoneid ($tzid,$value);
                         $tzid = $tz->getName();
                         $eventObj->tzid = $tzid;
                         $eventObj->startisdate = $isdate;
@@ -706,12 +736,7 @@ class IcsParser {
                     }
                 }
             }
-            
-            
         }
-        
         return $eventObj;
     }
 }
-
-$p = new IcsParser();

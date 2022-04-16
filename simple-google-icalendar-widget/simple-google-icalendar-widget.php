@@ -4,9 +4,9 @@
  Description: Widget that displays events from a public google calendar or iCal file
  Plugin URI: https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  Author: Bram Waasdorp
- Version: 1.5.0
+ Version: 1.5.1
  License: GPL3
- Tested up to: 5.7
+ Tested up to: 5.9
  Requires PHP:  5.3.0 tested with 7.2
  Text Domain:  simple_ical
  Domain Path:  /languages
@@ -22,7 +22,9 @@
  *               is empty so I use now wp_timezone() and if even that fails fall back to new \DateTimeZone('UTC').
  *   bw 20220404 V1.5.0 in response to a support topic on github of fhennies added parameter allowhtml (htmlspecialchars) to allow Html
  *               in Description, Summary and Location added wp_kses('post') to output to keep preventing XSS
- *   bw 20220407 Extra options for parser in array poptions and added temporary new option notprocessdst to don't process differences in DST between start of series events and the current event.             
+ *   bw 20220407 Extra options for parser in array poptions and added temporary new option notprocessdst to don't process differences in DST between start of series events and the current event.
+ *      20220410 V1.5.1 As notprocessdst is always better within one timezone removed the correction and this option. 
+ *               If this causes other problems when using more timezones then find specific solution.           
  */
 /*
  Simple Google Calendar Outlook Events Widget
@@ -43,9 +45,17 @@
  You should have received a copy of the GNU General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-require_once( 'includes/ical.php' );
-require_once('includes/widget-admin.php');
+use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget\IcsParser;
+use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget\SimpleicalWidgetAdmin;
 
+if (!class_exists('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget\IcsParser')) {
+    require_once( 'includes/IcsParser.php' );
+    class_alias('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget\IcsParser', 'IcsParser');
+}
+if (!class_exists('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget\SimpleicalWidgetAdmin')) {
+    require_once('includes/SimpleicalWidgetAdmin.php');
+    class_alias('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget\SimpleicalWidgetAdmin', 'SimpleicalWidgetAdmin');
+}
 
 class Simple_iCal_Widget extends WP_Widget
 {
@@ -143,7 +153,7 @@ class Simple_iCal_Widget extends WP_Widget
             
             $events = $parser->getFutureEvents($penddate);
             return $this->limitArray($events, $count);
-        } catch(IcsParsingException $e) {
+        } catch(\Exception $e) {
             return null;
         }
     }
@@ -279,7 +289,6 @@ class Simple_iCal_Widget extends WP_Widget
         $instance['suffix_lgi_class'] = strip_tags($new_instance['suffix_lgi_class']);
         $instance['suffix_lgia_class'] = strip_tags($new_instance['suffix_lgia_class']);
         $instance['allowhtml'] = $new_instance['allowhtml'];
-        $instance['notprocessdst'] = $new_instance['notprocessdst'];
         
         
         if (!empty($new_instance['clear_cache_now'])){
@@ -316,8 +325,7 @@ class Simple_iCal_Widget extends WP_Widget
             'suffix_lgi_class' => ' py-0',
             'suffix_lgia_class' => '',
             'allowhtml' => 0,
-            'notprocessdst' => 0,
-            'clear_cache_now' => 'no',
+            'clear_cache_now' => 0,
         );
         $instance = wp_parse_args((array) $instance, $default);
         
@@ -378,12 +386,8 @@ class Simple_iCal_Widget extends WP_Widget
           <input class="checkbox" id="<?php echo $this->get_field_id('allowhtml'); ?>" name="<?php echo $this->get_field_name('allowhtml'); ?>" type="checkbox" value="1" <?php checked( '1', $instance['allowhtml'] ); ?> />
           <label for="<?php echo $this->get_field_id('allowhtml'); ?>"><?php _e('Allow safe html in description and summary.', 'simple_ical'); ?></label> 
         </p>
-        <p>
-          <input class="checkbox" id="<?php echo $this->get_field_id('notprocessdst'); ?>" name="<?php echo $this->get_field_name('notprocessdst'); ?>" type="checkbox" value="1" <?php checked( '1', $instance['notprocessdst'] ); ?> />
-          <label for="<?php echo $this->get_field_id('notprocessdst'); ?>"><?php _e('(temporary) Do not process DST in series events when already automatically processed.', 'simple_ical'); ?></label> 
-        </p>
          <p>
-          <input class="checkbox" id="<?php echo $this->get_field_id('clear_cache_now'); ?>" name="<?php echo $this->get_field_name('clear_cache_now'); ?>" type="checkbox" value='yes' />
+          <input class="checkbox" id="<?php echo $this->get_field_id('clear_cache_now'); ?>" name="<?php echo $this->get_field_name('clear_cache_now'); ?>" type="checkbox" value='1' <?php checked( '1', $instance['clear_cache_now'] ); ?>/>
           <label for="<?php echo $this->get_field_id('clear_cache_now'); ?>"><?php _e(' clear cache on save.', 'simple_ical'); ?></label> 
         </p>
         <p>
@@ -397,7 +401,7 @@ class Simple_iCal_Widget extends WP_Widget
     }
 
 }
-$ical_admin = new Simple_iCal_Admin;
+$ical_admin = new SimpleicalWidgetAdmin;
 add_action('admin_menu',array ($ical_admin, 'simple_ical_admin_menu'));
 
 // add_action('widgets_init', create_function('', 'return register_widget("Simple_iCal_Widget");'));
