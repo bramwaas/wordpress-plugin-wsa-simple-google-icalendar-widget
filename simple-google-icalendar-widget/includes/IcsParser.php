@@ -250,7 +250,7 @@ class IcsParser {
                 $eventStr = substr($curstr, $eventStrStart);
                 $endpos = strpos($eventStr, self::TOKEN_END_VEVENT);
                 if ($endpos === false) {
-                    thrownew \Exception('IcsParser->parse: No valid END:VEVENT found.');
+                    throw new \Exception('IcsParser->parse: No valid END:VEVENT found.');
                 }
                 $eventStr = trim(substr($eventStr, 0, $endpos), "\n\r\0");
                 $e = $this->parseVevent($eventStr, $instance);
