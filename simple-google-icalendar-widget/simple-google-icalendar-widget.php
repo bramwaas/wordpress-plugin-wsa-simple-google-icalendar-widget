@@ -30,7 +30,7 @@
 /*
  Simple Google Calendar Outlook Events Widget
  Copyright (C) Bram Waasdorp 2017 - 2022
- 2022-02-23
+ 2022-04-21
  Forked from Simple Google Calendar Widget v 0.7 by Nico Boehr
  
  This program is free software: you can redistribute it and/or modify
@@ -411,3 +411,11 @@ add_action('admin_menu',array ($ical_admin, 'simple_ical_admin_menu'));
 function simple_ical_widget () {  register_widget( 'Simple_iCal_Widget' );}
 add_action ('widgets_init', 'simple_ical_widget'  );
 // end replace
+function myguten_enqueue() {
+    wp_enqueue_script(
+        'simple-google-icalendar-widget-script',
+        plugins_url( 'simple-google-icalendar-widget.js', __FILE__ )
+        );
+}
+add_action( 'enqueue_block_editor_assets', 'myguten_enqueue' );
+
