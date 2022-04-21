@@ -4,7 +4,7 @@
  Description: Widget that displays events from a public google calendar or iCal file
  Plugin URI: https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  Author: Bram Waasdorp
- Version: 1.5.1
+ Version: 1.6.0
  License: GPL3
  Tested up to: 5.9
  Requires PHP:  5.3.0 tested with 7.2
@@ -24,7 +24,8 @@
  *               in Description, Summary and Location added wp_kses('post') to output to keep preventing XSS
  *   bw 20220407 Extra options for parser in array poptions and added temporary new option notprocessdst to don't process differences in DST between start of series events and the current event.
  *      20220410 V1.5.1 As notprocessdst is always better within one timezone removed the correction and this option. 
- *               If this causes other problems when using more timezones then find specific solution.           
+ *               If this causes other problems when using more timezones then find specific solution. 
+ *   bw 20220421 V1.6.0 First steps to convert widget to block                      
  */
 /*
  Simple Google Calendar Outlook Events Widget
@@ -64,13 +65,14 @@ class Simple_iCal_Widget extends WP_Widget
     {
         // load our textdomain
         load_plugin_textdomain('simple_ical', false, basename( dirname( __FILE__ ) ) . '/languages' );
-        
+        $widget_ops = array(  // Args
+            'classname' => 'Simple_iCal_Widget',
+            'description' => __('Displays events from a public Google Calendar or other iCal source', 'simple_ical'),
+            'show_instance_in_rest' => true, // allow migrating to block
+        );
         parent::__construct('simple_ical_widget', // Base ID
-            'Simple Google iCalendar Widget', // Name
-            array( // Args
-                'classname' => 'Simple_iCal_Widget',
-                'description' => __('Displays events from a public Google Calendar or other iCal source', 'simple_ical'),
-            )
+            'Simple Google Calendar Outlook ical Events Widget', // Name
+            $widget_ops
             );
     }
     
