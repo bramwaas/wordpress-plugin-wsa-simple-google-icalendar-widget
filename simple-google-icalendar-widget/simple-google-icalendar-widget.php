@@ -411,11 +411,12 @@ add_action('admin_menu',array ($ical_admin, 'simple_ical_admin_menu'));
 function simple_ical_widget () {  register_widget( 'Simple_iCal_Widget' );}
 add_action ('widgets_init', 'simple_ical_widget'  );
 // end replace
-function myguten_enqueue() {
+function widget_js_enqueue() {
     wp_enqueue_script(
         'simple-google-icalendar-widget-script',
-        plugins_url( 'simple-google-icalendar-widget.js', __FILE__ )
+        plugins_url( 'simple-google-icalendar-widget.js', __FILE__ ),
+        array( 'wp-blocks' )
         );
 }
-add_action( 'enqueue_block_editor_assets', 'myguten_enqueue' );
+add_action( 'enqueue_block_editor_assets', 'widget_js_enqueue' );
 
