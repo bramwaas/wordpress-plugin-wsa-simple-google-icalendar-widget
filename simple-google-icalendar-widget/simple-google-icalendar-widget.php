@@ -57,23 +57,44 @@ if (!class_exists('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget\Simplei
     require_once('includes/SimpleicalWidgetAdmin.php');
     class_alias('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget\SimpleicalWidgetAdmin', 'SimpleicalWidgetAdmin');
 }
-
+if ( !class_exists( 'Simple_iCal_Widget' ) ) {
 class Simple_iCal_Widget extends WP_Widget
 {
     
     public function __construct()
     {
-        // load our textdomain
-        load_plugin_textdomain('simple_ical', false, basename( dirname( __FILE__ ) ) . '/languages' );
-        $widget_ops = array(  // Args
-            'classname' => 'Simple_iCal_Widget',
-            'description' => __('Displays events from a public Google Calendar or other iCal source', 'simple_ical'),
-            'show_instance_in_rest' => true, // allow migrating to block
-        );
-        parent::__construct('simple_ical_widget', // Base ID
+        if ( function_exists( 'register_block_type' ) ) {
+            if (!class_exists('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget\SimpleicalBlock')) {
+                require_once('includes/SimpleicalBlock.php');
+                class_alias('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget\SimpleicalBlock', 'SimpleicalBlock');
+            }
+            $ical_block = 'SimpleicalBlock'; // Static class method call
+//            $ical_block = new SimpleicalBlock(); // Object method call if necessary
+            if ( is_admin() ) {
+                add_action( 'admin_init', array( $ical_block, 'admin_init' ) );
+                add_action( 'enqueue_block_editor_assets', array( $ical_block,  'simple_google_icalendar_script_enqueue') );
+            }
+            else {
+                // ONLY LOAD THIS IF THE CURRENT PAGE HAS
+                add_action( 'init', array( $ical_block, 'init' ) );
+            }
+        }
+        else 
+        {
+            // load our textdomain
+            load_plugin_textdomain('simple_ical', false, basename( dirname( __FILE__ ) ) . '/languages' );
+            $widget_ops = array(  // Args
+                'classname' => 'Simple_iCal_Widget',
+                'description' => __('Displays events from a public Google Calendar or other iCal source', 'simple_ical'),
+                'show_instance_in_rest' => true, // allow migrating to block
+            );
+            parent::__construct('simple_ical_widget', // Base ID
             'Simple Google Calendar Outlook ical Events Widget', // Name
             $widget_ops
-            );
+             );
+            
+        }
+        
     }
     
     private function getTransientId()
@@ -401,22 +422,19 @@ class Simple_iCal_Widget extends WP_Widget
         <?php
 	return '';    
     }
+} // end class
+} // !class_exists( 'Simple_iCal_Widget' )
 
+if ( function_exists( 'register_block_type' ) ) {
+    new Simple_iCal_Widget();
+}
+else 
+{
+    function simple_ical_widget () {  register_widget( 'Simple_iCal_Widget' );}
+    add_action ('widgets_init', 'simple_ical_widget'  );
+    
 }
 $ical_admin = new SimpleicalWidgetAdmin;
 add_action('admin_menu',array ($ical_admin, 'simple_ical_admin_menu'));
 
-// add_action('widgets_init', create_function('', 'return register_widget("Simple_iCal_Widget");'));
-// replaced by
-function simple_ical_widget () {  register_widget( 'Simple_iCal_Widget' );}
-add_action ('widgets_init', 'simple_ical_widget'  );
-// end replace
-function widget_js_enqueue() {
-    wp_enqueue_script(
-        'simple-google-icalendar-widget-script',
-        plugins_url( 'simple-google-icalendar-widget.js', __FILE__ ),
-        array( 'wp-blocks' )
-        );
-}
-add_action( 'enqueue_block_editor_assets', 'widget_js_enqueue' );
 
