@@ -1,7 +1,8 @@
 {
+    "$schema": "https://json.schemastore.org/block.json",
     "apiVersion": 2,
     "title": "Simple ical Block",
-    "name": "Simple Google Calendar Outlook Events Widget",
+    "name": "wsa/simple-ical-block",
     "category": "widgets",
     "icon": "universal-access-alt",
     "editorScript": "file:./js/simple-ical-block.js"

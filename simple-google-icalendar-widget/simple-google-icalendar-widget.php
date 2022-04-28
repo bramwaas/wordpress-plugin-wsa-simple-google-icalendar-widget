@@ -68,8 +68,8 @@ class Simple_iCal_Widget extends WP_Widget
                 require_once('includes/SimpleicalBlock.php');
                 class_alias('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget\SimpleicalBlock', 'SimpleicalBlock');
             }
-            $ical_block = 'SimpleicalBlock'; // Static class method call
-//            $ical_block = new SimpleicalBlock(); // Object method call if necessary
+//            $ical_block = 'SimpleicalBlock'; // Static class method call
+            $ical_block = new SimpleicalBlock(); // Object method call if necessary
             if ( is_admin() ) {
                 add_action( 'admin_init', array( $ical_block, 'admin_init' ) );
                 add_action( 'enqueue_block_editor_assets', array( $ical_block,  'simple_google_icalendar_script_enqueue') );
