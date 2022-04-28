@@ -5,7 +5,7 @@
     var useSelect = data.useSelect;
     var useBlockProps = blockEditor.useBlockProps;
   
-    registerBlockType( 'wsa/simpleicalblock', {
+    registerBlockType( 'simplegoogleicalenderwidget/simpleicalblock', {
         apiVersion: 2,
         title: __('SimpleiCal', 'simple_ical'),
         icon: 'megaphone',
