@@ -1,50 +1,38 @@
-( function ( wp ) {
+( function ( blocks, element, data, blockEditor, __ ) {
 	console.log( "Plugin: Simple Google iCalendar Widget js 27-4 is loaded!" );
-    var registerPlugin = wp.plugins.registerPlugin;
-    var PluginSidebar = wp.editPost.PluginSidebar;
     var el = wp.element.createElement;
-    var TextControl = wp.components.TextControl;
-    var useSelect = wp.data.useSelect;
-    var useDispatch = wp.data.useDispatch;
-
-
-    var MetaBlockField = function ( props ) {
-        var metaFieldValue = useSelect( function ( select ) {
-            return select( 'core/editor' ).getEditedPostAttribute(
-                'meta'
-            )[ 'sidebar_plugin_meta_block_field' ];
-        }, [] );
+    var registerBlockType = blocks.registerBlockType;
+    var useSelect = data.useSelect;
+    var useBlockProps = blockEditor.useBlockProps;
+  
+    registerBlockType( 'wsa/simpleicalblock', {
+        apiVersion: 2,
+        title: __('SimpleiCal', 'simple_ical'),
+        icon: 'megaphone',
+        category: 'widgets',
+        edit: function () {
+            var content;
+            var blockProps = useBlockProps();
+            var posts = useSelect( function ( select ) {
+                return select( 'core' ).getEntityRecords( 'postType', 'post' );
+            }, [] );
+            if ( ! posts ) {
+                content = 'Loading...';
+            } else if ( posts.length === 0 ) {
+                content = 'No posts';
+            } else {
+                var post = posts[ 0 ];
+                content = el( 'a', { href: post.link }, post.title.rendered );
+            }
  
-        var editPost = useDispatch( 'core/editor' ).editPost;
- 
-        return el( TextControl, {
-            label: 'Meta Block Field ...',
-            value: metaFieldValue,
-            onChange: function ( content ) {
-                editPost( {
-                    meta: { sidebar_plugin_meta_block_field: content },
-                } );
-            },
-        } );
-    };
-
- 
-    registerPlugin( 'simple-google-icalendar-widget', {
-        render: function () {
-            return el(
-                PluginSidebar,
-                {
-                    name: 'simple-google-icalendar-widget',
-                    icon: 'admin-post',
-                    title: 'Simple Google Calendar Outlook Events Widget',
-                },
-                el(
-                    'div',
-                    { className: 'plugin-sidebar-content' },
-                    el( MetaBlockField  )
-                )
-            );
+            return el( 'div', blockProps, content );
         },
     } );
-} )( window.wp );
+} )(
+	window.wp.blocks,
+    window.wp.element,
+    window.wp.data,
+    window.wp.blockEditor,
+	window.wp.i18n
+ );
 

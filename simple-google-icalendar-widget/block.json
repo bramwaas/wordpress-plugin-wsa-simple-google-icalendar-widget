@@ -1,0 +1,8 @@
+{
+    "apiVersion": 2,
+    "title": "Simple ical Block",
+    "name": "Simple Google Calendar Outlook Events Widget",
+    "category": "widgets",
+    "icon": "universal-access-alt",
+    "editorScript": "file:./js/simple-ical-block.js"
+}

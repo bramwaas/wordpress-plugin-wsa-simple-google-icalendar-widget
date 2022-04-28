@@ -16,7 +16,6 @@
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget;
 
 class SimpleicalBlock {
-    //menu items
     /**
      * Front end block init
      *
@@ -25,9 +24,10 @@ class SimpleicalBlock {
      * @param .
      */
     public function init() {
-        wp_enqueue_style(
-            'simple-google-icalendar-block-css', plugin_dir_url( dirname(__FILE__) ) . 'simple-google-icalendar-block.min.css',
-            null, filemtime( plugin_dir_path( dirname(__FILE__) ) . 'simple-google-icalendar-block.min.css' )
+        register_block_type( dirname(__DIR__) );
+//        wp_enqueue_style(
+//            'simple-google-icalendar-block-css', plugin_dir_url( dirname(__FILE__) ) . 'simple-google-icalendar-block.min.css',
+//            null, filemtime( plugin_dir_path( dirname(__FILE__) ) . 'simple-google-icalendar-block.min.css' )
             );
     }
     /**
