@@ -19,13 +19,10 @@ class SimpleicalBlock {
     /**
      * Front end block init
      *
-     * see \WP_Widget::form()
-     *
      * @param .
      */
-    public function init() {
-        echo '<!-- block_init -->';
-        register_block_type( dirname(__DIR__) );
+    function init_block() {
+        register_block_type( dirname(__DIR__) .'/block.json' );
    }
     /**
      * Back end (admin) block init
@@ -35,8 +32,7 @@ class SimpleicalBlock {
      * @param .
      */
     public function admin_init() {
-            echo '<!-- admin_init -->';
-            register_block_type( dirname(__DIR__) );
+             register_block_type( dirname(__DIR__) . '/block.json' );
             //             wp_register_script(
 //                 'simple-google-icalendar-sidebar-script',
 // //                plugins_url( 'js/simple-google-icalendar-widget.js', dirname(__FILE__) ),
@@ -80,7 +76,7 @@ class SimpleicalBlock {
             //            wp_localize_script( 'meow-faq-block-js', 'meow_faq_block_params', array(
             //            'logo' => trailingslashit( plugin_dir_url( __FILE__ ) ) . 'img/meowapps.png'
             //    ) );
-            load_plugin_textdomain('simple_ical', false, basename( dirname( __FILE__ ) ) . '/languages' );
+ //           load_plugin_textdomain('simple_ical', false, basename( dirname( __FILE__ ) ) . '/languages' );
     }
 //     public function simple_google_icalendar_script_enqueue() {
 //         wp_enqueue_script( 'simple-google-icalendar-sidebar-script' );
