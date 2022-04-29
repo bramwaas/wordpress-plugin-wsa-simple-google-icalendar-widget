@@ -1,14 +1,25 @@
-( function ( blocks, element ) {
+( function ( blocks, element, blockEditor ) {
     var el = element.createElement;
  
     blocks.registerBlockType( 'simplegoogleicalenderwidget/simple-ical-block', {
-        edit: function () {
-            return el( 'p', {}, 'Hello World (from the editor).' );
+        edit: function (props) {
+            var blockProps = blockEditor.useBlockProps();
+            return el(
+				 'p',
+				 blockProps,
+				 'Hello World (from the editor, in green).' 
+			);
         },
         save: function () {
-            return el( 'p', {}, 'Hola mundo (from the frontend).' );
+            var blockProps = blockEditor.useBlockProps.save();
+            return el( 
+				'p', 
+				blockProps, 
+				'Hola mundo (from the frontend, in red).' 
+			);
         },
     } );
 } )( window.wp.blocks,
-     window.wp.element
+     window.wp.element,
+     window.wp.blockEditor
  );

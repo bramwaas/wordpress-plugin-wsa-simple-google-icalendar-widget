@@ -1,0 +1,8 @@
+/* simple-ical-block editor style 
+green background
+ */
+.wp-block-simplegoogleicalenderwidget-simple-ical-block {
+    background: #090;
+    color: white;
+    padding: 20px;
+}

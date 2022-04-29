@@ -21,7 +21,7 @@ These are great, but as soon as you want to make a few adjustments to the stylin
 
 == Plugin Features ==
 
-* Calendar widget to display appointments/events of a public Google calendar or other iCal file.
+* Calendar block or widget to display appointments/events of a public Google calendar or other iCal file.
 * Small footprint, uses only Google ID of the calendar, or ICS link for Outlook, or Url of iCal file, to get event information via iCal
 * Manage events in Google Calendar, or other iCalendar source.
 * Fully adaptable to your website with CSS. Output in unorderd list with Bootstrap 4 listgroup classes and toggle for details.
@@ -32,10 +32,13 @@ These are great, but as soon as you want to make a few adjustments to the stylin
 
 == Installation ==
 
-* Do the usual setup procedure... you know... downloading... unpacking... uploading... activating. 
-Or just install it through the wordpress plugin directory.
-* As soon as you activated the plugin, you should see a new widget under Design / Widgets.
-Just drag it into your sidebar.
+* Do the usual setup procedure... you know... downloading... unpacking... uploading... activating.   
+Or (in WP5 and higher) Download the zip-file and upload it via Plugins Add new ... install and activate.    
+Or just install it through the wordpress plugin directory.   
+* For WP 5.9 and higher: As soon as you activated the plugin, you should see a new block 'Simple ical Block' under Appearance / Widgets / Toggle block inserter / WIDGETS. Just drag it into your sidebar.    
+You can also enter the same block in a post or a page with the block-editor.
+* Alternative for WP 4.0 and higher: Select the legacy widget, drag it in the sidebar and choose 'Simple Google Calendar Outlook Events Widget'
+* For versions before WP 4 (not recommended): As soon as you activated the plugin, you should see a new widget under Design / Widgets. Just drag it into your sidebar.
 * Fill out all the necessary configuration fields.
  Under Calendar ID enter the calendar ID displayed by Google Calendar, or complete url of a  Google calendar or other iCal file.
  You can find Google calendar ID by going to Calendar Settings / Calendars, clicking on the appropriate calendar, scrolling all the way down to find the Calendar ID at the bottom under the Integrate Calendar section. There's your calendar id.

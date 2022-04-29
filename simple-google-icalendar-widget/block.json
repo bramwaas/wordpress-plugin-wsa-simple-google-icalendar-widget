@@ -4,6 +4,9 @@
     "title": "Simple ical Block",
     "name": "simplegoogleicalenderwidget/simple-ical-block",
     "category": "widgets",
+    "description": "Block that displays events from a public calendar or iCal file.",
     "icon": "universal-access-alt",
-    "editorScript": "file:./js/simple-ical-block.js"
+    "editorScript": "file:./js/simple-ical-block.js",
+    "editorStyle": "file:./css/simple-ical-editor.css",
+    "style": "file:./css/simple-ical-style.css"
 }
