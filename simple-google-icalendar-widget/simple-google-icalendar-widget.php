@@ -25,12 +25,13 @@
  *   bw 20220407 Extra options for parser in array poptions and added temporary new option notprocessdst to don't process differences in DST between start of series events and the current event.
  *      20220410 V1.5.1 As notprocessdst is always better within one timezone removed the correction and this option. 
  *               If this causes other problems when using more timezones then find specific solution. 
- *   bw 20220421 V1.6.0 First steps to convert widget to block                      
+ *   bw 20220421 V1.6.0 First steps to convert widget to block 
+ *      20220430 Block in own class  SimpleicalBlock called when function_exists( 'register_block_type') else old widget (later maybe always also old widget)                   
  */
 /*
  Simple Google Calendar Outlook Events Widget
  Copyright (C) Bram Waasdorp 2017 - 2022
- 2022-04-21
+ 2022-04-30
  Forked from Simple Google Calendar Widget v 0.7 by Nico Boehr
  
  This program is free software: you can redistribute it and/or modify
@@ -62,8 +63,8 @@ if ( function_exists( 'register_block_type' ) )  { // block widget
         require_once('includes/SimpleicalBlock.php');
         class_alias('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget\SimpleicalBlock', 'SimpleicalBlock');
     }
-	$sib = new SimpleicalBlock();
-	add_action( 'init', array ($sib, 'init_block') );
+    // Static class method call with name of the class
+    add_action( 'init', array ('SimpleicalBlock', 'init_block') );
 
 } // end function_exists( 'register_block_type' )
 else { //old widget

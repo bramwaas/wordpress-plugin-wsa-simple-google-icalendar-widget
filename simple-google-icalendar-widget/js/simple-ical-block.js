@@ -14,6 +14,10 @@
 
     var RichText = blockEditor.RichText;
 	var useBlockProps = blockEditor.useBlockProps;
+    var AlignmentToolbar = blockEditor.AlignmentToolbar;
+	var BlockControls = blockEditor.BlockControls;
+	var InspectorControls = blockEditor.InspectorControls;
+	var ColorPalette = blockEditor.ColorPalette;
 
 	blocks.registerBlockType( 'simplegoogleicalenderwidget/simple-ical-block', {
         attributes: {
@@ -21,7 +25,18 @@
                 type: 'array',
                 source: 'children',
                 selector: 'p',
+                default: '',
             },
+            alignment: {
+                type: 'string',
+                default: 'none',
+            },
+			bg_color: { 
+				type: 'string',
+				default: '#000000' },
+        	text_color: { 
+				type: 'string',
+				default: '#ffffff' },
         },
 		example: {
             attributes: {
@@ -29,29 +44,54 @@
             },
         },
 		edit: function( props ) {
-            var blockProps = useBlockProps();
             var content = props.attributes.content;
+            var alignment = props.attributes.alignment;
             function onChangeContent( newContent ) {
                 props.setAttributes( { content: newContent } );
             }
+/*            var bg_color = props.attributes.bg_color;
+            function onChangeBGColor ( hexColor ) {
+                props.setAttributes( { bg_color: hexColor } );
+            }
+            var text_color = props.attributes.text_color;
+            function onChangeTextColor ( hexColor ) {
+                props.setAttributes( { text_color: hexColor } );
+            }
+*/
+            function onChangeAlignment( newAlignment ) {
+                props.setAttributes( { alignment: newAlignment === undefined ? 'none' : newAlignment } );
+            }
  			
-			return el(
+			return [
+				el(
+					BlockControls,
+					{ key: 'controls' },
+					el( AlignmentToolbar, {
+						value: alignment,
+						onChange: onChangeAlignment,
+					} )
+				),
+				el(
                 RichText,
-                Object.assign( blockProps, {
+                useBlockProps ( {
+					key: 'richtext',
                     tagName: 'p',
+					style: { textAlign: alignment },
+					className: props.className,
                     onChange: onChangeContent,
                     value: content,
                 } )
-            );
+            ),
+			];
 		},
 		save: function( props ) {
-            var blockProps = useBlockProps.save();
             return el(
                 RichText.Content,
-                Object.assign( blockProps, {
+                useBlockProps.save( {
                     tagName: 'p',
+				    className: 'gutenberg-examples-align-' + props.attributes.alignment,
                     value: props.attributes.content,
-                } )
+                } ) 
             );
 		},
 	} );

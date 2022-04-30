@@ -12,16 +12,17 @@
  * used in newer wp versions where Gutenbergblocks are available. (tested with function_exists( 'register_block_type' ))
  * Version: 1.6.0
  * 20220427 namespaced and renamed after classname.
+ * 20220430 try with static calls
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget;
 
 class SimpleicalBlock {
     /**
-     * Front end block init
+     * Block init register block with help of block.json
      *
      * @param .
      */
-    function init_block() {
+    static function init_block() {
         register_block_type( dirname(__DIR__) .'/block.json' );
    }
     /**
