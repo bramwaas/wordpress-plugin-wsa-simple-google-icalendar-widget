@@ -3,12 +3,10 @@
  *
  * Move styles to stylesheets - both edit and front-end.
  * and use attributes and editable fields
- *
- * Note the `className` property supplied to the `edit` callback.  To use the
- * `.wp-block-*` class for styling, plugin implementers must return an
- * appropriate element with this class.
+ * v1.6.0
+ * 20220430
  */
-( function( blocks, i18n, element, blockEditor ) {
+( function( blocks, i18n, element, blockEditor, components ) {
 	var el = element.createElement;
 	var __ = i18n.__;
 
@@ -18,6 +16,10 @@
 	var BlockControls = blockEditor.BlockControls;
 	var InspectorControls = blockEditor.InspectorControls;
 	var ColorPalette = blockEditor.ColorPalette;
+	var ServerSideRender = components.ServerSideRender;
+    var TextControl = components.TextControl;
+    var ToggleControl = components.ToggleControl;
+
 
 	blocks.registerBlockType( 'simplegoogleicalenderwidget/simple-ical-block', {
         attributes: {
@@ -37,7 +39,12 @@
         	text_color: { 
 				type: 'string',
 				default: '#ffffff' },
-        },
+        	foo: { 
+				type: 'string',
+				default: 'empty' },
+        	toggle: { 
+				type: 'boolean' },
+		},
 		example: {
             attributes: {
                 content: 'Hello World',
@@ -63,24 +70,64 @@
             }
  			
 			return [
-				el(
-					BlockControls,
-					{ key: 'controls' },
-					el( AlignmentToolbar, {
-						value: alignment,
-						onChange: onChangeAlignment,
-					} )
-				),
-				el(
-                RichText,
-                useBlockProps ( {
-					key: 'richtext',
-                    tagName: 'p',
-					style: { textAlign: alignment },
-					className: props.className,
-                    onChange: onChangeContent,
-                    value: content,
-                } )
+            /*
+             * The ServerSideRender element uses the REST API to automatically call
+             * php_block_render() in your PHP code whenever it needs to get an updated
+             * view of the block.
+             */
+/*            el( ServerSideRender, {
+                block: 'nextgenthemes/arve-block',
+                attributes: props.attributes,
+            } ),
+*/
+            /*
+             * InspectorControls lets you add controls to the Block sidebar. In this case,
+             * we're adding a TextControl, which lets us edit the 'foo' attribute (which
+             * we defined in the PHP). The onChange property is a little bit of magic to tell
+             * the block editor to update the value of our 'foo' property, and to re-render
+             * the block.
+             */
+            el( InspectorControls, {},
+                el(
+                    TextControl,
+                    {
+                        label: 'Foo',
+                        value: props.attributes.foo,
+                        onChange: function( value ) {
+                            props.setAttributes( { foo: value } );
+                        },
+                    }
+                ),
+                el(
+                    ToggleControl,
+                    {
+                        label: 'Toogle',
+                        checked: props.attributes.toggle,
+                        onChange: function( value ) {
+                            props.setAttributes( { toggle: value } );
+                        },
+                    }
+                )
+            ),
+
+			el(
+				BlockControls,
+				{ key: 'controls' },
+				el( AlignmentToolbar, {
+					value: alignment,
+					onChange: onChangeAlignment,
+				} )
+			),
+			el(
+               RichText,
+               useBlockProps ( {
+				key: 'richtext',
+                tagName: 'p',
+				style: { textAlign: alignment },
+				className: props.className,
+                onChange: onChangeContent,
+                value: content,
+               } )
             ),
 			];
 		},
@@ -89,7 +136,7 @@
                 RichText.Content,
                 useBlockProps.save( {
                     tagName: 'p',
-				    className: 'gutenberg-examples-align-' + props.attributes.alignment,
+				    className: 'simple-ical-align-' + props.attributes.alignment,
                     value: props.attributes.content,
                 } ) 
             );
@@ -98,5 +145,7 @@
 }( window.wp.blocks,
    window.wp.i18n,
    window.wp.element,
-   window.wp.blockEditor )
+   window.wp.blockEditor,
+   window.wp.components
+ )
  );
