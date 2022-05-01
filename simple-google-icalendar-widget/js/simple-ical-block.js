@@ -15,6 +15,7 @@
     var AlignmentToolbar = blockEditor.AlignmentToolbar;
 	var BlockControls = blockEditor.BlockControls;
 	var InspectorControls = blockEditor.InspectorControls;
+	var InspectorAdvancedControls = blockEditor.InspectorAdvancedControls;
 	var ColorPalette = blockEditor.ColorPalette;
 	var ServerSideRender = components.ServerSideRender;
     var TextControl = components.TextControl;
@@ -23,52 +24,78 @@
 
 	blocks.registerBlockType( 'simplegoogleicalenderwidget/simple-ical-block', {
         attributes: {
+	
+        title: {
+            type: 'string',
+            source: 'html',
+            selector: '.block-title',
+            default: 'Events'
+        },
+       calid: {
+            type: 'string'
+        },
+       e_cnt: {
+            type: 'integer',
+            default: '10'
+        },
+       e_per: {
+            type: 'integer',
+            default: '92'
+        },
+       cache: {
+            type: 'integer',
+            default: '60'
+        },
+       df_lg: {
+            type: 'string',
+            default: 'l jS \of F'
+        },
+       df_tsum: {
+            type: 'string',
+            default: 'G:i '
+        },
+       df_tstrt: {
+            type: 'string',
+            default: 'G:i'
+        },
+       df_tend: {
+            type: 'string',
+            default: ' - G:i '
+        },
+       exc_ln: {
+            type: 'integer'
+        },
+       sf_lg_cl: {
+            type: 'string',
+            default: ''
+        },
+       sf_lgi_cl: {
+            type: 'string',
+            default: ' py-0'
+        },
+       sf_lgia_cl: {
+            type: 'string',
+            default: ''
+        },
+       allowhtml: {
+            type: 'boolean',
+            default: false
+        },
+       cl_cache: {
+            type: 'boolean',
+            default: false
+        },
+	
+	
+	
             content: {
                 type: 'array',
                 source: 'children',
                 selector: 'p',
                 default: '',
             },
-            alignment: {
-                type: 'string',
-                default: 'none',
-            },
-			bg_color: { 
-				type: 'string',
-				default: '#000000' },
-        	text_color: { 
-				type: 'string',
-				default: '#ffffff' },
-        	foo: { 
-				type: 'string',
-				default: 'empty' },
-        	toggle: { 
-				type: 'boolean' },
 		},
-		example: {
-            attributes: {
-                content: 'Hello World',
-            },
-        },
 		edit: function( props ) {
-            var content = props.attributes.content;
-            var alignment = props.attributes.alignment;
-            function onChangeContent( newContent ) {
-                props.setAttributes( { content: newContent } );
-            }
-/*            var bg_color = props.attributes.bg_color;
-            function onChangeBGColor ( hexColor ) {
-                props.setAttributes( { bg_color: hexColor } );
-            }
-            var text_color = props.attributes.text_color;
-            function onChangeTextColor ( hexColor ) {
-                props.setAttributes( { text_color: hexColor } );
-            }
-*/
-            function onChangeAlignment( newAlignment ) {
-                props.setAttributes( { alignment: newAlignment === undefined ? 'none' : newAlignment } );
-            }
- 			
 			return [
             /*
              * The ServerSideRender element uses the REST API to automatically call
@@ -87,46 +114,126 @@
              * the block editor to update the value of our 'foo' property, and to re-render
              * the block.
              */
-            el( InspectorControls, {},
+            el( InspectorControls, 
+				{key: 'inspectorcontrols'},
                 el(
                     TextControl,
-                    {
-                        label: 'Foo',
-                        value: props.attributes.foo,
-                        onChange: function( value ) {
-                            props.setAttributes( { foo: value } );
-                        },
+                    {   label: __('Title:', 'simple_ical'),
+                        value: props.attributes.title,
+                        onChange: function( value ) { props.setAttributes( { title: value } );},
+                    }
+                ),
+                el(
+                    TextControl,
+                    {   label: __('Calendar ID, or iCal URL:', 'simple_ical'),
+                        value: props.attributes.calid,
+                        onChange: function( value ) { props.setAttributes( { calid: value } );},
+                    }
+                ),
+                el(
+                    TextControl,
+                    {   label: __('Number of events displayed:', 'simple_ical'),
+                        value: props.attributes.e_cnt,
+                        onChange: function( value ) { props.setAttributes( { e_cnt: value } );},
+                    }
+                ),
+                el(
+                    TextControl,
+                    {   label: __('Number of days after today with events displayed:', 'simple_ical'),
+                        value: props.attributes.e_per,
+                        onChange: function( value ) { props.setAttributes( { e_per: value } );},
+                    }
+                ),
+                el(
+                    TextControl,
+                    {   label: __('Date format first line:', 'simple_ical'),
+                        value: props.attributes.df_lg,
+                        onChange: function( value ) { props.setAttributes( { df_lg: value } );},
+                    }
+                ),
+                el(
+                    TextControl,
+                    {   label: __('Time format time summary line:', 'simple_ical'),
+                        value: props.attributes.df_tsum,
+                        onChange: function( value ) { props.setAttributes( { df_tsum: value } );},
+                    }
+                ),
+                el(
+                    TextControl,
+                    {   label: __('Time format start time:', 'simple_ical'),
+                        value: props.attributes.df_tstrt,
+                        onChange: function( value ) { props.setAttributes( { df_tstrt: value } );},
+                    }
+                ),
+                el(
+                    TextControl,
+                    {   label: __('Time format end time:', 'simple_ical'),
+                        value: props.attributes.df_tend,
+                        onChange: function( value ) { props.setAttributes( { df_tend: value } );},
+                    }
+                )
+            ),
+            el( InspectorAdvancedControls,
+				{key: 'inspectoradvancedcontrols'},
+                el(
+                    TextControl,
+                    {   label: __('Cache expiration time in minutes:', 'simple_ical'),
+                        value: props.attributes.cache,
+                        onChange: function( value ) { props.setAttributes( { cache: value } );},
+                    }
+                ),
+                el(
+                    TextControl,
+                    {   label: __('Excerpt length, max length of description:', 'simple_ical'),
+                        value: props.attributes.exc_ln,
+                        onChange: function( value ) { props.setAttributes( { exc_ln: value } );},
+                    }
+                ),
+                el(
+                    TextControl,
+                    {   label: __('Suffix group class:', 'simple_ical'),
+                        value: props.attributes.sf_lg_cl,
+                        onChange: function( value ) { props.setAttributes( { sf_lg_cl: value } );},
+                    }
+                ),
+                el(
+                    TextControl,
+                    {   label: __('Suffix event start class:', 'simple_ical'),
+                        value: props.attributes.sf_lgi_cl,
+                        onChange: function( value ) { props.setAttributes( { sf_lgi_cl: value } );},
+                    }
+                ),
+                el(
+                    TextControl,
+                    {   label: __('Suffix event details class:', 'simple_ical'),
+                        value: props.attributes.sf_lgia_cl,
+                        onChange: function( value ) { props.setAttributes( { sf_lgia_cl: value } );},
                     }
                 ),
                 el(
                     ToggleControl,
-                    {
-                        label: 'Toogle',
-                        checked: props.attributes.toggle,
-                        onChange: function( value ) {
-                            props.setAttributes( { toggle: value } );
-                        },
+                    {   label: __('Allow safe html in description and summary.', 'simple_ical'),
+                        checked: props.attributes.allowhtml,
+                        onChange: function( value ) { props.setAttributes( { allowhtml: value } );},
+                    }
+                ),
+                el(
+                    ToggleControl,
+                    {   label: __(' clear cache on save.', 'simple_ical'),
+                        checked: props.attributes.cl_cache,
+                        onChange: function( value ) { props.setAttributes( { cl_cache: value } );},
                     }
                 )
             ),
-
-			el(
-				BlockControls,
-				{ key: 'controls' },
-				el( AlignmentToolbar, {
-					value: alignment,
-					onChange: onChangeAlignment,
-				} )
-			),
+			
 			el(
                RichText,
                useBlockProps ( {
 				key: 'richtext',
                 tagName: 'p',
-				style: { textAlign: alignment },
 				className: props.className,
-                onChange: onChangeContent,
-                value: content,
+                onChange: function ( newContent ) {	props.setAttributes( { content: newContent } );},
+                value: props.attributes.content,
                } )
             ),
 			];

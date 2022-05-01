@@ -4,8 +4,26 @@
     "title": "Simple ical Block",
     "name": "simplegoogleicalenderwidget/simple-ical-block",
     "category": "widgets",
-    "description": "Block that displays events from a public calendar or iCal file.",
     "icon": "universal-access-alt",
+    "description": "Block that displays events from a public calendar or iCal file.",
+    "keywords": [ "calendar", "ical", "event", "events", "google", "outlook", "iCalendar", "holydays", "ics" ],
+    "version": "1.6.0",
+    "textdomain": "my-plugin",
+    "attributes": {
+        "message": {
+            "type": "string",
+            "source": "html",
+            "selector": ".message"
+        }
+    },
+    "supports": {
+        "align": true
+    },
+    "example": {
+            "attributes": {
+                "message": "Hello World"
+            }
+    },
     "editorScript": "file:./js/simple-ical-block.js",
     "editorStyle": "file:./css/simple-ical-editor.css",
     "style": "file:./css/simple-ical-style.css"
