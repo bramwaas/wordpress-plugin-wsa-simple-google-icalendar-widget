@@ -93,7 +93,9 @@
             },
 		},
 		edit: function( props ) {
-			return [
+			return 	el(
+               'div',
+               useBlockProps ({key: 'simple_ical'}),
             /*
              * The ServerSideRender element uses the REST API to automatically call
              * php_block_render() in your PHP code whenever it needs to get an updated
@@ -111,8 +113,11 @@
              * the block editor to update the value of our 'foo' property, and to re-render
              * the block.
              */
+
             el( InspectorControls, 
-				useBlockProps ({key: 'inspectorcontrols'}),
+				{key: 'setting'},
+			el('div',
+   			    {className: 'components-panel__body is-opened'},
                 el(
                     TextControl,
                     {   label: __('Title:', 'simple_ical'),
@@ -131,14 +136,14 @@
                     TextControl,
                     {   label: __('Number of events displayed:', 'simple_ical'),
                         value: props.attributes.event_count,
-                        onChange: function( value ) { props.setAttributes( { event_count: value } );},
+                        onChange: function( value ) { props.setAttributes( { event_count: parseInt(value) } );},
                     }
                 ),
                 el(
                     TextControl,
                     {   label: __('Number of days after today with events displayed:', 'simple_ical'),
                         value: props.attributes.event_period,
-                        onChange: function( value ) { props.setAttributes( { event_period: value } );},
+                        onChange: function( value ) { props.setAttributes( { event_period: parseInt(value) } );},
                     }
                 ),
                 el(
@@ -169,21 +174,22 @@
                         onChange: function( value ) { props.setAttributes( { dateformat_tend: value } );},
                     }
                 )
+            )
             ),
             el( InspectorAdvancedControls,
-				useBlockProps ({key: 'inspectoradvancedcontrols'}),
+				{key: 'inspectoradvancedcontrols'},
                 el(
                     TextControl,
                     {   label: __('Cache expiration time in minutes:', 'simple_ical'),
                         value: props.attributes.cache_time,
-                        onChange: function( value ) { props.setAttributes( { cache_time: value } );},
+                        onChange: function( value ) { props.setAttributes( { cache_time: parseInt(value) } );},
                     }
                 ),
                 el(
                     TextControl,
                     {   label: __('Excerpt length, max length of description:', 'simple_ical'),
                         value: props.attributes.excerptlength,
-                        onChange: function( value ) { props.setAttributes( { excerptlength: value } );},
+                        onChange: function( value ) { props.setAttributes( { excerptlength: parseInt(value) } );},
                     }
                 ),
                 el(
@@ -222,27 +228,26 @@
                     }
                 )
             ),
-			
+		
 			el(
                RichText,
-               useBlockProps ( {
+               {
 				key: 'richtext',
                 tagName: 'p',
 				className: props.className,
-                onChange: function ( newContent ) {	props.setAttributes( { content: newContent } );},
                 value: props.attributes.content,
-               } )
-            ),
-			];
+                onChange: function ( newContent ) {	props.setAttributes( { content: newContent } );},
+               } 
+            )
+			);
 		},
 		save: function( props ) {
-            return el(
-                RichText.Content,
-                useBlockProps.save( {
+            return el(RichText.Content,
+					useBlockProps.save({
                     tagName: 'p',
                     value: props.attributes.content,
-                } ) 
-            );
+                } )
+			);
 		},
 	} );
 }( window.wp.blocks,
