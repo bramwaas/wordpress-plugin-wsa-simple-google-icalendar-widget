@@ -8,21 +8,9 @@
     "description": "Block that displays events from a public calendar or iCal file.",
     "keywords": [ "calendar", "ical", "event", "events", "google", "outlook", "iCalendar", "holydays", "ics" ],
     "version": "1.6.0",
-    "textdomain": "my-plugin",
-    "attributes": {
-        "message": {
-            "type": "string",
-            "source": "html",
-            "selector": ".message"
-        }
-    },
+    "textdomain": "simple_ical",
     "supports": {
         "align": true
-    },
-    "example": {
-            "attributes": {
-                "message": "Hello World"
-            }
     },
     "editorScript": "file:./js/simple-ical-block.js",
     "editorStyle": "file:./css/simple-ical-editor.css",

@@ -24,56 +24,53 @@
 
 	blocks.registerBlockType( 'simplegoogleicalenderwidget/simple-ical-block', {
         attributes: {
-	
         title: {
             type: 'string',
-            source: 'html',
-            selector: '.block-title',
             default: 'Events'
         },
-       calid: {
+       calendar_id: {
             type: 'string'
         },
-       e_cnt: {
+       event_count: {
             type: 'integer',
             default: '10'
         },
-       e_per: {
+       event_period: {
             type: 'integer',
             default: '92'
         },
-       cache: {
+       cache_time: {
             type: 'integer',
             default: '60'
         },
-       df_lg: {
+       dateformat_lg: {
             type: 'string',
             default: 'l jS \of F'
         },
-       df_tsum: {
+       dateformat_tsum: {
             type: 'string',
             default: 'G:i '
         },
-       df_tstrt: {
+       dateformat_tstart: {
             type: 'string',
             default: 'G:i'
         },
-       df_tend: {
+       dateformat_tend: {
             type: 'string',
             default: ' - G:i '
         },
-       exc_ln: {
+       excerptlength: {
             type: 'integer'
         },
-       sf_lg_cl: {
+       suffix_lg_class: {
             type: 'string',
             default: ''
         },
-       sf_lgi_cl: {
+       suffix_lgi_class: {
             type: 'string',
             default: ' py-0'
         },
-       sf_lgia_cl: {
+       suffix_lgia_class: {
             type: 'string',
             default: ''
         },
@@ -81,7 +78,7 @@
             type: 'boolean',
             default: false
         },
-       cl_cache: {
+       clear_cache_now: {
             type: 'boolean',
             default: false
         },
@@ -115,7 +112,7 @@
              * the block.
              */
             el( InspectorControls, 
-				{key: 'inspectorcontrols'},
+				useBlockProps ({key: 'inspectorcontrols'}),
                 el(
                     TextControl,
                     {   label: __('Title:', 'simple_ical'),
@@ -126,88 +123,88 @@
                 el(
                     TextControl,
                     {   label: __('Calendar ID, or iCal URL:', 'simple_ical'),
-                        value: props.attributes.calid,
-                        onChange: function( value ) { props.setAttributes( { calid: value } );},
+                        value: props.attributes.calendar_id,
+                        onChange: function( value ) { props.setAttributes( { calendar_id: value } );},
                     }
                 ),
                 el(
                     TextControl,
                     {   label: __('Number of events displayed:', 'simple_ical'),
-                        value: props.attributes.e_cnt,
-                        onChange: function( value ) { props.setAttributes( { e_cnt: value } );},
+                        value: props.attributes.event_count,
+                        onChange: function( value ) { props.setAttributes( { event_count: value } );},
                     }
                 ),
                 el(
                     TextControl,
                     {   label: __('Number of days after today with events displayed:', 'simple_ical'),
-                        value: props.attributes.e_per,
-                        onChange: function( value ) { props.setAttributes( { e_per: value } );},
+                        value: props.attributes.event_period,
+                        onChange: function( value ) { props.setAttributes( { event_period: value } );},
                     }
                 ),
                 el(
                     TextControl,
                     {   label: __('Date format first line:', 'simple_ical'),
-                        value: props.attributes.df_lg,
-                        onChange: function( value ) { props.setAttributes( { df_lg: value } );},
+                        value: props.attributes.dateformat_lg,
+                        onChange: function( value ) { props.setAttributes( { dateformat_lg: value } );},
                     }
                 ),
                 el(
                     TextControl,
                     {   label: __('Time format time summary line:', 'simple_ical'),
-                        value: props.attributes.df_tsum,
-                        onChange: function( value ) { props.setAttributes( { df_tsum: value } );},
+                        value: props.attributes.dateformat_tsum,
+                        onChange: function( value ) { props.setAttributes( { dateformat_tsum: value } );},
                     }
                 ),
                 el(
                     TextControl,
                     {   label: __('Time format start time:', 'simple_ical'),
-                        value: props.attributes.df_tstrt,
-                        onChange: function( value ) { props.setAttributes( { df_tstrt: value } );},
+                        value: props.attributes.dateformat_tstart,
+                        onChange: function( value ) { props.setAttributes( { dateformat_tstart: value } );},
                     }
                 ),
                 el(
                     TextControl,
                     {   label: __('Time format end time:', 'simple_ical'),
-                        value: props.attributes.df_tend,
-                        onChange: function( value ) { props.setAttributes( { df_tend: value } );},
+                        value: props.attributes.dateformat_tend,
+                        onChange: function( value ) { props.setAttributes( { dateformat_tend: value } );},
                     }
                 )
             ),
             el( InspectorAdvancedControls,
-				{key: 'inspectoradvancedcontrols'},
+				useBlockProps ({key: 'inspectoradvancedcontrols'}),
                 el(
                     TextControl,
                     {   label: __('Cache expiration time in minutes:', 'simple_ical'),
-                        value: props.attributes.cache,
-                        onChange: function( value ) { props.setAttributes( { cache: value } );},
+                        value: props.attributes.cache_time,
+                        onChange: function( value ) { props.setAttributes( { cache_time: value } );},
                     }
                 ),
                 el(
                     TextControl,
                     {   label: __('Excerpt length, max length of description:', 'simple_ical'),
-                        value: props.attributes.exc_ln,
-                        onChange: function( value ) { props.setAttributes( { exc_ln: value } );},
+                        value: props.attributes.excerptlength,
+                        onChange: function( value ) { props.setAttributes( { excerptlength: value } );},
                     }
                 ),
                 el(
                     TextControl,
                     {   label: __('Suffix group class:', 'simple_ical'),
-                        value: props.attributes.sf_lg_cl,
-                        onChange: function( value ) { props.setAttributes( { sf_lg_cl: value } );},
+                        value: props.attributes.suffix_lg_class,
+                        onChange: function( value ) { props.setAttributes( { suffix_lg_class: value } );},
                     }
                 ),
                 el(
                     TextControl,
                     {   label: __('Suffix event start class:', 'simple_ical'),
-                        value: props.attributes.sf_lgi_cl,
-                        onChange: function( value ) { props.setAttributes( { sf_lgi_cl: value } );},
+                        value: props.attributes.suffix_lgi_class,
+                        onChange: function( value ) { props.setAttributes( { suffix_lgi_class: value } );},
                     }
                 ),
                 el(
                     TextControl,
                     {   label: __('Suffix event details class:', 'simple_ical'),
-                        value: props.attributes.sf_lgia_cl,
-                        onChange: function( value ) { props.setAttributes( { sf_lgia_cl: value } );},
+                        value: props.attributes.suffix_lgia_class,
+                        onChange: function( value ) { props.setAttributes( { suffix_lgia_class: value } );},
                     }
                 ),
                 el(
@@ -220,8 +217,8 @@
                 el(
                     ToggleControl,
                     {   label: __(' clear cache on save.', 'simple_ical'),
-                        checked: props.attributes.cl_cache,
-                        onChange: function( value ) { props.setAttributes( { cl_cache: value } );},
+                        checked: props.attributes.clear_cache_now,
+                        onChange: function( value ) { props.setAttributes( { clear_cache_now: value } );},
                     }
                 )
             ),
@@ -243,7 +240,6 @@
                 RichText.Content,
                 useBlockProps.save( {
                     tagName: 'p',
-				    className: 'simple-ical-align-' + props.attributes.alignment,
                     value: props.attributes.content,
                 } ) 
             );
