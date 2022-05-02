@@ -1,10 +1,11 @@
 /**
- * simple-ical-block: Step 3
+ * simple-ical-block.js
  *
  * Move styles to stylesheets - both edit and front-end.
  * and use attributes and editable fields
+ * attributes as Inspectorcontrols (settings)
  * v1.6.0
- * 20220430
+ * 20220502
  */
 ( function( blocks, i18n, element, blockEditor, components ) {
 	var el = element.createElement;
@@ -12,17 +13,13 @@
 
     var RichText = blockEditor.RichText;
 	var useBlockProps = blockEditor.useBlockProps;
-    var AlignmentToolbar = blockEditor.AlignmentToolbar;
-	var BlockControls = blockEditor.BlockControls;
 	var InspectorControls = blockEditor.InspectorControls;
 	var InspectorAdvancedControls = blockEditor.InspectorAdvancedControls;
-	var ColorPalette = blockEditor.ColorPalette;
 	var ServerSideRender = components.ServerSideRender;
     var TextControl = components.TextControl;
     var ToggleControl = components.ToggleControl;
-
-
 	blocks.registerBlockType( 'simplegoogleicalenderwidget/simple-ical-block', {
+	/* attributes should in future be imported from block.json but that needs ESNEXT javascript */	
         attributes: {
         title: {
             type: 'string',
@@ -45,7 +42,7 @@
         },
        dateformat_lg: {
             type: 'string',
-            default: 'l jS \of F'
+            default: 'l jS \\of F'
         },
        dateformat_tsum: {
             type: 'string',
@@ -177,7 +174,7 @@
             )
             ),
             el( InspectorAdvancedControls,
-				{key: 'inspectoradvancedcontrols'},
+				{key: 'advancedsetting'},
                 el(
                     TextControl,
                     {   label: __('Cache expiration time in minutes:', 'simple_ical'),
