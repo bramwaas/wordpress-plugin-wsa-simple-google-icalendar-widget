@@ -5,7 +5,7 @@
  * and use attributes and editable fields
  * attributes as Inspectorcontrols (settings)
  * v1.6.0
- * 20220502
+ * 20220503
  */
 ( function( blocks, i18n, element, blockEditor, components ) {
 	var el = element.createElement;
@@ -99,16 +99,13 @@
              * view of the block.
              */
 /*            el( ServerSideRender, {
-                block: 'nextgenthemes/arve-block',
+                block: 'simplegoogleicalenderwidget/simple-ical-block',
                 attributes: props.attributes,
-            } ),
-*/
+              }
+			 ),
+*/		
             /*
-             * InspectorControls lets you add controls to the Block sidebar. In this case,
-             * we're adding a TextControl, which lets us edit the 'foo' attribute (which
-             * we defined in the PHP). The onChange property is a little bit of magic to tell
-             * the block editor to update the value of our 'foo' property, and to re-render
-             * the block.
+             * InspectorControls and InspectorAdvancedControls lets you add controls to the Block sidebar. In this case,
              */
 
             el( InspectorControls, 

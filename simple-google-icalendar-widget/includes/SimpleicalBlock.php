@@ -23,16 +23,47 @@ class SimpleicalBlock {
      * @param .
      */
     static function init_block() {
-        register_block_type( dirname(__DIR__) .'/block.json' );
+        register_block_type( dirname(__DIR__) .'/block.json',
+        array('render_callback' => array('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget\SimpleicalBlock', 'render_block'))
+        );
    }
     /**
-     * Back end (admin) block init
+     * Render the content of the block
      *
-     * see \WP_Widget::form()
+     * see 
      *
-     * @param .
+     * @param array $block_attributes the block attributes (that are changed from default therefore first merged with defaults.)
+     * @param array $content as saved in post by save in ...block.js
+     * @return string  HTML to render for the block (frontend)
      */
-    public function admin_init() {
-             register_block_type( dirname(__DIR__) . '/block.json' );
+   static function render_block($block_attributes, $content) {
+       $block_attributes = wp_parse_args((array) $block_attributes,
+           array(
+               'title' => __('Events', 'simple_ical'),
+               'calendar_id' => '',
+               'event_count' => 10,
+               'event_period' => 92,
+               'cache_time' => 60,
+               'dateformat_lg' => 'l jS \of F',
+               'dateformat_tsum' => 'G:i ',
+               'dateformat_tstart' => 'G:i',
+               'dateformat_tend' => ' - G:i ',
+               'excerptlength' => '',
+               'suffix_lg_class' => '',
+               'suffix_lgi_class' => ' py-0',
+               'suffix_lgia_class' => '',
+               'allowhtml' => 0,
+               'clear_cache_now' => 0,
+           )
+           );
+       
+       $output = '<ul>'. PHP_EOL;
+       foreach ($block_attributes as $key => $value) {
+           $output = $output . '<li>[' . $key . ']=' . $value . PHP_EOL;
+       }
+       $output = $output . '</ul>'. PHP_EOL;
+           
+       return '<div>' . $output . '</div>'. '<div class="content">' . $content . '</div>'  ;
+  
     }
 } // end class SimpleicalBlock
