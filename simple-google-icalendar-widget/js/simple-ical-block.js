@@ -89,6 +89,12 @@
                 default: '',
             },
 		},
+/* works, but only on saved content and is added in attribute className that is also visible in InspectorAdvancedControls 		
+		    styles: [
+        { name: "simple_ical_widget", label: "Simple_iCal_Widget", isDefault: true },
+        { name: "other", label: "Other" }
+    ],
+*/
 		edit: function( props ) {
 			return 	el(
                'div',

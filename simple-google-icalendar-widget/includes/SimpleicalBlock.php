@@ -54,6 +54,8 @@ class SimpleicalBlock {
                'suffix_lgia_class' => '',
                'allowhtml' => 0,
                'clear_cache_now' => 0,
+//               'align'=>'', 
+               'className'=>'',
            )
            );
        
