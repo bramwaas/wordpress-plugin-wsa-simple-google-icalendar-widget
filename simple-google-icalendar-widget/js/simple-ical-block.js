@@ -5,7 +5,7 @@
  * and use attributes and editable fields
  * attributes as Inspectorcontrols (settings)
  * v1.6.0
- * 20220503
+ * 20220507
  */
 ( function( blocks, i18n, element, blockEditor, components ) {
 	var el = element.createElement;
@@ -19,82 +19,6 @@
     var TextControl = components.TextControl;
     var ToggleControl = components.ToggleControl;
 	blocks.registerBlockType( 'simplegoogleicalenderwidget/simple-ical-block', {
-	/* attributes should in future be imported from block.json but that needs ESNEXT javascript */	
-        attributes: {
-        title: {
-            type: 'string',
-            default: 'Events'
-        },
-       calendar_id: {
-            type: 'string'
-        },
-       event_count: {
-            type: 'integer',
-            default: '10'
-        },
-       event_period: {
-            type: 'integer',
-            default: '92'
-        },
-       cache_time: {
-            type: 'integer',
-            default: '60'
-        },
-       dateformat_lg: {
-            type: 'string',
-            default: 'l jS \\of F'
-        },
-       dateformat_tsum: {
-            type: 'string',
-            default: 'G:i '
-        },
-       dateformat_tstart: {
-            type: 'string',
-            default: 'G:i'
-        },
-       dateformat_tend: {
-            type: 'string',
-            default: ' - G:i '
-        },
-       excerptlength: {
-            type: 'integer'
-        },
-       suffix_lg_class: {
-            type: 'string',
-            default: ''
-        },
-       suffix_lgi_class: {
-            type: 'string',
-            default: ' py-0'
-        },
-       suffix_lgia_class: {
-            type: 'string',
-            default: ''
-        },
-       allowhtml: {
-            type: 'boolean',
-            default: false
-        },
-       clear_cache_now: {
-            type: 'boolean',
-            default: false
-        },
-	
-	
-	
-            content: {
-                type: 'array',
-                source: 'children',
-                selector: 'p',
-                default: '',
-            },
-		},
-/* works, but only on saved content and is added in attribute className that is also visible in InspectorAdvancedControls 		
-		    styles: [
-        { name: "simple_ical_widget", label: "Simple_iCal_Widget", isDefault: true },
-        { name: "other", label: "Other" }
-    ],
-*/
 		edit: function( props ) {
 			return 	el(
                'div',
@@ -104,12 +28,13 @@
              * php_block_render() in your PHP code whenever it needs to get an updated
              * view of the block.
              */
-/*            el( ServerSideRender, {
+/* 
+          el( ServerSideRender, {
                 block: 'simplegoogleicalenderwidget/simple-ical-block',
-                attributes: props.attributes,
+                attributes: props.attributes
               }
 			 ),
-*/		
+*/
             /*
              * InspectorControls and InspectorAdvancedControls lets you add controls to the Block sidebar. In this case,
              */
@@ -227,27 +152,7 @@
                         onChange: function( value ) { props.setAttributes( { clear_cache_now: value } );},
                     }
                 )
-            ),
-		
-			el(
-               RichText,
-               {
-				key: 'richtext',
-                tagName: 'p',
-				className: props.className,
-                value: props.attributes.content,
-                onChange: function ( newContent ) {	props.setAttributes( { content: newContent } );},
-               } 
-            )
-			);
-		},
-		save: function( props ) {
-            return el(RichText.Content,
-					useBlockProps.save({
-                    tagName: 'p',
-                    value: props.attributes.content,
-                } )
-			);
+            )			);
 		},
 	} );
 }( window.wp.blocks,

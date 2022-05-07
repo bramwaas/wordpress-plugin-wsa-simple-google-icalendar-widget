@@ -13,6 +13,7 @@
  * Version: 1.6.0
  * 20220427 namespaced and renamed after classname.
  * 20220430 try with static calls
+ * 20220507
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget;
 
@@ -24,7 +25,27 @@ class SimpleicalBlock {
      */
     static function init_block() {
         register_block_type( dirname(__DIR__) .'/block.json',
-        array('render_callback' => array('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget\SimpleicalBlock', 'render_block'))
+//        register_block_type( 'simplegoogleicalenderwidget/simple-ical-block',
+            array(
+        'attributes' => [
+            'title' => ['type' => 'string', 'default' => __('Events', 'simple_ical')],
+            'calendar_id' => ['type' => 'string', 'default' => ''],
+            'event_count' => ['type' => 'integer', 'default' => 10],
+            'event_period' => ['type' => 'integer', 'default' => 92],
+            'cache_time' => ['type' => 'integer', 'default' => 60],
+            'dateformat_lg' => ['type' => 'string', 'default' => 'l jS \of F'],
+            'dateformat_tsum' => ['type' => 'string', 'default' => 'G:i '],
+            'dateformat_tstart' => ['type' => 'string', 'default' => 'G:i'],
+            'dateformat_tend' => ['type' => 'string', 'default' => ' - G:i '],
+            'excerptlength' => ['type' => 'integer', 'default' => ''],
+            'suffix_lg_class' => ['type' => 'string', 'default' => ''],
+            'suffix_lgi_class' => ['type' => 'string', 'default' => ' py-0'],
+            'suffix_lgia_class' => ['type' => 'string', 'default' => ''],
+            'allowhtml' => ['type' => 'boolean', 'default' => false],
+            'clear_cache_now' => ['type' => 'boolean', 'default' => false],
+        ],
+        'api_version' => 2,
+            'render_callback' => array('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget\SimpleicalBlock', 'render_block'))
         );
    }
     /**
@@ -64,8 +85,165 @@ class SimpleicalBlock {
            $output = $output . '<li>[' . $key . ']=' . $value . PHP_EOL;
        }
        $output = $output . '</ul>'. PHP_EOL;
-           
-       return '<div>' . $output . '</div>'. '<div class="content">' . $content . '</div>'  ;
-  
+       ob_start();
+       self::display_block([], $block_attributes);
+       $output = $output . ob_get_clean();
+       return '<div class="' . $block_attributes['className'] . ((isset($block_attributes['align'])) ? (' align' . $block_attributes['align']) : ' ')   .  '" >' . $output . '</div>'. '<div class="content">' . $content . '</div>'  ;
+       
     }
+    /**
+     * Front-end display of block or widget.
+     *
+     * @see 
+     *
+     * @param array $args     Widget arguments.
+     * @param array $instance Saved attribute/option values from database.
+     */
+    static function display_block($args, $instance)
+    {
+        $title = apply_filters('widget_title', $instance['title']);
+        if (isset($args['before_widget'])) {
+        echo $args['before_widget'];
+        if(isset($instance['title'])) {
+            echo $args['before_title'], $instance['title'], $args['after_title'];
+        }}
+        else echo $instance['title'];
+        $dflg = (isset($instance['dateformat_lg'])) ? $instance['dateformat_lg'] : 'l jS \of F' ;
+        $dftsum = (isset($instance['dateformat_tsum'])) ? $instance['dateformat_tsum'] : 'G:i ' ;
+        $dftstart = (isset($instance['dateformat_tstart'])) ? $instance['dateformat_tstart'] : 'G:i' ;
+        $dftend = (isset($instance['dateformat_tend'])) ? $instance['dateformat_tend'] : ' - G:i ' ;
+        $excerptlength = (isset($instance['excerptlength'])) ? $instance['excerptlength'] : '' ;
+        $sflg = (isset($instance['suffix_lg_class'])) ? $instance['suffix_lg_class'] : '' ;
+        $sflgi = (isset($instance['suffix_lgi_class'])) ? $instance['suffix_lgi_class'] : '' ;
+        $sflgia = (isset($instance['suffix_lgia_class'])) ? $instance['suffix_lgia_class'] : '' ;
+        $data = self::getData($instance);
+        if (!empty($data) && is_array($data)) {
+            date_default_timezone_set(get_option('timezone_string'));
+            echo '<ul class="list-group' .  $sflg . ' simple-ical-widget">';
+            $curdate = '';
+            foreach($data as $e) {
+                $idlist = explode("@", esc_attr($e->uid) );
+                $itemid = '$this->id'  . '_' . $idlist[0];
+                echo '<li class="list-group-item' .  $sflgi . ' ical-date">';
+                if ($curdate !=  ucfirst(wp_date( $dflg, $e->start))) {
+                    $curdate =  ucfirst(wp_date( $dflg, $e->start ));
+                    echo $curdate, '<br>';
+                }
+                echo  '<a class="ical_summary' .  $sflgia . '" data-toggle="collapse" href="#',
+                $itemid, '" aria-expanded="false" aria-controls="',
+                $itemid, '">';
+                if ($e->startisdate === false)	{
+                    echo wp_date( $dftsum, $e->start);
+                }
+                if(!empty($e->summary)) {
+                    echo str_replace("\n", '<br>', wp_kses($e->summary,'post'));
+                }
+                echo	'</a>' ;
+                echo '<div class="collapse ical_details' .  $sflgia . '" id="',  $itemid, '">';
+                if(!empty($e->description) && trim($e->description) > '' && $excerptlength !== 0) {
+                    if ($excerptlength !== '' && strlen($e->description) > $excerptlength) {$e->description = substr($e->description, 0, $excerptlength + 1);
+                    if (rtrim($e->description) !== $e->description) {$e->description = substr($e->description, 0, $excerptlength);}
+                    else {if (strrpos($e->description, ' ', max(0,$excerptlength - 10))!== false OR strrpos($e->description, "\n", max(0,$excerptlength - 10))!== false )
+                    {$e->description = substr($e->description, 0, max(strrpos($e->description, "\n", max(0,$excerptlength - 10)),strrpos($e->description, ' ', max(0,$excerptlength - 10))));
+                    } else
+                    {$e->description = substr($e->description, 0, $excerptlength);}
+                    }
+                    }
+                    $e->description = str_replace("\n", '<br>', wp_kses($e->description,'post') );
+                    echo   $e->description ,(strrpos($e->description, '<br>') == (strlen($e->description) - 4)) ? '' : '<br>';
+                }
+                if ($e->startisdate === false && date('z', $e->start) === date('z', $e->end))	{
+                    echo '<span class="time">', wp_date( $dftstart, $e->start ),
+                    '</span><span class="time">', wp_date( $dftend, $e->end ), '</span> ' ;
+                } else {
+                    echo '';
+                }
+                if(!empty($e->location)) {
+                    echo  '<span class="location">', str_replace("\n", '<br>', wp_kses($e->location,'post')) , '</span>';
+                }
+                
+                
+                echo '</div></li>';
+            }
+            echo '</ul>';
+            date_default_timezone_set('UTC');
+        }
+        
+        echo '<br class="clear" />';
+//        echo $args['after_widget'];
+    }
+    private static function getData($instance)
+    {
+        $calId = $instance['calendar_id'];
+        $transientId = 'SimpleicalBlock' . $calId . '_' . $instance['event_count'] .'_' . $instance['event_period']  ;
+        
+        if(false === ($data = get_transient($transientId))) {
+            $data =self::fetch($calId, $instance['event_count'], $instance['event_period'], $instance );
+            
+            // do not cache data if fetching failed
+            if ($data) {
+                set_transient($transientId, $data, $instance['cache_time']*60);
+            }
+        }
+        
+        return $data;
+    }
+    private static function fetch($calId, $count, $period,  $instance )
+    {
+        $url = self::getCalendarUrl($calId);
+        $httpData = wp_remote_get($url);
+        
+        if(is_wp_error($httpData)) {
+            echo '<!-- ' . $url . ' not found ' . 'fall back to https:// -->';
+            $httpData = wp_remote_get('https://' . explode('://', $url)[1]);
+            if(is_wp_error($httpData)) {
+                echo 'Simple iCal Block: ', $httpData->get_error_message();
+                return false;
+            }
+        }
+        
+        if(!is_array($httpData) || !array_key_exists('body', $httpData)) {
+            return false;
+        }
+        
+        try {
+            $penddate = strtotime("+$period day");
+            $parser = new IcsParser();
+            $parser->parse($httpData['body'], $penddate,  $count,  $instance );
+            
+            $events = $parser->getFutureEvents($penddate);
+            return self::limitArray($events, $count);
+        } catch(\Exception $e) {
+            return null;
+        }
+    }
+    
+    private static function getCalendarUrl($calId)
+    {
+        
+        $protocol = strtolower(explode('://', $calId)[0]);
+        if (array_search($protocol, array('http', 'https', 'webcal')))
+        { return $calId; }
+        else
+        { return 'https://www.google.com/calendar/ical/'.$calId.'/public/basic.ics'; }
+    }
+    
+    private static function limitArray($arr, $limit)
+    {
+        $i = 0;
+        
+        $out = array();
+        foreach ($arr as $e) {
+            $i++;
+            
+            if ($i > $limit) {
+                break;
+            }
+            $out[] = $e;
+        }
+        
+        return $out;
+    }
+    
+    
 } // end class SimpleicalBlock
