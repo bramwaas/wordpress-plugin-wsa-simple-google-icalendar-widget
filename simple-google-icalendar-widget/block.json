@@ -7,15 +7,74 @@
     "icon": "universal-access-alt",
     "description": "Block that displays events from a public calendar or iCal file.",
     "keywords": [ "calendar", "ical", "event", "events", "google", "outlook", "iCalendar", "holydays", "ics" ],
-    "styles": [
-        { "name": "simple_ical_widget", "label": "Simple_iCal_Widget", "isDefault": true },
-        { "name": "other", "label": "Other" }
-    ],
     "version": "1.6.0",
     "textdomain": "simple_ical",
+    "attributes": {
+        "blockid": {
+            "type": "string"
+        },
+        "title": {
+            "type": "string",
+            "default": "Events"
+        },
+       "calendar_id": {
+            "type": "string"
+        },
+       "event_count": {
+            "type": "integer",
+            "default": "10"
+        },
+       "event_period": {
+            "type": "integer",
+            "default": "92"
+        },
+       "cache_time": {
+            "type": "integer",
+            "default": "60"
+        },
+       "dateformat_lg": {
+            "type": "string",
+            "default": "l jS \\of F"
+        },
+       "dateformat_tsum": {
+            "type": "string",
+            "default": "G:i "
+        },
+       "dateformat_tstart": {
+            "type": "string",
+            "default": "G:i"
+        },
+       "dateformat_tend": {
+            "type": "string",
+            "default": " - G:i "
+        },
+       "excerptlength": {
+            "type": "integer"
+        },
+       "suffix_lg_class": {
+            "type": "string",
+            "default": ""
+        },
+       "suffix_lgi_class": {
+            "type": "string",
+            "default": " py-0"
+        },
+       "suffix_lgia_class": {
+            "type": "string",
+            "default": ""
+        },
+       "allowhtml": {
+            "type": "boolean",
+            "default": false
+        },
+       "clear_cache_now": {
+            "type": "boolean",
+            "default": false
+        }
+    },    
     "supports": {
         "align": true
     },
     "editorScript": "file:./js/simple-ical-block.js",
-    "style": "file:./css/simple-ical-style.css"
-}
+    "editorStyle": "file:./css/simple-ical-editor.css"
+  }
