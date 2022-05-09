@@ -13,7 +13,7 @@
  * Version: 1.6.0
  * 20220427 namespaced and renamed after classname.
  * 20220430 try with static calls
- * 20220507
+ * 20220509 fairly correct
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget;
 
@@ -28,6 +28,7 @@ class SimpleicalBlock {
 //        register_block_type( 'simplegoogleicalenderwidget/simple-ical-block',
             array(
         'attributes' => [
+            'blockid' => ['type' => 'string'],
             'title' => ['type' => 'string', 'default' => __('Events', 'simple_ical')],
             'calendar_id' => ['type' => 'string', 'default' => ''],
             'event_count' => ['type' => 'integer', 'default' => 10],
@@ -60,7 +61,8 @@ class SimpleicalBlock {
    static function render_block($block_attributes, $content) {
        $block_attributes = wp_parse_args((array) $block_attributes,
            array(
-               'title' => __('Events', 'simple_ical'),
+               'blockid' => 'AZ',
+              'title' => __('Events', 'simple_ical'),
                'calendar_id' => '',
                'event_count' => 10,
                'event_period' => 92,
@@ -107,7 +109,7 @@ class SimpleicalBlock {
         if(isset($instance['title'])) {
             echo $args['before_title'], $instance['title'], $args['after_title'];
         }}
-        else echo $instance['title'];
+        else echo '<h3 class="widget-title block-title">' . $instance['title'] . '</h3>';
         $dflg = (isset($instance['dateformat_lg'])) ? $instance['dateformat_lg'] : 'l jS \of F' ;
         $dftsum = (isset($instance['dateformat_tsum'])) ? $instance['dateformat_tsum'] : 'G:i ' ;
         $dftstart = (isset($instance['dateformat_tstart'])) ? $instance['dateformat_tstart'] : 'G:i' ;
@@ -123,7 +125,7 @@ class SimpleicalBlock {
             $curdate = '';
             foreach($data as $e) {
                 $idlist = explode("@", esc_attr($e->uid) );
-                $itemid = '$this->id'  . '_' . $idlist[0];
+                $itemid = $instance['blockid'] . '_' . $idlist[0]; //TODO find correct block id
                 echo '<li class="list-group-item' .  $sflgi . ' ical-date">';
                 if ($curdate !=  ucfirst(wp_date( $dflg, $e->start))) {
                     $curdate =  ucfirst(wp_date( $dflg, $e->start ));

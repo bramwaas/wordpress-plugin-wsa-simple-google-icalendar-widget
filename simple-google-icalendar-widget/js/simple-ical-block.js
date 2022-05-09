@@ -5,7 +5,7 @@
  * and use attributes and editable fields
  * attributes as Inspectorcontrols (settings)
  * v1.6.0
- * 20220507
+ * 20220509 try to find a unique blockid from __internalWidgetId clientid //TODO is this correct ???
  */
 ( function( blocks, i18n, element, blockEditor, components ) {
 	var el = element.createElement;
@@ -20,6 +20,7 @@
     var ToggleControl = components.ToggleControl;
 	blocks.registerBlockType( 'simplegoogleicalenderwidget/simple-ical-block', {
 		edit: function( props ) {
+	      { props.setAttributes( { blockid: props.attributes.__internalWidgetId  } );}
 			return 	el(
                'div',
                useBlockProps ({key: 'simple_ical'}),
