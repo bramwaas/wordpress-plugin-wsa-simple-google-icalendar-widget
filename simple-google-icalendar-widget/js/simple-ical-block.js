@@ -20,7 +20,6 @@
     var ToggleControl = components.ToggleControl;
 	blocks.registerBlockType( 'simplegoogleicalenderwidget/simple-ical-block', {
 		edit: function( props ) {
-/*	      { props.setAttributes( { blockid: props.attributes.__internalWidgetId  } );} */
  	      if ( ! props.attributes.blockid ) { props.setAttributes( { blockid: props.clientId  } );} 
 			return 	el(
                'div',
