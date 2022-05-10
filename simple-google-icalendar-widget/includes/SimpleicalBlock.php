@@ -14,6 +14,7 @@
  * 20220427 namespaced and renamed after classname.
  * 20220430 try with static calls
  * 20220509 fairly correct front-end display. attributes back to block.json
+ * 20220510 attributes again in php also added anchor, align and className who can be added by support hopefully that is enough for ServerSideRender.
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget;
 
@@ -27,7 +28,30 @@ class SimpleicalBlock {
         register_block_type( dirname(__DIR__) .'/block.json',
 //        register_block_type( 'simplegoogleicalenderwidget/simple-ical-block',
             array(
-
+        'attributes' => [
+            'blockid' => ['type' => 'string'],
+            'title' => ['type' => 'string', 'default' => __('Events', 'simple_ical')],
+            'calendar_id' => ['type' => 'string', 'default' => ''],
+            'event_count' => ['type' => 'integer', 'default' => 10],
+            'event_period' => ['type' => 'integer', 'default' => 92],
+            'cache_time' => ['type' => 'integer', 'default' => 60],
+            'dateformat_lg' => ['type' => 'string', 'default' => 'l jS \of F'],
+            'dateformat_tsum' => ['type' => 'string', 'default' => 'G:i '],
+            'dateformat_tstart' => ['type' => 'string', 'default' => 'G:i'],
+            'dateformat_tend' => ['type' => 'string', 'default' => ' - G:i '],
+            'excerptlength' => ['type' => 'integer', 'default' => ''],
+            'suffix_lg_class' => ['type' => 'string', 'default' => ''],
+            'suffix_lgi_class' => ['type' => 'string', 'default' => ' py-0'],
+            'suffix_lgia_class' => ['type' => 'string', 'default' => ''],
+            'allowhtml' => ['type' => 'boolean', 'default' => false],
+            'clear_cache_now' => ['type' => 'boolean', 'default' => false],
+// from supports:
+            'anchor' => ['type' => 'string'],
+            'align' => ['type' => 'string'],
+            'className' => ['type' => 'string'],
+            
+        ],
+        'api_version' => 2,
             'render_callback' => array('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget\SimpleicalBlock', 'render_block'))
         );
    }
