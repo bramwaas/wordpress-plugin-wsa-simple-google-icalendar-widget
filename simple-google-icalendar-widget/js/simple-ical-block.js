@@ -5,9 +5,12 @@
  * and use attributes and editable fields
  * attributes as Inspectorcontrols (settings)
  * v1.6.0
- * 20220509 try to find a unique blockid from __internalWidgetId clientId (only once) //TODO is this correct ???
+ * 20220509 try to find a unique blockid from  clientId (only once) 
+ * 20220511 integer excerptlength not initialised with '' and all parseInt(value) followed bij || 0 because result must comply type validation of REST endpoint and '' or NaN don't. (rest_invalid_type)
+*           wp.components.ServerSideRender deprecated replaced by wp.serverSideRender
+*           dependency to wp.editor although this seems not to be used (replaced by blockEditor) and gives a warning. 
  */
-( function( blocks, i18n, element, blockEditor, components ) {
+( function(wp, blocks, i18n, element, blockEditor, components ) {
 	var el = element.createElement;
 	var __ = i18n.__;
 
@@ -15,7 +18,7 @@
 	var useBlockProps = blockEditor.useBlockProps;
 	var InspectorControls = blockEditor.InspectorControls;
 	var InspectorAdvancedControls = blockEditor.InspectorAdvancedControls;
-	var ServerSideRender = components.ServerSideRender;
+	var ServerSideRender = wp.serverSideRender;
     var TextControl = components.TextControl;
     var ToggleControl = components.ToggleControl;
 	blocks.registerBlockType( 'simplegoogleicalenderwidget/simple-ical-block', {
@@ -29,13 +32,13 @@
              * php_block_render() in your PHP code whenever it needs to get an updated
              * view of the block.
              */
-/* 
+
           el( ServerSideRender, {
                 block: 'simplegoogleicalenderwidget/simple-ical-block',
                 attributes: props.attributes
               }
 			 ),
-*/
+
             /*
              * InspectorControls and InspectorAdvancedControls lets you add controls to the Block sidebar. In this case,
              */
@@ -62,14 +65,14 @@
                     TextControl,
                     {   label: __('Number of events displayed:', 'simple_ical'),
                         value: props.attributes.event_count,
-                        onChange: function( value ) { props.setAttributes( { event_count: parseInt(value) } );},
+                        onChange: function( value ) { props.setAttributes( { event_count: parseInt(value) || 0 } );},
                     }
                 ),
                 el(
                     TextControl,
                     {   label: __('Number of days after today with events displayed:', 'simple_ical'),
                         value: props.attributes.event_period,
-                        onChange: function( value ) { props.setAttributes( { event_period: parseInt(value) } );},
+                        onChange: function( value ) { props.setAttributes( { event_period: parseInt(value) || 0 } );},
                     }
                 ),
                 el(
@@ -108,14 +111,14 @@
                     TextControl,
                     {   label: __('Cache expiration time in minutes:', 'simple_ical'),
                         value: props.attributes.cache_time,
-                        onChange: function( value ) { props.setAttributes( { cache_time: parseInt(value) } );},
+                        onChange: function( value ) { props.setAttributes( { cache_time: parseInt(value) || 0 } );},
                     }
                 ),
                 el(
                     TextControl,
                     {   label: __('Excerpt length, max length of description:', 'simple_ical'),
                         value: props.attributes.excerptlength,
-                        onChange: function( value ) { props.setAttributes( { excerptlength: parseInt(value) } );},
+                        onChange: function( value ) { props.setAttributes( { excerptlength: parseInt(value) || 0 } );},
                     }
                 ),
                 el(
@@ -156,7 +159,8 @@
             )			);
 		},
 	} );
-}( window.wp.blocks,
+}( window.wp,
+   window.wp.blocks,
    window.wp.i18n,
    window.wp.element,
    window.wp.blockEditor,

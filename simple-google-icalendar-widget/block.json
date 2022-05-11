@@ -12,6 +12,6 @@
     "supports": {
         "align": true
     },
-    "editorScript": "file:./js/simple-ical-block.js",
-    "editorStyle": "file:./css/simple-ical-editor.css"
+    "editorScript": "file:js/simple-ical-block.js",
+    "editorStyle": "file:css/simple-ical-editor.css"
   }
