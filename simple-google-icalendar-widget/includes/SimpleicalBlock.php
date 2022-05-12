@@ -16,7 +16,7 @@
  * 20220509 fairly correct front-end display. attributes back to block.json
  * 20220510 attributes again in php also added anchor, align and className who can be added by support hopefully that is enough for ServerSideRender.
  * 20220511 integer excerptlength not initialised with '' because serversiderender REST type validation gives an error (rest_invalid_type)
- *  //TODO find a solution for 0 values of integers or replace integers by strings. 
+ *  excerptlength string and in javascript  '' when not parsed as integer. 
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget;
 
@@ -41,7 +41,7 @@ class SimpleicalBlock {
             'dateformat_tsum' => ['type' => 'string', 'default' => 'G:i '],
             'dateformat_tstart' => ['type' => 'string', 'default' => 'G:i'],
             'dateformat_tend' => ['type' => 'string', 'default' => ' - G:i '],
-            'excerptlength' => ['type' => 'integer'],
+            'excerptlength' => ['type' => 'string', ''],
             'suffix_lg_class' => ['type' => 'string', 'default' => ''],
             'suffix_lgi_class' => ['type' => 'string', 'default' => ' py-0'],
             'suffix_lgia_class' => ['type' => 'string', 'default' => ''],

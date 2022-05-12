@@ -9,6 +9,7 @@
  * 20220511 integer excerptlength not initialised with '' and all parseInt(value) followed bij || 0 because result must comply type validation of REST endpoint and '' or NaN don't. (rest_invalid_type)
 *           wp.components.ServerSideRender deprecated replaced by wp.serverSideRender
 *           dependency to wp.editor although this seems not to be used (replaced by blockEditor) and gives a warning. 
+*           preponed 'b' to blockid, because html id must not start with number.
  */
 ( function(wp, blocks, i18n, element, blockEditor, components ) {
 	var el = element.createElement;
@@ -23,16 +24,10 @@
     var ToggleControl = components.ToggleControl;
 	blocks.registerBlockType( 'simplegoogleicalenderwidget/simple-ical-block', {
 		edit: function( props ) {
- 	      if ( ! props.attributes.blockid ) { props.setAttributes( { blockid: props.clientId  } );} 
+ 	      if ( ! props.attributes.blockid ) { props.setAttributes( { blockid: 'b' + props.clientId  } );} 
 			return 	el(
                'div',
                useBlockProps ({key: 'simple_ical'}),
-            /*
-             * The ServerSideRender element uses the REST API to automatically call
-             * php_block_render() in your PHP code whenever it needs to get an updated
-             * view of the block.
-             */
-
           el( ServerSideRender, {
                 block: 'simplegoogleicalenderwidget/simple-ical-block',
                 attributes: props.attributes
@@ -118,7 +113,9 @@
                     TextControl,
                     {   label: __('Excerpt length, max length of description:', 'simple_ical'),
                         value: props.attributes.excerptlength,
-                        onChange: function( value ) { props.setAttributes( { excerptlength: parseInt(value) || 0 } );},
+                        onChange: function( value ) {parsed =  parseInt(value);
+                                                     if (isNaN(parse)) {parsed = ''};
+                                                     props.setAttributes( { excerptlength: parsed } );},
                     }
                 ),
                 el(
