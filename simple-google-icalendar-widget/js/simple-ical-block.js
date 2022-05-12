@@ -60,14 +60,14 @@
                     TextControl,
                     {   label: __('Number of events displayed:', 'simple_ical'),
                         value: props.attributes.event_count,
-                        onChange: function( value ) { props.setAttributes( { event_count: parseInt(value) || 0 } );},
+                        onChange: function( value ) { props.setAttributes( { event_count: Math.max((parseInt(value) || 1),1) } );},
                     }
                 ),
                 el(
                     TextControl,
                     {   label: __('Number of days after today with events displayed:', 'simple_ical'),
                         value: props.attributes.event_period,
-                        onChange: function( value ) { props.setAttributes( { event_period: parseInt(value) || 0 } );},
+                        onChange: function( value ) { props.setAttributes( { event_period: Math.max((parseInt(value) || 1),1) } );},
                     }
                 ),
                 el(
@@ -106,7 +106,7 @@
                     TextControl,
                     {   label: __('Cache expiration time in minutes:', 'simple_ical'),
                         value: props.attributes.cache_time,
-                        onChange: function( value ) { props.setAttributes( { cache_time: parseInt(value) || 0 } );},
+                        onChange: function( value ) { props.setAttributes( { cache_time: Math.max((parseInt(value) || 1),2) } );},
                     }
                 ),
                 el(

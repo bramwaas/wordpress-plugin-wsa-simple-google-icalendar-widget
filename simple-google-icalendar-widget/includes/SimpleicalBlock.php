@@ -91,11 +91,11 @@ class SimpleicalBlock {
            );
        
  //      $output ='<!-- $block=' . print_r($block, true) . ' -->  ' . PHP_EOL .
-       $output =         '<ul>'. PHP_EOL;
+       $output =         '<!-- <ul>'. PHP_EOL;
        foreach ($block_attributes as $key => $value) {
            $output = $output . '<li>[' . $key . ']=' . $value . PHP_EOL;
        }
-       $output = $output . '</ul>'. PHP_EOL;
+       $output = $output . '</ul> -->'. PHP_EOL;
        ob_start();
        self::display_block([], $block_attributes);
        $output = $output . ob_get_clean();
@@ -134,7 +134,7 @@ class SimpleicalBlock {
             $curdate = '';
             foreach($data as $e) {
                 $idlist = explode("@", esc_attr($e->uid) );
-                $itemid = $instance['blockid'] . '_' . $idlist[0]; //TODO find correct block id
+                $itemid = $instance['blockid'] . '_' . $idlist[0]; //TODO find correct block id when duplicate
                 echo '<li class="list-group-item' .  $sflgi . ' ical-date">';
                 if ($curdate !=  ucfirst(wp_date( $dflg, $e->start))) {
                     $curdate =  ucfirst(wp_date( $dflg, $e->start ));
