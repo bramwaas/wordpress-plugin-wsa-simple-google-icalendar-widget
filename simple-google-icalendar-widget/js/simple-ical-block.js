@@ -4,7 +4,7 @@
  * Move styles to stylesheets - both edit and front-end.
  * and use attributes and editable fields
  * attributes as Inspectorcontrols (settings)
- * v1.6.0
+ * v1.7.0
  * 20220509 try to find a unique blockid from  clientId (only once) 
  * 20220511 integer excerptlength not initialised with '' and all parseInt(value) followed bij || 0 because result must comply type validation of REST endpoint and '' or NaN don't. (rest_invalid_type)
 *           wp.components.ServerSideRender deprecated replaced by wp.serverSideRender
@@ -15,7 +15,6 @@
 	var el = element.createElement;
 	var __ = i18n.__;
 
-    var RichText = blockEditor.RichText;
 	var useBlockProps = blockEditor.useBlockProps;
 	var InspectorControls = blockEditor.InspectorControls;
 	var InspectorAdvancedControls = blockEditor.InspectorAdvancedControls;
@@ -30,14 +29,10 @@
                useBlockProps ({key: 'simple_ical'}),
           el( ServerSideRender, {
                 block: 'simplegoogleicalenderwidget/simple-ical-block',
-                attributes: props.attributes
+                attributes: props.attributes,
+				httpMethod: 'POST'
               }
 			 ),
-
-            /*
-             * InspectorControls and InspectorAdvancedControls lets you add controls to the Block sidebar. In this case,
-             */
-
             el( InspectorControls, 
 				{key: 'setting'},
 			el('div',
@@ -114,8 +109,8 @@
                     {   label: __('Excerpt length, max length of description:', 'simple_ical'),
                         value: props.attributes.excerptlength,
                         onChange: function( value ) {parsed =  parseInt(value);
-                                                     if (isNaN(parse)) {parsed = ''};
-                                                     props.setAttributes( { excerptlength: parsed } );},
+                                                     if (isNaN(parsed)) {parsed = ''};
+                                                     props.setAttributes( { excerptlength: parsed.toString() } );},
                     }
                 ),
                 el(
