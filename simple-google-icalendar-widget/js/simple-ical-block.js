@@ -7,18 +7,17 @@
  * v1.7.0
  * 20220509 try to find a unique blockid from  clientId (only once) 
  * 20220511 integer excerptlength not initialised with '' and all parseInt(value) followed bij || 0 because result must comply type validation of REST endpoint and '' or NaN don't. (rest_invalid_type)
-*           wp.components.ServerSideRender deprecated replaced by wp.serverSideRender
-*           dependency to wp.editor although this seems not to be used (replaced by blockEditor) and gives a warning. 
-*           preponed 'b' to blockid, because html id must not start with number.
+ *           preponed 'b' to blockid, because html id must not start with number.
+ * 20220513  wp.components.ServerSideRender deprecated replaced by wp.serverSideRender and dependency wp-server-side-render
+ *     
  */
-( function(wp, blocks, i18n, element, blockEditor, components ) {
+( function(blocks, i18n, element, blockEditor, components, serverSideRender ) {
 	var el = element.createElement;
 	var __ = i18n.__;
-
 	var useBlockProps = blockEditor.useBlockProps;
 	var InspectorControls = blockEditor.InspectorControls;
 	var InspectorAdvancedControls = blockEditor.InspectorAdvancedControls;
-	var ServerSideRender = wp.serverSideRender;
+	var ServerSideRender = serverSideRender;
     var TextControl = components.TextControl;
     var ToggleControl = components.ToggleControl;
 	blocks.registerBlockType( 'simplegoogleicalenderwidget/simple-ical-block', {
@@ -92,6 +91,13 @@
                         value: props.attributes.dateformat_tend,
                         onChange: function( value ) { props.setAttributes( { dateformat_tend: value } );},
                     }
+                ),
+                el(
+                   'a',
+                    {  href: 'admin.php?page=simple_ical_info',
+					   target: '_blank',
+                    },
+					__('Need help?', 'simple_ical')
                 )
             )
             ),
@@ -151,11 +157,11 @@
             )			);
 		},
 	} );
-}( window.wp,
-   window.wp.blocks,
+}( window.wp.blocks,
    window.wp.i18n,
    window.wp.element,
    window.wp.blockEditor,
-   window.wp.components
+   window.wp.components,
+   window.wp.serverSideRender
  )
  );

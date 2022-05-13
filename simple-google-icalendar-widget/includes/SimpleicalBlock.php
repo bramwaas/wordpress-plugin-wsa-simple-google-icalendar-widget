@@ -10,7 +10,7 @@
  * @license    http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * Gutenberg Block functions
  * used in newer wp versions where Gutenbergblocks are available. (tested with function_exists( 'register_block_type' ))
- * Version: 1.6.0
+ * Version: 1.7.0
  * 20220427 namespaced and renamed after classname.
  * 20220430 try with static calls
  * 20220509 fairly correct front-end display. attributes back to block.json
@@ -28,7 +28,6 @@ class SimpleicalBlock {
      */
     static function init_block() {
         register_block_type( dirname(__DIR__) .'/block.json',
-//        register_block_type( 'simplegoogleicalenderwidget/simple-ical-block',
             array(
         'attributes' => [
             'blockid' => ['type' => 'string'],
@@ -47,11 +46,6 @@ class SimpleicalBlock {
             'suffix_lgia_class' => ['type' => 'string', 'default' => ''],
             'allowhtml' => ['type' => 'boolean', 'default' => false],
             'clear_cache_now' => ['type' => 'boolean', 'default' => false],
-// from supports:
-            'anchor' => ['type' => 'string'],
-            'align' => ['type' => 'string'],
-            'className' => ['type' => 'string'],
-            
         ],
         'api_version' => 2,
             'render_callback' => array('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget\SimpleicalBlock', 'render_block'))
