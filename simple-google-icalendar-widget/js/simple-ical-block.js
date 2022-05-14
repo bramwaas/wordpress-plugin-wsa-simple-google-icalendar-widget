@@ -18,6 +18,7 @@
 	var InspectorControls = blockEditor.InspectorControls;
 	var InspectorAdvancedControls = blockEditor.InspectorAdvancedControls;
 	var ServerSideRender = serverSideRender;
+    var Button = components.Button;
     var TextControl = components.TextControl;
     var ToggleControl = components.ToggleControl;
     var useEffect = element.useEffect;
@@ -161,6 +162,15 @@
                     {   label: __('Clear cache.', 'simple_ical'),
                         checked: props.attributes.clear_cache_now,
                         onChange: function( value ) { props.setAttributes( { clear_cache_now: value } );},
+                    }
+                ),
+                el(
+                    Button,
+                    {   text: __('Reset ID.', 'simple_ical'),
+                        label: __('Reset ID, only necessary after duplicating block', 'simple_ical'),
+                        showTooltip: true,
+                        variant: 'secondary',
+                        onClick: function( ) { props.setAttributes( { blockid: 'b' + props.clientId } );},
                     }
                 )
             )			);
