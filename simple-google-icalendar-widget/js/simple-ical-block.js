@@ -20,9 +20,18 @@
 	var ServerSideRender = serverSideRender;
     var TextControl = components.TextControl;
     var ToggleControl = components.ToggleControl;
+    var useEffect = element.useEffect;
 	blocks.registerBlockType( 'simplegoogleicalenderwidget/simple-ical-block', {
 		edit: function( props ) {
- 	      if ( ! props.attributes.blockid ) { props.setAttributes( { blockid: 'b' + props.clientId  } );} 
+			useEffect(function() {
+ 	           if ( ! props.attributes.blockid ) { props.setAttributes( { blockid: 'b' + props.clientId  } );}
+            }, []); 
+			useEffect(function() {
+				if ( props.attributes.clear_cache_now ) {			   
+					var x = setTimeout(stopCC, 5000);
+               		function stopCC () { props.setAttributes( { clear_cache_now: false  } );}	
+ 	           }
+            }, [props.attributes.clear_cache_now]); 
 			return 	el(
                'div',
                useBlockProps ({key: 'simple_ical'}),
@@ -149,7 +158,7 @@
                 ),
                 el(
                     ToggleControl,
-                    {   label: __(' clear cache on save.', 'simple_ical'),
+                    {   label: __('Clear cache.', 'simple_ical'),
                         checked: props.attributes.clear_cache_now,
                         onChange: function( value ) { props.setAttributes( { clear_cache_now: value } );},
                     }
