@@ -73,7 +73,7 @@ class SimpleicalBlock {
                'dateformat_tsum' => 'G:i ',
                'dateformat_tstart' => 'G:i',
                'dateformat_tend' => ' - G:i ',
- //              'excerptlength' => '', //TODO cannot be '' because it must be an integer 
+              'excerptlength' => '',
                'suffix_lg_class' => '',
                'suffix_lgi_class' => ' py-0',
                'suffix_lgia_class' => '',
@@ -84,12 +84,7 @@ class SimpleicalBlock {
            )
            );
        
- //      $output ='<!-- $block=' . print_r($block, true) . ' -->  ' . PHP_EOL .
-       $output =         '<!-- <ul>'. PHP_EOL;
-       foreach ($block_attributes as $key => $value) {
-           $output = $output . '<li>[' . $key . ']=' . $value . PHP_EOL;
-       }
-       $output = $output . '</ul> -->'. PHP_EOL;
+       $output = '';
        ob_start();
        self::display_block([], $block_attributes);
        $output = $output . ob_get_clean();
@@ -177,13 +172,24 @@ class SimpleicalBlock {
         echo '<br class="clear" />';
 //        echo $args['after_widget'];
     }
+    /**
+     * Gets data from calender or transient cache
+     *
+     * @param array $instance the block attributes 
+     *    ['blockid']      to create transientid
+     *    ['calendar_id']  id or url of the calender to fetch data
+     *    ['event_count']  max number of events to return
+     *    ['event_period'] max number of days after now to fetch events.
+     *      
+     * @return array event objects
+     */
     private static function getData($instance)
     {
-        $calId = $instance['calendar_id'];
-        $transientId = 'SimpleicalBlock' . $calId . '_' . $instance['event_count'] .'_' . $instance['event_period']  ;
+        $transientId = 'SimpleicalBlock'  . $instance['blockid']   ;
+        if ($instance['clear_cache_now']) delete_transient($transientId);
         
         if(false === ($data = get_transient($transientId))) {
-            $data =self::fetch($calId, $instance['event_count'], $instance['event_period'], $instance );
+            $data =self::fetch(  $instance,  );
             
             // do not cache data if fetching failed
             if ($data) {
@@ -193,11 +199,21 @@ class SimpleicalBlock {
         
         return $data;
     }
-    private static function fetch($calId, $count, $period,  $instance )
+    /**
+     * Fetches from calender 
+     *
+     * @param array $instance the block attributes
+     *    ['calendar_id']  id or url of the calender to fetch data
+     *    ['event_count']  max number of events to return
+     *    ['event_period'] max number of days after now to fetch events.
+     *
+     * @return array event objects
+     */
+    private static function fetch( $instance )
     {
-        $url = self::getCalendarUrl($calId);
+        $period = $instance['event_period'];
+        $url = self::getCalendarUrl($instance['calendar_id']);
         $httpData = wp_remote_get($url);
-        
         if(is_wp_error($httpData)) {
             echo '<!-- ' . $url . ' not found ' . 'fall back to https:// -->';
             $httpData = wp_remote_get('https://' . explode('://', $url)[1]);
@@ -214,10 +230,10 @@ class SimpleicalBlock {
         try {
             $penddate = strtotime("+$period day");
             $parser = new IcsParser();
-            $parser->parse($httpData['body'], $penddate,  $count,  $instance );
+            $parser->parse($httpData['body'], $penddate, $instance['event_count'],  $instance );
             
             $events = $parser->getFutureEvents($penddate);
-            return self::limitArray($events, $count);
+            return self::limitArray($events, $instance['event_count']);
         } catch(\Exception $e) {
             return null;
         }
@@ -236,17 +252,14 @@ class SimpleicalBlock {
     private static function limitArray($arr, $limit)
     {
         $i = 0;
-        
         $out = array();
         foreach ($arr as $e) {
             $i++;
-            
             if ($i > $limit) {
                 break;
             }
             $out[] = $e;
         }
-        
         return $out;
     }
     
