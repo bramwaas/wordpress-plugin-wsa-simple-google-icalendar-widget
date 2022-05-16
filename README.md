@@ -3,7 +3,7 @@ Plugin name: Simple Google Calendar Outlook Events Widget
 Contributors: bramwaas
 Tags: Calendar, Event Calendar, Google Calendar, iCal, Events, iCalendar, Outlook, iCloud
 Requires at least: 5.3.0
-Tested up to: 5.9
+Tested up to: 6.0
 Requires PHP: 5.3.0
 Stable tag: trunk
 License: GPLv2 or later
@@ -166,6 +166,7 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 
 == Changelog ==
 * 1.5.1 After more testing and solving some issues with recurring events and daylight saving time removed the old correction for DST and the temporary checkbox to turn this correction off. Now there is only a correction when time is changed because the calculated time does not exists during transition from ST to DST. In that case in the next recursion the hour and minutes are set back to their beginvalue. Renamed and namespaced classes. Improved Zerodate to UTC-timezone processing. Restructured the IcsParse class a bit.
+   20220516 tested up to 6.0 (RC2)
 * 1.5.0 in response to a github issue of fhennies added a checkbox to allow safe html in the output. Added wp_kses() function to run for description, digest and location, to echo only html considered safe for wordpress posts, thus preserving some security against XSS.
 Extra options for parser in array $instance and added temporary new option notprocessdst to don't process differences in DST between start of series events and the current event. (in response to a WP support topic of @wurzelserver)
    7-4-2022 tested with wordpress 5.9.1
