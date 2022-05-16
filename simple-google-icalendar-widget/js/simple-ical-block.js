@@ -29,7 +29,7 @@
             }, []); 
 			useEffect(function() {
 				if ( props.attributes.clear_cache_now ) {			   
-					var x = setTimeout(stopCC, 5000);
+					var x = setTimeout(stopCC, 1000);
                		function stopCC () { props.setAttributes( { clear_cache_now: false  } );}	
  	           }
             }, [props.attributes.clear_cache_now]); 

@@ -91,9 +91,11 @@ class SimpleicalWidgetAdmin {
         _e('<p><strong>Checkbox Allow safe html in description and summary.</strong></p>', 'simple_ical');
         _e('<p>Check checkbox to allow the use of some safe html in description and summary,<br>otherwise it will only be displayed as text.</p>', 'simple_ical');
         
-        _e('<p><strong>Checkbox clear cache on save.</strong></p>', 'simple_ical');
-        _e('<p>Check checkbox to clear cache on save, otherwise it will be cleared after cache time is expired.</p>', 'simple_ical');
+        _e('<p><strong>Checkbox clear cache now.</strong></p>', 'simple_ical');
+        _e('<p>Check checkbox to clear cache now, otherwise it will be cleared after cache time is expired.<br>(to prevent very much calls to agenda, returns to false in block-editor after a short time)<br>In the (legacy)widget clears cache only on save.</p>', 'simple_ical');
         
+        _e('<p><strong>Button Reset ID</strong></p>', 'simple_ical');
+        _e('<p>(only in block) Press button Reset ID to copy the blockid from the clientid in the editor after duplicating the block, to make blockid unique again.</p>', 'simple_ical');
         
         echo('</div>');
         
