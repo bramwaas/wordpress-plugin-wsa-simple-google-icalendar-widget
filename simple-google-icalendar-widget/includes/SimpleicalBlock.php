@@ -10,7 +10,7 @@
  * @license    http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * Gutenberg Block functions
  * used in newer wp versions where Gutenbergblocks are available. (tested with function_exists( 'register_block_type' ))
- * Version: 1.7.0
+ * Version: 2.0.0
  * 20220427 namespaced and renamed after classname.
  * 20220430 try with static calls
  * 20220509 fairly correct front-end display. attributes back to block.json
@@ -89,7 +89,6 @@ class SimpleicalBlock {
        self::display_block([], $block_attributes);
        $output = $output . ob_get_clean();
        return '<div class="' . $block_attributes['className'] . ((isset($block_attributes['align'])) ? (' align' . $block_attributes['align']) : ' ')   .  '" >' . $output . '</div>'. '<div class="content">' . $content . '</div>'  ;
-       
     }
     /**
      * Front-end display of block or widget.
@@ -170,7 +169,6 @@ class SimpleicalBlock {
         }
         
         echo '<br class="clear" />';
-//        echo $args['after_widget'];
     }
     /**
      * Gets data from calender or transient cache
@@ -187,16 +185,13 @@ class SimpleicalBlock {
     {
         $transientId = 'SimpleicalBlock'  . $instance['blockid']   ;
         if ($instance['clear_cache_now']) delete_transient($transientId);
-        
         if(false === ($data = get_transient($transientId))) {
             $data =self::fetch(  $instance,  );
-            
-            // do not cache data if fetching failed
+             // do not cache data if fetching failed
             if ($data) {
                 set_transient($transientId, $data, $instance['cache_time']*60);
             }
         }
-        
         return $data;
     }
     /**

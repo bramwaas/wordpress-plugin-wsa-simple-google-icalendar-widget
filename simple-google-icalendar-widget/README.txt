@@ -13,7 +13,7 @@ Widget that displays events from a public google calendar or iCal file.
  
 == Description ==
 
-Simple widget to display events from a public google calendar, microsoft office outlook calendar or an other iCal file, in the style of your website.
+Simple block or widget to display events from a public google calendar, microsoft office outlook calendar or an other iCal file, in the style of your website.
 
 This simple widget fetches events from a public google calendar (or other calendar in iCal format) and displays them in simple list allowing you to fully adapt to your website by applying all kinds of CSS. 
 Google offers some HTML snippets to embed your public Google Calendar into your website.
@@ -22,6 +22,7 @@ These are great, but as soon as you want to make a few adjustments to the stylin
 == Plugin Features ==
 
 * Calendar block or widget to display appointments/events of a public Google calendar or other iCal file.
+* Block gives live preview in the editor and is not constrained to widget area. Old widget will be displayed in legacy widget block only in widget area.
 * Small footprint, uses only Google ID of the calendar, or ICS link for Outlook, or Url of iCal file, to get event information via iCal
 * Manage events in Google Calendar, or other iCalendar source.
 * Fully adaptable to your website with CSS. Output in unorderd list with Bootstrap 4 listgroup classes and toggle for details.
@@ -164,6 +165,7 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 * since v1.2.0 Wordpress version 5.3.0 is required because of the use of wp_date() 
 
 == Changelog ==
+* 2.0.0 Created a native Gutenberg Block next to the old the widget when using WP 5.9 or higher with the same backend code and almost the same frontend.
 * 1.5.1 After more testing and solving some issues with recurring events and daylight saving time removed the old correction for DST and the temporary checkbox to turn this correction off. Now there is only a correction when time is changed because the calculated time does not exists during transition from ST to DST. In that case in the next recursion the hour and minutes are set back to their beginvalue. Renamed and namespaced classes. Improved Zerodate to UTC-timezone processing. Restructured the IcsParse class a bit.
    20220516 tested up to 6.0 (RC2)
 * 1.5.0 in response to a github issue of fhennies added a checkbox to allow safe html in the output. Added wp_kses() function to run for description, digest and location, to echo only html considered safe for wordpress posts, thus preserving some security against XSS.

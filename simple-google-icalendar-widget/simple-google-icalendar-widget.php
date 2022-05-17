@@ -4,7 +4,7 @@
  Description: Widget that displays events from a public google calendar or iCal file
  Plugin URI: https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  Author: Bram Waasdorp
- Version: 1.7.0
+ Version: 2.0.0
  License: GPL3
  Tested up to: 5.9
  Requires PHP:  5.3.0 tested with 7.2
@@ -63,10 +63,9 @@ if (!class_exists('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget\Simplei
 if ( is_wp_version_compatible( '5.9' ) )   { // block widget
     if (!class_exists('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget\SimpleicalBlock')) {
         require_once('includes/SimpleicalBlock.php');
-        class_alias('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget\SimpleicalBlock', 'SimpleicalBlock');
     }
     // Static class method call with name of the class
-    add_action( 'init', array ('SimpleicalBlock', 'init_block') );
+    add_action( 'init', array ('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget\SimpleicalBlock', 'init_block') );
 
 } // end function_exists( 'register_block_type' )
 

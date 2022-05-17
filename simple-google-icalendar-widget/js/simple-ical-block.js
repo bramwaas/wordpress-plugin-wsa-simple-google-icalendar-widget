@@ -4,12 +4,11 @@
  * Move styles to stylesheets - both edit and front-end.
  * and use attributes and editable fields
  * attributes as Inspectorcontrols (settings)
- * v1.7.0
- * 20220509 try to find a unique blockid from  clientId (only once) 
- * 20220511 integer excerptlength not initialised with '' and all parseInt(value) followed bij || 0 because result must comply type validation of REST endpoint and '' or NaN don't. (rest_invalid_type)
- *           preponed 'b' to blockid, because html id must not start with number.
- * 20220513  wp.components.ServerSideRender deprecated replaced by wp.serverSideRender and dependency wp-server-side-render
- *     
+ * v2.0.0
+ * 20220517  try to find a unique blockid from  clientId (only once) 
+ *   excerptlength initialised with '' so cannot be integer, all parseInt(value) followed bij || 0,1,or 2  because result must comply type validation of REST endpoint and '' or NaN don't. (rest_invalid_type)
+ *   preponed 'b' to blockid, because html id must not start with number.
+ *   wp.components.ServerSideRender deprecated replaced by serverSideRender and dependency wp-server-side-render; clear_cache_now false after 1 second, to prevent excessive calling of calendar
  */
 ( function(blocks, i18n, element, blockEditor, components, serverSideRender ) {
 	var el = element.createElement;
