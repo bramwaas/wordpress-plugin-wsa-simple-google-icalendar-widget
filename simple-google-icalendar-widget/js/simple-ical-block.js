@@ -26,7 +26,7 @@
     el('circle', { fill: "#ecf6fe",  stroke: "#000000", cx: "38", cy: "35", r: "3"}),
     el('circle', { fill: "#ecf6fe",  stroke: "#000000", cx: "86", cy: "21", r: "3"}),
     el('circle', { fill: "#ecf6fe",  stroke: "#000000", cx: "86", cy: "35", r: "3"}),
-    el('path', {fill: "#000000", stroke: "#000000", d: "M M38,21 V35 M86,21 V35", })
+    el('path', {fill: "#000000", stroke: "#000000", d: "M38,21 V35 M86,21 V35", })
     );
     var Button = components.Button;
     var TextControl = components.TextControl;
