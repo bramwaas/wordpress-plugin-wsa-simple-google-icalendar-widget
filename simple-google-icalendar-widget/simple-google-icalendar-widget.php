@@ -4,9 +4,9 @@
  Description: Widget that displays events from a public google calendar or iCal file
  Plugin URI: https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  Author: Bram Waasdorp
- Version: 1.5.1
+ Version: 2.0.0
  License: GPL3
- Tested up to: 5.9
+ Tested up to: 6.0
  Requires PHP:  5.3.0 tested with 7.2
  Text Domain:  simple_ical
  Domain Path:  /languages
@@ -24,12 +24,16 @@
  *               in Description, Summary and Location added wp_kses('post') to output to keep preventing XSS
  *   bw 20220407 Extra options for parser in array poptions and added temporary new option notprocessdst to don't process differences in DST between start of series events and the current event.
  *      20220410 V1.5.1 As notprocessdst is always better within one timezone removed the correction and this option. 
- *               If this causes other problems when using more timezones then find specific solution.           
+ *               If this causes other problems when using more timezones then find specific solution. 
+ *   bw 20220421 V1.6.0 First steps to convert widget to block 
+ *      20220430 Block in own class  SimpleicalBlock called when function_exists( 'register_block_type') else old widget (later maybe always also old widget)  
+ *   bw 20220503 Replaced ( function_exists( 'register_block_type' ) ) by ( is_wp_version_compatible( '5.9' ) ) because we use the newest version of blocks and removed else for the old widget, so that
+ *              the legacy block with the old widget still keeps working                   
  */
 /*
  Simple Google Calendar Outlook Events Widget
  Copyright (C) Bram Waasdorp 2017 - 2022
- 2022-02-23
+ 2022-05-03
  Forked from Simple Google Calendar Widget v 0.7 by Nico Boehr
  
  This program is free software: you can redistribute it and/or modify
@@ -56,10 +60,24 @@ if (!class_exists('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget\Simplei
     require_once('includes/SimpleicalWidgetAdmin.php');
     class_alias('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget\SimpleicalWidgetAdmin', 'SimpleicalWidgetAdmin');
 }
+if ( is_wp_version_compatible( '5.9' ) )   { // block widget
+    if (!class_exists('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget\SimpleicalBlock')) {
+        require_once('includes/SimpleicalBlock.php');
+    }
+    // Static class method call with name of the class
+    add_action( 'init', array ('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget\SimpleicalBlock', 'init_block') );
 
+} // end function_exists( 'register_block_type' )
+
+{ //old widget
+	
+if ( !class_exists( 'Simple_iCal_Widget' ) ) {
 class Simple_iCal_Widget extends WP_Widget
 {
-    
+/* 
+* contruct the old widget
+*
+*/
     public function __construct()
     {
         // load our textdomain
@@ -70,10 +88,10 @@ class Simple_iCal_Widget extends WP_Widget
             array( // Args
                 'classname' => 'Simple_iCal_Widget',
                 'description' => __('Displays events from a public Google Calendar or other iCal source', 'simple_ical'),
+                'show_instance_in_rest' => true, // allow migrating to block
             )
             );
     }
-    
     private function getTransientId()
     {
         return 'wp_ical_widget_'.$this->id;
@@ -347,10 +365,6 @@ class Simple_iCal_Widget extends WP_Widget
           <input class="widefat" id="<?php echo $this->get_field_id('event_period'); ?>" name="<?php echo $this->get_field_name('event_period'); ?>" type="text" value="<?php echo esc_attr($instance['event_period']); ?>" />
         </p>
         <p>
-          <label for="<?php echo $this->get_field_id('cache_time'); ?>"><?php _e('Cache expiration time in minutes:', 'simple_ical'); ?></label> 
-          <input class="widefat" id="<?php echo $this->get_field_id('cache_time'); ?>" name="<?php echo $this->get_field_name('cache_time'); ?>" type="text" value="<?php echo esc_attr($instance['cache_time']); ?>" />
-        </p>
-        <p>
           <label for="<?php echo $this->get_field_id('dateformat_lg'); ?>"><?php _e('Date format first line:', 'simple_ical'); ?></label> 
           <input class="widefat" id="<?php echo $this->get_field_id('dateformat_lg'); ?>" name="<?php echo $this->get_field_name('dateformat_lg'); ?>" type="text" value="<?php echo esc_attr($instance['dateformat_lg']); ?>" />
         </p>
@@ -365,6 +379,11 @@ class Simple_iCal_Widget extends WP_Widget
         <p>
           <label for="<?php echo $this->get_field_id('dateformat_tend'); ?>"><?php _e('Time format end time:', 'simple_ical'); ?></label> 
           <input class="widefat" id="<?php echo $this->get_field_id('dateformat_tend'); ?>" name="<?php echo $this->get_field_name('dateformat_tend'); ?>" type="text" value="<?php echo esc_attr($instance['dateformat_tend']); ?>" />
+        </p>
+        <h4>Advanced</h4>
+        <p>
+          <label for="<?php echo $this->get_field_id('cache_time'); ?>"><?php _e('Cache expiration time in minutes:', 'simple_ical'); ?></label> 
+          <input class="widefat" id="<?php echo $this->get_field_id('cache_time'); ?>" name="<?php echo $this->get_field_name('cache_time'); ?>" type="text" value="<?php echo esc_attr($instance['cache_time']); ?>" />
         </p>
         <p>
           <label for="<?php echo $this->get_field_id('excerptlength'); ?>"><?php _e('Excerpt length, max length of description:', 'simple_ical'); ?></label> 
@@ -399,13 +418,13 @@ class Simple_iCal_Widget extends WP_Widget
         <?php
 	return '';    
     }
+	
+} // end class
+} // !class_exists( 'Simple_iCal_Widget' )
+function simple_ical_widget () {  register_widget( 'Simple_iCal_Widget' );}
+add_action ('widgets_init', 'simple_ical_widget'  );
 
-}
 $ical_admin = new SimpleicalWidgetAdmin;
 add_action('admin_menu',array ($ical_admin, 'simple_ical_admin_menu'));
 
-// add_action('widgets_init', create_function('', 'return register_widget("Simple_iCal_Widget");'));
-// replaced by
-function simple_ical_widget () {  register_widget( 'Simple_iCal_Widget' );}
-add_action ('widgets_init', 'simple_ical_widget'  );
-// end replace
+} // old widget

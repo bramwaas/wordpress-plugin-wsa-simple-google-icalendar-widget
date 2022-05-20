@@ -1,19 +1,19 @@
-=== Simple Google Calendar Outlook Events Widget ===
+=== Simple Google Calendar Outlook Events Block Widget ===
 Plugin name: Simple Google Calendar Outlook Events Widget
 Contributors: bramwaas
-Tags: Calendar, Event Calendar, Google Calendar, iCal, Events, iCalendar, Outlook, iCloud
+Tags: Event Calendar, Google Calendar, iCal, Events, Block, Calendar, iCalendar, Outlook, iCloud
 Requires at least: 5.3.0
-Tested up to: 5.9
+Tested up to: 6.0
 Requires PHP: 5.3.0
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
  
-Widget that displays events from a public google calendar or iCal file.
+Block widget that displays events from a public google calendar or iCal file.
  
 == Description ==
 
-Simple widget to display events from a public google calendar, microsoft office outlook calendar or an other iCal file, in the style of your website.
+Simple block or widget to display events from a public google calendar, microsoft office outlook calendar or an other iCal file, in the style of your website.
 
 This simple widget fetches events from a public google calendar (or other calendar in iCal format) and displays them in simple list allowing you to fully adapt to your website by applying all kinds of CSS. 
 Google offers some HTML snippets to embed your public Google Calendar into your website.
@@ -21,7 +21,8 @@ These are great, but as soon as you want to make a few adjustments to the stylin
 
 == Plugin Features ==
 
-* Calendar widget to display appointments/events of a public Google calendar or other iCal file.
+* Calendar block or widget to display appointments/events of a public Google calendar or other iCal file.
+* Block gives live preview in the editor and is not constrained to widget area. Old widget will be displayed in legacy widget block only in widget area.
 * Small footprint, uses only Google ID of the calendar, or ICS link for Outlook, or Url of iCal file, to get event information via iCal
 * Manage events in Google Calendar, or other iCalendar source.
 * Fully adaptable to your website with CSS. Output in unorderd list with Bootstrap 4 listgroup classes and toggle for details.
@@ -32,12 +33,17 @@ These are great, but as soon as you want to make a few adjustments to the stylin
 
 == Installation ==
 
-* Do the usual setup procedure... you know... downloading... unpacking... uploading... activating. 
-Or just install it through the wordpress plugin directory.
-* As soon as you activated the plugin, you should see a new widget under Design / Widgets.
-Just drag it into your sidebar.
+* Do the usual setup procedure... you know... downloading... unpacking... uploading... activating.   
+Or download the zip-file and upload it via Plugins Add new ... install and activate.    
+Or just install it through the wordpress plugin directory.       
+* For WP 5.9 and higher: As soon as you activated the plugin, you should see a new block 'Simple ical Block' in the (block) Editor in the category Widgets.       
+You can enter the block in a post or a page with the block-editor (eg. (+ sign)Toggle block inserter / WIDGETS).           
+If your theme has a widget area you can also enter the block as a widget in a widget area:          
+ Appearance / Widgets / (+ sign)Toggle block inserter / WIDGETS. Just drag it into your sidebar.    
+* Alternative for WP 5.3 and higher: Select 'Simple Google Calendar Outlook Events Widget' or select the Legacy widget and choose 'Simple Google Calendar Outlook Events Widget'     
+  and drag it into the sidebar.
 * Fill out all the necessary configuration fields.
- Under Calendar ID enter the calendar ID displayed by Google Calendar, or complete url of a  Google calendar or other iCal file.
+ In Calendar ID enter the calendar ID displayed by Google Calendar, or complete url of a  Google calendar or other iCal file.
  You can find Google calendar ID by going to Calendar Settings / Calendars, clicking on the appropriate calendar, scrolling all the way down to find the Calendar ID at the bottom under the Integrate Calendar section. There's your calendar id.
 * You're done!
 
@@ -162,7 +168,9 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 * since v1.2.0 Wordpress version 5.3.0 is required because of the use of wp_date() 
 
 == Changelog ==
+* 2.0.0 Created a native Gutenberg Block Simple ical Block next to the old the widget when using WP 5.9 or higher with the same backend code and almost the same frontend.
 * 1.5.1 After more testing and solving some issues with recurring events and daylight saving time removed the old correction for DST and the temporary checkbox to turn this correction off. Now there is only a correction when time is changed because the calculated time does not exists during transition from ST to DST. In that case in the next recursion the hour and minutes are set back to their beginvalue. Renamed and namespaced classes. Improved Zerodate to UTC-timezone processing. Restructured the IcsParse class a bit.
+   20220516 tested up to 6.0 (RC2)
 * 1.5.0 in response to a github issue of fhennies added a checkbox to allow safe html in the output. Added wp_kses() function to run for description, digest and location, to echo only html considered safe for wordpress posts, thus preserving some security against XSS.
 Extra options for parser in array $instance and added temporary new option notprocessdst to don't process differences in DST between start of series events and the current event. (in response to a WP support topic of @wurzelserver)
    7-4-2022 tested with wordpress 5.9.1
