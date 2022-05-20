@@ -6,7 +6,7 @@
  Author: Bram Waasdorp
  Version: 2.0.0
  License: GPL3
- Tested up to: 5.9
+ Tested up to: 6.0
  Requires PHP:  5.3.0 tested with 7.2
  Text Domain:  simple_ical
  Domain Path:  /languages
@@ -88,6 +88,7 @@ class Simple_iCal_Widget extends WP_Widget
             array( // Args
                 'classname' => 'Simple_iCal_Widget',
                 'description' => __('Displays events from a public Google Calendar or other iCal source', 'simple_ical'),
+                'show_instance_in_rest' => true, // allow migrating to block
             )
             );
     }
@@ -364,10 +365,6 @@ class Simple_iCal_Widget extends WP_Widget
           <input class="widefat" id="<?php echo $this->get_field_id('event_period'); ?>" name="<?php echo $this->get_field_name('event_period'); ?>" type="text" value="<?php echo esc_attr($instance['event_period']); ?>" />
         </p>
         <p>
-          <label for="<?php echo $this->get_field_id('cache_time'); ?>"><?php _e('Cache expiration time in minutes:', 'simple_ical'); ?></label> 
-          <input class="widefat" id="<?php echo $this->get_field_id('cache_time'); ?>" name="<?php echo $this->get_field_name('cache_time'); ?>" type="text" value="<?php echo esc_attr($instance['cache_time']); ?>" />
-        </p>
-        <p>
           <label for="<?php echo $this->get_field_id('dateformat_lg'); ?>"><?php _e('Date format first line:', 'simple_ical'); ?></label> 
           <input class="widefat" id="<?php echo $this->get_field_id('dateformat_lg'); ?>" name="<?php echo $this->get_field_name('dateformat_lg'); ?>" type="text" value="<?php echo esc_attr($instance['dateformat_lg']); ?>" />
         </p>
@@ -382,6 +379,11 @@ class Simple_iCal_Widget extends WP_Widget
         <p>
           <label for="<?php echo $this->get_field_id('dateformat_tend'); ?>"><?php _e('Time format end time:', 'simple_ical'); ?></label> 
           <input class="widefat" id="<?php echo $this->get_field_id('dateformat_tend'); ?>" name="<?php echo $this->get_field_name('dateformat_tend'); ?>" type="text" value="<?php echo esc_attr($instance['dateformat_tend']); ?>" />
+        </p>
+        <h4>Advanced</h4>
+        <p>
+          <label for="<?php echo $this->get_field_id('cache_time'); ?>"><?php _e('Cache expiration time in minutes:', 'simple_ical'); ?></label> 
+          <input class="widefat" id="<?php echo $this->get_field_id('cache_time'); ?>" name="<?php echo $this->get_field_name('cache_time'); ?>" type="text" value="<?php echo esc_attr($instance['cache_time']); ?>" />
         </p>
         <p>
           <label for="<?php echo $this->get_field_id('excerptlength'); ?>"><?php _e('Excerpt length, max length of description:', 'simple_ical'); ?></label> 
