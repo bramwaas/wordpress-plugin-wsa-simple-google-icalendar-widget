@@ -34,6 +34,41 @@
     var useEffect = element.useEffect;
 	blocks.registerBlockType( 'simplegoogleicalenderwidget/simple-ical-block', {
         icon: iconEl,
+
+        transforms: {
+    from: [
+        {
+            type: 'block',
+            blocks: [ 'core/legacy-widget' ],
+            isMatch: ( { idBase, instance } ) => {
+                if ( ! instance?.raw ) {
+                    // Can't transform if raw instance is not shown in REST API.
+                    return false;
+                }
+                return idBase === 'simple_ical_widget';
+            },
+            transform: ( { instance } ) => {
+                return blocks.createBlock( 'simplegoogleicalenderwidget/simple-ical-block', {
+                    title: instance.raw.title,
+                    calendar_id: instance.raw.calendar_id,
+                    event_count: instance.raw.event_count,
+                    event_period: instance.raw.event_period,
+                    cache_time: instance.raw.cache_time,
+                    dateformat_lg: instance.raw.dateformat_lg,
+                    dateformat_tsum: instance.raw.dateformat_tsum,
+                    dateformat_tstart: instance.raw.dateformat_tstart,
+                    dateformat_tend: instance.raw.dateformat_tend,
+                    excerptlength: instance.raw.excerptlength,
+                    suffix_lg_class: instance.raw.suffix_lg_class,
+                    suffix_lgi_class: instance.raw.suffix_lgi_class,
+                    suffix_lgia_class: instance.raw.suffix_lgia_class,
+                    allowhtml: instance.raw.allowhtml,
+                } );
+            },
+        },
+    ]
+},
+
 		edit: function( props ) {
 			useEffect(function() {
  	           if ( ! props.attributes.blockid ) { props.setAttributes( { blockid: 'b' + props.clientId  } );}
