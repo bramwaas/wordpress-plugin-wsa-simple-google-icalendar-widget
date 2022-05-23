@@ -40,14 +40,14 @@
         {
             type: 'block',
             blocks: [ 'core/legacy-widget' ],
-            isMatch: ( { idBase, instance } ) => {
-                if ( ! instance?.raw ) {
+            isMatch: function ( { idBase, instance } ) {
+                if ( ! (instance && instance.raw) ) {
                     // Can't transform if raw instance is not shown in REST API.
                     return false;
                 }
                 return idBase === 'simple_ical_widget';
             },
-            transform: ( { instance } ) => {
+            transform: function ( { instance } ) {
                 return blocks.createBlock( 'simplegoogleicalenderwidget/simple-ical-block', {
                     title: instance.raw.title,
                     calendar_id: instance.raw.calendar_id,
@@ -63,6 +63,7 @@
                     suffix_lgi_class: instance.raw.suffix_lgi_class,
                     suffix_lgia_class: instance.raw.suffix_lgia_class,
                     allowhtml: instance.raw.allowhtml,
+					className: 'Simple_iCal_Widget',
                 } );
             },
         },

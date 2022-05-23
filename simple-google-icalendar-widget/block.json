@@ -6,10 +6,11 @@
     "category": "widgets",
     "description": "Block that displays events from a public calendar or iCal file.",
     "keywords": [ "calendar", "ical", "event", "events", "google", "outlook", "iCalendar", "holydays", "ics" ],
-    "version": "2.0.0",
+    "version": "2.0.1",
     "textdomain": "simple_ical",
     "supports": {
-        "align": true
+        "align": true,
+        "anchor": true
     },
     "editorScript": "file:js/simple-ical-block.js",
     "editorStyle": "file:css/simple-ical-editor.css"
