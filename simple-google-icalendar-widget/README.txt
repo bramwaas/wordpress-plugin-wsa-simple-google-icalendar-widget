@@ -30,6 +30,9 @@ These are great, but as soon as you want to make a few adjustments to the stylin
 * Displays per event DTSTART, DTEND, SUMMARY, LOCATION and DESCRIPTION. DTSTART is required other components are optional. 
 * Displays most common repeating events. Frequency Yearly, Monthly, Weekly, Dayly (not Hourly, Minutely and smaller periods)
 
+ == Screenshots ==
+ 
+ 1. examples.
 
 == Installation ==
 
