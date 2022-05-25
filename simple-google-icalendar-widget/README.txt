@@ -25,14 +25,14 @@ These are great, but as soon as you want to make a few adjustments to the stylin
 * Block gives live preview in the editor and is not constrained to widget area. Old widget will be displayed in legacy widget block only in widget area.
 * Small footprint, uses only Google ID of the calendar, or ICS link for Outlook, or Url of iCal file, to get event information via iCal
 * Manage events in Google Calendar, or other iCalendar source.
-* Fully adaptable to your website with CSS. Output in unorderd list with Bootstrap 4 listgroup classes and toggle for details.
-* Choose date / time format in admin screen that best suits your website.
+* Fully adaptable to your website with CSS. Output in unordered list with Bootstrap 4 listgroup classes and toggle for details.
+* Choose date / time format in settings screen that best suits your website.
 * Displays per event DTSTART, DTEND, SUMMARY, LOCATION and DESCRIPTION. DTSTART is required other components are optional. 
 * Displays most common repeating events. Frequency Yearly, Monthly, Weekly, Dayly (not Hourly, Minutely and smaller periods)
 
  == Screenshots ==
  
- 1. examples.
+ 1. example
 
 == Installation ==
 
