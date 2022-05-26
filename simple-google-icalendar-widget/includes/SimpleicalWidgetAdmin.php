@@ -54,6 +54,7 @@ class SimpleicalWidgetAdmin {
         
         _e('<p><strong>Calendar ID, or iCal URL</strong></p>', 'simple_ical');
         _e('<p>The Google calendar ID, or the URL of te iCal file to display.</p>', 'simple_ical');
+        _e('<p>In the block you can use #example to get example events</p>', 'simple_ical');
         
         _e('<p><strong>Number of events displayed</strong></p>', 'simple_ical');
         _e('<p>The maximum number of events to display.</p>', 'simple_ical');
