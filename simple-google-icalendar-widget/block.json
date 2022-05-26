@@ -9,7 +9,13 @@
     "icon": "calendar-alt",
     "version": "2.0.1",
     "textdomain": "simple_ical",
-    "example": {},
+    "example": {"attributes": {
+        "title": "Example events.",
+        "calendar_id": "#example",
+        "event_count": "3",
+        "event_period": "62"
+        }
+    },
     "supports": {
         "align": true
     },

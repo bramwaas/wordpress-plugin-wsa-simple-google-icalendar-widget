@@ -17,10 +17,37 @@
  * 20220510 attributes again in php also added anchor, align and className who can be added by support hopefully that is enough for ServerSideRender.
  * 20220511 integer excerptlength not initialised with '' because serversiderender REST type validation gives an error (rest_invalid_type)
  *  excerptlength string and in javascript  '' when not parsed as integer. 
+ * 20220526 added example 
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget;
 
 class SimpleicalBlock {
+    /**
+     * @var string events to display in example 
+     * EOL's and one space before second description line are important.
+     */
+    private static $example_events = 'BEGIN:VCALENDAR
+BEGIN:VEVENT
+DTSTART:20220526T150000
+DTEND:20220526T160000
+RRULE:FREQ=WEEKLY;INTERVAL=3;BYDAY=SU,WE,SA
+UID:a-1
+DESCRIPTION:Description event every 3 weeks sunday wednesday and saturday. t
+ est A-Z.\nLine 2 of description.
+LOCATION:At home or somewhere else
+SUMMARY: Every 3 weeks sunday wednesday and saturday
+END:VEVENT
+BEGIN:VEVENT
+DTSTART:20220529T143000
+DTEND:20220529T153000
+RRULE:FREQ=MONTHLY;COUNT=24;BYMONTHDAY=29
+UID:a-2
+DESCRIPTION:
+LOCATION:
+SUMMARY:Example event\, Monthly day 29
+END:VEVENT
+END:VCALENDAR';
+    
     /**
      * Block init register block with help of block.json
      *
@@ -206,14 +233,19 @@ class SimpleicalBlock {
     private static function fetch( $instance )
     {
         $period = $instance['event_period'];
-        $url = self::getCalendarUrl($instance['calendar_id']);
-        $httpData = wp_remote_get($url);
-        if(is_wp_error($httpData)) {
-            echo '<!-- ' . $url . ' not found ' . 'fall back to https:// -->';
-            $httpData = wp_remote_get('https://' . explode('://', $url)[1]);
+        if ('#example' == $instance['calendar_id']){ 
+            $httpData['body'] = self::$example_events;
+        }
+        else  {
+            $url = self::getCalendarUrl($instance['calendar_id']);
+            $httpData = wp_remote_get($url);
             if(is_wp_error($httpData)) {
-                echo 'Simple iCal Block: ', $httpData->get_error_message();
-                return false;
+                echo '<!-- ' . $url . ' not found ' . 'fall back to https:// -->';
+                $httpData = wp_remote_get('https://' . explode('://', $url)[1]);
+                if(is_wp_error($httpData)) {
+                    echo 'Simple iCal Block: ', $httpData->get_error_message();
+                    return false;
+                }
             }
         }
         
