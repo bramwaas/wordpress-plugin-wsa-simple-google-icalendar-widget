@@ -92,89 +92,12 @@ class Simple_iCal_Widget extends WP_Widget
             )
             );
     }
-    private function getTransientId()
-    {
-        return 'wp_ical_widget_'.$this->id;
-    }
-    
-    private function getCalendarUrl($calId)
-    {
-        
-        $protocol = strtolower(explode('://', $calId)[0]);
-        if (array_search($protocol, array('http', 'https', 'webcal')))
-        { return $calId; }
-        else
-        { return 'https://www.google.com/calendar/ical/'.$calId.'/public/basic.ics'; }
-    }
-    
-    private function getData($instance)
-    {
-        $widgetId = $this->id;
-        $calId = $instance['calendar_id'];
-        $transientId = $this->getTransientId();
-        if(false === ($data = get_transient($transientId))) {
-            $data = $this->fetch($calId, $instance['event_count'], $instance['event_period'], $instance );
-            
-            // do not cache data if fetching failed
-            if ($data) {
-                set_transient($transientId, $data, $instance['cache_time']*60);
-            }
-        }
-        
-        return $data;
-    }
-    
+  
     private function clearData()
     {
-        return delete_transient($this->getTransientId());
+        return delete_transient('wp_ical_widget_'.$this->id);
     }
     
-    private function limitArray($arr, $limit)
-    {
-        $i = 0;
-        
-        $out = array();
-        foreach ($arr as $e) {
-            $i++;
-            
-            if ($i > $limit) {
-                break;
-            }
-            $out[] = $e;
-        }
-        
-        return $out;
-    }
-    
-    private function fetch($calId, $count, $period,  $instance )
-    {
-        $url = $this->getCalendarUrl($calId);
-        $httpData = wp_remote_get($url);
-        
-        if(is_wp_error($httpData)) {
-            echo '<!-- ' . $url . ' not found ' . 'fall back to https:// -->';
-            $httpData = wp_remote_get('https://' . explode('://', $url)[1]);
-            if(is_wp_error($httpData)) {
-                echo 'Simple Google Calendar: ', $httpData->get_error_message();
-                return false;
-            }
-        }
-        
-        if(!is_array($httpData) || !array_key_exists('body', $httpData)) {
-            return false;
-        }
-        
-        try {
-            $penddate = strtotime("+$period day");
-            $parser = new IcsParser();
-            $parser->parse($httpData['body'], $penddate,  $count,  $instance );
-            
-            $events = $parser->getFutureEvents($penddate);
-            return $this->limitArray($events, $count);
-        } catch(\Exception $e) {
-            return null;
-        }
-    }
     /**
      * Front-end display of widget.
      *
@@ -198,7 +121,9 @@ class Simple_iCal_Widget extends WP_Widget
         $sflg = (isset($instance['suffix_lg_class'])) ? $instance['suffix_lg_class'] : '' ;
         $sflgi = (isset($instance['suffix_lgi_class'])) ? $instance['suffix_lgi_class'] : '' ;
         $sflgia = (isset($instance['suffix_lgia_class'])) ? $instance['suffix_lgia_class'] : '' ;
-        $data = $this->getData($instance);
+        $instance['blockid'] = 'wp_ical_widget_'.$this->id;
+        $instance['clear_cache_now'] = false;
+        $data = IcsParser::getData($instance);
         if (!empty($data) && is_array($data)) {
             date_default_timezone_set(get_option('timezone_string'));
             echo '<ul class="list-group' .  $sflg . ' simple-ical-widget">';

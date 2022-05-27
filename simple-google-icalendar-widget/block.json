@@ -12,7 +12,7 @@
     "example": {"attributes": {
         "title": "Example events.",
         "calendar_id": "#example",
-        "event_count": "3",
+        "event_count": "4",
         "event_period": "62"
         }
     },
