@@ -95,7 +95,7 @@ class Simple_iCal_Widget extends WP_Widget
   
     private function clearData()
     {
-        return delete_transient('wp_ical_widget_'.$this->id);
+        return delete_transient('SimpleicalBlock'.$this->id);
     }
     
     /**
@@ -121,7 +121,7 @@ class Simple_iCal_Widget extends WP_Widget
         $sflg = (isset($instance['suffix_lg_class'])) ? $instance['suffix_lg_class'] : '' ;
         $sflgi = (isset($instance['suffix_lgi_class'])) ? $instance['suffix_lgi_class'] : '' ;
         $sflgia = (isset($instance['suffix_lgia_class'])) ? $instance['suffix_lgia_class'] : '' ;
-        $instance['blockid'] = 'wp_ical_widget_'.$this->id;
+        $instance['blockid'] = $this->id;
         $instance['clear_cache_now'] = false;
         $data = IcsParser::getData($instance);
         if (!empty($data) && is_array($data)) {
