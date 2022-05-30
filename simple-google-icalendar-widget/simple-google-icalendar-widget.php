@@ -237,9 +237,9 @@ class Simple_iCal_Widget extends WP_Widget
         if (!empty($new_instance['clear_cache_now'])){
             // delete our transient cache
             $this->clearData();
-            $instance['clear_cache_now'] = $new_instance['clear_cache_now'];
+            $instance['clear_cache_now'] = false; //  $new_instance['clear_cache_now'];
         } else {
-            $instance['clear_cache_now'] = 'no' ;
+            $instance['clear_cache_now'] = false ;
         }
         
         return $instance;
@@ -268,7 +268,7 @@ class Simple_iCal_Widget extends WP_Widget
             'suffix_lgi_class' => ' py-0',
             'suffix_lgia_class' => '',
             'allowhtml' => 0,
-            'clear_cache_now' => 0,
+            'clear_cache_now' => false,
         );
         $instance = wp_parse_args((array) $instance, $default);
         
