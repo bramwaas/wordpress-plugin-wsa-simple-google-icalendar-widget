@@ -10,13 +10,14 @@
  * @license    http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * Gutenberg Block functions
  * used in newer wp versions where Gutenbergblocks are available. (tested with function_exists( 'register_block_type' ))
- * Version: 2.0.0
+ * Version: 2.0.1
  * 20220427 namespaced and renamed after classname.
  * 20220430 try with static calls
  * 20220509 fairly correct front-end display. attributes back to block.json
  * 20220510 attributes again in php also added anchor, align and className who can be added by support hopefully that is enough for ServerSideRender.
  * 20220511 integer excerptlength not initialised with '' because serversiderender REST type validation gives an error (rest_invalid_type)
  *  excerptlength string and in javascript  '' when not parsed as integer. 
+ * 20220526 added example 
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget;
 
@@ -47,7 +48,6 @@ class SimpleicalBlock {
             'allowhtml' => ['type' => 'boolean', 'default' => false],
             'clear_cache_now' => ['type' => 'boolean', 'default' => false],
         ],
-        'api_version' => 2,
             'render_callback' => array('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget\SimpleicalBlock', 'render_block'))
         );
    }
@@ -115,7 +115,7 @@ class SimpleicalBlock {
         $sflg = (isset($instance['suffix_lg_class'])) ? $instance['suffix_lg_class'] : '' ;
         $sflgi = (isset($instance['suffix_lgi_class'])) ? $instance['suffix_lgi_class'] : '' ;
         $sflgia = (isset($instance['suffix_lgia_class'])) ? $instance['suffix_lgia_class'] : '' ;
-        $data = self::getData($instance);
+        $data = IcsParser::getData($instance);
         if (!empty($data) && is_array($data)) {
             date_default_timezone_set(get_option('timezone_string'));
             echo '<ul class="list-group' .  $sflg . ' simple-ical-widget">';
@@ -170,93 +170,5 @@ class SimpleicalBlock {
         
         echo '<br class="clear" />';
     }
-    /**
-     * Gets data from calender or transient cache
-     *
-     * @param array $instance the block attributes 
-     *    ['blockid']      to create transientid
-     *    ['calendar_id']  id or url of the calender to fetch data
-     *    ['event_count']  max number of events to return
-     *    ['event_period'] max number of days after now to fetch events.
-     *      
-     * @return array event objects
-     */
-    private static function getData($instance)
-    {
-        $transientId = 'SimpleicalBlock'  . $instance['blockid']   ;
-        if ($instance['clear_cache_now']) delete_transient($transientId);
-        if(false === ($data = get_transient($transientId))) {
-            $data =self::fetch(  $instance,  );
-             // do not cache data if fetching failed
-            if ($data) {
-                set_transient($transientId, $data, $instance['cache_time']*60);
-            }
-        }
-        return $data;
-    }
-    /**
-     * Fetches from calender 
-     *
-     * @param array $instance the block attributes
-     *    ['calendar_id']  id or url of the calender to fetch data
-     *    ['event_count']  max number of events to return
-     *    ['event_period'] max number of days after now to fetch events.
-     *
-     * @return array event objects
-     */
-    private static function fetch( $instance )
-    {
-        $period = $instance['event_period'];
-        $url = self::getCalendarUrl($instance['calendar_id']);
-        $httpData = wp_remote_get($url);
-        if(is_wp_error($httpData)) {
-            echo '<!-- ' . $url . ' not found ' . 'fall back to https:// -->';
-            $httpData = wp_remote_get('https://' . explode('://', $url)[1]);
-            if(is_wp_error($httpData)) {
-                echo 'Simple iCal Block: ', $httpData->get_error_message();
-                return false;
-            }
-        }
-        
-        if(!is_array($httpData) || !array_key_exists('body', $httpData)) {
-            return false;
-        }
-        
-        try {
-            $penddate = strtotime("+$period day");
-            $parser = new IcsParser();
-            $parser->parse($httpData['body'], $penddate, $instance['event_count'],  $instance );
-            
-            $events = $parser->getFutureEvents($penddate);
-            return self::limitArray($events, $instance['event_count']);
-        } catch(\Exception $e) {
-            return null;
-        }
-    }
-    
-    private static function getCalendarUrl($calId)
-    {
-        
-        $protocol = strtolower(explode('://', $calId)[0]);
-        if (array_search($protocol, array('http', 'https', 'webcal')))
-        { return $calId; }
-        else
-        { return 'https://www.google.com/calendar/ical/'.$calId.'/public/basic.ics'; }
-    }
-    
-    private static function limitArray($arr, $limit)
-    {
-        $i = 0;
-        $out = array();
-        foreach ($arr as $e) {
-            $i++;
-            if ($i > $limit) {
-                break;
-            }
-            $out[] = $e;
-        }
-        return $out;
-    }
-    
     
 } // end class SimpleicalBlock
