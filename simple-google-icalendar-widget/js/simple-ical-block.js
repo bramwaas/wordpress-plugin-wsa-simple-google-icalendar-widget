@@ -152,7 +152,7 @@
                 ),
                 el(
                     TextControl,
-                    {   label: __('Time format time summary line:', 'simple_ical'),
+                    {   label: __('Time format end time summary line:', 'simple_ical'),
                         value: props.attributes.dateformat_tsend,
                         onChange: function( value ) { props.setAttributes( { dateformat_tsend: value } );},
                     }
