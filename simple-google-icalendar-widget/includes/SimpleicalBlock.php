@@ -134,7 +134,7 @@ class SimpleicalBlock {
             foreach($data as $e) {
                 $idlist = explode("@", esc_attr($e->uid) );
                 $itemid = $instance['blockid'] . '_' . $idlist[0]; //TODO find correct block id when duplicate
-                $evdate = wp_date( $dflg, $e->start) . (date('yz', $e->start) == date('yz', $e->end) ? '' : wp_date( $dflgend, $e->end) );
+                $evdate = wp_date( $dflg, $e->start) . (date('yz', $e->start) == date('yz', $e->end) ? '' : wp_date( $dflgend, $e->end - 1) );
                 $evdtsum = (($e->startisdate === false) ? wp_date( $dftsum, $e->start) . wp_date( $dftsend, $e->end) : '');
                 echo '<li class="list-group-item' .  $sflgi . ' ical-date">';
                 if (!$startwsum && $curdate != $evdate ) {
@@ -150,10 +150,10 @@ class SimpleicalBlock {
                 if(!empty($e->summary)) {
                     echo str_replace("\n", '<br>', wp_kses($e->summary,'post'));
                 }
-                if ($startwsum ) {
-                    echo $evdate, $evdtsum, '<br>';
-                }
                 echo	'</a>' ;
+                if ($startwsum ) {
+                    echo '<span>', $evdate, $evdtsum, '</span>', '<br>';
+                }
                 echo '<div class="collapse ical_details' .  $sflgia . '" id="',  $itemid, '">';
                 if(!empty($e->description) && trim($e->description) > '' && $excerptlength !== 0) {
                     if ($excerptlength !== '' && strlen($e->description) > $excerptlength) {$e->description = substr($e->description, 0, $excerptlength + 1);
