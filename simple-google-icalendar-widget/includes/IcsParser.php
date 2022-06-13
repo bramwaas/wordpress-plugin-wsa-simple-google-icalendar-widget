@@ -25,8 +25,9 @@
  *               This calculation better takes into account the deleted hour at the start of DST.
  *               Correction when time is changed by ST to DST transition set hour and minutes back to beginvalue (because time doesn't exist during changeperiod) 
  *               Set event Timezoneid to UTC when datetimesting ends with Z (zero date)
- *   bw 20220527 V2.0.1 code starting with getData from block to this class                    
- * Version: 2.0.1
+ *   bw 20220527 V2.0.1 code starting with getData from block to this class 
+ *   bw 20220613 v2.0.2 code to correct endtime (00:00:00) when recurring event with different start and end as dates includes DST to ST transition or vv                    
+ * Version: 2.0.2
  
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget;
@@ -358,8 +359,6 @@ END:VCALENDAR';
                             $fmdayok = true;
                             $freqstart = clone $edtstart;
                             $newstart = clone $edtstart;
-                            $newend = clone $edtstart;
-                            $tzoffsetedt = $timezone->getOffset ( $edtstart);
                             while ( $freqstart->getTimestamp() <= $freqendloop
                                 && ($count == 0 || $i < $count  )            						)
                             {   // first FREQ loop on dtstart will only output new events
@@ -521,13 +520,20 @@ END:VCALENDAR';
                                                 && $newstart->getTimestamp() < $until
                                                 && !(!empty($e->exdate) && in_array($newstart->getTimestamp(), $e->exdate))
                                                 && $newstart> $edtstart) { // count events after dtstart
-                                                    if ($newstart->getTimestamp() >= $this->now
+                                                    if (($newstart->getTimestamp() + $edurationsecs) >= $this->now
                                                         ) { // copy only events after now
                                                             $cen++;
-                                                            
                                                             $en =  clone $e;
                                                             $en->start = $newstart->getTimestamp();
                                                             $en->end = $en->start + $edurationsecs;
+                                                            if ($en->startisdate ){ //
+                                                                $endtime = wp_date('Gis', $en->end, $timezone);
+                                                                if ('000000' < $endtime){
+                                                                    if ('120000' < $endtime) $en->end = $en->end + 86400;
+                                                                    $enddate = \DateTime::createFromFormat('Y-m-d G:i:s', wp_date('Y-m-d 00:00:00', $en->end, $timezone), $timezone );
+                                                                    $en->end = $enddate->getTimestamp();
+                                                                }
+                                                            }
                                                             $en->uid = $i . '_' . $e->uid;
                                                             if ($test > ' ') { 	$en->summary = $en->summary . '<br>Test:' . $test; 	}
                                                             $events[] = $en;
