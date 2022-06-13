@@ -32,6 +32,7 @@
     var Button = components.Button;
     var TextControl = components.TextControl;
     var ToggleControl = components.ToggleControl;
+    var SelectControl = components.SelectControl;
     var useEffect = element.useEffect;
 	blocks.registerBlockType( 'simplegoogleicalenderwidget/simple-ical-block', {
         icon: iconEl,
@@ -196,6 +197,21 @@
                         onChange: function( value ) {parsed =  parseInt(value);
                                                      if (isNaN(parsed)) {parsed = ''};
                                                      props.setAttributes( { excerptlength: parsed.toString() } );},
+                    }
+                ),
+                el(
+                    SelectControl,
+                    {   label: __('Tag for summary:', 'simple_ical'),
+                        value: props.attributes.tag_sum,
+                        onChange: function( value ) { props.setAttributes( { tag_sum: value } );},
+					    options:  [
+							        { value: 'a', label: 'a (link)' },
+								    { value: 'div', label: 'div' },
+								    { value: 'h4', label: 'h4 (sub header)' },
+								    { value: 'h5', label: 'h5 (sub header)' },
+								    { value: 'h6', label: 'h6 (sub header)' },
+								    { value: 'span', label: 'span' }
+    							] 
                     }
                 ),
                 el(

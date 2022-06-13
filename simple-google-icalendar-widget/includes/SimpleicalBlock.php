@@ -18,7 +18,7 @@
  * 20220511 integer excerptlength not initialised with '' because serversiderender REST type validation gives an error (rest_invalid_type)
  *  excerptlength string and in javascript  '' when not parsed as integer. 
  * 20220526 added example 
- * 20220612 added enddate/times for startdate and starttime added Id as anchor.
+ * 20220612 added enddate/times for startdate and starttime added Id as anchor and choice of tagg for summary
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget;
 
@@ -41,6 +41,7 @@ class SimpleicalBlock {
             'startwsum' => ['type' => 'boolean', 'default' => false],
             'dateformat_lg' => ['type' => 'string', 'default' => 'l jS \of F'],
             'dateformat_lgend' => ['type' => 'string', 'default' => ''],
+            'tag_sum' => ['enum' => ['a', 'div', 'h4', 'h5', 'h6', 'span'], 'default' => 'a'],
             'dateformat_tsum' => ['type' => 'string', 'default' => 'G:i '],
             'dateformat_tsend' => ['type' => 'string', 'default' => ''],
             'dateformat_tstart' => ['type' => 'string', 'default' => 'G:i'],
@@ -77,6 +78,7 @@ class SimpleicalBlock {
                'startwsum' => false,
                'dateformat_lg' => 'l jS \of F',
                'dateformat_lgend' => '',
+               'tag_sum' => 'a',
                'dateformat_tsum' => 'G:i ',
                'dateformat_tsend' => '',
                'dateformat_tstart' => 'G:i',
@@ -95,7 +97,7 @@ class SimpleicalBlock {
        $block_attributes['anchorId'] = sanitize_html_class($block_attributes['anchorId'], $block_attributes['blockid']);
        $output = '';
        ob_start();
-       self::display_block([], $block_attributes);
+       self::display_block($block_attributes);
        $output = $output . ob_get_clean();
        return '<div id="' . $block_attributes['anchorId'] .'" class="' . $block_attributes['className'] . ((isset($block_attributes['align'])) ? (' align' . $block_attributes['align']) : ' ')   .  '" >' . $output . '</div>'. '<div class="content">' . $content . '</div>'  ;
     }
@@ -104,17 +106,11 @@ class SimpleicalBlock {
      *
      * @see 
      *
-     * @param array $args     Widget arguments.
      * @param array $instance Saved attribute/option values from database.
      */
-    static function display_block($args, $instance)
+    static function display_block($instance)
     {
-        if (isset($args['before_widget'])) {
-        echo $args['before_widget'];
-        if(isset($instance['title'])) {
-            echo $args['before_title'], $instance['title'], $args['after_title'];
-        }}
-        else echo '<h3 class="widget-title block-title">' . $instance['title'] . '</h3>';
+        echo '<h3 class="widget-title block-title">' . $instance['title'] . '</h3>';
         $startwsum = (isset($instance['startwsum'])) ? $instance['startwsum'] : false ;
         $dflg = (isset($instance['dateformat_lg'])) ? $instance['dateformat_lg'] : 'l jS \of F' ;
         $dflgend = (isset($instance['dateformat_lgend'])) ? $instance['dateformat_lgend'] : '' ;
@@ -141,7 +137,7 @@ class SimpleicalBlock {
                     $curdate =  $evdate;
                     echo ucfirst($evdate), '<br>';
                 }
-                echo  '<a class="ical_summary' .  $sflgia . '" data-toggle="collapse" data-bs-toggle="collapse" href="#',
+                echo  '<' . $instance['tag_sum'] . ' class="ical_summary' .  $sflgia . '" data-toggle="collapse" data-bs-toggle="collapse" href="#',
                 $itemid, '" aria-expanded="false" aria-controls="',
                 $itemid, '">';
                 if (!$startwsum)	{
@@ -150,7 +146,7 @@ class SimpleicalBlock {
                 if(!empty($e->summary)) {
                     echo str_replace("\n", '<br>', wp_kses($e->summary,'post'));
                 }
-                echo	'</a>' ;
+                echo	'</' . $instance['tag_sum'] . '>' ;
                 if ($startwsum ) {
                     echo '<span>', $evdate, $evdtsum, '</span>', '<br>';
                 }
