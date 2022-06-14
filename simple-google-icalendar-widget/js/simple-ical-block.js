@@ -210,7 +210,8 @@
 								    { value: 'h4', label: 'h4 (sub header)' },
 								    { value: 'h5', label: 'h5 (sub header)' },
 								    { value: 'h6', label: 'h6 (sub header)' },
-								    { value: 'span', label: 'span' }
+								    { value: 'span', label: 'span' },
+								    { value: 'strong', label: 'strong' }
     							] 
                     }
                 ),

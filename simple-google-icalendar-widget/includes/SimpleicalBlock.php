@@ -23,7 +23,7 @@
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget;
 
 class SimpleicalBlock {
-    private static $allowed_tags_sum = ['a', 'div', 'h4', 'h5', 'h6', 'span'] ;
+    private static $allowed_tags_sum = ['a', 'div', 'h4', 'h5', 'h6', 'span', 'strong'] ;
     
     /**
      * Block init register block with help of block.json
@@ -96,10 +96,7 @@ class SimpleicalBlock {
                'anchorId'=> '',
            )
            );
-       $block_attributes['anchorId'] = sanitize_html_class($block_attributes['anchorId'], $block_attributes['blockid']);
-       $block_attributes['suffix_lg_class'] = wp_kses($block_attributes['suffix_lg_class'], 'post');
-       if (!in_array($block_attributes['tag_sum'], self::$allowed_tags_sum)) $block_attributes['tag_sum'] = 'a';
-       
+      
        $output = '';
        ob_start();
        self::display_block($block_attributes);
@@ -124,8 +121,11 @@ class SimpleicalBlock {
         $dftstart = (isset($instance['dateformat_tstart'])) ? $instance['dateformat_tstart'] : 'G:i' ;
         $dftend = (isset($instance['dateformat_tend'])) ? $instance['dateformat_tend'] : ' - G:i ' ;
         $excerptlength = (isset($instance['excerptlength'])) ? $instance['excerptlength'] : '' ;
+        $instance['suffix_lg_class'] = wp_kses($instance['suffix_lg_class'], 'post');
         $sflgi = wp_kses($instance['suffix_lgi_class'], 'post');
         $sflgia = wp_kses($instance['suffix_lgia_class'], 'post');
+        if (!in_array($instance['tag_sum'], self::$allowed_tags_sum)) $instance['tag_sum'] = 'a';
+        $instance['anchorId'] = sanitize_html_class($instance['anchorId'], $instance['blockid']);
         $data = IcsParser::getData($instance);
         if (!empty($data) && is_array($data)) {
             date_default_timezone_set(get_option('timezone_string'));
