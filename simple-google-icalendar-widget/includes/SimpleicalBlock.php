@@ -23,6 +23,8 @@
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget;
 
 class SimpleicalBlock {
+    private static $allowed_tags_sum = ['a', 'div', 'h4', 'h5', 'h6', 'span'] ;
+    
     /**
      * Block init register block with help of block.json
      *
@@ -41,7 +43,7 @@ class SimpleicalBlock {
             'startwsum' => ['type' => 'boolean', 'default' => false],
             'dateformat_lg' => ['type' => 'string', 'default' => 'l jS \of F'],
             'dateformat_lgend' => ['type' => 'string', 'default' => ''],
-            'tag_sum' => ['enum' => ['a', 'div', 'h4', 'h5', 'h6', 'span'], 'default' => 'a'],
+            'tag_sum' => ['enum' => self::$allowed_tags_sum, 'default' => 'a'],
             'dateformat_tsum' => ['type' => 'string', 'default' => 'G:i '],
             'dateformat_tsend' => ['type' => 'string', 'default' => ''],
             'dateformat_tstart' => ['type' => 'string', 'default' => 'G:i'],
@@ -95,6 +97,9 @@ class SimpleicalBlock {
            )
            );
        $block_attributes['anchorId'] = sanitize_html_class($block_attributes['anchorId'], $block_attributes['blockid']);
+       $block_attributes['suffix_lg_class'] = wp_kses($block_attributes['suffix_lg_class'], 'post');
+       if (!in_array($block_attributes['tag_sum'], self::$allowed_tags_sum)) $block_attributes['tag_sum'] = 'a';
+       
        $output = '';
        ob_start();
        self::display_block($block_attributes);
@@ -119,19 +124,18 @@ class SimpleicalBlock {
         $dftstart = (isset($instance['dateformat_tstart'])) ? $instance['dateformat_tstart'] : 'G:i' ;
         $dftend = (isset($instance['dateformat_tend'])) ? $instance['dateformat_tend'] : ' - G:i ' ;
         $excerptlength = (isset($instance['excerptlength'])) ? $instance['excerptlength'] : '' ;
-        $sflg = (isset($instance['suffix_lg_class'])) ? $instance['suffix_lg_class'] : '' ;
-        $sflgi = (isset($instance['suffix_lgi_class'])) ? $instance['suffix_lgi_class'] : '' ;
-        $sflgia = (isset($instance['suffix_lgia_class'])) ? $instance['suffix_lgia_class'] : '' ;
+        $sflgi = wp_kses($instance['suffix_lgi_class'], 'post');
+        $sflgia = wp_kses($instance['suffix_lgia_class'], 'post');
         $data = IcsParser::getData($instance);
         if (!empty($data) && is_array($data)) {
             date_default_timezone_set(get_option('timezone_string'));
-            echo '<ul class="list-group' .  $sflg . ' simple-ical-widget">';
+            echo '<ul class="list-group' .  $instance['suffix_lg_class'] . ' simple-ical-widget">';
             $curdate = '';
             foreach($data as $e) {
                 $idlist = explode("@", esc_attr($e->uid) );
                 $itemid = $instance['blockid'] . '_' . $idlist[0]; //TODO find correct block id when duplicate
-                $evdate = wp_date( $dflg, $e->start) . (date('yz', $e->start) == date('yz', $e->end) ? '' : wp_date( $dflgend, $e->end - 1) );
-                $evdtsum = (($e->startisdate === false) ? wp_date( $dftsum, $e->start) . wp_date( $dftsend, $e->end) : '');
+                $evdate = wp_kses(wp_date( $dflg, $e->start) . (date('yz', $e->start) == date('yz', $e->end) ? '' : wp_date( $dflgend, $e->end - 1) ), 'post');
+                $evdtsum = (($e->startisdate === false) ? wp_kses(wp_date( $dftsum, $e->start) . wp_date( $dftsend, $e->end), 'post') : '');
                 echo '<li class="list-group-item' .  $sflgi . ' ical-date">';
                 if (!$startwsum && $curdate != $evdate ) {
                     $curdate =  $evdate;
@@ -164,8 +168,8 @@ class SimpleicalBlock {
                     echo   $e->description ,(strrpos($e->description, '<br>') == (strlen($e->description) - 4)) ? '' : '<br>';
                 }
                 if ($e->startisdate === false && date('yz', $e->start) === date('yz', $e->end))	{
-                    echo '<span class="time">', wp_date( $dftstart, $e->start ),
-                    '</span><span class="time">', wp_date( $dftend, $e->end ), '</span> ' ;
+                    echo '<span class="time">', wp_kses(wp_date( $dftstart, $e->start ), 'post'),
+                    '</span><span class="time">', wp_kses(wp_date( $dftend, $e->end ), 'post'), '</span> ' ;
                 } else {
                     echo '';
                 }

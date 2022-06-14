@@ -527,10 +527,10 @@ END:VCALENDAR';
                                                             $en->start = $newstart->getTimestamp();
                                                             $en->end = $en->start + $edurationsecs;
                                                             if ($en->startisdate ){ //
-                                                                $endtime = wp_date('Gis', $en->end, $timezone);
+                                                                $endtime = wp_date('His', $en->end, $timezone);
                                                                 if ('000000' < $endtime){
                                                                     if ('120000' < $endtime) $en->end = $en->end + 86400;
-                                                                    $enddate = \DateTime::createFromFormat('Y-m-d G:i:s', wp_date('Y-m-d 00:00:00', $en->end, $timezone), $timezone );
+                                                                    $enddate = \DateTime::createFromFormat('Y-m-d H:i:s', wp_date('Y-m-d 00:00:00', $en->end, $timezone), $timezone );
                                                                     $en->end = $enddate->getTimestamp();
                                                                 }
                                                             }
