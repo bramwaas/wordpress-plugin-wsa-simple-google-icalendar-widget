@@ -74,7 +74,7 @@ class SimpleicalWidgetAdmin {
         _e('<p>Only available in block.</p>', 'simple_ical');
         
         _e('<p><strong>Time format start time after summary</strong></p>', 'simple_ical');
-        _e('<p>Start time format summary line. Default: G:i ,<br>G or g = 24 or 12 hour format of an hour without leading zeros<br>i = Minutes with leading zeros<br>a or A = Lowercase or Uppercase Ante meridiem and Post meridiem<br>make empty if you don\'t want to show this field.<br>Linefeed before this field wil be removed when summary is before first date line, if desired you can get it back by starting the format with \&lt;\b\r\&gt; <br>This field will only be shown when date part of enddate is equal to start date and format not empty.</p>', 'simple_ical');
+        _e('<p>Start time format summary line. Default: G:i ,<br>G or g = 24 or 12 hour format of an hour without leading zeros<br>i = Minutes with leading zeros<br>a or A = Lowercase or Uppercase Ante meridiem and Post meridiem<br>make empty if you don\'t want to show this field.<br>Linefeed before this field will be removed when summary is before first date line, if desired you can get it back by starting the format with \&lt;\b\r\&gt; <br>This field will only be shown when date part of enddate is equal to start date and format not empty.</p>', 'simple_ical');
         
         _e('<p><strong>Time format end time after summary</strong></p>', 'simple_ical');
         _e('<p>End time format summary line. Default: empty , no display.</p>', 'simple_ical');
