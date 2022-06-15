@@ -4,9 +4,10 @@
  Description: Widget that displays events from a public google calendar or iCal file
  Plugin URI: https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  Author: Bram Waasdorp
- Version: 2.0.1
+ Version: 2.0.2
  License: GPL3
  Tested up to: 6.0
+ Requires at least: 5.3
  Requires PHP:  5.3.0 tested with 7.2
  Text Domain:  simple_ical
  Domain Path:  /languages
@@ -33,7 +34,7 @@
 /*
  Simple Google Calendar Outlook Events Widget
  Copyright (C) Bram Waasdorp 2017 - 2022
- 2022-05-03
+ 2022-06-15
  Forked from Simple Google Calendar Widget v 0.7 by Nico Boehr
  
  This program is free software: you can redistribute it and/or modify
