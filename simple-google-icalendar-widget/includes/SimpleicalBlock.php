@@ -136,10 +136,10 @@ class SimpleicalBlock {
                 $itemid = $instance['blockid'] . '_' . $idlist[0]; //TODO find correct block id when duplicate
                 $evdate = wp_kses(wp_date( $dflg, $e->start) . (date('yz', $e->start) == date('yz', $e->end) ? '' : wp_date( $dflgend, $e->end - 1) ), 'post');
                 $evdtsum = (($e->startisdate === false) ? wp_kses(wp_date( $dftsum, $e->start) . wp_date( $dftsend, $e->end), 'post') : '');
-                echo '<li class="list-group-item' .  $sflgi . ' ical-date">';
+                echo '<li class="list-group-item' .  $sflgi . '">';
                 if (!$startwsum && $curdate != $evdate ) {
                     $curdate =  $evdate;
-                    echo ucfirst($evdate), '<br>';
+                    echo '<span class="ical-date">' . ucfirst($evdate) . '</span>' . (('a' == $instance['tag_sum'] ) ? '<br>': '');
                 }
                 echo  '<' . $instance['tag_sum'] . ' class="ical_summary' .  $sflgia . '" data-toggle="collapse" data-bs-toggle="collapse" href="#',
                 $itemid, '" aria-expanded="false" aria-controls="',
@@ -152,7 +152,7 @@ class SimpleicalBlock {
                 }
                 echo	'</' . $instance['tag_sum'] . '>' ;
                 if ($startwsum ) {
-                    echo '<span>', $evdate, $evdtsum, '</span>', '<br>';
+                    echo '<span>', $evdate, $evdtsum, '</span>';
                 }
                 echo '<div class="collapse ical_details' .  $sflgia . '" id="',  $itemid, '">';
                 if(!empty($e->description) && trim($e->description) > '' && $excerptlength !== 0) {
