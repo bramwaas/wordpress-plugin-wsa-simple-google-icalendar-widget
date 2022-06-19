@@ -172,7 +172,7 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 
 == Changelog ==
 * 2.0.2 For block: Added enddate (only when different from startdate) and endtime for first line and summary line, boolean start with summary, selectlist for summary tag,
-*       HTML anchor and improved security by using wp_kess on formatted datetimes.   
+*       HTML anchor and improved security by using wp_kess on formatted datetimes. Removed editor style.  
 *       For all: Improved handling of enddate for recurrent events with DATEs (no times) and selection recurrent events also when enddate is after now (was already so with single events)     
 * 2.0.1 Added transform from widget to block. Removed support for anchor because it doesn't work and gives error if you don't save more then attributes. added example.
 * 2.0.0 Created a native Gutenberg Block Simple ical Block next to the old the widget when using WP 5.9 or higher with the same backend code and almost the same frontend.
