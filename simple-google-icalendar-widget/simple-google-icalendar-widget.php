@@ -232,7 +232,7 @@ class Simple_iCal_Widget extends WP_Widget
         $instance['suffix_lg_class'] = strip_tags($new_instance['suffix_lg_class']);
         $instance['suffix_lgi_class'] = strip_tags($new_instance['suffix_lgi_class']);
         $instance['suffix_lgia_class'] = strip_tags($new_instance['suffix_lgia_class']);
-        $instance['allowhtml'] = $new_instance['allowhtml'];
+        $instance['allowhtml'] = !empty($new_instance['allowhtml']);
         
         
         if (!empty($new_instance['clear_cache_now'])){
@@ -268,7 +268,7 @@ class Simple_iCal_Widget extends WP_Widget
             'suffix_lg_class' => '',
             'suffix_lgi_class' => ' py-0',
             'suffix_lgia_class' => '',
-            'allowhtml' => 0,
+            'allowhtml' => false,
             'clear_cache_now' => false,
         );
         $instance = wp_parse_args((array) $instance, $default);

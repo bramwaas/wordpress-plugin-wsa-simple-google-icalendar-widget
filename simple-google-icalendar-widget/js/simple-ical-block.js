@@ -205,13 +205,16 @@
                         value: props.attributes.tag_sum,
                         onChange: function( value ) { props.setAttributes( { tag_sum: value } );},
 					    options:  [
-							        { value: 'a', label: 'a (link)' },
-								    { value: 'div', label: 'div' },
-								    { value: 'h4', label: 'h4 (sub header)' },
-								    { value: 'h5', label: 'h5 (sub header)' },
-								    { value: 'h6', label: 'h6 (sub header)' },
-								    { value: 'span', label: 'span' },
-								    { value: 'strong', label: 'strong' }
+							        { value: 'a', label: __('a (link)', 'simple_ical') },
+							        { value: 'b', label: __('b (attention, bold)', 'simple_ical') },
+								    { value: 'div', label: __('div', 'simple_ical') },
+								    { value: 'h4', label: __('h4 (sub header)', 'simple_ical') },
+								    { value: 'h5', label: __('h5 (sub header)', 'simple_ical') },
+								    { value: 'h6', label: __('h6 (sub header)', 'simple_ical') },
+							        { value: 'i', label: __('i (idiomatic, italic)', 'simple_ical') },
+								    { value: 'span', label: __('span', 'simple_ical') },
+								    { value: 'strong', label: __('strong', 'simple_ical') },
+							        { value: 'u', label: __('u (unarticulated, underline )', 'simple_ical') }
     							] 
                     }
                 ),

@@ -23,7 +23,7 @@
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget;
 
 class SimpleicalBlock {
-    private static $allowed_tags_sum = ['a', 'div', 'h4', 'h5', 'h6', 'span', 'strong'] ;
+    private static $allowed_tags_sum = ['a', 'b', 'div', 'h4', 'h5', 'h6', 'i', 'span', 'strong', 'u'] ;
     
     /**
      * Block init register block with help of block.json
@@ -43,7 +43,7 @@ class SimpleicalBlock {
             'startwsum' => ['type' => 'boolean', 'default' => false],
             'dateformat_lg' => ['type' => 'string', 'default' => 'l jS \of F'],
             'dateformat_lgend' => ['type' => 'string', 'default' => ''],
-            'tag_sum' => ['enum' => self::$allowed_tags_sum, 'default' => 'a'],
+            'tag_sum' => ['type' => 'string', 'enum' => self::$allowed_tags_sum, 'default' => 'a'],
             'dateformat_tsum' => ['type' => 'string', 'default' => 'G:i '],
             'dateformat_tsend' => ['type' => 'string', 'default' => ''],
             'dateformat_tstart' => ['type' => 'string', 'default' => 'G:i'],
@@ -89,8 +89,8 @@ class SimpleicalBlock {
                'suffix_lg_class' => '',
                'suffix_lgi_class' => ' py-0',
                'suffix_lgia_class' => '',
-               'allowhtml' => 0,
-               'clear_cache_now' => 0,
+               'allowhtml' => false,
+               'clear_cache_now' => false,
 //               'align'=>'', 
                'className'=>'',
                'anchorId'=> '',
@@ -134,7 +134,10 @@ class SimpleicalBlock {
             foreach($data as $e) {
                 $idlist = explode("@", esc_attr($e->uid) );
                 $itemid = $instance['blockid'] . '_' . $idlist[0]; //TODO find correct block id when duplicate
-                $evdate = wp_kses(wp_date( $dflg, $e->start) . (date('yz', $e->start) == date('yz', $e->end) ? '' : wp_date( $dflgend, $e->end - 1) ), 'post');
+                $evdate = wp_kses(wp_date( $dflg, $e->start), 'post');
+                if (date('yz', $e->start) != date('yz', $e->end)) {
+                    $evdate = str_replace(array("</div><div>", "</h4><h4>", "</h5><h5>", "</h6><h6>" ), '', $evdate . wp_kses(wp_date( $dflgend, $e->end - 1) , 'post'));
+                }
                 $evdtsum = (($e->startisdate === false) ? wp_kses(wp_date( $dftsum, $e->start) . wp_date( $dftsend, $e->end), 'post') : '');
                 echo '<li class="list-group-item' .  $sflgi . '">';
                 if (!$startwsum && $curdate != $evdate ) {
