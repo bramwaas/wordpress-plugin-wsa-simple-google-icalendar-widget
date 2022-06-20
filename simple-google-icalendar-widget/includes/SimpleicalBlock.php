@@ -18,7 +18,7 @@
  * 20220511 integer excerptlength not initialised with '' because serversiderender REST type validation gives an error (rest_invalid_type)
  *  excerptlength string and in javascript  '' when not parsed as integer. 
  * 20220526 added example 
- * 20220612 added enddate/times for startdate and starttime added Id as anchor and choice of tagg for summary
+ * 20220620 added enddate/times for startdate and starttime added Id as anchor and choice of tagg for summary, collaps only when tag_for summary = a.
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget;
 
@@ -144,9 +144,9 @@ class SimpleicalBlock {
                     $curdate =  $evdate;
                     echo '<span class="ical-date">' . ucfirst($evdate) . '</span>' . (('a' == $instance['tag_sum'] ) ? '<br>': '');
                 }
-                echo  '<' . $instance['tag_sum'] . ' class="ical_summary' .  $sflgia . '" data-toggle="collapse" data-bs-toggle="collapse" href="#',
-                $itemid, '" aria-expanded="false" aria-controls="',
-                $itemid, '">';
+                echo  '<' . $instance['tag_sum'] . ' class="ical_summary' .  $sflgia . (('a' == $instance['tag_sum'] ) ? '" data-toggle="collapse" data-bs-toggle="collapse" href="#'.
+                $itemid . '" aria-expanded="false" aria-controls="'.
+                $itemid . '">' : '">') ;
                 if (!$startwsum)	{
                     echo $evdtsum;
                 }
@@ -157,7 +157,7 @@ class SimpleicalBlock {
                 if ($startwsum ) {
                     echo '<span>', $evdate, $evdtsum, '</span>';
                 }
-                echo '<div class="collapse ical_details' .  $sflgia . '" id="',  $itemid, '">';
+                echo '<div class="ical_details' .  $sflgia . (('a' == $instance['tag_sum'] ) ? ' collapse' : '') . '" id="',  $itemid, '">';
                 if(!empty($e->description) && trim($e->description) > '' && $excerptlength !== 0) {
                     if ($excerptlength !== '' && strlen($e->description) > $excerptlength) {$e->description = substr($e->description, 0, $excerptlength + 1);
                     if (rtrim($e->description) !== $e->description) {$e->description = substr($e->description, 0, $excerptlength);}

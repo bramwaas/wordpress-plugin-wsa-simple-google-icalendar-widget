@@ -32,7 +32,23 @@ These are great, but as soon as you want to make a few adjustments to the stylin
 
  == Screenshots ==
  
- 1. example
+In the screenshot: Left the block with default settings and clicked on one summary. Right with some adjusted settings.   
+ 
+ 
+ 1. With theme Twenty Twenty-Two
+ 2. With theme WP Bootstrap Starter (with bootstrap 4 css and js)
+ 
+Adjusted settings for start with summary:  
+Start with summary.: "true"  
+Date format first line: ".<\b\r>l jS \o\f  F"  
+Enddate format first line: " - l jS \o\f F"  
+Time format time summary line: " G:i"   
+Time format end time summary line: " - G:i"   
+Time format start time: ""  
+Time format end time: ""  
+Tag for summary: "strong" 
+
+ 
 
 == Installation ==
 
