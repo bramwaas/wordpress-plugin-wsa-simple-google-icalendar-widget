@@ -4,11 +4,12 @@
  * Move styles to stylesheets - both edit and front-end.
  * and use attributes and editable fields
  * attributes as Inspectorcontrols (settings)
- * v2.0.0
+ * v2.0.2
  * 20220517  try to find a unique blockid from  clientId (only once) 
  *   excerptlength initialised with '' so cannot be integer, all parseInt(value) followed bij || 0,1,or 2  because result must comply type validation of REST endpoint and '' or NaN don't. (rest_invalid_type)
  *   preponed 'b' to blockid, because html id must not start with number.
  *   wp.components.ServerSideRender deprecated replaced by serverSideRender and dependency wp-server-side-render; clear_cache_now false after 1 second, to prevent excessive calling of calendar
+ * 20220612  added enddate/times for startdate and starttime added Id as anchor.
  */
 ( function(blocks, i18n, element, blockEditor, components, serverSideRender ) {
 	var el = element.createElement;
@@ -31,6 +32,7 @@
     var Button = components.Button;
     var TextControl = components.TextControl;
     var ToggleControl = components.ToggleControl;
+    var SelectControl = components.SelectControl;
     var useEffect = element.useEffect;
 	blocks.registerBlockType( 'simplegoogleicalenderwidget/simple-ical-block', {
         icon: iconEl,
@@ -122,6 +124,13 @@
                     }
                 ),
                 el(
+                    ToggleControl,
+                    {   label: __('Start with summary.', 'simple_ical'),
+                        checked: props.attributes.startwsum,
+                        onChange: function( value ) { props.setAttributes( { startwsum: value } );},
+                    }
+                ),
+                el(
                     TextControl,
                     {   label: __('Date format first line:', 'simple_ical'),
                         value: props.attributes.dateformat_lg,
@@ -130,9 +139,23 @@
                 ),
                 el(
                     TextControl,
+                    {   label: __('Enddate format first line:', 'simple_ical'),
+                        value: props.attributes.dateformat_lgend,
+                        onChange: function( value ) { props.setAttributes( { dateformat_lgend: value } );},
+                    }
+                ),
+                el(
+                    TextControl,
                     {   label: __('Time format time summary line:', 'simple_ical'),
                         value: props.attributes.dateformat_tsum,
                         onChange: function( value ) { props.setAttributes( { dateformat_tsum: value } );},
+                    }
+                ),
+                el(
+                    TextControl,
+                    {   label: __('Time format end time summary line:', 'simple_ical'),
+                        value: props.attributes.dateformat_tsend,
+                        onChange: function( value ) { props.setAttributes( { dateformat_tsend: value } );},
                     }
                 ),
                 el(
@@ -174,6 +197,25 @@
                         onChange: function( value ) {parsed =  parseInt(value);
                                                      if (isNaN(parsed)) {parsed = ''};
                                                      props.setAttributes( { excerptlength: parsed.toString() } );},
+                    }
+                ),
+                el(
+                    SelectControl,
+                    {   label: __('Tag for summary:', 'simple_ical'),
+                        value: props.attributes.tag_sum,
+                        onChange: function( value ) { props.setAttributes( { tag_sum: value } );},
+					    options:  [
+							        { value: 'a', label: __('a (link)', 'simple_ical') },
+							        { value: 'b', label: __('b (attention, bold)', 'simple_ical') },
+								    { value: 'div', label: __('div', 'simple_ical') },
+								    { value: 'h4', label: __('h4 (sub header)', 'simple_ical') },
+								    { value: 'h5', label: __('h5 (sub header)', 'simple_ical') },
+								    { value: 'h6', label: __('h6 (sub header)', 'simple_ical') },
+							        { value: 'i', label: __('i (idiomatic, italic)', 'simple_ical') },
+								    { value: 'span', label: __('span', 'simple_ical') },
+								    { value: 'strong', label: __('strong', 'simple_ical') },
+							        { value: 'u', label: __('u (unarticulated, underline )', 'simple_ical') }
+    							] 
                     }
                 ),
                 el(
@@ -219,8 +261,15 @@
                         variant: 'secondary',
                         onClick: function( ) { props.setAttributes( { blockid: 'b' + props.clientId } );},
                     }
+                ),
+                el(
+                    TextControl,
+                    {   label: __('HTML anchor:', 'simple_ical'),
+                        value: props.attributes.anchorId,
+                        onChange: function( value ) { props.setAttributes( { anchorId: value } );},
+                    }
                 )
-            )			);
+            )			); 
 		},
 	} );
 }( window.wp.blocks,

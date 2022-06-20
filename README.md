@@ -1,5 +1,5 @@
 === Simple Google Calendar Outlook Events Block Widget ===
-Plugin name: Simple Google Calendar Outlook Events Widget
+Plugin name: Simple Google Calendar Outlook Events Block Widget
 Contributors: bramwaas
 Tags: Event Calendar, Google Calendar, iCal, Events, Block, Calendar, iCalendar, Outlook, iCloud
 Requires at least: 5.3.0
@@ -32,7 +32,23 @@ These are great, but as soon as you want to make a few adjustments to the stylin
 
  == Screenshots ==
  
- 1. example
+In the screenshot: Left the block with default settings and clicked on one summary. Right with some adjusted settings.   
+ 
+ 
+ 1. With theme Twenty Twenty-Two
+ 2. With theme WP Bootstrap Starter (with bootstrap 4 css and js)
+ 
+Adjusted settings for start with summary:  
+Start with summary.: "true"  
+Date format first line: ".<\b\r>l jS \o\f  F"  
+Enddate format first line: " - l jS \o\f F"  
+Time format time summary line: " G:i"   
+Time format end time summary line: " - G:i"   
+Time format start time: ""  
+Time format end time: ""  
+Tag for summary: "strong" 
+
+ 
 
 == Installation ==
 
@@ -171,6 +187,9 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 * since v1.2.0 Wordpress version 5.3.0 is required because of the use of wp_date() 
 
 == Changelog ==
+* 2.0.2 For block: Added enddate (only when different from startdate) and endtime for first line and summary line, boolean start with summary, selectlist for summary tag,
+*       HTML anchor and improved security by using wp_kess on formatted datetimes. Removed editor style.  
+*       For all: Improved handling of enddate for recurrent events with DATEs (no times) and selection recurrent events also when enddate is after now (was already so with single events)     
 * 2.0.1 Added transform from widget to block. Removed support for anchor because it doesn't work and gives error if you don't save more then attributes. added example.
 * 2.0.0 Created a native Gutenberg Block Simple ical Block next to the old the widget when using WP 5.9 or higher with the same backend code and almost the same frontend.
 * 1.5.1 After more testing and solving some issues with recurring events and daylight saving time removed the old correction for DST and the temporary checkbox to turn this correction off. Now there is only a correction when time is changed because the calculated time does not exists during transition from ST to DST. In that case in the next recursion the hour and minutes are set back to their beginvalue. Renamed and namespaced classes. Improved Zerodate to UTC-timezone processing. Restructured the IcsParse class a bit.

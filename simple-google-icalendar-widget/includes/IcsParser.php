@@ -25,8 +25,9 @@
  *               This calculation better takes into account the deleted hour at the start of DST.
  *               Correction when time is changed by ST to DST transition set hour and minutes back to beginvalue (because time doesn't exist during changeperiod) 
  *               Set event Timezoneid to UTC when datetimesting ends with Z (zero date)
- *   bw 20220527 V2.0.1 code starting with getData from block to this class                    
- * Version: 2.0.1
+ *   bw 20220527 V2.0.1 code starting with getData from block to this class 
+ *   bw 20220613 v2.0.2 code to correct endtime (00:00:00) when recurring event with different start and end as dates includes DST to ST transition or vv                    
+ * Version: 2.0.2
  
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget;
@@ -43,23 +44,32 @@ class IcsParser {
      */
     private static $example_events = 'BEGIN:VCALENDAR
 BEGIN:VEVENT
-DTSTART:20220526T150000
-DTEND:20220526T160000
+DTSTART:20220626T150000
+DTEND:20220626T160000
 RRULE:FREQ=WEEKLY;INTERVAL=3;BYDAY=SU,WE,SA
 UID:a-1
 DESCRIPTION:Description event every 3 weeks sunday wednesday and saturday. t
  est A-Z.\nLine 2 of description.
-LOCATION:At home or somewhere else
+LOCATION:Located at home or somewhere else
 SUMMARY: Every 3 weeks sunday wednesday and saturday
 END:VEVENT
 BEGIN:VEVENT
-DTSTART:20220529T143000
-DTEND:20220529T153000
+DTSTART:20220629T143000
+DTEND:20220629T153000
 RRULE:FREQ=MONTHLY;COUNT=24;BYMONTHDAY=29
 UID:a-2
 DESCRIPTION:
 LOCATION:
-SUMMARY:Example event\, Monthly day 29
+SUMMARY:Example Monthly day 29
+END:VEVENT
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20220618
+DTEND;VALUE=DATE:20220620
+RRULE:FREQ=MONTHLY;COUNT=13;BYDAY=4SA
+UID:a-3
+DESCRIPTION:Example Monthly 4th weekend
+LOCATION:Loc. unknown
+SUMMARY:X Monthly 4th weekend
 END:VEVENT
 END:VCALENDAR';
     
@@ -358,8 +368,6 @@ END:VCALENDAR';
                             $fmdayok = true;
                             $freqstart = clone $edtstart;
                             $newstart = clone $edtstart;
-                            $newend = clone $edtstart;
-                            $tzoffsetedt = $timezone->getOffset ( $edtstart);
                             while ( $freqstart->getTimestamp() <= $freqendloop
                                 && ($count == 0 || $i < $count  )            						)
                             {   // first FREQ loop on dtstart will only output new events
@@ -521,13 +529,20 @@ END:VCALENDAR';
                                                 && $newstart->getTimestamp() < $until
                                                 && !(!empty($e->exdate) && in_array($newstart->getTimestamp(), $e->exdate))
                                                 && $newstart> $edtstart) { // count events after dtstart
-                                                    if ($newstart->getTimestamp() >= $this->now
+                                                    if (($newstart->getTimestamp() + $edurationsecs) >= $this->now
                                                         ) { // copy only events after now
                                                             $cen++;
-                                                            
                                                             $en =  clone $e;
                                                             $en->start = $newstart->getTimestamp();
                                                             $en->end = $en->start + $edurationsecs;
+                                                            if ($en->startisdate ){ //
+                                                                $endtime = wp_date('His', $en->end, $timezone);
+                                                                if ('000000' < $endtime){
+                                                                    if ('120000' < $endtime) $en->end = $en->end + 86400;
+                                                                    $enddate = \DateTime::createFromFormat('Y-m-d H:i:s', wp_date('Y-m-d 00:00:00', $en->end, $timezone), $timezone );
+                                                                    $en->end = $enddate->getTimestamp();
+                                                                }
+                                                            }
                                                             $en->uid = $i . '_' . $e->uid;
                                                             if ($test > ' ') { 	$en->summary = $en->summary . '<br>Test:' . $test; 	}
                                                             $events[] = $en;
