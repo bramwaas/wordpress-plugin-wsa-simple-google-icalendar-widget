@@ -41,7 +41,6 @@ Time format end time: ""
 Tag for summary: "strong" 
   
  == Screenshots ==
-
 1. With theme Twenty Twenty-Two.
 2. With theme WP Bootstrap Starter (with bootstrap 4 css and js).
  
