@@ -9,7 +9,7 @@
  * @copyright  Copyright (c)  2017 - 2022, Bram Waasdorp
  * @link       https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  * @license    http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * Version: 1.5.1
+ * Version: 2.0.3
  * 20220410 namespaced and renamed after classname.
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget;
@@ -95,7 +95,7 @@ class SimpleicalWidgetAdmin {
         _e('<p>Max length of the description in characters.<br>If there is a space or end-of-line character within 10 characters of this end, break there.<br>Note, not all characters have the same width, so the number of lines is not completely fixed by this. So you need additional CSS for that.<br><b>Warning:</b> If you allow html in the description, necessary end tags may disappear here.<br> Default: empty, all characters will be displayed</p>', 'simple_ical');
         
         _e('<p><strong>Tag for summary</strong></p>', 'simple_ical');
-        _e('<p>Tag for summary. Choose a tag from the list. Default: a (link)<br>When using bootstrap or other collapse css and java-script the description is collapsed and wil be opened bij clicking on the summary<br>if not h4, div or strong may be a better choice.</p>', 'simple_ical');
+        _e('<p>Tag for summary. Choose a tag from the list. Default: a (link)<br>When using bootstrap or other collapse css and java-script the description is collapsed and wil be opened bij clicking on the summary link.<br>Link is not included with the other tags.<br>If not using bootstrap h4, div or strong may be a better choice then a..</p>', 'simple_ical');
         _e('<p>Only available in block.</p>', 'simple_ical');
         
         
