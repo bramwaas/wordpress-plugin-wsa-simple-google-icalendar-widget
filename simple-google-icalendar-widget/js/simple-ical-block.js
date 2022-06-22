@@ -4,12 +4,12 @@
  * Move styles to stylesheets - both edit and front-end.
  * and use attributes and editable fields
  * attributes as Inspectorcontrols (settings)
- * v2.0.2
+ * v2.0.3
  * 20220517  try to find a unique blockid from  clientId (only once) 
  *   excerptlength initialised with '' so cannot be integer, all parseInt(value) followed bij || 0,1,or 2  because result must comply type validation of REST endpoint and '' or NaN don't. (rest_invalid_type)
  *   preponed 'b' to blockid, because html id must not start with number.
  *   wp.components.ServerSideRender deprecated replaced by serverSideRender and dependency wp-server-side-render; clear_cache_now false after 1 second, to prevent excessive calling of calendar
- * 20220612  added enddate/times for startdate and starttime added Id as anchor.
+ * 20220622  added enddate/times for startdate and starttime added Id as anchor.
  */
 ( function(blocks, i18n, element, blockEditor, components, serverSideRender ) {
 	var el = element.createElement;
@@ -56,8 +56,11 @@
                     event_count: instance.raw.event_count,
                     event_period: instance.raw.event_period,
                     cache_time: instance.raw.cache_time,
+                    startwsum : false,
                     dateformat_lg: instance.raw.dateformat_lg,
+                    dateformat_lgend : '',
                     dateformat_tsum: instance.raw.dateformat_tsum,
+			  		dateformat_tsend : '',
                     dateformat_tstart: instance.raw.dateformat_tstart,
                     dateformat_tend: instance.raw.dateformat_tend,
                     excerptlength: instance.raw.excerptlength,
@@ -65,7 +68,9 @@
                     suffix_lgi_class: instance.raw.suffix_lgi_class,
                     suffix_lgia_class: instance.raw.suffix_lgia_class,
                     allowhtml: instance.raw.allowhtml,
-					className: 'Simple_iCal_Widget',
+			  		tag_sum: 'a',
+                    anchorId: '',
+			  		className: 'Simple_iCal_Widget',
                 } );
             },
         },

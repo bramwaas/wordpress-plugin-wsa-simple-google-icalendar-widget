@@ -29,15 +29,7 @@ These are great, but as soon as you want to make a few adjustments to the stylin
 * Choose date / time format in settings screen that best suits your website.
 * Displays per event DTSTART, DTEND, SUMMARY, LOCATION and DESCRIPTION. DTSTART is required other components are optional. 
 * Displays most common repeating events. Frequency Yearly, Monthly, Weekly, Dayly (not Hourly, Minutely and smaller periods)
-
- == Screenshots ==
- 
-In the screenshot: Left the block with default settings and clicked on one summary. Right with some adjusted settings.   
- 
- 
- 1. With theme Twenty Twenty-Two
- 2. With theme WP Bootstrap Starter (with bootstrap 4 css and js)
- 
+* In the screenshot below: Left the block with default settings and clicked on one summary. Right with some adjusted settings.   
 Adjusted settings for start with summary:  
 Start with summary.: "true"  
 Date format first line: ".<\b\r>l jS \o\f  F"  
@@ -47,9 +39,12 @@ Time format end time summary line: " - G:i"
 Time format start time: ""  
 Time format end time: ""  
 Tag for summary: "strong" 
-
+  
+ == Screenshots ==
+1. With theme Twenty Twenty-Two.
+2. With theme WP Bootstrap Starter (with bootstrap 4 css and js).
+3. Transform from Legacy widget block to Simple ical Block.
  
-
 == Installation ==
 
 * Do the usual setup procedure... you know... downloading... unpacking... uploading... activating.   
@@ -187,6 +182,7 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 * since v1.2.0 Wordpress version 5.3.0 is required because of the use of wp_date() 
 
 == Changelog ==
+* 2.0.3 Added initial values for new attributes in transform.
 * 2.0.2 For block: Added enddate (only when different from startdate) and endtime for first line and summary line, boolean start with summary, selectlist for summary tag,
 *       HTML anchor and improved security by using wp_kess on formatted datetimes. Removed editor style.  
 *       For all: Improved handling of enddate for recurrent events with DATEs (no times) and selection recurrent events also when enddate is after now (was already so with single events)     
