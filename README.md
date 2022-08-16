@@ -182,6 +182,10 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 * since v1.2.0 Wordpress version 5.3.0 is required because of the use of wp_date() 
 
 == Changelog ==
+* 2.0.4 Improvements IcsParser made as a result of porting to Joomla
+* notably solve issue not recognizing http as a valid protocol in array('http', 'https', 'webcal') because index = 0 so added 1 as starting index
+* make timezone-string a property of the object filled with the time-zone setting of the CMS (get_option('timezone_string')).
+* replace wp_date() by date() because translation of weekday- and month-names is not needed here.
 * 2.0.3 Added initial values for new attributes in transform.
 * 2.0.2 For block: Added enddate (only when different from startdate) and endtime for first line and summary line, boolean start with summary, selectlist for summary tag,
 *       HTML anchor and improved security by using wp_kess on formatted datetimes. Removed editor style.  
