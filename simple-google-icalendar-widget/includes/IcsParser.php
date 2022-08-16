@@ -26,9 +26,12 @@
  *               Correction when time is changed by ST to DST transition set hour and minutes back to beginvalue (because time doesn't exist during changeperiod) 
  *               Set event Timezoneid to UTC when datetimesting ends with Z (zero date)
  *   bw 20220527 V2.0.1 code starting with getData from block to this class 
- *   bw 20220613 v2.0.2 code to correct endtime (00:00:00) when recurring event with different start and end as dates includes DST to ST transition or vv                    
- * Version: 2.0.2
- 
+ *   bw 20220613 v2.0.2 code to correct endtime (00:00:00) when recurring event with different start and end as dates includes DST to ST transition or vv  
+ *   bw 20220613 v2.0.4 Improvements IcsParser made as a result of porting to Joomla
+ * solve issue not recognizing http as a valid protocol in array('http', 'https', 'webcal') because index = 0 so added 1 as starting index
+ * make timezone-string a property of the object filled with the time-zone setting of the CMS (get_option('timezone_string')).
+ * replace wp_date() by date() because translation of weekday- and month-names is not needed.                   
+ * Version: 2.0.4
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget;
 
@@ -246,7 +249,13 @@ END:VCALENDAR';
      * @since  1.5.1
      */
     protected $now = NULL;
-    
+    /**
+     * The timezone string from the configuration.
+     *
+     * @var   string
+     * @since  2.0.4
+     */
+    protected $timezone_string = 'UTC';
     /**
      * Constructor.
      *
@@ -258,6 +267,7 @@ END:VCALENDAR';
      */
     public function __construct()
     {
+        $this->timezone_string = get_option('timezone_string');
     }
     /**
      * Parse ical string to individual events
@@ -311,7 +321,7 @@ END:VCALENDAR';
                      * FREQ=DAILY;COUNT=5;INTERVAL=7 Every 7 days,5 times
                      
                      */
-                    $timezone = new \DateTimeZone((isset($e->tzid)&& $e->tzid !== '') ? $e->tzid : get_option('timezone_string'));
+                    $timezone = new \DateTimeZone((isset($e->tzid)&& $e->tzid !== '') ? $e->tzid : $this->timezone_string);
                     $edtstart = new \DateTime('@' . $e->start);
                     $edtstart->setTimezone($timezone);
                     $edtstartmday = $edtstart->format('j');
@@ -536,10 +546,10 @@ END:VCALENDAR';
                                                             $en->start = $newstart->getTimestamp();
                                                             $en->end = $en->start + $edurationsecs;
                                                             if ($en->startisdate ){ //
-                                                                $endtime = wp_date('His', $en->end, $timezone);
+                                                                $endtime = date('His', $en->end, $timezone);
                                                                 if ('000000' < $endtime){
                                                                     if ('120000' < $endtime) $en->end = $en->end + 86400;
-                                                                    $enddate = \DateTime::createFromFormat('Y-m-d H:i:s', wp_date('Y-m-d 00:00:00', $en->end, $timezone), $timezone );
+                                                                    $enddate = \DateTime::createFromFormat('Y-m-d H:i:s', date('Y-m-d 00:00:00', $en->end, $timezone), $timezone );
                                                                     $en->end = $enddate->getTimestamp();
                                                                 }
                                                             }
@@ -657,7 +667,7 @@ END:VCALENDAR';
     private function parseIanaTimezoneid ($ptzid = '', $datetime = '') {
         if (8 < strlen($datetime) && 'Z'== $datetime[strlen($datetime) - 1]) $ptzid = 'UTC';
         try {
-            $timezone = (isset($ptzid)&& $ptzid !== '') ? new \DateTimeZone($ptzid) : wp_timezone();
+            $timezone = (isset($ptzid)&& $ptzid !== '') ? new \DateTimeZone($ptzid) : new \DateTimeZone($this->timezone_string);
         } catch (\Exception $exc) {}
         if (isset($timezone)) return $timezone;
         try {
@@ -665,7 +675,7 @@ END:VCALENDAR';
         } catch (\Exception $exc) {}
         if (isset($timezone)) return $timezone;
         try {
-            $timezone = wp_timezone();
+            $timezone = new \DateTimeZone($this->timezone_string);
         } catch (\Exception $exc) { }
         if (isset($timezone)) return $timezone;
         return new \DateTimeZone('UTC');
@@ -787,6 +797,7 @@ END:VCALENDAR';
      *
      * @param array $instance the block attributes
      *    ['blockid']      to create transientid
+     *    ['cache_time'] time the transient cache is valid in minutes.
      *    ['calendar_id']  id or url of the calender to fetch data
      *    ['event_count']  max number of events to return
      *    ['event_period'] max number of days after now to fetch events.
@@ -856,8 +867,9 @@ END:VCALENDAR';
     private static function getCalendarUrl($calId)
     {
         $protocol = strtolower(explode('://', $calId)[0]);
-        if (array_search($protocol, array('http', 'https', 'webcal')))
-        { return $calId; }
+        if (array_search($protocol, array(1 => 'http', 'https', 'webcal')))
+        { if ('webcal' == $protocol) $calId = 'http://' . explode('://', $calId)[1];
+           return $calId; }
         else
         { return 'https://www.google.com/calendar/ical/'.$calId.'/public/basic.ics'; }
     }
