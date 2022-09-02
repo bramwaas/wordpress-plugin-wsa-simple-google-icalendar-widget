@@ -24,6 +24,7 @@ These are great, but as soon as you want to make a few adjustments to the stylin
 * Calendar block or widget to display appointments/events of a public Google calendar or other iCal file.
 * Block gives live preview in the editor and is not constrained to widget area. Old widget will be displayed in legacy widget block only in widget area.
 * Small footprint, uses only Google ID of the calendar, or ICS link for Outlook, or Url of iCal file, to get event information via iCal
+* Merge more calendars into one block
 * Manage events in Google Calendar, or other iCalendar source.
 * Fully adaptable to your website with CSS. Output in unordered list with Bootstrap 4 listgroup classes and toggle for details.
 * Choose date / time format in settings screen that best suits your website.
@@ -74,6 +75,13 @@ Then use the public iCal address or the Google calendar ID.
  You can find Google calendar ID by going to Calendar Settings / Calendars, clicking on the appropriate calendar, scrolling all the way down to find the Calendar ID at the bottom under the Integrate Calendar section. There's your calendar id.
  [More details on Google support](https://support.google.com/calendar/answer/37083#link)
 
+= How to merge more calendars into one module/block =  
+
+Fill a comma separated list of ID's in the Calendar ID field.      
+Optional you can add a html-class separated by a semicolon to some or all ID's to distinguish the descent in the lay-out of the event.   
+E.g.: #example;blue,https://p24-calendars.icloud.com/holiday/NL_nl.ics;red     
+Events of #example will be merged with events of NL holidays; html-class "blue" is added to all events of #example, html-class "red" to all events of NL holidays. 
+
 = Can I use HTML in the description of the appointement?  =
 
 You can use HTML in the most Calendars, but the result in the plugin may not be what you expect.    
@@ -121,6 +129,7 @@ We'd love your help! Here's a few things you can do:
 == Documentation ==
 
 * Gets calendar events via iCal url or google calendar ID
+* Merge more calendars into one block
 * Displays selected number of events, or events in a selected period from now as listgroup-items
 * Displays event start-date and summary; toggle details, description, start-, end-time, location. 
 * Displays most common repeating events 
@@ -182,6 +191,8 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 * since v1.2.0 Wordpress version 5.3.0 is required because of the use of wp_date() 
 
 == Changelog ==
+* 2.1.0 Support more calendars in one module/block. Support DURATION of event. Move processing 'allowhtml' complete out Parser to template/block. 
+  Use properties in IcsParser to limit copying of input params in several functions.  
 * 2.0.4 Improvements IcsParser made as a result of porting to Joomla
 * notably solve issue not recognizing http as a valid protocol in array('http', 'https', 'webcal') because index = 0 so added 1 as starting index
 * make timezone-string a property of the object filled with the time-zone setting of the CMS (get_option('timezone_string')).
