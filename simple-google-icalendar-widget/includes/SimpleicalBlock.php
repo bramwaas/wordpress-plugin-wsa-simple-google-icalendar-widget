@@ -19,6 +19,9 @@
  *  excerptlength string and in javascript  '' when not parsed as integer. 
  * 20220526 added example 
  * 20220620 added enddate/times for startdate and starttime added Id as anchor and choice of tagg for summary, collaps only when tag_for summary = a.
+ * 2.1.0 add calendar class to list-group-item
+ *   add htmlspecialchars() to summary, description and location when not 'allowhtml', replacing similar code from IcsParser
+
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget;
 
@@ -135,11 +138,16 @@ class SimpleicalBlock {
                 $idlist = explode("@", esc_attr($e->uid) );
                 $itemid = $instance['blockid'] . '_' . $idlist[0]; //TODO find correct block id when duplicate
                 $evdate = wp_kses(wp_date( $dflg, $e->start), 'post');
+                if ( !$instance['allowhtml']) {
+                    $e->summary = htmlspecialchars($e->summary);
+                    $e->description = htmlspecialchars($e->description);
+                    $e->location = htmlspecialchars($e->location);
+                }
                 if (date('yz', $e->start) != date('yz', $e->end)) {
                     $evdate = str_replace(array("</div><div>", "</h4><h4>", "</h5><h5>", "</h6><h6>" ), '', $evdate . wp_kses(wp_date( $dflgend, $e->end - 1) , 'post'));
                 }
                 $evdtsum = (($e->startisdate === false) ? wp_kses(wp_date( $dftsum, $e->start) . wp_date( $dftsend, $e->end), 'post') : '');
-                echo '<li class="list-group-item' .  $sflgi . '">';
+                echo '<li class="list-group-item' .  $sflgi . ' ' . sanitize_html_class($e->cal_class) . '">';
                 if (!$startwsum && $curdate != $evdate ) {
                     $curdate =  $evdate;
                     echo '<span class="ical-date">' . ucfirst($evdate) . '</span>' . (('a' == $instance['tag_sum'] ) ? '<br>': '');
