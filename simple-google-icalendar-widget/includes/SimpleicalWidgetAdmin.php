@@ -55,7 +55,7 @@ class SimpleicalWidgetAdmin {
         
         _e('<p><strong>Calendar ID(s), or iCal URL</strong></p>', 'simple_ical');
         _e('<p>The Google calendar ID, or the URL of te iCal file to display, or #example, or comma separated list of ID&apos;s.</p>', 'simple_ical');
-        _e('<p>In the block you can use #example to get example events</p>', 'simple_ical');
+        _e('<p>You can use #example to get example events</p>', 'simple_ical');
         _e('<p>Or a comma separated list of ID&apos;s; optional you can add a html-class separated by a semicolon to some or all ID&apos;s to distinguish the descent in the lay-out of the event.</p>', 'simple_ical');
         
         _e('<p><strong>Number of events displayed</strong></p>', 'simple_ical');
