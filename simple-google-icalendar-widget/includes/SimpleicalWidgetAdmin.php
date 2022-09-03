@@ -90,8 +90,8 @@ class SimpleicalWidgetAdmin {
 
         _e('<h3>Advanced settings</h3>' );
         
-        _e('<p><strong>Cache expiration time in minutes</strong></p>', 'simple_ical');
-        _e('<p>Minimal time in minutes between reads from source.</p>', 'simple_ical');
+        _e('<p><strong>Calendar cache expiration time in minutes</strong></p>', 'simple_ical');
+        _e('<p>Minimal time in minutes between reads from calendar source.</p>', 'simple_ical');
         
         _e('<p><strong>Excerpt length</strong></p>', 'simple_ical');
         _e('<p>Max length of the description in characters.<br>If there is a space or end-of-line character within 10 characters of this end, break there.<br>Note, not all characters have the same width, so the number of lines is not completely fixed by this. So you need additional CSS for that.<br><b>Warning:</b> If you allow html in the description, necessary end tags may disappear here.<br> Default: empty, all characters will be displayed</p>', 'simple_ical');
