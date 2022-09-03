@@ -1,6 +1,8 @@
 <?php
 /**
  * a simple ICS parser.
+ * @copyright Copyright (C) 2017 - 2022 Bram Waasdorp. All rights reserved.
+ * @license GNU General Public License version 3 or later
  *
  * note that this class does not implement all ICS functionality.
  *   bw 20171109 enkele verbeteringen voor start en end in ical.php
@@ -31,7 +33,12 @@
  * solve issue not recognizing http as a valid protocol in array('http', 'https', 'webcal') because index = 0 so added 1 as starting index
  * make timezone-string a property of the object filled with the time-zone setting of the CMS (get_option('timezone_string')).
  * replace wp_date() by date() because translation of weekday- and month-names is not needed.                   
- * Version: 2.0.4
+ * 2.1.0 calendar_id can be array of ID;class elements; elements foreach in fetch() to parse each element; sort moved to fetch() after foreach.
+ *   parse() directly add in events in $this->events, add html-class from new input parameter to each event
+ *   Make properties from most important parameters during instantiation of the class to limit copying of input params in several functions.
+ *   Removed htmlspecialchars() from summary, description and location, to replace it in the output template/block
+ *   Combined getFutureEvents and Limit array. usort eventsortcomparer now on start, end, cal_ord and with arithmic subtraction because all are integers.
+ *   Parse event DURATION; (only) When DTEND is empty: determine end from start plus duration, when duration is empty and start is DATE start plus one day, else = start  
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget;
 
@@ -67,7 +74,8 @@ SUMMARY:Example Monthly day 29
 END:VEVENT
 BEGIN:VEVENT
 DTSTART;VALUE=DATE:20220618
-DTEND;VALUE=DATE:20220620
+//DTEND;VALUE=DATE:20220620
+DURATION:P1DT23H59M60S
 RRULE:FREQ=MONTHLY;COUNT=13;BYDAY=4SA
 UID:a-3
 DESCRIPTION:Example Monthly 4th weekend
@@ -236,6 +244,28 @@ END:VCALENDAR';
         'Yakutsk Standard Time'           => 'Asia/Yakutsk',
     );
     /**
+     * Comma separated list of Id's or url's of the calendar to fetch data.
+     * Each Id/url may be followed by semicolon and a html-class
+     *
+     * @var    string
+     * @since 2.1.0
+     */
+    protected $calendar_ids = '';
+    /**
+     * max number of events to return
+     *
+     * @var    int
+     * @since 2.1.0
+     */
+    protected $event_count = 0;
+    /**
+     * Timestamp periode enddate calculated from today and event_period
+     *
+     * @var   int
+     * @since 2.1.0
+     */
+    protected $penddate = NULL;
+    /**
      * The arry of events parsed from the ics file, initial set by parse function.
      *
      * @var    array array of event objects
@@ -243,9 +273,9 @@ END:VCALENDAR';
      */
     protected $events = [];
     /**
-     * The start time fo parsing, set by parse function.
+     * Timestamp of the start time fo parsing, set by parse function.
      *
-     * @var    \DateTime
+     * @var    int
      * @since  1.5.1
      */
     protected $now = NULL;
@@ -253,42 +283,43 @@ END:VCALENDAR';
      * The timezone string from the configuration.
      *
      * @var   string
-     * @since  2.0.4
+     * @since  2.0.0
      */
     protected $timezone_string = 'UTC';
     /**
      * Constructor.
      *
-     * @param
+     * @param string  $calendar_ids Comma separated list of Id's or url's of the calendar to fetch data. Each Id/url may be followed by semicolon and a html-class
+     * @param int     $event_count max number of events to return
+     * @param int     $event_period max number of days after now to fetch events. => penddate
      *
      * @return  $this IcsParser object
      *
      * @since
      */
-    public function __construct()
+    public function __construct($calendar_ids, $event_count = 0, $event_period = 0)
     {
         $this->timezone_string = get_option('timezone_string');
+        $this->now = time();
+        $this->calendar_ids = $calendar_ids;
+        $this->event_count = $event_count;
+        $this->penddate = (0 < $event_period) ? strtotime("+$event_period day"): $this->now;
     }
     /**
      * Parse ical string to individual events
      *
      * @param   string      $str the  content of the file to parse as a string.
-     * @param   \datetime   $penddate the max date for the last event to return.
-     * @param   int         $pcount   the max number of events to return.
-     * @param   array       $instance array of options
+     * @param   string      $cal_class the html-class for this calendar
+     * @param   int         $cal_ord   order in list of this calendar 
      *
      * @return  array       $this->events the parsed event objects.
      *
      * @since
      */
-    public function parse($str ,  $penddate,  $pcount, $instance  ) {
+    public function parse($str ,   $cal_class = '', $cal_ord = 0) {
         $curstr = $str;
         $haveVevent = true;
-        $events = array();
-        $this->now = time();
-//        $this->now = (new \DateTime('2022-01-01'))->getTimestamp();
         
-        $penddate = (isset($penddate) && $penddate > $this->now) ? $penddate : $this->now;
         do {
             $startpos = strpos($curstr, self::TOKEN_BEGIN_VEVENT);
             if ($startpos !== false) {
@@ -300,8 +331,10 @@ END:VCALENDAR';
                     throw new \Exception('IcsParser->parse: No valid END:VEVENT found.');
                 }
                 $eventStr = trim(substr($eventStr, 0, $endpos), "\n\r\0");
-                $e = $this->parseVevent($eventStr, $instance);
-                $events[] = $e;
+                $e = $this->parseVevent($eventStr);
+                $e->cal_class = $cal_class;
+                $e->cal_ord = $cal_ord;
+                $this->events[] = $e;
                 // Recurring event?
                 if (isset($e->rrule) && $e->rrule !== '') {
                     /* Recurring event, parse RRULE in associative array add appropriate duplicate events
@@ -344,9 +377,9 @@ END:VCALENDAR';
                     $interval = (isset($rrules['interval']) && $rrules['interval'] !== '') ? $rrules['interval'] : 1;
                     $freqinterval =new \DateInterval('P' . $interval . substr($frequency,0,1));
                     $interval3day =new \DateInterval('P3D');
-                    $until = (isset($rrules['until'])) ? $this->parseIcsDateTime($rrules['until']) : $penddate;
-                    $until = ($until < $penddate) ? $until : ($penddate - 1);
-                    $freqendloop = ($until > $penddate) ? $until : $penddate;
+                    $until = (isset($rrules['until'])) ? $this->parseIcsDateTime($rrules['until']) : $this->penddate;
+                    $until = ($until < $this->penddate) ? $until : $this->penddate;
+                    $freqendloop = $until;
                     switch ($frequency){
                         case "YEARLY"	:
                             $freqendloop = $freqendloop + (31622400 * $interval); // 366 days in sec
@@ -536,7 +569,7 @@ END:VCALENDAR';
                                                 ($fmdayok  || $expand
                                                     || $newstart->format('Ymd') != $edtstart->format('Ymd'))
                                                 && ($count == 0 || $i < $count)
-                                                && $newstart->getTimestamp() < $until
+                                                && $newstart->getTimestamp() <= $until
                                                 && !(!empty($e->exdate) && in_array($newstart->getTimestamp(), $e->exdate))
                                                 && $newstart> $edtstart) { // count events after dtstart
                                                     if (($newstart->getTimestamp() + $edurationsecs) >= $this->now
@@ -555,15 +588,14 @@ END:VCALENDAR';
                                                             }
                                                             $en->uid = $i . '_' . $e->uid;
                                                             if ($test > ' ') { 	$en->summary = $en->summary . '<br>Test:' . $test; 	}
-                                                            $events[] = $en;
-                                                    } // copy eevents
-                                                    // next eventcount from $e->start
+                                                            $this->events[] = $en;
                                                     $i++;
+                                                    } // copy eevents
                                             } // end count events
                                         } // end byday
                                     } // end bymonthday
                                 } // end bymonth
-                                // next startdate by FREQ for loop < $until and <= $penddate
+                                // next startdate by FREQ 
                                 $freqstart->add($freqinterval);
                                 if ($freqstart->format('His') != $edtstarttod) {// correction when time changed by ST to DST transition
                                     $freqstart->setTime($edtstarthour, $edtstartmin, $edtstartsec);
@@ -576,9 +608,8 @@ END:VCALENDAR';
                                 } elseif (!$fmdayok ){
                                     $freqstart->add($interval3day);
                                     $fmdayok = true;
-                                    
-                                }
-                            }
+                            	}
+                            }  // end while $freqstart->getTimestamp() <= $freqendloop and $count ...
                     }
                 } // switch freq
                 //
@@ -588,20 +619,24 @@ END:VCALENDAR';
                 $haveVevent = false;
             }
         } while($haveVevent);
-        
-        usort($events, array($this, "eventSortComparer"));
-        
-        $this->events = $events;
     }
-    
-    public function getFutureEvents($penddate ) {
-        // events are already sorted
+/*
+ * Limit events to the first event_count events from today. 
+ * Events are already sorted
+ * 
+ * @return  array       remaining event objects.
+ */
+    public function getFutureEvents( ) {
+        // 
         $newEvents = array();
-//        $this->now = time();
-        
+        $i=0;
         foreach ($this->events as $e) {
-            if ((($e->start > $this->now) || (!empty($e->end) && $e->end >= $this->now))
-                && $e->start <= $penddate) {
+            if (($e->end >= $this->now)
+                && $e->start <= $this->penddate) {
+                    $i++;
+                    if ($i > $this->event_count) {
+                        break;
+                    }
                     $newEvents[] = $e;
                 }
         }
@@ -616,7 +651,7 @@ END:VCALENDAR';
     * Parse timestamp from date time string (with timezone ID)
     * @param  string $datetime date time format YYYYMMDDTHHMMSSZ last letter ='Z' means Zero-time or 'UTC' time. overrides any timezone.
     * @param  string $ptzid (timezone ID)
-    * @return \DateTimeZone object
+    * @return int timestamp
     */
     
     private function parseIcsDateTime($datetime, $tzid = '') {
@@ -681,24 +716,29 @@ END:VCALENDAR';
         return new \DateTimeZone('UTC');
     }
     
+    /**
+     * Compare events order for usort.
+     *
+     * @param  \StdClass $a first event to compare
+     * @param  \StdClass $b second event to compare
+     * @return int 0 if eventsorder is equal, positive if $a > $b negative if $a < $b
+     */
     private function eventSortComparer($a, $b) {
         if ($a->start == $b->start) {
-            return 0;
-        } else if($a->start > $b->start) {
-            return 1;
-        } else {
-            return -1;
+            if ($a->end == $b->end) {
+                return ($a->cal_ord - $b->cal_ord);
+            } 
+            else return ($a->end - $b->end);
         }
+        else return ($a->start - $b->start);
     }
     /**
      * Parse an event string from an ical file to an event object.
      *
      * @param  string $eventStr
-     * @param  array  $instance array of options.
-     *    ['allowhtml'] allow html in output.
      * @return \StdClass $eventObj
      */
-    public function parseVevent($eventStr, $instance) {
+    public function parseVevent($eventStr) {
         $lines = explode("\n", $eventStr);
         $eventObj = new \StdClass;
         $tokenprev = "";
@@ -731,8 +771,7 @@ END:VCALENDAR';
             if (count($list) > 1 && strlen($token) > 1 && substr($token, 0, 1) > ' ') { //all tokens start with a alphabetic char , otherwise it is a continuation of a description with a colon in it.
                 // trim() to remove \n\r\0
                 $value = trim($list[1]);
-                $desc = ( $instance['allowhtml']) ? $list[1] : htmlspecialchars($list[1]);
-                $desc = str_replace(array('\;', '\,', '\r\n','\n', '\r'), array(';', ',', "\n","\n","\n"), $desc);
+                $desc = str_replace(array('\;', '\,', '\r\n','\n', '\r'), array(';', ',', "\n","\n","\n"), $value);
                 $tokenprev = $token;
                 switch($token) {
                     case "SUMMARY":
@@ -750,14 +789,13 @@ END:VCALENDAR';
                         $eventObj->tzid = $tzid;
                         $eventObj->startisdate = $isdate;
                         $eventObj->start = $this->parseIcsDateTime($value, $tzid);
-                        if (!isset($eventObj->end)) { // because I am not sure the order is alway DTSTART before DTEND
-                            $eventObj->endisdate = $isdate;
-                            $eventObj->end = $eventObj->start;
-                        }
                         break;
                     case "DTEND":
                         $eventObj->endisdate = $isdate;
                         $eventObj->end = $this->parseIcsDateTime($value, $tzid);
+                        break;
+                    case "DURATION":
+                        $eventObj->duration = $value;
                         break;
                     case "UID":
                         $eventObj->uid = $value;
@@ -774,8 +812,7 @@ END:VCALENDAR';
                 }
             }else { // count($list) <= 1
                 if (strlen($l) > 1) {
-                    $desc = ($instance['allowhtml']) ? $l : htmlspecialchars($l);
-                    $desc = str_replace(array('\;', '\,', '\r\n','\n', '\r'), array(';', ',', "\n","\n","\n"), substr($desc,1));
+                    $desc = str_replace(array('\;', '\,', '\r\n','\n', '\r'), array(';', ',', "\n","\n","\n"), substr($l,1));
                     switch($tokenprev) {
                         case "SUMMARY":
                             $eventObj->summary .= $desc;
@@ -790,6 +827,25 @@ END:VCALENDAR';
                 }
             }
         }
+        if (!isset($eventObj->end)) {
+            if (isset($eventObj->duration)) {
+                $timezone = new \DateTimeZone((isset($eventObj->tzid)&& $eventObj->tzid !== '') ? $eventObj->tzid : $this->timezone_string);
+                $edtstart = new \DateTime('@' . $eventObj->start);
+                $edtstart->setTimezone($timezone);
+                $w = stripos($eventObj->duration, 'W');
+                if (0 < $w && $w < stripos($eventObj->duration, 'D')) { // in php < 8.0 W cannot be combined with D.
+                    $edtstart->add(new \DateInterval(substr($eventObj->duration,0, ++$w)));
+                    $edtstart->add(new \DateInterval('P' . substr($eventObj->duration,$w)));
+                }
+                else {
+                    $edtstart->add(new \DateInterval($eventObj->duration));
+                }
+                $eventObj->end = $edtstart->getTimestamp();
+            } else {
+                $eventObj->end = ($eventObj->startisdate) ? $eventObj->start + 86400 : $eventObj->start;
+            }
+            $eventObj->endisdate = $eventObj->startisdate;
+        }
         return $eventObj;
     }
     /**
@@ -797,11 +853,10 @@ END:VCALENDAR';
      *
      * @param array $instance the block attributes
      *    ['blockid']      to create transientid
-     *    ['cache_time'] time the transient cache is valid in minutes.
-     *    ['calendar_id']  id or url of the calender to fetch data
+     *    ['cache_time'] / ['transient_time'] time the transient cache is valid in minutes.
+     *    ['calendar_id'] id's or url's of the calendar(s) to fetch data
      *    ['event_count']  max number of events to return
      *    ['event_period'] max number of days after now to fetch events.
-     *    ['allowhtml'] allow html in output.
      *
      * @return array event objects
      */
@@ -810,7 +865,8 @@ END:VCALENDAR';
         $transientId = 'SimpleicalBlock'  . $instance['blockid']   ;
         if ($instance['clear_cache_now']) delete_transient($transientId);
         if(false === ($data = get_transient($transientId))) {
-            $data =self::fetch(  $instance,  );
+            $parser = new IcsParser($instance['calendar_id'], $instance['event_count'], $instance['event_period']);
+            $data = $parser->fetch( );
             // do not cache data if fetching failed
             if ($data) {
                 set_transient($transientId, $data, $instance['cache_time']*60);
@@ -819,49 +875,52 @@ END:VCALENDAR';
         return $data;
     }
     /**
-     * Fetches from calender
+     * Fetches from calender using calendar_ids, event_count and 
      *
-     * @param array $instance the block attributes
      *    ['calendar_id']  id or url of the calender to fetch data
      *    ['event_count']  max number of events to return
      *    ['event_period'] max number of days after now to fetch events.
-     *    ['allowhtml'] allow html in output.
      *
      * @return array event objects
      */
-    static function fetch( $instance )
+    function fetch()
     {
-        $period = $instance['event_period'];
-        if ('#example' == $instance['calendar_id']){
-            $httpData['body'] = self::$example_events;
-        }
-        else  {
-            $url = self::getCalendarUrl($instance['calendar_id']);
-            $httpData = wp_remote_get($url);
-            if(is_wp_error($httpData)) {
-                echo '<!-- ' . $url . ' not found ' . 'fall back to https:// -->';
-                $httpData = wp_remote_get('https://' . explode('://', $url)[1]);
-                if(is_wp_error($httpData)) {
-                    echo 'Simple iCal Block: ', $httpData->get_error_message();
-                    return false;
-                }
-            }
-        }
+        $cal_ord = 0;
+        foreach (explode(',', $this->calendar_ids) as $cal)
+        {
+            list($cal_id, $cal_class) = explode(';', $cal, 2);
+            $cal_id = trim($cal_id," \n\r\t\v\x00\x22");
+            $cal_class = trim($cal_class," \n\r\t\v\x00\x22");
+            ++$cal_ord;
+            if ('#example' == $cal_id){
+	            $httpBody = self::$example_events;
+	        }
+	        else  {
+                $url = self::getCalendarUrl($cal_id);
+	            $httpData = wp_remote_get($url);
+	            if(is_wp_error($httpData)) {
+	                echo '<!-- ' . $url . ' not found ' . 'fall back to https:// -->';
+	                $httpData = wp_remote_get('https://' . explode('://', $url)[1]);
+	                if(is_wp_error($httpData)) {
+	                    echo '<!-- Simple iCal Block: ', $httpData->get_error_message(), ' -->';
+	                    continue;
+	                }
+	            }
+		        if(is_array($httpData) && array_key_exists('body', $httpData)) {
+ 	           		$httpBody = $httpData['body'];
+		        } else continue;
+	        }
+	        
         
-        if(!is_array($httpData) || !array_key_exists('body', $httpData)) {
-            return false;
-        }
-        
-        try {
-            $penddate = strtotime("+$period day");
-            $parser = new IcsParser();
-            $parser->parse($httpData['body'], $penddate, $instance['event_count'],  $instance );
-            
-            $events = $parser->getFutureEvents($penddate);
-            return self::limitArray($events, $instance['event_count']);
-        } catch(\Exception $e) {
-            return null;
-        }
+	        try {
+                $this->parse($httpBody,  $cal_class, $cal_ord );
+ 	        } catch(\Exception $e) {
+	            continue;
+	        }
+        } // end foreach
+
+        usort($this->events, array($this, "eventSortComparer"));
+        return $this->getFutureEvents();
     }
     
     private static function getCalendarUrl($calId)
@@ -872,20 +931,6 @@ END:VCALENDAR';
            return $calId; }
         else
         { return 'https://www.google.com/calendar/ical/'.$calId.'/public/basic.ics'; }
-    }
-    
-    private static function limitArray($arr, $limit)
-    {
-        $i = 0;
-        $out = array();
-        foreach ($arr as $e) {
-            $i++;
-            if ($i > $limit) {
-                break;
-            }
-            $out[] = $e;
-        }
-        return $out;
     }
     
 }
