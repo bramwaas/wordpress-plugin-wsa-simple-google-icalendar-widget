@@ -9,8 +9,9 @@
  * @copyright  Copyright (c)  2017 - 2022, Bram Waasdorp
  * @link       https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  * @license    http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * Version: 2.0.3
+ * Version: 2.1.0
  * 20220410 namespaced and renamed after classname.
+ * 2.1.0 option for comma seperated list of IDs
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget;
 
@@ -52,9 +53,10 @@ class SimpleicalWidgetAdmin {
         _e('<p><strong>Title</strong></p>', 'simple_ical');
         _e('<p>Title of this instance of the widget</p>', 'simple_ical');
         
-        _e('<p><strong>Calendar ID, or iCal URL</strong></p>', 'simple_ical');
-        _e('<p>The Google calendar ID, or the URL of te iCal file to display.</p>', 'simple_ical');
+        _e('<p><strong>Calendar ID(s), or iCal URL</strong></p>', 'simple_ical');
+        _e('<p>The Google calendar ID, or the URL of te iCal file to display, or #example, or comma separated list of ID&apos;s.</p>', 'simple_ical');
         _e('<p>In the block you can use #example to get example events</p>', 'simple_ical');
+        _e('<p>Or a comma separated list of ID&apos;s; optional you can add a html-class separated by a semicolon to some or all ID&apos;s to distinguish the descent in the lay-out of the event.</p>', 'simple_ical');
         
         _e('<p><strong>Number of events displayed</strong></p>', 'simple_ical');
         _e('<p>The maximum number of events to display.</p>', 'simple_ical');
