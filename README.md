@@ -169,6 +169,8 @@ see http://www.ietf.org/rfc/rfc5545.txt for specification of te ical format.
   |____________|_________|________|_________|________|
   |BYDAY       |Limit    |Expand  |Note 1   |Note 2  |
   |____________|_________|________|_________|________|
+  |BYSETPOS    |Limit    |Limit   |Limit    |Limit   |
+  |____________|_________|________|_________|________|
  
     Note 1:  Limit if BYMONTHDAY is present; 
              otherwise, special expand for MONTHLY.
@@ -192,7 +194,8 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 
 == Changelog ==
 * 2.1.0 Support more calendars in one module/block. Support DURATION of event. Move processing 'allowhtml' complete out Parser to template/block. 
-  Use properties in IcsParser to limit copying of input params in several functions.  
+  Use properties in IcsParser to limit copying of input params in several functions. 
+  //TODO Support  BYSETPOS
 * 2.0.4 Improvements IcsParser made as a result of porting to Joomla
 * notably solve issue not recognizing http as a valid protocol in array('http', 'https', 'webcal') because index = 0 so added 1 as starting index
 * make timezone-string a property of the object filled with the time-zone setting of the CMS (get_option('timezone_string')).
