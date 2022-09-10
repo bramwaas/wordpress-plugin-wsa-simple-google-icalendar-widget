@@ -606,7 +606,7 @@ END:VCALENDAR';
                                 } // end bymonth
                                 if (false !== $bysetpos) { // process set
                                     usort($evset, array($this, "eventSortComparer"));
-                                    $cset = count($bysetpos) + 1;
+                                    $cset = count($evset) + 1;
                                     $si = 0;
                                     foreach ($evset as $evm){
                                         $si++;
