@@ -572,11 +572,11 @@ END:VCALENDAR';
                                                 ($fmdayok  || $expand
                                                     || $newstart->format('Ymd') != $edtstart->format('Ymd'))
                                                 && ($count == 0 || $i < $count)
-                                                && $newstart->getTimestamp() <= $until
+                                                && ($newstart->getTimestamp() <= $until || (false !== $bysetpos))
                                                 && !(!empty($e->exdate) && in_array($newstart->getTimestamp(), $e->exdate))
-                                                && $newstart> $edtstart) { // count events after dtstart
+                                                && $newstart> $edtstart) { // count events after dtstart  
                                                 if (($newstart->getTimestamp() + $edurationsecs) >= $this->now
-                                                    ) { // copy only events after now
+                                                        ) { // copy only events after now
                                                         $cen++;
                                                         $en =  clone $e;
                                                         $en->start = $newstart->getTimestamp();
@@ -611,8 +611,10 @@ END:VCALENDAR';
                                     foreach ($evset as $evm){
                                         $si++;
                                         if (in_array($si, $bysetpos) || in_array($si - $cset, $bysetpos)) {
-                                            $evm->description = $evm->description . '<br>$cset=' . $cset . ';  $si=' .  $si . ';<br>$bysetpos=' . print_r($bysetpos, true);
-                                            $this->events[] = $evm;
+                                            if ($newstart->getTimestamp() <= $until) {
+                                                $evm->description = $evm->description . '<br>$cset=' . $cset . ';  $si=' .  $si . ';<br>$bysetpos=' . print_r($bysetpos, true);
+                                                $this->events[] = $evm;
+                                            }
                                         }
                                     }
                                     $evset = [];
