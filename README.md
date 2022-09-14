@@ -135,9 +135,9 @@ We'd love your help! Here's a few things you can do:
 * Displays most common repeating events 
 * Frequency Yearly, Monthly, Weekly, Dayly (not parsed Hourly, Minutely ...)
 * End of repeating by COUNT or UNTIL
-* Exclude events on EXDATE from repeat 
-* By day month or by monthday (BYDAY, BYMONTH, BYMONTHDAY) no other by
-  (not parsed: BYYEARDAY, BYSETPOS, BYHOUR, BYMINUTE, WKST)
+* By day month, monthday or setpos (BYDAY, BYMONTH, BYMONTHDAY, BYSETPOS) no other by...   
+  (not parsed: BYYEARDAY, BYHOUR, BYMINUTE, WKST, RDATE)
+* Exclude events on EXDATE from repeat (after evaluating BYSETPOS)
 * Respects Timezone and Day Light Saving time. Build and tested with Iana timezones as used in php, Google, and Apple now also tested with Microsoft timezones and unknown timezones. For unknown timezone-names using the default timezone of Wordpress (probably the local timezone).  
 
 === Recurrent events, Timezone,  Daylight Saving Time ===
@@ -145,7 +145,7 @@ We'd love your help! Here's a few things you can do:
 Most users don't worry about time zones. The timezonesettings for the Wordpress installation, the calendar application and the events are all the same local time.   
 In that case this widget displays all the recurrent events with the same local times. The widget uses the properties of the starttime and duration (in seconds) of the first event to calculate the repeated events. Only when a calculated time is removed during the transition from ST (standard time, wintertime) to DST (daylight saving time, summertime) by turning the clock forward one hour, both the times of the event (in case the starttime is in the transition period) or only the endtime (in case only the endtime is in the transition period)  of the event are pushed forward with that same amount.    
 But because the transition period is usually very early in the morning, few events will be affected by it.   
-If a calculated day does not exist (i.e. February 30), the event will not be displayed.
+If a calculated day does not exist (i.e. February 30), the event will not be displayed. (Formally this should also happen to the time in the transition from ST to DST)   
 
 For users in countries that span more time zones, or users with international events the calendar applications can add a timezone to the event times. So users in other timezones will see the event in the local time in there timezone (as set in timezone settings of Wordpress) corresponding with the time.    
 The widget uses the starttime, the timezone of the starttime and the duration in seconds of the starting event as starting point for the calculation of repeating events. So if the events startime timezone does'not use daylight savings time and and timezone of the widget (i.e. the WP timezone setting) does. During DST the events are placed an hour later than during ST. (more precisely shift with the local time shift). Similar the events will be shift earlier when the timezone of the starttime has DST and the timezone of the widget not.   
@@ -194,8 +194,9 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 
 == Changelog ==
 * 2.1.0 Support more calendars in one module/block. Support DURATION of event. Move processing 'allowhtml' complete out Parser to template/block. 
-  Use properties in IcsParser to limit copying of input params in several functions. 
-  //TODO Support  BYSETPOS
+  Use properties in IcsParser to limit copying of input params in several functions.
+  Solved issue: Warning: date() expects at most 2 parameters, 3 given in ...IcsParser.php on line 549 caused by wp_date() / date() replacement in v2.0.4.     
+  Support BYSETPOS in response to a github issue on the WP block of peppergrayxyz.
 * 2.0.4 Improvements IcsParser made as a result of porting to Joomla
 * notably solve issue not recognizing http as a valid protocol in array('http', 'https', 'webcal') because index = 0 so added 1 as starting index
 * make timezone-string a property of the object filled with the time-zone setting of the CMS (get_option('timezone_string')).
