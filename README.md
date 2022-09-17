@@ -55,7 +55,7 @@ Or just install it through the wordpress plugin directory.
 You can enter the block in a post or a page with the block-editor (eg. (+ sign)Toggle block inserter / WIDGETS).           
 If your theme has a widget area you can also enter the block as a widget in a widget area:          
  Appearance / Widgets / (+ sign)Toggle block inserter / WIDGETS. Just drag it into your sidebar.    
-* Alternative for WP 5.3 and higher: Select 'Simple Google Calendar Outlook Events Widget' or select the Legacy widget and choose 'Simple Google Calendar Outlook Events Widget'     
+* Alternative : Select 'Simple Google Calendar Outlook Events Widget' or select the Legacy widget and choose 'Simple Google Calendar Outlook Events Widget'     
   and drag it into the sidebar.
 * Fill out all the necessary configuration fields.
  In Calendar ID enter the calendar ID displayed by Google Calendar, or complete url of a  Google calendar or other iCal file.
@@ -133,10 +133,10 @@ We'd love your help! Here's a few things you can do:
 * Displays selected number of events, or events in a selected period from now as listgroup-items
 * Displays event start-date and summary; toggle details, description, start-, end-time, location. 
 * Displays most common repeating events 
-* Frequency Yearly, Monthly, Weekly, Dayly (not parsed Hourly, Minutely ...)
+* Frequency Yearly, Monthly, Weekly, Dayly (not parsed Hourly, Minutely ...), INTERVAL, WKST
 * End of repeating by COUNT or UNTIL
 * By day month, monthday or setpos (BYDAY, BYMONTH, BYMONTHDAY, BYSETPOS) no other by...   
-  (not parsed: BYYEARDAY, BYHOUR, BYMINUTE, WKST, RDATE)
+  (not parsed: BYWEEKNO, BYYEARDAY, BYHOUR, BYMINUTE, RDATE)
 * Exclude events on EXDATE from repeat (after evaluating BYSETPOS)
 * Respects Timezone and Day Light Saving time. Build and tested with Iana timezones as used in php, Google, and Apple now also tested with Microsoft timezones and unknown timezones. For unknown timezone-names using the default timezone of Wordpress (probably the local timezone).  
 
@@ -196,7 +196,7 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 * 2.1.0 Support more calendars in one module/block. Support DURATION of event. Move processing 'allowhtml' complete out Parser to template/block. 
   Use properties in IcsParser to limit copying of input params in several functions.
   Solved issue: Warning: date() expects at most 2 parameters, 3 given in ...IcsParser.php on line 549 caused by wp_date() / date() replacement in v2.0.4.     
-  Support BYSETPOS in response to a github issue on the WP block of peppergrayxyz.
+  Support BYSETPOS in response to a github issue on the WP block of peppergrayxyz. Support WKST.   
 * 2.0.4 Improvements IcsParser made as a result of porting to Joomla
 * notably solve issue not recognizing http as a valid protocol in array('http', 'https', 'webcal') because index = 0 so added 1 as starting index
 * make timezone-string a property of the object filled with the time-zone setting of the CMS (get_option('timezone_string')).
