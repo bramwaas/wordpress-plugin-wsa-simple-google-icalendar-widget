@@ -147,7 +147,7 @@ class SimpleicalBlock {
                     $evdate = str_replace(array("</div><div>", "</h4><h4>", "</h5><h5>", "</h6><h6>" ), '', $evdate . wp_kses(wp_date( $dflgend, $e->end - 1) , 'post'));
                 }
                 $evdtsum = (($e->startisdate === false) ? wp_kses(wp_date( $dftsum, $e->start) . wp_date( $dftsend, $e->end), 'post') : '');
-                echo '<li class="list-group-item' .  $sflgi . ((!empty($e->location)) ? ' ' . sanitize_html_class($e->cal_class): '') . '">';
+                echo '<li class="list-group-item' .  $sflgi . ((!empty($e->cal_class)) ? ' ' . sanitize_html_class($e->cal_class): '') . '">';
                 if (!$startwsum && $curdate != $evdate ) {
                     $curdate =  $evdate;
                     echo '<span class="ical-date">' . ucfirst($evdate) . '</span>' . (('a' == $instance['tag_sum'] ) ? '<br>': '');
