@@ -39,7 +39,7 @@
  *   Removed htmlspecialchars() from summary, description and location, to replace it in the output template/block
  *   Combined getFutureEvents and Limit array. usort eventsortcomparer now on start, end, cal_ord and with arithmic subtraction because all are integers.
  *   Parse event DURATION; (only) When DTEND is empty: determine end from start plus duration, when duration is empty and start is DATE start plus one day, else = start
- *   Parse event BYSETPOS; \\TODO ...   
+ *   Parse event BYSETPOS; Parse WKST (default MO) 
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget;
 
@@ -586,7 +586,7 @@ END:VCALENDAR';
                                             $newstart->setTimestamp($by) ;
                                         }
                                         if (
-                                            ($fmdayok || $expand)  //TODO what if !$fmdayok
+                                            ($fmdayok || $expand)
                                             && ($count == 0 || $i < $count)
                                             && $newstart->getTimestamp() <= $until
                                             && !(!empty($e->exdate) && in_array($newstart->getTimestamp(), $e->exdate))
