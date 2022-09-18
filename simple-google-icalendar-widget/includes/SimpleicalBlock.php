@@ -136,18 +136,18 @@ class SimpleicalBlock {
             $curdate = '';
             foreach($data as $e) {
                 $idlist = explode("@", esc_attr($e->uid) );
-                $itemid = $instance['blockid'] . '_' . $idlist[0]; //TODO find correct block id when duplicate
+                $itemid = $instance['blockid'] . '_' . $idlist[0]; 
                 $evdate = wp_kses(wp_date( $dflg, $e->start), 'post');
                 if ( !$instance['allowhtml']) {
-                    $e->summary = htmlspecialchars($e->summary);
-                    $e->description = htmlspecialchars($e->description);
-                    $e->location = htmlspecialchars($e->location);
+                    if (!empty($e->summary)) $e->summary = htmlspecialchars($e->summary);
+                    if (!empty($e->description)) $e->description = htmlspecialchars($e->description);
+                    if (!empty($e->location)) $e->location = htmlspecialchars($e->location);
                 }
                 if (date('yz', $e->start) != date('yz', $e->end)) {
                     $evdate = str_replace(array("</div><div>", "</h4><h4>", "</h5><h5>", "</h6><h6>" ), '', $evdate . wp_kses(wp_date( $dflgend, $e->end - 1) , 'post'));
                 }
                 $evdtsum = (($e->startisdate === false) ? wp_kses(wp_date( $dftsum, $e->start) . wp_date( $dftsend, $e->end), 'post') : '');
-                echo '<li class="list-group-item' .  $sflgi . ' ' . sanitize_html_class($e->cal_class) . '">';
+                echo '<li class="list-group-item' .  $sflgi . ((!empty($e->location)) ? ' ' . sanitize_html_class($e->cal_class): '') . '">';
                 if (!$startwsum && $curdate != $evdate ) {
                     $curdate =  $evdate;
                     echo '<span class="ical-date">' . ucfirst($evdate) . '</span>' . (('a' == $instance['tag_sum'] ) ? '<br>': '');
