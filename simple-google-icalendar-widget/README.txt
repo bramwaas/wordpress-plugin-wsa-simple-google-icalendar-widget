@@ -24,6 +24,7 @@ These are great, but as soon as you want to make a few adjustments to the stylin
 * Calendar block or widget to display appointments/events of a public Google calendar or other iCal file.
 * Block gives live preview in the editor and is not constrained to widget area. Old widget will be displayed in legacy widget block only in widget area.
 * Small footprint, uses only Google ID of the calendar, or ICS link for Outlook, or Url of iCal file, to get event information via iCal
+* Merge more calendars into one block
 * Manage events in Google Calendar, or other iCalendar source.
 * Fully adaptable to your website with CSS. Output in unordered list with Bootstrap 4 listgroup classes and toggle for details.
 * Choose date / time format in settings screen that best suits your website.
@@ -54,7 +55,7 @@ Or just install it through the wordpress plugin directory.
 You can enter the block in a post or a page with the block-editor (eg. (+ sign)Toggle block inserter / WIDGETS).           
 If your theme has a widget area you can also enter the block as a widget in a widget area:          
  Appearance / Widgets / (+ sign)Toggle block inserter / WIDGETS. Just drag it into your sidebar.    
-* Alternative for WP 5.3 and higher: Select 'Simple Google Calendar Outlook Events Widget' or select the Legacy widget and choose 'Simple Google Calendar Outlook Events Widget'     
+* Alternative : Select 'Simple Google Calendar Outlook Events Widget' or select the Legacy widget and choose 'Simple Google Calendar Outlook Events Widget'     
   and drag it into the sidebar.
 * Fill out all the necessary configuration fields.
  In Calendar ID enter the calendar ID displayed by Google Calendar, or complete url of a  Google calendar or other iCal file.
@@ -73,6 +74,13 @@ Then use the public iCal address or the Google calendar ID.
 
  You can find Google calendar ID by going to Calendar Settings / Calendars, clicking on the appropriate calendar, scrolling all the way down to find the Calendar ID at the bottom under the Integrate Calendar section. There's your calendar id.
  [More details on Google support](https://support.google.com/calendar/answer/37083#link)
+
+= How to merge more calendars into one module/block =  
+
+Fill a comma separated list of ID's in the Calendar ID field.      
+Optional you can add a html-class separated by a semicolon to some or all ID's to distinguish the descent in the lay-out of the event.   
+E.g.: #example;blue,https://p24-calendars.icloud.com/holiday/NL_nl.ics;red     
+Events of #example will be merged with events of NL holidays; html-class "blue" is added to all events of #example, html-class "red" to all events of NL holidays. 
 
 = Can I use HTML in the description of the appointement?  =
 
@@ -121,14 +129,15 @@ We'd love your help! Here's a few things you can do:
 == Documentation ==
 
 * Gets calendar events via iCal url or google calendar ID
+* Merge more calendars into one block
 * Displays selected number of events, or events in a selected period from now as listgroup-items
 * Displays event start-date and summary; toggle details, description, start-, end-time, location. 
 * Displays most common repeating events 
-* Frequency Yearly, Monthly, Weekly, Dayly (not parsed Hourly, Minutely ...)
+* Frequency Yearly, Monthly, Weekly, Dayly (not parsed Hourly, Minutely ...), INTERVAL (default 1), WKST (default MO)
 * End of repeating by COUNT or UNTIL
-* Exclude events on EXDATE from repeat 
-* By day month or by monthday (BYDAY, BYMONTH, BYMONTHDAY) no other by
-  (not parsed: BYYEARDAY, BYSETPOS, BYHOUR, BYMINUTE, WKST)
+* By day month, monthday or setpos (BYDAY, BYMONTH, BYMONTHDAY, BYSETPOS) no other by...   
+  (not parsed: BYWEEKNO, BYYEARDAY, BYHOUR, BYMINUTE, RDATE)
+* Exclude events on EXDATE from repeat (after evaluating BYSETPOS)
 * Respects Timezone and Day Light Saving time. Build and tested with Iana timezones as used in php, Google, and Apple now also tested with Microsoft timezones and unknown timezones. For unknown timezone-names using the default timezone of Wordpress (probably the local timezone).  
 
 === Recurrent events, Timezone,  Daylight Saving Time ===
@@ -136,7 +145,7 @@ We'd love your help! Here's a few things you can do:
 Most users don't worry about time zones. The timezonesettings for the Wordpress installation, the calendar application and the events are all the same local time.   
 In that case this widget displays all the recurrent events with the same local times. The widget uses the properties of the starttime and duration (in seconds) of the first event to calculate the repeated events. Only when a calculated time is removed during the transition from ST (standard time, wintertime) to DST (daylight saving time, summertime) by turning the clock forward one hour, both the times of the event (in case the starttime is in the transition period) or only the endtime (in case only the endtime is in the transition period)  of the event are pushed forward with that same amount.    
 But because the transition period is usually very early in the morning, few events will be affected by it.   
-If a calculated day does not exist (i.e. February 30), the event will not be displayed.
+If a calculated day does not exist (i.e. February 30), the event will not be displayed. (Formally this should also happen to the time in the transition from ST to DST)   
 
 For users in countries that span more time zones, or users with international events the calendar applications can add a timezone to the event times. So users in other timezones will see the event in the local time in there timezone (as set in timezone settings of Wordpress) corresponding with the time.    
 The widget uses the starttime, the timezone of the starttime and the duration in seconds of the starting event as starting point for the calculation of repeating events. So if the events startime timezone does'not use daylight savings time and and timezone of the widget (i.e. the WP timezone setting) does. During DST the events are placed an hour later than during ST. (more precisely shift with the local time shift). Similar the events will be shift earlier when the timezone of the starttime has DST and the timezone of the widget not.   
@@ -160,6 +169,8 @@ see http://www.ietf.org/rfc/rfc5545.txt for specification of te ical format.
   |____________|_________|________|_________|________|
   |BYDAY       |Limit    |Expand  |Note 1   |Note 2  |
   |____________|_________|________|_________|________|
+  |BYSETPOS    |Limit    |Limit   |Limit    |Limit   |
+  |____________|_________|________|_________|________|
  
     Note 1:  Limit if BYMONTHDAY is present; 
              otherwise, special expand for MONTHLY.
@@ -182,6 +193,10 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 * since v1.2.0 Wordpress version 5.3.0 is required because of the use of wp_date() 
 
 == Changelog ==
+* 2.1.0 Support more calendars in one module/block. Support DURATION of event. Move processing 'allowhtml' complete out Parser to template/block. 
+  Use properties in IcsParser to limit copying of input params in several functions.
+  Solved issue: Warning: date() expects at most 2 parameters, 3 given in ...IcsParser.php on line 549 caused by wp_date() / date() replacement in v2.0.4.     
+  Support BYSETPOS in response to a github issue on the WP block of peppergrayxyz. Support WKST.   
 * 2.0.4 Improvements IcsParser made as a result of porting to Joomla
 * notably solve issue not recognizing http as a valid protocol in array('http', 'https', 'webcal') because index = 0 so added 1 as starting index
 * make timezone-string a property of the object filled with the time-zone setting of the CMS (get_option('timezone_string')).

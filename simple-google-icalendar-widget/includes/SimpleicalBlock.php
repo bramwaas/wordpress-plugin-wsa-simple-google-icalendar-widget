@@ -10,7 +10,7 @@
  * @license    http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * Gutenberg Block functions
  * used in newer wp versions where Gutenbergblocks are available. (tested with function_exists( 'register_block_type' ))
- * Version: 2.0.4
+ * Version: 2.1.0
  * 20220427 namespaced and renamed after classname.
  * 20220430 try with static calls
  * 20220509 fairly correct front-end display. attributes back to block.json
@@ -19,6 +19,9 @@
  *  excerptlength string and in javascript  '' when not parsed as integer. 
  * 20220526 added example 
  * 20220620 added enddate/times for startdate and starttime added Id as anchor and choice of tagg for summary, collaps only when tag_for summary = a.
+ * 2.1.0 add calendar class to list-group-item
+ *   add htmlspecialchars() to summary, description and location when not 'allowhtml', replacing similar code from IcsParser
+
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget;
 
@@ -133,13 +136,18 @@ class SimpleicalBlock {
             $curdate = '';
             foreach($data as $e) {
                 $idlist = explode("@", esc_attr($e->uid) );
-                $itemid = $instance['blockid'] . '_' . $idlist[0]; //TODO find correct block id when duplicate
+                $itemid = $instance['blockid'] . '_' . $idlist[0]; 
                 $evdate = wp_kses(wp_date( $dflg, $e->start), 'post');
+                if ( !$instance['allowhtml']) {
+                    if (!empty($e->summary)) $e->summary = htmlspecialchars($e->summary);
+                    if (!empty($e->description)) $e->description = htmlspecialchars($e->description);
+                    if (!empty($e->location)) $e->location = htmlspecialchars($e->location);
+                }
                 if (date('yz', $e->start) != date('yz', $e->end)) {
                     $evdate = str_replace(array("</div><div>", "</h4><h4>", "</h5><h5>", "</h6><h6>" ), '', $evdate . wp_kses(wp_date( $dflgend, $e->end - 1) , 'post'));
                 }
                 $evdtsum = (($e->startisdate === false) ? wp_kses(wp_date( $dftsum, $e->start) . wp_date( $dftsend, $e->end), 'post') : '');
-                echo '<li class="list-group-item' .  $sflgi . '">';
+                echo '<li class="list-group-item' .  $sflgi . ((!empty($e->cal_class)) ? ' ' . sanitize_html_class($e->cal_class): '') . '">';
                 if (!$startwsum && $curdate != $evdate ) {
                     $curdate =  $evdate;
                     echo '<span class="ical-date">' . ucfirst($evdate) . '</span>' . (('a' == $instance['tag_sum'] ) ? '<br>': '');
@@ -168,7 +176,7 @@ class SimpleicalBlock {
                     }
                     }
                     $e->description = str_replace("\n", '<br>', wp_kses($e->description,'post') );
-                    echo   $e->description ,(strrpos($e->description, '<br>') == (strlen($e->description) - 4)) ? '' : '<br>';
+                    echo   $e->description ,(strrpos($e->description, '<br>') === (strlen($e->description) - 4)) ? '' : '<br>';
                 }
                 if ($e->startisdate === false && date('yz', $e->start) === date('yz', $e->end))	{
                     echo '<span class="time">', wp_kses(wp_date( $dftstart, $e->start ), 'post'),

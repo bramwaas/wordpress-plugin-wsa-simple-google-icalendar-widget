@@ -9,8 +9,9 @@
  * @copyright  Copyright (c)  2017 - 2022, Bram Waasdorp
  * @link       https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  * @license    http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * Version: 2.0.3
+ * Version: 2.1.0
  * 20220410 namespaced and renamed after classname.
+ * 2.1.0 option for comma seperated list of IDs
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget;
 
@@ -52,9 +53,10 @@ class SimpleicalWidgetAdmin {
         _e('<p><strong>Title</strong></p>', 'simple_ical');
         _e('<p>Title of this instance of the widget</p>', 'simple_ical');
         
-        _e('<p><strong>Calendar ID, or iCal URL</strong></p>', 'simple_ical');
-        _e('<p>The Google calendar ID, or the URL of te iCal file to display.</p>', 'simple_ical');
-        _e('<p>In the block you can use #example to get example events</p>', 'simple_ical');
+        _e('<p><strong>Calendar ID(s), or iCal URL</strong></p>', 'simple_ical');
+        _e('<p>The Google calendar ID, or the URL of te iCal file to display, or #example, or comma separated list of ID&apos;s.</p>', 'simple_ical');
+        _e('<p>You can use #example to get example events</p>', 'simple_ical');
+        _e('<p>Or a comma separated list of ID&apos;s; optional you can add a html-class separated by a semicolon to some or all ID&apos;s to distinguish the descent in the lay-out of the event.</p>', 'simple_ical');
         
         _e('<p><strong>Number of events displayed</strong></p>', 'simple_ical');
         _e('<p>The maximum number of events to display.</p>', 'simple_ical');
@@ -88,8 +90,8 @@ class SimpleicalWidgetAdmin {
 
         _e('<h3>Advanced settings</h3>' );
         
-        _e('<p><strong>Cache expiration time in minutes</strong></p>', 'simple_ical');
-        _e('<p>Minimal time in minutes between reads from source.</p>', 'simple_ical');
+        _e('<p><strong>Calendar cache expiration time in minutes</strong></p>', 'simple_ical');
+        _e('<p>Minimal time in minutes between reads from calendar source.</p>', 'simple_ical');
         
         _e('<p><strong>Excerpt length</strong></p>', 'simple_ical');
         _e('<p>Max length of the description in characters.<br>If there is a space or end-of-line character within 10 characters of this end, break there.<br>Note, not all characters have the same width, so the number of lines is not completely fixed by this. So you need additional CSS for that.<br><b>Warning:</b> If you allow html in the description, necessary end tags may disappear here.<br> Default: empty, all characters will be displayed</p>', 'simple_ical');
