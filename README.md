@@ -3,7 +3,7 @@ Plugin name: Simple Google Calendar Outlook Events Block Widget
 Contributors: bramwaas
 Tags: Event Calendar, Google Calendar, iCal, Events, Block, Calendar, iCalendar, Outlook, iCloud
 Requires at least: 5.3.0
-Tested up to: 6.0
+Tested up to: 6.1
 Requires PHP: 5.3.0
 Stable tag: trunk
 License: GPLv2 or later
@@ -186,7 +186,7 @@ https://nl.wordpress.org/plugins/simple-google-calendar-widget/)
 == Copyright and License ==
 
 This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-licenses/gpl-2.0.html), version 2 or later.
-2017&thinsp;&ndash;&thinsp;2022 &copy; [Bram Waasdorp](http://www.waasdorpsoekhan.nl).
+2017&thinsp;&ndash;&thinsp;2023 &copy; [Bram Waasdorp](http://www.waasdorpsoekhan.nl).
 
 == Upgrade Notice ==
 
