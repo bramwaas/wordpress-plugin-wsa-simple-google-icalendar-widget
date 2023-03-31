@@ -15,7 +15,8 @@ Block widget that displays events from a public google calendar or iCal file.
 
 Simple block or widget to display events from a public google calendar, microsoft office outlook calendar or an other iCal file, in the style of your website.
 
-This simple widget fetches events from a public google calendar (or other calendar in iCal format) and displays them in simple list allowing you to fully adapt to your website by applying all kinds of CSS. 
+The Gutenberg block requires at least Wordpress 5.9.
+This simple block/widget fetches events from a public google calendar (or other calendar in iCal format) and displays them in simple list allowing you to fully adapt to your website by applying all kinds of CSS. 
 Google offers some HTML snippets to embed your public Google Calendar into your website.
 These are great, but as soon as you want to make a few adjustments to the styling, that goes beyond changing some colors, they're not enough.
 
@@ -99,6 +100,10 @@ In case you have all kinds of HTML in your appointments a plugin that uses the A
 First you have to share your calendar to make it public available, or to create and share a public calendar. Private calendars cannot be accessed by this plugin.
 Then publish it as  an ICS link and use this link address. (something like https://outlook.live.com/owa/calendar/00000000-0000-0000-0000-000000000000/.../cid-.../calendar.ics) (works from version 1.3.1 of this widget)
 [More details on Microsoft Office support](https://support.office.com/en-us/article/share-your-calendar-in-outlook-on-the-web-7ecef8ae-139c-40d9-bae2-a23977ee58d5)
+
+= I only see the widget not the block =
+Are you using at least WP 5.9? Below 5.9 the block doesn't work.
+Are you using a page builder like Elementor? The block might not show in the page builder editor, try if it is available in the Wordpress editor. If so  may be you can use a work-around as described in [How to Display Gutenberg Blocks in Other Page Builders (Elementor, Divi, etc)](https://gutenberghub.com/how-to-display-gutenberg-blocks-in-other-page-builders/) or some pro functionality of Elementor.   
 
 = How to use Apple Calendar (iCloud Mac/ios)? =
 Choose the calendar you want to share. On the line of that calendar click on the radio symbol (a dot with three quart circles) right in that line. In the pop up Calendar Sharing check the box Public Calendar. You see the url below something like webcal://p59-caldav.icloud.com/published/2/MTQxNzk0NDA2NjE0MTc5AAAAAXt2Dy6XXXXXPXXxuZnTLDV9xr6A6_m3r_GU33Qj. Click on Copy Link and OK. Paste that in the "Calendar ID, or iCal URL" field of the widget (before version 1.3.1 you have to change webcal in https)
