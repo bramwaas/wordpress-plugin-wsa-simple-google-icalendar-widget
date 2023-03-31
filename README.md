@@ -103,7 +103,7 @@ Then publish it as  an ICS link and use this link address. (something like https
 
 = I only see the widget not the block =
 Are you using at least WP 5.9? Below 5.9 the block doesn't work.
-Are you using a page builder like Elementor? The block might not show in the page builder editor, try if it is available in the Wordpress editor. If so  may be you can use a work-around as described in [How to Display Gutenberg Blocks in Other Page Builders (Elementor, Divi, etc)](https://gutenberghub.com/how-to-display-gutenberg-blocks-in-other-page-builders/) or some pro functionality of Elementor.   
+Are you using a page builder like Elementor? The block might not show in the page builder editor, try if it is available in the Wordpress editor. If so  may be you can use a work-around as described in [How to Display Gutenberg Blocks in Other Page Builders (Elementor, Divi, etc)](https://gutenberghub.com/how-to-display-gutenberg-blocks-in-other-page-builders/) or use an other plugin that adds a shortcode to a Gutenberg block or some pro functionality of Elementor.   
 
 = How to use Apple Calendar (iCloud Mac/ios)? =
 Choose the calendar you want to share. On the line of that calendar click on the radio symbol (a dot with three quart circles) right in that line. In the pop up Calendar Sharing check the box Public Calendar. You see the url below something like webcal://p59-caldav.icloud.com/published/2/MTQxNzk0NDA2NjE0MTc5AAAAAXt2Dy6XXXXXPXXxuZnTLDV9xr6A6_m3r_GU33Qj. Click on Copy Link and OK. Paste that in the "Calendar ID, or iCal URL" field of the widget (before version 1.3.1 you have to change webcal in https)
