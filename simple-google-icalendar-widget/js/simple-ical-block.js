@@ -4,7 +4,8 @@
  * Move styles to stylesheets - both edit and front-end.
  * and use attributes and editable fields
  * attributes as Inspectorcontrols (settings)
- * v2.0.3
+ * v2.1.1
+ * 20230401 use select 'layout' in stead of 'start with summary' to create more lay-out options.
  * 20220517  try to find a unique blockid from  clientId (only once) 
  *   excerptlength initialised with '' so cannot be integer, all parseInt(value) followed bij || 0,1,or 2  because result must comply type validation of REST endpoint and '' or NaN don't. (rest_invalid_type)
  *   preponed 'b' to blockid, because html id must not start with number.
@@ -50,6 +51,7 @@
                 return idBase === 'simple_ical_widget';
             },
             transform: function ( { instance } ) {
+				if (!(instance.raw.layout > 0))  {instance.raw.layout = 3} 
                 return blocks.createBlock( 'simplegoogleicalenderwidget/simple-ical-block', {
                     title: instance.raw.title,
                     calendar_id: instance.raw.calendar_id,
@@ -57,6 +59,7 @@
                     event_period: instance.raw.event_period,
                     cache_time: instance.raw.cache_time,
                     startwsum : false,
+                    layout: instance.raw.layout,
                     dateformat_lg: instance.raw.dateformat_lg,
                     dateformat_lgend : '',
                     dateformat_tsum: instance.raw.dateformat_tsum,
@@ -87,6 +90,12 @@
                		function stopCC () { props.setAttributes( { clear_cache_now: false  } );}	
  	           }
             }, [props.attributes.clear_cache_now]); 
+			useEffect(function() {
+				if ( props.attributes.startwsum ) {
+					props.setAttributes( { layout: 2 } );			   
+					props.setAttributes( { startwsum: false  } );			   
+ 	           }
+            }, [props.attributes.layout]); 
 			return 	el(
                'div',
                useBlockProps ({key: 'simple_ical'}),
@@ -128,11 +137,25 @@
                         onChange: function( value ) { props.setAttributes( { event_period: Math.max((parseInt(value) || 1),1) } );},
                     }
                 ),
+/*
                 el(
                     ToggleControl,
                     {   label: __('Start with summary.', 'simple_ical'),
                         checked: props.attributes.startwsum,
                         onChange: function( value ) { props.setAttributes( { startwsum: value } );},
+                    }
+                ),
+*/                
+                el(
+                    SelectControl,
+                    {   label: __('Lay-out:', 'simple_ical'),
+                        value: props.attributes.layout,
+                        onChange: function( value ) { props.setAttributes( { layout: value } );},
+					    options:  [
+							        { value: 1, label: __('Startdate higher level', 'simple_ical') },
+							        { value: 2, label: __('Start with summary', 'simple_ical') },
+								    { value: 3, label: __('Old style', 'simple_ical') }
+    							] 
                     }
                 ),
                 el(
