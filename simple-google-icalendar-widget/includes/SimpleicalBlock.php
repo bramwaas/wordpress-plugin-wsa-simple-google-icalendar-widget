@@ -119,6 +119,8 @@ class SimpleicalBlock {
     {
         echo '<h3 class="widget-title block-title">' . $instance['title'] . '</h3>';
         $layout = (isset($instance['layout'])) ? $instance['layout'] : 3;
+        $cal_class = ((!empty($e->cal_class)) ? ' ' . sanitize_html_class($e->cal_class): '');
+        $sn = 0;
         $dflg = (isset($instance['dateformat_lg'])) ? $instance['dateformat_lg'] : 'l jS \of F' ;
         $dflgend = (isset($instance['dateformat_lgend'])) ? $instance['dateformat_lgend'] : '' ;
         $dftsum = (isset($instance['dateformat_tsum'])) ? $instance['dateformat_tsum'] : 'G:i ' ;
@@ -138,7 +140,7 @@ class SimpleicalBlock {
             $curdate = '';
             foreach($data as $e) {
                 $idlist = explode("@", esc_attr($e->uid) );
-                $itemid = $instance['blockid'] . '_' . $idlist[0]; 
+                $itemid = $instance['blockid'] .'_' . strval(++$sn) . '_' . $idlist[0]; 
                 $evdate = wp_kses(wp_date( $dflg, $e->start), 'post');
                 if ( !$instance['allowhtml']) {
                     if (!empty($e->summary)) $e->summary = htmlspecialchars($e->summary);
@@ -152,13 +154,13 @@ class SimpleicalBlock {
                 if ($layout < 2 && $curdate != $evdate && $curdate != '' ) {
                     echo '</ul></li>';
                 }
-                echo '<li class="list-group-item' .  $sflgi . ((!empty($e->cal_class)) ? ' ' . sanitize_html_class($e->cal_class): '') . '">';
+                echo '<li class="list-group-item' .  $sflgi . $cal_class . '">';
                 if ($layout != 2 && $curdate != $evdate ) {
                     if ($layout == 3) {
                         echo '<span class="ical-date">' . ucfirst($evdate) . '</span>' . (('a' == $instance['tag_sum'] ) ? '<br>': '');}
                     else {
                         echo '<span class="ical-date">' . ucfirst($evdate) . '</span><ul class="list-group' .  $instance['suffix_lg_class'] 
-                             . ' "><li class="list-group-item' .  $sflgi . ((!empty($e->cal_class)) ? ' ' . sanitize_html_class($e->cal_class): '') . '">';
+                        . ' sub"><li class="list-group-item' .  $sflgi . $cal_class . ' sub">';
                     }
                 }
                 echo  '<' . $instance['tag_sum'] . ' class="ical_summary' .  $sflgia . (('a' == $instance['tag_sum'] ) ? '" data-toggle="collapse" data-bs-toggle="collapse" href="#'.
