@@ -11,7 +11,6 @@
  * Gutenberg Block functions
  * used in newer wp versions where Gutenbergblocks are available. (tested with function_exists( 'register_block_type' ))
  * Version: 2.1.1
- * 20230401 use select 'layout' in stead of 'start with summary' to create more lay-out options.
  * 20220427 namespaced and renamed after classname.
  * 20220430 try with static calls
  * 20220509 fairly correct front-end display. attributes back to block.json
@@ -22,6 +21,8 @@
  * 20220620 added enddate/times for startdate and starttime added Id as anchor and choice of tagg for summary, collaps only when tag_for summary = a.
  * 2.1.0 add calendar class to list-group-item
  *   add htmlspecialchars() to summary, description and location when not 'allowhtml', replacing similar code from IcsParser
+ * 2.1.1  
+ * 20230401 use select 'layout' in stead of 'start with summary' to create more lay-out options.
 
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget;
@@ -38,6 +39,7 @@ class SimpleicalBlock {
         register_block_type( dirname(__DIR__) .'/block.json',
             array(
         'attributes' => [
+            'wptype' => ['type' => 'string'],
             'blockid' => ['type' => 'string'],
             'title' => ['type' => 'string', 'default' => __('Events', 'simple_ical')],
             'calendar_id' => ['type' => 'string', 'default' => ''],
@@ -45,7 +47,6 @@ class SimpleicalBlock {
             'event_period' => ['type' => 'integer', 'default' => 92],
             'layout' => ['type' => 'integer', 'default' => 3],
             'cache_time' => ['type' => 'integer', 'default' => 60],
-//            'startwsum' => ['type' => 'boolean', 'default' => false],
             'dateformat_lg' => ['type' => 'string', 'default' => 'l jS \of F'],
             'dateformat_lgend' => ['type' => 'string', 'default' => ''],
             'tag_sum' => ['type' => 'string', 'enum' => self::$allowed_tags_sum, 'default' => 'a'],
@@ -76,6 +77,7 @@ class SimpleicalBlock {
    static function render_block($block_attributes, $content) {
        $block_attributes = wp_parse_args((array) $block_attributes,
            array(
+               'wptype' => 'block',
                'blockid' => 'AZ',
               'title' => __('Events', 'simple_ical'),
                'calendar_id' => '',
@@ -117,7 +119,9 @@ class SimpleicalBlock {
      */
     static function display_block($instance)
     {
-        echo '<h3 class="widget-title block-title">' . $instance['title'] . '</h3>';
+        if (!isset($instance['wptype']) || 'block' == $instance['wptype']) {
+            echo '<h3 class="widget-title block-title">' . $instance['title'] . '</h3>';
+        }
         $layout = (isset($instance['layout'])) ? $instance['layout'] : 3;
         $cal_class = ((!empty($e->cal_class)) ? ' ' . sanitize_html_class($e->cal_class): '');
         $sn = 0;
