@@ -260,7 +260,7 @@ class Simple_iCal_Widget extends WP_Widget
         </p>
         <p>
           <label for="<?php echo $this->get_field_id('layout'); ?>"><?php _e('Lay-out:', 'simple_ical'); ?></label> 
-          <select class="widefat" id="<?php echo $this->get_field_id('layout'); ?>" name="<?php echo $this->get_field_name('layout'); ?>" type="text" >
+          <select class="widefat" id="<?php echo $this->get_field_id('layout'); ?>" name="<?php echo $this->get_field_name('layout'); ?>" >
             <option value="1"<?php echo (1==esc_attr($instance['layout']))?'selected':''; ?>><?php _e('Startdate higher level', 'simple_ical'); ?></option>
   			<option value="2"<?php echo (2==esc_attr($instance['layout']))?'selected':''; ?>><?php _e('Start with summary', 'simple_ical'); ?></option>
   			<option value="3"<?php echo (3==esc_attr($instance['layout']))?'selected':''; ?>><?php _e('Old style', 'simple_ical'); ?></option>
