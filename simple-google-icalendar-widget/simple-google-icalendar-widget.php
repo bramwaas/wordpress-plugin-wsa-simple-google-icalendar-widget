@@ -185,7 +185,7 @@ class Simple_iCal_Widget extends WP_Widget
         } else {
             $instance['excerptlength'] = '';
         }
-        
+        $instance['tag_sum'] = strip_tags($new_instance['tag_sum']);
         $instance['suffix_lg_class'] = strip_tags($new_instance['suffix_lg_class']);
         $instance['suffix_lgi_class'] = strip_tags($new_instance['suffix_lgi_class']);
         $instance['suffix_lgia_class'] = strip_tags($new_instance['suffix_lgia_class']);
@@ -228,6 +228,7 @@ class Simple_iCal_Widget extends WP_Widget
             'dateformat_tstart' => 'G:i',
             'dateformat_tend' => ' - G:i ',
             'excerptlength' => '',
+            'tag_sum' => 'a',
             'suffix_lg_class' => '',
             'suffix_lgi_class' => ' py-0',
             'suffix_lgia_class' => '',
@@ -259,7 +260,7 @@ class Simple_iCal_Widget extends WP_Widget
         </p>
         <p>
           <label for="<?php echo $this->get_field_id('layout'); ?>"><?php _e('Lay-out:', 'simple_ical'); ?></label> 
-          <select class="widefat" id="<?php echo $this->get_field_id('layout'); ?>" name="<?php echo $this->get_field_name('layout'); ?>" type="text" />
+          <select class="widefat" id="<?php echo $this->get_field_id('layout'); ?>" name="<?php echo $this->get_field_name('layout'); ?>" type="text" >
             <option value="1"<?php echo (1==esc_attr($instance['layout']))?'selected':''; ?>><?php _e('Startdate higher level', 'simple_ical'); ?></option>
   			<option value="2"<?php echo (2==esc_attr($instance['layout']))?'selected':''; ?>><?php _e('Start with summary', 'simple_ical'); ?></option>
   			<option value="3"<?php echo (3==esc_attr($instance['layout']))?'selected':''; ?>><?php _e('Old style', 'simple_ical'); ?></option>
@@ -289,6 +290,21 @@ class Simple_iCal_Widget extends WP_Widget
         <p>
           <label for="<?php echo $this->get_field_id('excerptlength'); ?>"><?php _e('Excerpt length, max length of description:', 'simple_ical'); ?></label> 
           <input class="widefat" id="<?php echo $this->get_field_id('excerptlength'); ?>" name="<?php echo $this->get_field_name('excerptlength'); ?>" type="text" value="<?php echo esc_attr($instance['excerptlength']); ?>" />
+        </p>
+        <p>
+          <label for="<?php echo $this->get_field_id('tag_sum'); ?>"><?php _e('Tag for summary:', 'simple_ical'); ?></label> 
+          <select class="widefat" id="<?php echo $this->get_field_id('tag_sum'); ?>" name="<?php echo $this->get_field_name('tag_sum'); ?>" >
+            <option value="a"<?php echo ('a'==esc_attr($instance['tag_sum']))?'selected':''; ?>><?php _e('a (link)', 'simple_ical'); ?></option>
+  			<option value="b"<?php echo ('b'==esc_attr($instance['tag_sum']))?'selected':''; ?>><?php _e('b (attention, bold)', 'simple_ical'); ?></option>
+  			<option value="div"<?php echo ('div'==esc_attr($instance['tag_sum']))?'selected':''; ?>><?php _e('div', 'simple_ical'); ?></option>
+  			<option value="h4"<?php echo ('h4'==esc_attr($instance['tag_sum']))?'selected':''; ?>><?php _e('h4 (sub header)', 'simple_ical'); ?></option>
+  			<option value="h5"<?php echo ('h5'==esc_attr($instance['tag_sum']))?'selected':''; ?>><?php _e('h5 (sub header)', 'simple_ical'); ?></option>
+  			<option value="h6"<?php echo ('h6'==esc_attr($instance['tag_sum']))?'selected':''; ?>><?php _e('h6 (sub header)', 'simple_ical'); ?></option>
+  			<option value="i"<?php echo ('i'==esc_attr($instance['tag_sum']))?'selected':''; ?>><?php _e('i (idiomatic, italic)', 'simple_ical'); ?></option>
+  			<option value="span"<?php echo ('span'==esc_attr($instance['tag_sum']))?'selected':''; ?>><?php _e('span', 'simple_ical'); ?></option>
+  			<option value="strong"<?php echo ('strong'==esc_attr($instance['tag_sum']))?'selected':''; ?>><?php _e('strong', 'simple_ical'); ?></option>
+  			<option value="u"<?php echo ('u'==esc_attr($instance['tag_sum']))?'selected':''; ?>><?php _e('u (unarticulated, underline )', 'simple_ical'); ?></option>
+  		 </select>	
         </p>
         <p>
           <label for="<?php echo $this->get_field_id('suffix_lg_class'); ?>"><?php _e('Suffix group class:', 'simple_ical'); ?></label> 
