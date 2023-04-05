@@ -119,7 +119,7 @@ class Simple_iCal_Widget extends WP_Widget
         $title = apply_filters('widget_title', $instance['title']);
         echo $args['before_widget'];
         if(isset($instance['title'])) {
-            echo $args['before_title'], $instance['title'], $args['after_title'];
+            echo $args['before_title'], $title, $args['after_title'];
         }
 // lay-out block:
         $instance[wptype] = 'widget';
@@ -177,6 +177,8 @@ class Simple_iCal_Widget extends WP_Widget
         }
         // using strip_tags because it can start with space or contain more classe seperated by spaces
         $instance['dateformat_lg'] = ($new_instance['dateformat_lg']);
+        $instance['dateformat_lg'] = ($new_instance['dateformat_lgend']);
+        $instance['dateformat_tsum'] = ($new_instance['dateformat_tsum']);
         $instance['dateformat_tsum'] = ($new_instance['dateformat_tsum']);
         $instance['dateformat_tstart'] = ($new_instance['dateformat_tstart']);
         $instance['dateformat_tend'] = ($new_instance['dateformat_tend']);
@@ -270,25 +272,18 @@ class Simple_iCal_Widget extends WP_Widget
           <label for="<?php echo $this->get_field_id('dateformat_lg'); ?>"><?php _e('Date format first line:', 'simple_ical'); ?></label> 
           <input class="widefat" id="<?php echo $this->get_field_id('dateformat_lg'); ?>" name="<?php echo $this->get_field_name('dateformat_lg'); ?>" type="text" value="<?php echo esc_attr($instance['dateformat_lg']); ?>" />
         </p>
-<!--                 el(
-                    TextControl,
-                    {   label: __('Enddate format first line:', 'simple_ical'),
-                        value: props.attributes.dateformat_lgend,
-                        onChange: function( value ) { props.setAttributes( { dateformat_lgend: value } );},
-                    }
-                ), -->
+         <p>
+          <label for="<?php echo $this->get_field_id('dateformat_lgend'); ?>"><?php _e('Enddate format first line:', 'simple_ical'); ?></label> 
+          <input class="widefat" id="<?php echo $this->get_field_id('dateformat_lgend'); ?>" name="<?php echo $this->get_field_name('dateformat_lgend'); ?>" type="text" value="<?php echo esc_attr($instance['dateformat_lgend']); ?>" />
+        </p>
         <p>
           <label for="<?php echo $this->get_field_id('dateformat_tsum'); ?>"><?php _e('Time format time summary line:', 'simple_ical'); ?></label> 
           <input class="widefat" id="<?php echo $this->get_field_id('dateformat_tsum'); ?>" name="<?php echo $this->get_field_name('dateformat_tsum'); ?>" type="text" value="<?php echo esc_attr($instance['dateformat_tsum']); ?>" />
         </p>
-<!--                 el(
-                    TextControl,
-                    {   label: __('Time format end time summary line:', 'simple_ical'),
-                        value: props.attributes.dateformat_tsend,
-                        onChange: function( value ) { props.setAttributes( { dateformat_tsend: value } );},
-                    }
-                ),
-  -->
+        <p>
+          <label for="<?php echo $this->get_field_id('dateformat_tsend'); ?>"><?php _e('Time format end time summary line:', 'simple_ical'); ?></label> 
+          <input class="widefat" id="<?php echo $this->get_field_id('dateformat_tsend'); ?>" name="<?php echo $this->get_field_name('dateformat_tsend'); ?>" type="text" value="<?php echo esc_attr($instance['dateformat_tsend']); ?>" />
+        </p>
         <p>
           <label for="<?php echo $this->get_field_id('dateformat_tstart'); ?>"><?php _e('Time format start time:', 'simple_ical'); ?></label> 
           <input class="widefat" id="<?php echo $this->get_field_id('dateformat_tstart'); ?>" name="<?php echo $this->get_field_name('dateformat_tstart'); ?>" type="text" value="<?php echo esc_attr($instance['dateformat_tstart']); ?>" />
