@@ -15,7 +15,8 @@ Block widget that displays events from a public google calendar or iCal file.
 
 Simple block or widget to display events from a public google calendar, microsoft office outlook calendar or an other iCal file, in the style of your website.
 
-This simple widget fetches events from a public google calendar (or other calendar in iCal format) and displays them in simple list allowing you to fully adapt to your website by applying all kinds of CSS. 
+The Gutenberg block requires at least Wordpress 5.9.
+This simple block/widget fetches events from a public google calendar (or other calendar in iCal format) and displays them in simple list allowing you to fully adapt to your website by applying all kinds of CSS. 
 Google offers some HTML snippets to embed your public Google Calendar into your website.
 These are great, but as soon as you want to make a few adjustments to the styling, that goes beyond changing some colors, they're not enough.
 
@@ -32,7 +33,7 @@ These are great, but as soon as you want to make a few adjustments to the stylin
 * Displays most common repeating events. Frequency Yearly, Monthly, Weekly, Dayly (not Hourly, Minutely and smaller periods)
 * In the screenshot below: Left the block with default settings and clicked on one summary. Right with some adjusted settings.   
 Adjusted settings for start with summary:  
-Start with summary.: "true"  
+Lay-out: Start with summary.     
 Date format first line: ".<\b\r>l jS \o\f  F"  
 Enddate format first line: " - l jS \o\f F"  
 Time format time summary line: " G:i"   
@@ -88,7 +89,7 @@ You can use HTML in the most Calendars, but the result in the plugin may not be 
 First: The original iCalendar standard allowed only plain text as part of an event description. Thus probably most calendars will only give the plain text in the Description in the iCal output.   
 Secondly: For security reasons  this plugin filters the HTML to convert characters that have special significance in HTML to the corresponding HTML-entities.
   
-But from version 1.5.0 of this widget if you trust the output of the calendar application you can set a checkbox to allow safe html in the output. So if you manage to get the HTML in the Description and you set the checkbox to allow safe html you can get that html in the output, with exception of the tags that are not considered safe like SCRIPT and unknown tags.          
+But if you trust the output of the calendar application you can set a checkbox to allow safe html in the output. So if you manage to get the HTML in the Description and you set the checkbox to allow safe html you can get that html in the output, with exception of the tags that are not considered safe like SCRIPT and unknown tags.          
 And with the current version  of Google Calendar you can put some HTML in the Description output. (April 2022) I saw the  &lt;a&gt; (link),  &lt;b&gt; (bold text),  &lt;i&gt; (italic text),  &lt;u&gt; (underlined text) and  &lt;br&gt; (linebreak) tags in a iCal description. They will all come through with "Allow safe html" checkbox on. Probably even more is possible, but Google can also decide to comply more to the standard.   
 With Microsoft Outlook the HTML tags were filtered away and did not reach the iCal description         
 
@@ -99,6 +100,12 @@ In case you have all kinds of HTML in your appointments a plugin that uses the A
 First you have to share your calendar to make it public available, or to create and share a public calendar. Private calendars cannot be accessed by this plugin.
 Then publish it as  an ICS link and use this link address. (something like https://outlook.live.com/owa/calendar/00000000-0000-0000-0000-000000000000/.../cid-.../calendar.ics) (works from version 1.3.1 of this widget)
 [More details on Microsoft Office support](https://support.office.com/en-us/article/share-your-calendar-in-outlook-on-the-web-7ecef8ae-139c-40d9-bae2-a23977ee58d5)
+
+= I only see the widget not the block =
+Are you using at least WP 5.9? Below 5.9 the block doesn't work.
+Are you using a page builder like Elementor? The block might not show in the page builder editor, try if it is available in the Wordpress editor.
+To support users wo cannot use the Gutenberg block I have in v2.1.1 (with pain in my hart because Gutenberg blocks are in my opinion the future of WP) synchronized the output of the widget again with that of the block. 
+ Otherwise they needed to use a work-around with an extra plugin like described in [How to Display Gutenberg Blocks in Other Page Builders (Elementor, Divi, etc)](https://gutenberghub.com/how-to-display-gutenberg-blocks-in-other-page-builders/) or use an other plugin that adds a shortcode to a Gutenberg block or maybe some pro functionality of Elementor.   
 
 = How to use Apple Calendar (iCloud Mac/ios)? =
 Choose the calendar you want to share. On the line of that calendar click on the radio symbol (a dot with three quart circles) right in that line. In the pop up Calendar Sharing check the box Public Calendar. You see the url below something like webcal://p59-caldav.icloud.com/published/2/MTQxNzk0NDA2NjE0MTc5AAAAAXt2Dy6XXXXXPXXxuZnTLDV9xr6A6_m3r_GU33Qj. Click on Copy Link and OK. Paste that in the "Calendar ID, or iCal URL" field of the widget (before version 1.3.1 you have to change webcal in https)
@@ -186,14 +193,16 @@ https://nl.wordpress.org/plugins/simple-google-calendar-widget/)
 == Copyright and License ==
 
 This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-licenses/gpl-2.0.html), version 2 or later.
-2017&thinsp;&ndash;&thinsp;2022 &copy; [Bram Waasdorp](http://www.waasdorpsoekhan.nl).
+2017&thinsp;&ndash;&thinsp;2023 &copy; [Bram Waasdorp](http://www.waasdorpsoekhan.nl).
 
 == Upgrade Notice ==
 
+* from 2023 (v2.1.1) deprecation php older than 7.4. I don't test in older php versions than 7.4 older versions might still work, but in future I may use new functions of php 8.
 * since v1.2.0 Wordpress version 5.3.0 is required because of the use of wp_date() 
 
 == Changelog ==
-    19-3-2023 tested with wordpress 6.2-RC2
+* 2.1.1 New lay-out for block with first date line on a higer level li. 'Start with summary' toggle-setting changed in 'layout' select-setting with options 'Startdate higher level', 'Start with summary', 'Old style'.   
+Synchronize widget lay-out with block layout by largely using the same code.   
 * 2.1.0 Support more calendars in one module/block. Support DURATION of event. Move processing 'allowhtml' complete out Parser to template/block. 
   Use properties in IcsParser to limit copying of input params in several functions.
   Solved issue: Warning: date() expects at most 2 parameters, 3 given in ...IcsParser.php on line 549 caused by wp_date() / date() replacement in v2.0.4.     
