@@ -123,7 +123,6 @@ class Simple_iCal_Widget extends WP_Widget
         }
 // lay-out block:
         $instance[wptype] = 'widget';
-        $instance['blockid'] = $this->id;
         $instance['clear_cache_now'] = false;
         SimpleicalBlock::display_block($instance);
         
@@ -202,6 +201,14 @@ class Simple_iCal_Widget extends WP_Widget
             $instance['clear_cache_now'] = false ;
         }
         
+        if (empty($instance['blockid']) || !empty($new_instance['reset_id'])){
+            // delete our transient cache
+            $instance['blockid'] = 'w' . uniqid().
+            $instance['reset_id'] = false; //  $new_instance['clear_cache_now'];
+        } else {
+            $instance['reset_id'] = false ;
+        }
+        
         return $instance;
     }
     /**
@@ -215,7 +222,7 @@ class Simple_iCal_Widget extends WP_Widget
     {
         $default = array(
             'wptype' => 'widget',
-            'blockid' => 'AZ',
+ //           'blockid' => 'AZ',
             'title' => __('Events', 'simple_ical'),
             'calendar_id' => '',
             'event_count' => 10,
@@ -335,6 +342,10 @@ class Simple_iCal_Widget extends WP_Widget
          <p>
           <input class="checkbox" id="<?php echo $this->get_field_id('clear_cache_now'); ?>" name="<?php echo $this->get_field_name('clear_cache_now'); ?>" type="checkbox" value='1' <?php checked( '1', $instance['clear_cache_now'] ); ?>/>
           <label for="<?php echo $this->get_field_id('clear_cache_now'); ?>"><?php _e(' clear cache on save.', 'simple_ical'); ?></label> 
+        </p>
+         <p>
+          <input class="checkbox" id="<?php echo $this->get_field_id('reset_id'); ?>" name="<?php echo $this->get_field_name('reset_id'); ?>" type="checkbox" value='1' <?php checked( '1', $instance['reset_id'] ); ?>/>
+          <label for="<?php echo $this->get_field_id('reset_id'); ?>"><?php _e(' reset blockid on save.', 'simple_ical'); ?></label> 
         </p>
         <p>
             <?php echo '<a href="' . admin_url('admin.php?page=simple_ical_info') . '" target="_blank">' ; 
