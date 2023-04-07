@@ -110,12 +110,10 @@ class SimpleicalWidgetAdmin {
         _e('<p><strong>Checkbox Allow safe html in description and summary.</strong></p>', 'simple_ical');
         _e('<p>Check checkbox to allow the use of some safe html in description and summary,<br>otherwise it will only be displayed as text.</p>', 'simple_ical');
         
-        _e('<p><strong>Checkbox clear cache now.</strong></p>', 'simple_ical');
-        _e('<p>Check checkbox to clear cache now, otherwise it will be cleared after cache time is expired.<br>(to prevent very much calls to agenda, returns to false in block-editor after a short time)<br>In the (legacy)widget clears cache only on save.</p>', 'simple_ical');
-        
-        _e('<p><strong>Checkbox/Button Reset ID</strong></p>', 'simple_ical');
+        _e('<p><strong>Button Reset ID</strong></p>', 'simple_ical');
         _e('<p>Press button Reset ID to copy the blockid from the clientid in the editor after duplicating the block, to make blockid unique again.</p>', 'simple_ical');
-        _e('<p>In the legacy widget the uniqid() function is used when checkbox is checked.</p>', 'simple_ical');
+        _e('<p>In the legacy widget the uniqid() function is used to create a new blockid.</p>', 'simple_ical');
+        _e('<p>Since the transient cache id is derived from the block id, this also clears the data cache once.</p>', 'simple_ical');
         
         _e('<p><strong>HTML anchor</strong></p>', 'simple_ical');
         _e('<p>HTML anchor for this block.<br>Type one or two words — no spaces — to create a unique web address for this block, called an “anchor.” Then you can link directly to this section on your page.<br>You can als use this ID to make parts of your extra css specific for this block</p>', 'simple_ical');
