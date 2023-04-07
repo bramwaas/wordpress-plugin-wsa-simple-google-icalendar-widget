@@ -99,11 +99,6 @@ class Simple_iCal_Widget extends WP_Widget
             );
     }
   
-    private function clearData()
-    {
-        return delete_transient('SimpleicalBlock'.$this->id);
-    }
-    
     /**
      * Front-end display of widget.
      *
@@ -115,14 +110,14 @@ class Simple_iCal_Widget extends WP_Widget
     public function widget($args, $instance)
     {
 // title widget
-        echo '<!-- start widget with block lay-out -->';
+        echo '<!-- start widget blockid=' . $instance['blockid'] . ' -->';
         $title = apply_filters('widget_title', $instance['title']);
         echo $args['before_widget'];
         if(isset($instance['title'])) {
             echo $args['before_title'], $title, $args['after_title'];
         }
 // lay-out block:
-        $instance[wptype] = 'widget';
+        $instance['wptype'] = 'widget';
         $instance['clear_cache_now'] = false;
         SimpleicalBlock::display_block($instance);
         
@@ -191,23 +186,7 @@ class Simple_iCal_Widget extends WP_Widget
         $instance['suffix_lgi_class'] = strip_tags($new_instance['suffix_lgi_class']);
         $instance['suffix_lgia_class'] = strip_tags($new_instance['suffix_lgia_class']);
         $instance['allowhtml'] = !empty($new_instance['allowhtml']);
-        
-        
-        if (!empty($new_instance['clear_cache_now'])){
-            // delete our transient cache
-            $this->clearData();
-            $instance['clear_cache_now'] = false; //  $new_instance['clear_cache_now'];
-        } else {
-            $instance['clear_cache_now'] = false ;
-        }
-        
-        if (empty($instance['blockid']) || !empty($new_instance['reset_id'])){
-            // delete our transient cache
-            $instance['blockid'] = 'w' . uniqid().
-            $instance['reset_id'] = false; //  $new_instance['clear_cache_now'];
-        } else {
-            $instance['reset_id'] = false ;
-        }
+        $instance['blockid'] = strip_tags($new_instance['blockid']);
         
         return $instance;
     }
@@ -222,7 +201,7 @@ class Simple_iCal_Widget extends WP_Widget
     {
         $default = array(
             'wptype' => 'widget',
- //           'blockid' => 'AZ',
+            'blockid' => 'W' . uniqid(),
             'title' => __('Events', 'simple_ical'),
             'calendar_id' => '',
             'event_count' => 10,
@@ -249,6 +228,7 @@ class Simple_iCal_Widget extends WP_Widget
             
         );
         $instance = wp_parse_args((array) $instance, $default);
+        $nwblockid = 'w' . uniqid();
         
         ?>
         <p>
@@ -340,12 +320,11 @@ class Simple_iCal_Widget extends WP_Widget
           <label for="<?php echo $this->get_field_id('allowhtml'); ?>"><?php _e('Allow safe html in description and summary.', 'simple_ical'); ?></label> 
         </p>
          <p>
-          <input class="checkbox" id="<?php echo $this->get_field_id('clear_cache_now'); ?>" name="<?php echo $this->get_field_name('clear_cache_now'); ?>" type="checkbox" value='1' <?php checked( '1', $instance['clear_cache_now'] ); ?>/>
-          <label for="<?php echo $this->get_field_id('clear_cache_now'); ?>"><?php _e(' clear cache on save.', 'simple_ical'); ?></label> 
+          <button class="button" id="<?php echo $this->get_field_id('reset_id'); ?>" name="<?php echo $this->get_field_name('reset_id'); ?>" onclick="document.getElementById('<?php echo $this->get_field_id('blockid'); ?>').value = '<?php echo $nwblockid; ?>'" type="button" ><?php _e('Reset ID.', 'simple_ical')  ?></button>
+          <label for="<?php echo $this->get_field_id('reset_id'); ?>"><?php _e('Reset ID, only necessary to clear cache or after duplicating block.', 'simple_ical'); ?></label> 
         </p>
-         <p>
-          <input class="checkbox" id="<?php echo $this->get_field_id('reset_id'); ?>" name="<?php echo $this->get_field_name('reset_id'); ?>" type="checkbox" value='1' <?php checked( '1', $instance['reset_id'] ); ?>/>
-          <label for="<?php echo $this->get_field_id('reset_id'); ?>"><?php _e(' reset blockid on save.', 'simple_ical'); ?></label> 
+        <p>
+          <input class="widefat" id="<?php echo $this->get_field_id('blockid'); ?>" name="<?php echo $this->get_field_name('blockid'); ?>" type="hidden" value="<?php echo esc_attr($instance['blockid']); ?>" />
         </p>
         <p>
             <?php echo '<a href="' . admin_url('admin.php?page=simple_ical_info') . '" target="_blank">' ; 

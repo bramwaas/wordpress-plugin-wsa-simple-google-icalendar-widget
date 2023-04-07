@@ -201,8 +201,10 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 * since v1.2.0 Wordpress version 5.3.0 is required because of the use of wp_date() 
 
 == Changelog ==
-* 2.1.1 New lay-out for block with first date line on a higer level li. 'Start with summary' toggle-setting changed in 'layout' select-setting with options 'Startdate higher level', 'Start with summary', 'Old style'.   
-Synchronize widget lay-out with block layout by largely using the same code.   
+* 2.1.1 In response to a support issue of (@marijnvr). New lay-out for block with first date line on a higer level li. 'Start with summary' toggle-setting changed in 'layout' select-setting with options 'Startdate higher level', 'Start with summary', 'Old style'.   
+After some testing with Elementor:     
+Synchronize widget lay-out with block layout by largely using the same code. 
+In widget use ID based on timestamp in blockid setting. To be sure that ID in frontend is the same as in admin form. (this was not always so with the ID based on instance-id of widget). Added reset ID in settings to change the ID once and in the same time clear the transient cache which is named after the blockid. Removed clear cache now setting in widget because ResetId is more reliable.   
 * 2.1.0 Support more calendars in one module/block. Support DURATION of event. Move processing 'allowhtml' complete out Parser to template/block. 
   Use properties in IcsParser to limit copying of input params in several functions.
   Solved issue: Warning: date() expects at most 2 parameters, 3 given in ...IcsParser.php on line 549 caused by wp_date() / date() replacement in v2.0.4.     
