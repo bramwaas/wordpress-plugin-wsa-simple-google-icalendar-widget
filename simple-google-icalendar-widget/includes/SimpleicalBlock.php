@@ -5,12 +5,12 @@
  * @package    Simple Google iCalendar Block
  * @subpackage Block
  * @author     Bram Waasdorp <bram@waasdorpsoekhan.nl>
- * @copyright  Copyright (c)  2022 - 2022, Bram Waasdorp
+ * @copyright  Copyright (c)  2022 - 2023, Bram Waasdorp
  * @link       https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  * @license    http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * Gutenberg Block functions
  * used in newer wp versions where Gutenbergblocks are available. (tested with function_exists( 'register_block_type' ))
- * Version: 2.1.0
+ * Version: 2.1.1
  * 20220427 namespaced and renamed after classname.
  * 20220430 try with static calls
  * 20220509 fairly correct front-end display. attributes back to block.json
@@ -21,6 +21,8 @@
  * 20220620 added enddate/times for startdate and starttime added Id as anchor and choice of tagg for summary, collaps only when tag_for summary = a.
  * 2.1.0 add calendar class to list-group-item
  *   add htmlspecialchars() to summary, description and location when not 'allowhtml', replacing similar code from IcsParser
+ * 2.1.1  
+ * 20230401 use select 'layout' in stead of 'start with summary' to create more lay-out options.
 
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget;
@@ -37,13 +39,14 @@ class SimpleicalBlock {
         register_block_type( dirname(__DIR__) .'/block.json',
             array(
         'attributes' => [
+            'wptype' => ['type' => 'string'],
             'blockid' => ['type' => 'string'],
             'title' => ['type' => 'string', 'default' => __('Events', 'simple_ical')],
             'calendar_id' => ['type' => 'string', 'default' => ''],
             'event_count' => ['type' => 'integer', 'default' => 10],
             'event_period' => ['type' => 'integer', 'default' => 92],
+            'layout' => ['type' => 'integer', 'default' => 3],
             'cache_time' => ['type' => 'integer', 'default' => 60],
-            'startwsum' => ['type' => 'boolean', 'default' => false],
             'dateformat_lg' => ['type' => 'string', 'default' => 'l jS \of F'],
             'dateformat_lgend' => ['type' => 'string', 'default' => ''],
             'tag_sum' => ['type' => 'string', 'enum' => self::$allowed_tags_sum, 'default' => 'a'],
@@ -74,13 +77,14 @@ class SimpleicalBlock {
    static function render_block($block_attributes, $content) {
        $block_attributes = wp_parse_args((array) $block_attributes,
            array(
+               'wptype' => 'block',
                'blockid' => 'AZ',
               'title' => __('Events', 'simple_ical'),
                'calendar_id' => '',
                'event_count' => 10,
                'event_period' => 92,
                'cache_time' => 60,
-               'startwsum' => false,
+               'layout' => 3,
                'dateformat_lg' => 'l jS \of F',
                'dateformat_lgend' => '',
                'tag_sum' => 'a',
@@ -115,8 +119,12 @@ class SimpleicalBlock {
      */
     static function display_block($instance)
     {
-        echo '<h3 class="widget-title block-title">' . $instance['title'] . '</h3>';
-        $startwsum = (isset($instance['startwsum'])) ? $instance['startwsum'] : false ;
+        if (!isset($instance['wptype']) || 'block' == $instance['wptype']) {
+            echo '<h3 class="widget-title block-title">' . $instance['title'] . '</h3>';
+        }
+        $layout = (isset($instance['layout'])) ? $instance['layout'] : 3;
+        $cal_class = ((!empty($e->cal_class)) ? ' ' . sanitize_html_class($e->cal_class): '');
+        $sn = 0;
         $dflg = (isset($instance['dateformat_lg'])) ? $instance['dateformat_lg'] : 'l jS \of F' ;
         $dflgend = (isset($instance['dateformat_lgend'])) ? $instance['dateformat_lgend'] : '' ;
         $dftsum = (isset($instance['dateformat_tsum'])) ? $instance['dateformat_tsum'] : 'G:i ' ;
@@ -136,7 +144,7 @@ class SimpleicalBlock {
             $curdate = '';
             foreach($data as $e) {
                 $idlist = explode("@", esc_attr($e->uid) );
-                $itemid = $instance['blockid'] . '_' . $idlist[0]; 
+                $itemid = $instance['blockid'] .'_' . strval(++$sn) . '_' . $idlist[0]; 
                 $evdate = wp_kses(wp_date( $dflg, $e->start), 'post');
                 if ( !$instance['allowhtml']) {
                     if (!empty($e->summary)) $e->summary = htmlspecialchars($e->summary);
@@ -147,22 +155,29 @@ class SimpleicalBlock {
                     $evdate = str_replace(array("</div><div>", "</h4><h4>", "</h5><h5>", "</h6><h6>" ), '', $evdate . wp_kses(wp_date( $dflgend, $e->end - 1) , 'post'));
                 }
                 $evdtsum = (($e->startisdate === false) ? wp_kses(wp_date( $dftsum, $e->start) . wp_date( $dftsend, $e->end), 'post') : '');
-                echo '<li class="list-group-item' .  $sflgi . ((!empty($e->cal_class)) ? ' ' . sanitize_html_class($e->cal_class): '') . '">';
-                if (!$startwsum && $curdate != $evdate ) {
-                    $curdate =  $evdate;
-                    echo '<span class="ical-date">' . ucfirst($evdate) . '</span>' . (('a' == $instance['tag_sum'] ) ? '<br>': '');
+                if ($layout < 2 && $curdate != $evdate && $curdate != '' ) {
+                    echo '</ul></li>';
+                }
+                echo '<li class="list-group-item' .  $sflgi . $cal_class . '">';
+                if ($layout != 2 && $curdate != $evdate ) {
+                    if ($layout == 3) {
+                        echo '<span class="ical-date">' . ucfirst($evdate) . '</span>' . (('a' == $instance['tag_sum'] ) ? '<br>': '');}
+                    else {
+                        echo '<span class="ical-date">' . ucfirst($evdate) . '</span><ul class="list-group' .  $instance['suffix_lg_class'] 
+                        . ' sub"><li class="list-group-item' .  $sflgi . $cal_class . ' sub">';
+                    }
                 }
                 echo  '<' . $instance['tag_sum'] . ' class="ical_summary' .  $sflgia . (('a' == $instance['tag_sum'] ) ? '" data-toggle="collapse" data-bs-toggle="collapse" href="#'.
                 $itemid . '" aria-expanded="false" aria-controls="'.
                 $itemid . '">' : '">') ;
-                if (!$startwsum)	{
+                if ($layout != 2)	{
                     echo $evdtsum;
                 }
                 if(!empty($e->summary)) {
                     echo str_replace("\n", '<br>', wp_kses($e->summary,'post'));
                 }
                 echo	'</' . $instance['tag_sum'] . '>' ;
-                if ($startwsum ) {
+                if ($layout == 2) {
                     echo '<span>', $evdate, $evdtsum, '</span>';
                 }
                 echo '<div class="ical_details' .  $sflgia . (('a' == $instance['tag_sum'] ) ? ' collapse' : '') . '" id="',  $itemid, '">';
@@ -187,9 +202,11 @@ class SimpleicalBlock {
                 if(!empty($e->location)) {
                     echo  '<span class="location">', str_replace("\n", '<br>', wp_kses($e->location,'post')) , '</span>';
                 }
-                
-                
                 echo '</div></li>';
+                $curdate =  $evdate;
+            }
+            if ($layout < 2 ) {
+                echo '</ul></li>';
             }
             echo '</ul>';
             date_default_timezone_set('UTC');
