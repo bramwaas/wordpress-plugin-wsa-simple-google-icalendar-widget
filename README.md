@@ -202,6 +202,7 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 * since v1.2.0 Wordpress version 5.3.0 is required because of the use of wp_date() 
 
 == Changelog ==
+* 2.1.2 move assignment of cal_class (of event) to a place where event is available.   
 * 2.1.1 In response to a support issue of (@marijnvr). New lay-out for block with first date line on a higer level li. 'Start with summary' toggle-setting changed in 'layout' select-setting with options 'Startdate higher level', 'Start with summary', 'Old style'.   
 After some testing with Elementor:     
 Synchronize widget lay-out with block layout by largely using the same code. 

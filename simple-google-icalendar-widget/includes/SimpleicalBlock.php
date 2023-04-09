@@ -10,7 +10,7 @@
  * @license    http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * Gutenberg Block functions
  * used in newer wp versions where Gutenbergblocks are available. (tested with function_exists( 'register_block_type' ))
- * Version: 2.1.1
+ * Version: 2.1.2
  * 20220427 namespaced and renamed after classname.
  * 20220430 try with static calls
  * 20220509 fairly correct front-end display. attributes back to block.json
@@ -23,6 +23,7 @@
  *   add htmlspecialchars() to summary, description and location when not 'allowhtml', replacing similar code from IcsParser
  * 2.1.1  
  * 20230401 use select 'layout' in stead of 'start with summary' to create more lay-out options.
+ * 2.1.2 move assignment of cal_class to a place where e=>cal_class is available.
 
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget;
