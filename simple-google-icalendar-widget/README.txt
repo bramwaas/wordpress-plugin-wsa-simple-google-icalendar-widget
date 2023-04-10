@@ -198,9 +198,11 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 == Upgrade Notice ==
 
 * from 2023 (v2.1.1) deprecation php older than 7.4. I don't test in older php versions than 7.4 older versions might still work, but in future I may use new functions of php 8.
+* in v2.1.1 Start with summary is replaced with a select. After upgrade you may have to choose the correct option again. 
 * since v1.2.0 Wordpress version 5.3.0 is required because of the use of wp_date() 
 
 == Changelog ==
+* 2.1.2 fix classes from calendar id and improve hierarchical layout     
 * 2.1.1 In response to a support issue of (@marijnvr). New lay-out for block with first date line on a higer level li. 'Start with summary' toggle-setting changed in 'layout' select-setting with options 'Startdate higher level', 'Start with summary', 'Old style'.   
 After some testing with Elementor:     
 Synchronize widget lay-out with block layout by largely using the same code. 

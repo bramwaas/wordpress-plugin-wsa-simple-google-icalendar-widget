@@ -10,7 +10,7 @@
  * @license    http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * Gutenberg Block functions
  * used in newer wp versions where Gutenbergblocks are available. (tested with function_exists( 'register_block_type' ))
- * Version: 2.1.1
+ * Version: 2.1.2
  * 20220427 namespaced and renamed after classname.
  * 20220430 try with static calls
  * 20220509 fairly correct front-end display. attributes back to block.json
@@ -23,6 +23,8 @@
  *   add htmlspecialchars() to summary, description and location when not 'allowhtml', replacing similar code from IcsParser
  * 2.1.1  
  * 20230401 use select 'layout' in stead of 'start with summary' to create more lay-out options.
+ * 2.1.2 
+ * 20230410 move assignment of cal_class to a place where e=>cal_class is available.
 
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget;
@@ -123,7 +125,6 @@ class SimpleicalBlock {
             echo '<h3 class="widget-title block-title">' . $instance['title'] . '</h3>';
         }
         $layout = (isset($instance['layout'])) ? $instance['layout'] : 3;
-        $cal_class = ((!empty($e->cal_class)) ? ' ' . sanitize_html_class($e->cal_class): '');
         $sn = 0;
         $dflg = (isset($instance['dateformat_lg'])) ? $instance['dateformat_lg'] : 'l jS \of F' ;
         $dflgend = (isset($instance['dateformat_lgend'])) ? $instance['dateformat_lgend'] : '' ;
@@ -146,6 +147,7 @@ class SimpleicalBlock {
                 $idlist = explode("@", esc_attr($e->uid) );
                 $itemid = $instance['blockid'] .'_' . strval(++$sn) . '_' . $idlist[0]; 
                 $evdate = wp_kses(wp_date( $dflg, $e->start), 'post');
+                $cal_class = ((!empty($e->cal_class)) ? ' ' . sanitize_html_class($e->cal_class): '');
                 if ( !$instance['allowhtml']) {
                     if (!empty($e->summary)) $e->summary = htmlspecialchars($e->summary);
                     if (!empty($e->description)) $e->description = htmlspecialchars($e->description);
@@ -155,17 +157,14 @@ class SimpleicalBlock {
                     $evdate = str_replace(array("</div><div>", "</h4><h4>", "</h5><h5>", "</h6><h6>" ), '', $evdate . wp_kses(wp_date( $dflgend, $e->end - 1) , 'post'));
                 }
                 $evdtsum = (($e->startisdate === false) ? wp_kses(wp_date( $dftsum, $e->start) . wp_date( $dftsend, $e->end), 'post') : '');
-                if ($layout < 2 && $curdate != $evdate && $curdate != '' ) {
-                    echo '</ul></li>';
+                if ($layout < 2 && $curdate != $evdate) {
+                    if  ($curdate != '') { echo '</ul></li>';}
+                    echo '<li class="list-group-item' .  $sflgi . ' head">' .
+                    '<span class="ical-date">' . ucfirst($evdate) . '</span><ul class="list-group' .  $instance['suffix_lg_class'] . '">';
                 }
                 echo '<li class="list-group-item' .  $sflgi . $cal_class . '">';
-                if ($layout != 2 && $curdate != $evdate ) {
-                    if ($layout == 3) {
-                        echo '<span class="ical-date">' . ucfirst($evdate) . '</span>' . (('a' == $instance['tag_sum'] ) ? '<br>': '');}
-                    else {
-                        echo '<span class="ical-date">' . ucfirst($evdate) . '</span><ul class="list-group' .  $instance['suffix_lg_class'] 
-                        . ' sub"><li class="list-group-item' .  $sflgi . $cal_class . ' sub">';
-                    }
+                if ($layout == 3 && $curdate != $evdate) {
+                    echo '<span class="ical-date">' . ucfirst($evdate) . '</span>' . (('a' == $instance['tag_sum'] ) ? '<br>': '');
                 }
                 echo  '<' . $instance['tag_sum'] . ' class="ical_summary' .  $sflgia . (('a' == $instance['tag_sum'] ) ? '" data-toggle="collapse" data-bs-toggle="collapse" href="#'.
                 $itemid . '" aria-expanded="false" aria-controls="'.
