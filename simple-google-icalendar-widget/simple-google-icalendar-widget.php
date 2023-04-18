@@ -4,7 +4,7 @@
  Description: Widget that displays events from a public google calendar or iCal file
  Plugin URI: https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  Author: Bram Waasdorp
- Version: 2.1.2
+ Version: 2.1.3
  License: GPL3
  Tested up to: 6.2
  Requires at least: 5.3
@@ -32,12 +32,13 @@
  *              the legacy block with the old widget still keeps working                   
  *   bw 20230403 v2.1.1 replaced almost all of the widget (display) function by a call to SimpleicalBlock::display_block($instance); to make the html roughly the same as that of the block.
  *               added layout setting in the settings form. removed strip-tags from date-time fields in settings form 
- *   bw 20230409 v2.1.2 small adjustments befor_widget id (probably without effect)               
+ *   bw 20230409 v2.1.2 small adjustments befor_widget id (probably without effect) 
+ *   bw 20230418 v2.1.3 added optional placeholder HTML output when no upcoming events are avalable. Also added optional output after the events list (when upcoming events are available).
  */
 /*
  Simple Google Calendar Outlook Events Widget
  Copyright (C) Bram Waasdorp 2017 - 2023
- 2022-06-15
+ 2023-04-18
  Forked from Simple Google Calendar Widget v 0.7 by Nico Boehr
  
  This program is free software: you can redistribute it and/or modify
@@ -185,6 +186,8 @@ class Simple_iCal_Widget extends WP_Widget
         $instance['suffix_lg_class'] = strip_tags($new_instance['suffix_lg_class']);
         $instance['suffix_lgi_class'] = strip_tags($new_instance['suffix_lgi_class']);
         $instance['suffix_lgia_class'] = strip_tags($new_instance['suffix_lgia_class']);
+        $instance['after_events'] = ($new_instance['after_events']);
+        $instance['no_events'] = ($new_instance['no_events']);
         $instance['allowhtml'] = !empty($new_instance['allowhtml']);
         $instance['blockid'] = strip_tags($new_instance['blockid']);
         
@@ -220,6 +223,8 @@ class Simple_iCal_Widget extends WP_Widget
             'suffix_lg_class' => '',
             'suffix_lgi_class' => ' py-0',
             'suffix_lgia_class' => '',
+            'after_events' => '',
+            'no_events' => '',
             'allowhtml' => false,
             'clear_cache_now' => false,
             'className'=>'',
@@ -318,6 +323,14 @@ class Simple_iCal_Widget extends WP_Widget
         <p>
           <input class="checkbox" id="<?php echo $this->get_field_id('allowhtml'); ?>" name="<?php echo $this->get_field_name('allowhtml'); ?>" type="checkbox" value="1" <?php checked( '1', $instance['allowhtml'] ); ?> />
           <label for="<?php echo $this->get_field_id('allowhtml'); ?>"><?php _e('Allow safe html in description and summary.', 'simple_ical'); ?></label> 
+        </p>
+        <p>
+          <label for="<?php echo $this->get_field_id('after_events'); ?>"><?php _e('Closing HTML after available events:', 'simple_ical'); ?></label> 
+          <input class="widefat" id="<?php echo $this->get_field_id('after_events'); ?>" name="<?php echo $this->get_field_name('after_events'); ?>" type="text" value="<?php echo esc_attr($instance['after_events']); ?>" />
+        </p>
+        <p>
+          <label for="<?php echo $this->get_field_id('no_events'); ?>"><?php _e('Closing HTML when no events:', 'simple_ical'); ?></label> 
+          <input class="widefat" id="<?php echo $this->get_field_id('no_events'); ?>" name="<?php echo $this->get_field_name('no_events'); ?>" type="text" value="<?php echo esc_attr($instance['no_events']); ?>" />
         </p>
          <p>
           <button class="button" id="<?php echo $this->get_field_id('reset_id'); ?>" name="<?php echo $this->get_field_name('reset_id'); ?>" onclick="document.getElementById('<?php echo $this->get_field_id('blockid'); ?>').value = '<?php echo $nwblockid; ?>'" type="button" ><?php _e('Reset ID.', 'simple_ical')  ?></button>

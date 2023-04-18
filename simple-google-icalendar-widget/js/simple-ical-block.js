@@ -4,7 +4,8 @@
  * Move styles to stylesheets - both edit and front-end.
  * and use attributes and editable fields
  * attributes as Inspectorcontrols (settings)
- * v2.1.1
+ * v2.1.3
+ * 20230418 Added after_events and no_events HTML output after available events, or istead of unavailable events.
  * 20230401 use select 'layout' in stead of 'start with summary' to create more lay-out options.
  * 20220517  try to find a unique blockid from  clientId (only once) 
  *   excerptlength initialised with '' so cannot be integer, all parseInt(value) followed bij || 0,1,or 2  because result must comply type validation of REST endpoint and '' or NaN don't. (rest_invalid_type)
@@ -272,6 +273,20 @@
                     {   label: __('Allow safe html in description and summary.', 'simple_ical'),
                         checked: props.attributes.allowhtml,
                         onChange: function( value ) { props.setAttributes( { allowhtml: value } );},
+                    }
+                ),
+                el(
+                    TextControl,
+                    {   label: __('Closing HTML after available events:', 'simple_ical'),
+                        value: props.attributes.after_events,
+                        onChange: function( value ) { props.setAttributes( { after_events: value } );},
+                    }
+                ),
+                el(
+                    TextControl,
+                    {   label: __('Closing HTML when no events:', 'simple_ical'),
+                        value: props.attributes.no_events,
+                        onChange: function( value ) { props.setAttributes( { no_events: value } );},
                     }
                 ),
                 el(
