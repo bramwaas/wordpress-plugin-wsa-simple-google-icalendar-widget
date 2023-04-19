@@ -143,7 +143,7 @@ class SimpleicalBlock {
         $instance['anchorId'] = sanitize_html_class($instance['anchorId'], $instance['blockid']);
         $data = IcsParser::getData($instance);
         if (!empty($data) && is_array($data)) {
-            date_default_timezone_set(get_option('timezone_string'));
+            date_default_timezone_set(wp_timezone_string());
             echo '<ul class="list-group' .  $instance['suffix_lg_class'] . ' simple-ical-widget">';
             $curdate = '';
             foreach($data as $e) {
