@@ -60,8 +60,8 @@ class SimpleicalBlock {
             'suffix_lgi_class' => ['type' => 'string', 'default' => ' py-0'],
             'suffix_lgia_class' => ['type' => 'string', 'default' => ''],
             'allowhtml' => ['type' => 'boolean', 'default' => false],
-            'after_events' => '',
-            'no_events' => '',
+            'after_events' => ['type' => 'string', 'default' => ''],
+            'no_events' => ['type' => 'string', 'default' => ''],
             'clear_cache_now' => ['type' => 'boolean', 'default' => false],
             'anchorId' => ['type' => 'string', 'default' => ''],
         ],
@@ -113,7 +113,7 @@ class SimpleicalBlock {
        ob_start();
        self::display_block($block_attributes);
        $output = $output . ob_get_clean();
-       return '<div id="' . $block_attributes['anchorId'] .'" class="' . $block_attributes['className'] . ((isset($block_attributes['align'])) ? (' align' . $block_attributes['align']) : ' ')   .  '" >' . $output . '</div>'. '<div class="content">' . $content . '</div>'  ;
+       return '<div id="' . $block_attributes['anchorId'] .'" class="' . $block_attributes['className'] .'" data-sib-id="' . $block_attributes['blockid'] . '" ' . ((isset($block_attributes['align'])) ? (' align' . $block_attributes['align']) : ' ')   .  '" >' . $output . '</div>'. '<div class="content">' . $content . '</div>'  ;
     }
     /**
      * Front-end display of block or widget.
