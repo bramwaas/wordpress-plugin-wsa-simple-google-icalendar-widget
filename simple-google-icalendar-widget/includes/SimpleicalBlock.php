@@ -8,9 +8,8 @@
  * @copyright  Copyright (c)  2022 - 2023, Bram Waasdorp
  * @link       https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  * @license    http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * Gutenberg Block functions
- * used in newer wp versions where Gutenbergblocks are available. (tested with function_exists( 'register_block_type' ))
- * Version: 2.1.2
+ * Gutenberg Block functions since v2.1.2 also used for widget.
+ * Version: 2.1.3
  * 20220427 namespaced and renamed after classname.
  * 20220430 try with static calls
  * 20220509 fairly correct front-end display. attributes back to block.json
@@ -21,10 +20,10 @@
  * 20220620 added enddate/times for startdate and starttime added Id as anchor and choice of tagg for summary, collaps only when tag_for summary = a.
  * 2.1.0 add calendar class to list-group-item
  *   add htmlspecialchars() to summary, description and location when not 'allowhtml', replacing similar code from IcsParser
- * 2.1.1  
- * 20230401 use select 'layout' in stead of 'start with summary' to create more lay-out options.
- * 2.1.2 
- * 20230410 move assignment of cal_class to a place where e=>cal_class is available.
+ * 2.1.1 20230401 use select 'layout' in stead of 'start with summary' to create more lay-out options.
+ * 2.1.2 20230410 move assignment of cal_class to a place where e=>cal_class is available.
+ * 2.1.3 20230418 Added optional placeholder HTML output when no upcoming events are avalable. 
+ *       Also added optional output after the events list (when upcoming events are available).
 
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget;
@@ -61,6 +60,8 @@ class SimpleicalBlock {
             'suffix_lgi_class' => ['type' => 'string', 'default' => ' py-0'],
             'suffix_lgia_class' => ['type' => 'string', 'default' => ''],
             'allowhtml' => ['type' => 'boolean', 'default' => false],
+            'after_events' => ['type' => 'string', 'default' => ''],
+            'no_events' => ['type' => 'string', 'default' => ''],
             'clear_cache_now' => ['type' => 'boolean', 'default' => false],
             'anchorId' => ['type' => 'string', 'default' => ''],
         ],
@@ -99,6 +100,8 @@ class SimpleicalBlock {
                'suffix_lgi_class' => ' py-0',
                'suffix_lgia_class' => '',
                'allowhtml' => false,
+               'after_events' => '',
+               'no_events' => '',
                'clear_cache_now' => false,
 //               'align'=>'', 
                'className'=>'',
@@ -110,7 +113,7 @@ class SimpleicalBlock {
        ob_start();
        self::display_block($block_attributes);
        $output = $output . ob_get_clean();
-       return '<div id="' . $block_attributes['anchorId'] .'" class="' . $block_attributes['className'] . ((isset($block_attributes['align'])) ? (' align' . $block_attributes['align']) : ' ')   .  '" >' . $output . '</div>'. '<div class="content">' . $content . '</div>'  ;
+       return '<div id="' . $block_attributes['anchorId'] .'" class="' . $block_attributes['className'] .'" data-sib-id="' . $block_attributes['blockid'] . '" ' . ((isset($block_attributes['align'])) ? (' align' . $block_attributes['align']) : ' ')   .  '" >' . $output . '</div>'. '<div class="content">' . $content . '</div>'  ;
     }
     /**
      * Front-end display of block or widget.
@@ -140,7 +143,7 @@ class SimpleicalBlock {
         $instance['anchorId'] = sanitize_html_class($instance['anchorId'], $instance['blockid']);
         $data = IcsParser::getData($instance);
         if (!empty($data) && is_array($data)) {
-            date_default_timezone_set(get_option('timezone_string'));
+            date_default_timezone_set(wp_timezone_string());
             echo '<ul class="list-group' .  $instance['suffix_lg_class'] . ' simple-ical-widget">';
             $curdate = '';
             foreach($data as $e) {
@@ -209,8 +212,12 @@ class SimpleicalBlock {
             }
             echo '</ul>';
             date_default_timezone_set('UTC');
+            echo wp_kses($instance['after_events'],'post');
         }
-        
+        else {
+            echo wp_kses($instance['no_events'],'post');
+            
+        }
         echo '<br class="clear" />';
     }
     

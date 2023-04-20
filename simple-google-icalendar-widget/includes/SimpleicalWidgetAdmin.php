@@ -6,12 +6,13 @@
  * @package    Simple Google iCalendar Widget
  * @subpackage Admin
  * @author     Bram Waasdorp <bram@waasdorpsoekhan.nl>
- * @copyright  Copyright (c)  2017 - 2022, Bram Waasdorp
+ * @copyright  Copyright (c)  2017 - 2023, Bram Waasdorp
  * @link       https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  * @license    http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * Version: 2.1.0
+ * Version: 2.1.3
  * 20220410 namespaced and renamed after classname.
  * 2.1.0 option for comma seperated list of IDs
+ * 2.1.3 block footer after events and placeholder when no events.
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget;
 
@@ -109,6 +110,12 @@ class SimpleicalWidgetAdmin {
 
         _e('<p><strong>Checkbox Allow safe html in description and summary.</strong></p>', 'simple_ical');
         _e('<p>Check checkbox to allow the use of some safe html in description and summary,<br>otherwise it will only be displayed as text.</p>', 'simple_ical');
+        
+        _e('<p><strong>Closing HTML after available events.</strong></p>', 'simple_ical');
+        _e('<p>Closing (safe) HTML after events list, when events are available.<br><br>This text with simple HTML will be displayed after the events list.<br>Use &amp;lt; or &amp;gt; if you want to output &lt; or &gt; otherwise they may be removed as unknown and therefore unsafe tags.<br>E.g. &lt;hr class=&quot;module-ft&quot;	&gt;.</p>', 'simple_ical');
+        
+        _e('<p><strong>Closing HTML when no events.</strong></p>', 'simple_ical');
+        _e('<p>Closing (safe) HTML output when no events are available.<br>This text with simple HTML will be displayed instead of the events list.<br>Use &amp;lt; or &amp;gt; if you want to output &lt; or &gt; otherwise they may be removed as unknown and therefore unsafe tags.<br>E.g. &lt;p  class=&quot;warning&quot; &gt;&amp;lt; No events found. &amp;gt;&lt;\p&gt;&lt;hr class=&quot;module-ft&quot;&gt;.</p>', 'simple_ical');
         
         _e('<p><strong>Button Reset ID</strong></p>', 'simple_ical');
         _e('<p>Press button Reset ID to copy the blockid from the clientid in the editor after duplicating the block, to make blockid unique again.</p>', 'simple_ical');
