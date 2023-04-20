@@ -113,8 +113,10 @@ class SimpleicalBlock {
        ob_start();
        self::display_block($block_attributes);
        $output = $output . ob_get_clean();
-       return '<div id="' . $block_attributes['anchorId'] .'" class="' . $block_attributes['className'] .'" data-sib-id="' . $block_attributes['blockid'] . '" ' . ((isset($block_attributes['align'])) ? (' align' . $block_attributes['align']) : ' ')   .  '" >' . $output . '</div>'. '<div class="content">' . $content . '</div>'  ;
-    }
+       return '<div id="' . $block_attributes['anchorId'] 
+                .'" class="' . $block_attributes['className'] '" ' . ((isset($block_attributes['align'])) ? (' align' . $block_attributes['align']) : ' ')
+                .'" data-sib-id="' . $block_attributes['blockid'] . '" >' . $output . '</div>'. '<div class="content">' . $content . '</div>'  ;
+   }
     /**
      * Front-end display of block or widget.
      *
