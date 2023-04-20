@@ -144,7 +144,7 @@
                     SelectControl,
                     {   label: __('Lay-out:', 'simple_ical'),
                         value: props.attributes.layout,
-                        onChange: function( value ) { props.setAttributes( { layout: value } );},
+                        onChange: function( value ) { props.setAttributes( { layout: parseInt(value) } );},
 					    options:  [
 							        { value: 1, label: __('Startdate higher level', 'simple_ical') },
 							        { value: 2, label: __('Start with summary', 'simple_ical') },
