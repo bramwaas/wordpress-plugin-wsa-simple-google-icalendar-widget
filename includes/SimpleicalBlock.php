@@ -22,8 +22,7 @@
  *   add htmlspecialchars() to summary, description and location when not 'allowhtml', replacing similar code from IcsParser
  * 2.1.1 20230401 use select 'layout' in stead of 'start with summary' to create more lay-out options.
  * 2.1.2 20230410 move assignment of cal_class to a place where e=>cal_class is available.
- * 2.1.3 20230418 Added optional placeholder HTML output when no upcoming events are avalable. 
- *       Also added optional output after the events list (when upcoming events are available).
+ * 2.1.3 20230418 Added optional placeholder HTML output when no upcoming events are avalable. Also added optional output after the events list (when upcoming events are available).
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget;
 
