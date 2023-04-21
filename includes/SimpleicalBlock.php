@@ -127,6 +127,8 @@ class SimpleicalBlock {
         if (!isset($instance['wptype']) || 'block' == $instance['wptype']) {
             echo '<h3 class="widget-title block-title">' . $instance['title'] . '</h3>';
         }
+        $old_timezone = date_default_timezone_get();
+        $tzid_ui = wp_timezone_string();
         $layout = (isset($instance['layout'])) ? $instance['layout'] : 3;
         $sn = 0;
         $dflg = (isset($instance['dateformat_lg'])) ? $instance['dateformat_lg'] : 'l jS \of F' ;
@@ -143,7 +145,7 @@ class SimpleicalBlock {
         $instance['anchorId'] = sanitize_html_class($instance['anchorId'], $instance['blockid']);
         $data = IcsParser::getData($instance);
         if (!empty($data) && is_array($data)) {
-            date_default_timezone_set(wp_timezone_string());
+            date_default_timezone_set($tzid_ui);
             echo '<ul class="list-group' .  $instance['suffix_lg_class'] . ' simple-ical-widget">';
             $curdate = '';
             foreach($data as $e) {
@@ -211,7 +213,7 @@ class SimpleicalBlock {
                 echo '</ul></li>';
             }
             echo '</ul>';
-            date_default_timezone_set('UTC');
+            date_default_timezone_set($old_timezone);
             echo wp_kses($instance['after_events'],'post');
         }
         else {
