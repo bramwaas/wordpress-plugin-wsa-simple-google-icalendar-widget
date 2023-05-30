@@ -8,7 +8,7 @@
  License: GPL3
  Tested up to: 6.2
  Requires at least: 5.3
- Requires PHP:  5.3.0 tested with 7.2
+ Requires PHP:  5.3.0 tested with 7.4
  Text Domain:  simple_ical
  Domain Path:  /languages
  *   bw 20201122 v1.2.0 find solution for DTSTART and DTEND without time by explicit using isDate and only displaying times when isDate === false.;

@@ -22,9 +22,8 @@
  *   add htmlspecialchars() to summary, description and location when not 'allowhtml', replacing similar code from IcsParser
  * 2.1.1 20230401 use select 'layout' in stead of 'start with summary' to create more lay-out options.
  * 2.1.2 20230410 move assignment of cal_class to a place where e=>cal_class is available.
- * 2.1.3 20230418 Added optional placeholder HTML output when no upcoming events are avalable. 
- *       Also added optional output after the events list (when upcoming events are available).
-
+ * 2.1.3 20230418 Added optional placeholder HTML output when no upcoming events are avalable. Also added optional output after the events list (when upcoming events are available).
+ * 
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget;
 
@@ -113,7 +112,7 @@ class SimpleicalBlock {
        ob_start();
        self::display_block($block_attributes);
        $output = $output . ob_get_clean();
-       return '<div id="' . $block_attributes['anchorId'] .'" class="' . $block_attributes['className'] . ((isset($block_attributes['align'])) ? (' align' . $block_attributes['align']) : ' ') .'" data-sib-id="' . $block_attributes['blockid'] . '" >' . $output . '</div>'. '<div class="content">' . $content . '</div>'  ;
+       return '<div id="' . $block_attributes['anchorId'] .'" class="' . $block_attributes['className'] . ((isset($block_attributes['align'])) ? (' align' . $block_attributes['align']) : ' ') .'" data-sib-id="' . $block_attributes['blockid'] . '" >' . $output . '</div>';
    }
     /**
      * Front-end display of block or widget.
@@ -127,6 +126,8 @@ class SimpleicalBlock {
         if (!isset($instance['wptype']) || 'block' == $instance['wptype']) {
             echo '<h3 class="widget-title block-title">' . $instance['title'] . '</h3>';
         }
+        $old_timezone = date_default_timezone_get();
+        $tzid_ui = wp_timezone_string();
         $layout = (isset($instance['layout'])) ? $instance['layout'] : 3;
         $sn = 0;
         $dflg = (isset($instance['dateformat_lg'])) ? $instance['dateformat_lg'] : 'l jS \of F' ;
@@ -143,7 +144,7 @@ class SimpleicalBlock {
         $instance['anchorId'] = sanitize_html_class($instance['anchorId'], $instance['blockid']);
         $data = IcsParser::getData($instance);
         if (!empty($data) && is_array($data)) {
-            date_default_timezone_set(wp_timezone_string());
+            date_default_timezone_set($tzid_ui);
             echo '<ul class="list-group' .  $instance['suffix_lg_class'] . ' simple-ical-widget">';
             $curdate = '';
             foreach($data as $e) {
@@ -211,7 +212,7 @@ class SimpleicalBlock {
                 echo '</ul></li>';
             }
             echo '</ul>';
-            date_default_timezone_set('UTC');
+            date_default_timezone_set($old_timezone);
             echo wp_kses($instance['after_events'],'post');
         }
         else {
