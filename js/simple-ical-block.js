@@ -5,6 +5,7 @@
  * and use attributes and editable fields
  * attributes as Inspectorcontrols (settings)
  * v2.1.3
+ * 20230420 added parseInt on line 147(now 148) to keep layout in block-editor
  * 20230418 Added after_events and no_events HTML output after available events, or istead of unavailable events.
  * 20230401 use select 'layout' in stead of 'start with summary' to create more lay-out options.
  * 20220622  added enddate/times for startdate and starttime added Id as anchor.
