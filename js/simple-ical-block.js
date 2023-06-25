@@ -4,7 +4,8 @@
  * Move styles to stylesheets - both edit and front-end.
  * and use attributes and editable fields
  * attributes as Inspectorcontrols (settings)
- * v2.1.3
+ * v2.1.4
+ * 20230625 added quotes to te options of the Layout SelectControl
  * 20230420 added parseInt on line 147(now 148) to keep layout in block-editor
  * 20230418 Added after_events and no_events HTML output after available events, or istead of unavailable events.
  * 20230401 use select 'layout' in stead of 'start with summary' to create more lay-out options.
