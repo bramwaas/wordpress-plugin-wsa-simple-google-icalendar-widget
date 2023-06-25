@@ -5,7 +5,8 @@
  * and use attributes and editable fields
  * attributes as Inspectorcontrols (settings)
  * v2.1.4
- * 20230625 added quotes to te options of the Layout SelectControl
+ * 20230625 added quotes to te options of the Layout SelectControl, add parseInt to al integers in transform
+ *  
  * 20230420 added parseInt on line 147(now 148) to keep layout in block-editor
  * 20230418 Added after_events and no_events HTML output after available events, or istead of unavailable events.
  * 20230401 use select 'layout' in stead of 'start with summary' to create more lay-out options.
@@ -54,15 +55,15 @@
                 return idBase === 'simple_ical_widget';
             },
             transform: function ( { instance } ) {
-				if (!(instance.raw.layout > 0))  {instance.raw.layout = 3} 
+				if (!(parseInt(instance.raw.layout) > 0))  {instance.raw.layout = 3} 
                 return blocks.createBlock( 'simplegoogleicalenderwidget/simple-ical-block', {
                     title: instance.raw.title,
                     calendar_id: instance.raw.calendar_id,
-                    event_count: instance.raw.event_count,
-                    event_period: instance.raw.event_period,
-                    cache_time: instance.raw.cache_time,
+                    event_count: parseInt(instance.raw.event_count),
+                    event_period: parseInt(instance.raw.event_period),
+                    cache_time: parseInt(instance.raw.cache_time),
                     startwsum : false,
-                    layout: instance.raw.layout,
+                    layout: parseInt(instance.raw.layout),
                     dateformat_lg: instance.raw.dateformat_lg,
                     dateformat_lgend : '',
                     dateformat_tsum: instance.raw.dateformat_tsum,
