@@ -5,8 +5,8 @@
  * and use attributes and editable fields
  * attributes as Inspectorcontrols (settings)
  * v2.1.4
- * 20230625 added quotes to te options of the Layout SelectControl, add parseInt to al integers in transform
- *  
+ * 20230625 added quotes to the options of the Layout SelectControl,
+ *  add parseInt to all integers in transform, added conversion dateformat_lgend and _tsend and anchorid = blockid
  * 20230420 added parseInt on line 147(now 148) to keep layout in block-editor
  * 20230418 Added after_events and no_events HTML output after available events, or istead of unavailable events.
  * 20230401 use select 'layout' in stead of 'start with summary' to create more lay-out options.
@@ -65,9 +65,9 @@
                     startwsum : false,
                     layout: parseInt(instance.raw.layout),
                     dateformat_lg: instance.raw.dateformat_lg,
-                    dateformat_lgend : '',
+                    dateformat_lgend : instance.raw.dateformat_lgend,
                     dateformat_tsum: instance.raw.dateformat_tsum,
-			  		dateformat_tsend : '',
+			  		dateformat_tsend : instance.raw.dateformat_tsend,
                     dateformat_tstart: instance.raw.dateformat_tstart,
                     dateformat_tend: instance.raw.dateformat_tend,
                     excerptlength: instance.raw.excerptlength,
@@ -78,7 +78,7 @@
                     after_events: instance.raw.after_events,
                     no_events: instance.raw.no_events,
 			  		tag_sum: instance.raw.tag_sum,
-                    anchorId: '',
+                    anchorId: instance.raw.blockid,
 			  		className: 'Simple_iCal_Widget',
                 } );
             },
