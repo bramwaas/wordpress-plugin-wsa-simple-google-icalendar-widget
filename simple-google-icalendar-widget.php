@@ -4,7 +4,7 @@
  Description: Widget that displays events from a public google calendar or iCal file
  Plugin URI: https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  Author: Bram Waasdorp
- Version: 2.1.3
+ Version: 2.1.4
  License: GPL3
  Tested up to: 6.2
  Requires at least: 5.3
@@ -34,6 +34,7 @@
  *               added layout setting in the settings form. removed strip-tags from date-time fields in settings form 
  *   bw 20230409 v2.1.2 small adjustments befor_widget id (probably without effect) 
  *   bw 20230418 v2.1.3 added optional placeholder HTML output when no upcoming events are avalable. Also added optional output after the events list (when upcoming events are available).
+ *   bw 20230623 v2.1.4 solved a number of typos in dateformat_... in update function to save all options.
  */
 /*
  Simple Google Calendar Outlook Events Widget
@@ -172,9 +173,9 @@ class Simple_iCal_Widget extends WP_Widget
         }
         // using strip_tags because it can start with space or contain more classe seperated by spaces
         $instance['dateformat_lg'] = ($new_instance['dateformat_lg']);
-        $instance['dateformat_lg'] = ($new_instance['dateformat_lgend']);
+        $instance['dateformat_lgend'] = ($new_instance['dateformat_lgend']);
         $instance['dateformat_tsum'] = ($new_instance['dateformat_tsum']);
-        $instance['dateformat_tsum'] = ($new_instance['dateformat_tsum']);
+        $instance['dateformat_tsend'] = ($new_instance['dateformat_tsend']);
         $instance['dateformat_tstart'] = ($new_instance['dateformat_tstart']);
         $instance['dateformat_tend'] = ($new_instance['dateformat_tend']);
         if(is_numeric($new_instance['excerptlength']) && $new_instance['excerptlength'] >= 0) {

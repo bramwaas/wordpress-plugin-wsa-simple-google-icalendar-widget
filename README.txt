@@ -49,9 +49,9 @@ Tag for summary: "strong"
  
 == Installation ==
 
-* Do the usual setup procedure... you know... downloading... unpacking... uploading... activating.   
+* Do the usual just install it through the wordpress plugin directory.
 Or download the zip-file and upload it via Plugins Add new ... install and activate.    
-Or just install it through the wordpress plugin directory.       
+Or do the old manual setup procedure... you know... downloading... unpacking... uploading... activating.       
 * For WP 5.9 and higher: As soon as you activated the plugin, you should see a new block 'Simple ical Block' in the (block) Editor in the category Widgets.       
 You can enter the block in a post or a page with the block-editor (eg. (+ sign)Toggle block inserter / WIDGETS).           
 If your theme has a widget area you can also enter the block as a widget in a widget area:          
@@ -202,7 +202,10 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 * since v1.2.0 Wordpress version 5.3.0 is required because of the use of wp_date() 
 
 == Changelog ==
-* * 2.1.3 After a feature request of achimmm (in github on Joomla module) added optional placeholder HTML output when no upcoming events are avalable. Also added optional output after the events list (when upcoming events are available).   
+* 2.1.4 added quotes to the options of the Layout SelectControl in simple-ical-block.js conform / Block Editor Handbook / Reference Guides / Component Reference / SelectControl to emphasize that the return value is a string;   
+To make transform smoother: Add parseInt to all integers in transform and added missing transformations in block.js     
+Solved a number of typos in dateformat_... in update function in widget.php that prevented saving some options/settings.
+* 2.1.3 After a feature request of achimmm (in github on Joomla module) added optional placeholder HTML output when no upcoming events are avalable. Also added optional output after the events list (when upcoming events are available).   
 added parseInt on line 147(148) of simple-ical-block.js to keep layout in block-editor
 * 2.1.2 fix classes from calendar id and improve hierarchical layout     
 * 2.1.1 In response to a support issue of (@marijnvr). New lay-out for block with first date line on a higer level li. 'Start with summary' toggle-setting changed in 'layout' select-setting with options 'Startdate higher level', 'Start with summary', 'Old style'.   
