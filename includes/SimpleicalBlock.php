@@ -9,7 +9,7 @@
  * @link       https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  * @license    http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * Gutenberg Block functions since v2.1.2 also used for widget.
- * Version: 2.1.3
+ * Version: 2.1.5
  * 20220427 namespaced and renamed after classname.
  * 20220430 try with static calls
  * 20220509 fairly correct front-end display. attributes back to block.json
@@ -23,12 +23,48 @@
  * 2.1.1 20230401 use select 'layout' in stead of 'start with summary' to create more lay-out options.
  * 2.1.2 20230410 move assignment of cal_class to a place where e=>cal_class is available.
  * 2.1.3 20230418 Added optional placeholder HTML output when no upcoming events are avalable. Also added optional output after the events list (when upcoming events are available).
+ * 2.1.5 20230823 default_block_attributes as static variable and alowed_tags_sum made public to use same values also in the widget, 
  * 
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget;
 
 class SimpleicalBlock {
-    private static $allowed_tags_sum = ['a', 'b', 'div', 'h4', 'h5', 'h6', 'i', 'span', 'strong', 'u'] ;
+    /**
+     * tags allowed for summary
+     * @var array
+     */
+    static $allowed_tags_sum = ['a', 'b', 'div', 'h4', 'h5', 'h6', 'i', 'span', 'strong', 'u'] ;
+    /**
+     * deafault value for block_attributes (or instance)
+     * @var array
+     */
+     static $default_block_attributes =   array(
+        'wptype' => 'block',
+        'blockid' => 'AZ',
+//         'title' => __('Events', 'simple_ical'),
+         'calendar_id' => '',
+        'event_count' => 10,
+        'event_period' => 92,
+        'cache_time' => 60,
+        'layout' => 3,
+        'dateformat_lg' => 'l jS \of F',
+        'dateformat_lgend' => '',
+        'tag_sum' => 'a',
+        'dateformat_tsum' => 'G:i ',
+        'dateformat_tsend' => '',
+        'dateformat_tstart' => 'G:i',
+        'dateformat_tend' => ' - G:i ',
+        'excerptlength' => '',
+        'suffix_lg_class' => '',
+        'suffix_lgi_class' => ' py-0',
+        'suffix_lgia_class' => '',
+        'allowhtml' => false,
+        'after_events' => '',
+        'no_events' => '',
+        'clear_cache_now' => false,
+        'className'=>'',
+        'anchorId'=> '',
+        );
     
     /**
      * Block init register block with help of block.json
@@ -78,35 +114,7 @@ class SimpleicalBlock {
      */
    static function render_block($block_attributes, $content) {
        $block_attributes = wp_parse_args((array) $block_attributes,
-           array(
-               'wptype' => 'block',
-               'blockid' => 'AZ',
-              'title' => __('Events', 'simple_ical'),
-               'calendar_id' => '',
-               'event_count' => 10,
-               'event_period' => 92,
-               'cache_time' => 60,
-               'layout' => 3,
-               'dateformat_lg' => 'l jS \of F',
-               'dateformat_lgend' => '',
-               'tag_sum' => 'a',
-               'dateformat_tsum' => 'G:i ',
-               'dateformat_tsend' => '',
-               'dateformat_tstart' => 'G:i',
-               'dateformat_tend' => ' - G:i ',
-              'excerptlength' => '',
-               'suffix_lg_class' => '',
-               'suffix_lgi_class' => ' py-0',
-               'suffix_lgia_class' => '',
-               'allowhtml' => false,
-               'after_events' => '',
-               'no_events' => '',
-               'clear_cache_now' => false,
-//               'align'=>'', 
-               'className'=>'',
-               'anchorId'=> '',
-           )
-           );
+           (array ('title' => __('Events', 'simple_ical')) + self::$default_block_attributes));
       
        $output = '';
        ob_start();

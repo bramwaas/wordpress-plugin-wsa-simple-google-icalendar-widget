@@ -4,9 +4,9 @@
  Description: Widget that displays events from a public google calendar or iCal file
  Plugin URI: https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  Author: Bram Waasdorp
- Version: 2.1.4
+ Version: 2.1.5
  License: GPL3
- Tested up to: 6.2
+ Tested up to: 6.3
  Requires at least: 5.3
  Requires PHP:  5.3.0 tested with 7.4
  Text Domain:  simple_ical
@@ -35,11 +35,12 @@
  *   bw 20230409 v2.1.2 small adjustments befor_widget id (probably without effect) 
  *   bw 20230418 v2.1.3 added optional placeholder HTML output when no upcoming events are avalable. Also added optional output after the events list (when upcoming events are available).
  *   bw 20230623 v2.1.4 solved a number of typos in dateformat_... in update function to save all options.
+ *   bw 20230823 v2.1.5 added defaults from SimpleicalBlock block_attributes for all used keys in instance to prevent Undefined array key warnings/errors.
  */
 /*
  Simple Google Calendar Outlook Events Widget
  Copyright (C) Bram Waasdorp 2017 - 2023
- 2023-04-18
+ 2023-08-23
  Forked from Simple Google Calendar Widget v 0.7 by Nico Boehr
  
  This program is free software: you can redistribute it and/or modify
@@ -112,6 +113,11 @@ class Simple_iCal_Widget extends WP_Widget
      */
     public function widget($args, $instance)
     {
+
+        $instance = wp_parse_args((array) $instance,
+            (array ('title' => __('Events', 'simple_ical')) + SimpleicalBlock::$default_block_attributes));
+       
+
 // title widget
         $title = apply_filters('widget_title', $instance['title']);
         echo sprintf($args['before_widget'], $instance['blockid'], 'Simple_iCal_Widget ') ;
@@ -121,6 +127,9 @@ class Simple_iCal_Widget extends WP_Widget
 // lay-out block:
         $instance['wptype'] = 'widget';
         $instance['clear_cache_now'] = false;
+        
+        
+        
         SimpleicalBlock::display_block($instance);
         
 // end lay-out block
@@ -203,36 +212,13 @@ class Simple_iCal_Widget extends WP_Widget
      */
     public function form($instance)
     {
-        $default = array(
+        
+        $default = wp_parse_args((array) array(
             'wptype' => 'widget',
             'blockid' => 'W' . uniqid(),
-            'title' => __('Events', 'simple_ical'),
-            'calendar_id' => '',
-            'event_count' => 10,
-            'event_period' => 92,
-            'cache_time' => 60,
-            'layout' => 3,
-            'dateformat_lg' => 'l jS \of F',
-            'dateformat_lgend' => '',
-            'tag_sum' => 'a',
-            'dateformat_tsum' => 'G:i ',
-            'dateformat_tsend' => '',
-            'dateformat_tstart' => 'G:i',
-            'dateformat_tend' => ' - G:i ',
-            'excerptlength' => '',
-            'tag_sum' => 'a',
-            'suffix_lg_class' => '',
-            'suffix_lgi_class' => ' py-0',
-            'suffix_lgia_class' => '',
-            'after_events' => '',
-            'no_events' => '',
-            'allowhtml' => false,
-            'clear_cache_now' => false,
-            'className'=>'',
-            'anchorId'=> '',
-            
-            
-        );
+        ),
+            (array ('title' => __('Events', 'simple_ical')) + SimpleicalBlock::$default_block_attributes));
+        
         $instance = wp_parse_args((array) $instance, $default);
         $nwblockid = 'w' . uniqid();
         

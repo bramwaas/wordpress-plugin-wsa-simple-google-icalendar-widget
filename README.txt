@@ -202,6 +202,8 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 * since v1.2.0 Wordpress version 5.3.0 is required because of the use of wp_date() 
 
 == Changelog ==
+* 2.1.5 20230823 after an issue of johansam (@johansam) in wp support forum: 'Warning: Undefined array key
+' reviewed and improved initialising of options  
 * 2.1.4 20230725 tested with WordPress 6.3-RC1 running Twenty Twenty-Two theme.    
 20230626 added quotes to the options of the Layout SelectControl in simple-ical-block.js conform / Block Editor Handbook / Reference Guides / Component Reference / SelectControl to emphasize that the return value is a string;   
 To make transform smoother: Add parseInt to all integers in transform and added missing transformations in block.js     
