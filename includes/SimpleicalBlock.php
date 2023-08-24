@@ -115,7 +115,8 @@ class SimpleicalBlock {
    static function render_block($block_attributes, $content) {
        $block_attributes = wp_parse_args((array) $block_attributes,
            (array ('title' => __('Events', 'simple_ical')) + self::$default_block_attributes));
-      
+       $instance['anchorId'] = sanitize_html_class($instance['anchorId'], $instance['blockid']);
+       
        $output = '';
        ob_start();
        self::display_block($block_attributes);
@@ -149,7 +150,6 @@ class SimpleicalBlock {
         $sflgi = wp_kses($instance['suffix_lgi_class'], 'post');
         $sflgia = wp_kses($instance['suffix_lgia_class'], 'post');
         if (!in_array($instance['tag_sum'], self::$allowed_tags_sum)) $instance['tag_sum'] = 'a';
-        $instance['anchorId'] = sanitize_html_class($instance['anchorId'], $instance['blockid']);
         $data = IcsParser::getData($instance);
         if (!empty($data) && is_array($data)) {
             date_default_timezone_set($tzid_ui);
