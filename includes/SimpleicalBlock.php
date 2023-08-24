@@ -23,7 +23,7 @@
  * 2.1.1 20230401 use select 'layout' in stead of 'start with summary' to create more lay-out options.
  * 2.1.2 20230410 move assignment of cal_class to a place where e=>cal_class is available.
  * 2.1.3 20230418 Added optional placeholder HTML output when no upcoming events are avalable. Also added optional output after the events list (when upcoming events are available).
- * 2.1.5 20230823 default_block_attributes as static variable and alowed_tags_sum made public to use same values also in the widget, 
+ * 2.1.5 20230824 default_block_attributes as static variable and alowed_tags_sum made public to use same values also in the widget, option anchorId moved to render_block. 
  * 
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget;
@@ -115,7 +115,7 @@ class SimpleicalBlock {
    static function render_block($block_attributes, $content) {
        $block_attributes = wp_parse_args((array) $block_attributes,
            (array ('title' => __('Events', 'simple_ical')) + self::$default_block_attributes));
-       $instance['anchorId'] = sanitize_html_class($instance['anchorId'], $instance['blockid']);
+       $block_attributes['anchorId'] = sanitize_html_class($block_attributes['anchorId'], $block_attributes['blockid']);
        
        $output = '';
        ob_start();
