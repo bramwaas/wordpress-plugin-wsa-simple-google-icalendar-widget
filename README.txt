@@ -3,7 +3,7 @@ Plugin name: Simple Google Calendar Outlook Events Block Widget
 Contributors: bramwaas
 Tags: Event Calendar, Google Calendar, iCal, Events, Block, Calendar, iCalendar, Outlook, iCloud
 Requires at least: 5.3.0
-Tested up to: 6.2
+Tested up to: 6.3
 Requires PHP: 5.3.0
 Stable tag: trunk
 License: GPLv2 or later
@@ -202,7 +202,10 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 * since v1.2.0 Wordpress version 5.3.0 is required because of the use of wp_date() 
 
 == Changelog ==
-* 2.1.4 added quotes to the options of the Layout SelectControl in simple-ical-block.js conform / Block Editor Handbook / Reference Guides / Component Reference / SelectControl to emphasize that the return value is a string;   
+* 2.1.5 20230824 after an issue of johansam (@johansam) in wp support forum: 'Warning: Undefined array key
+' reviewed and improved initialising of options for legacy widget.   
+* 2.1.4 20230725 tested with WordPress 6.3-RC1 running Twenty Twenty-Two theme.    
+20230626 added quotes to the options of the Layout SelectControl in simple-ical-block.js conform / Block Editor Handbook / Reference Guides / Component Reference / SelectControl to emphasize that the return value is a string;   
 To make transform smoother: Add parseInt to all integers in transform and added missing transformations in block.js     
 Solved a number of typos in dateformat_... in update function in widget.php that prevented saving some options/settings.
 * 2.1.3 After a feature request of achimmm (in github on Joomla module) added optional placeholder HTML output when no upcoming events are avalable. Also added optional output after the events list (when upcoming events are available).   
