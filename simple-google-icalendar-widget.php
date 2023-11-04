@@ -6,7 +6,7 @@
  Author: Bram Waasdorp
  Version: 2.1.5
  License: GPL3
- Tested up to: 6.3
+ Tested up to: 6.4
  Requires at least: 5.3
  Requires PHP:  5.3.0 tested with 7.4
  Text Domain:  simple_ical
@@ -36,6 +36,7 @@
  *   bw 20230418 v2.1.3 added optional placeholder HTML output when no upcoming events are avalable. Also added optional output after the events list (when upcoming events are available).
  *   bw 20230623 v2.1.4 solved a number of typos in dateformat_... in update function to save all options.
  *   bw 20230823 v2.1.5 added defaults from SimpleicalBlock block_attributes for all used keys in instance to prevent Undefined array key warnings/errors.
+ *   bw 20231104 tested with 6.4-RC3.
  */
 /*
  Simple Google Calendar Outlook Events Widget
