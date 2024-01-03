@@ -592,7 +592,7 @@ END:VCALENDAR';
                                             ($fmdayok || $expand)
                                             && ($count == 0 || $i < $count)
                                             && $newstart->getTimestamp() <= $until
-                                            && !(!empty($e->exdate) && in_array($newstart->getTimestamp(), $e->exdate))
+                                            && (empty($e->exdate) || !in_array($newstart->getTimestamp(), $e->exdate))
                                             && $newstart> $edtstart) { // count events after dtstart
                                                 if ($newstart->getTimestamp() > $nowstart
                                                     ) { // copy only events after now
@@ -950,7 +950,7 @@ END:VCALENDAR';
         
 	        try {
                 $this->parse($httpBody,  $cal_class, $cal_ord );
- 	        } catch(\Exception $e) {
+ 	        } catch(\Exception $exc) {
 	            continue;
 	        }
         } // end foreach
