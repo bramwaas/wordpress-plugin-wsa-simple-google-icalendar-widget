@@ -336,7 +336,9 @@ END:VCALENDAR';
                 $e = $this->parseVevent($eventStr);
                 $e->cal_class = $cal_class;
                 $e->cal_ord = $cal_ord;
-                $this->events[] = $e;
+                if (!empty($e->exdate) || !in_array($newstart->getTimestamp(), $e->exdate)) {
+                   $this->events[] = $e;
+                }
                 // Recurring event?
                 if (isset($e->rrule) && $e->rrule !== '') {
                     /* Recurring event, parse RRULE in associative array add appropriate duplicate events
