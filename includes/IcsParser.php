@@ -336,7 +336,7 @@ END:VCALENDAR';
                 $e = $this->parseVevent($eventStr);
                 $e->cal_class = $cal_class;
                 $e->cal_ord = $cal_ord;
-                if (!empty($e->exdate) || !in_array($newstart->getTimestamp(), $e->exdate)) {
+                if (empty($e->exdate) || !in_array($newstart->getTimestamp(), $e->exdate)) {
                    $this->events[] = $e;
                 }
                 // Recurring event?
