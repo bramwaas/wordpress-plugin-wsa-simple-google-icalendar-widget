@@ -3,7 +3,7 @@ Plugin name: Simple Google Calendar Outlook Events Block Widget
 Contributors: bramwaas
 Tags: Event Calendar, Google Calendar, iCal, Events, Block, Calendar, iCalendar, Outlook, iCloud
 Requires at least: 5.3.0
-Tested up to: 6.3
+Tested up to: 6.4
 Requires PHP: 5.3.0
 Stable tag: trunk
 License: GPLv2 or later
@@ -144,7 +144,7 @@ We'd love your help! Here's a few things you can do:
 * End of repeating by COUNT or UNTIL
 * By day month, monthday or setpos (BYDAY, BYMONTH, BYMONTHDAY, BYSETPOS) no other by...   
   (not parsed: BYWEEKNO, BYYEARDAY, BYHOUR, BYMINUTE, RDATE)
-* Exclude events on EXDATE from repeat (after evaluating BYSETPOS)
+* Exclude events on EXDATE from recurrence set (after evaluating BYSETPOS)
 * Respects Timezone and Day Light Saving time. Build and tested with Iana timezones as used in php, Google, and Apple now also tested with Microsoft timezones and unknown timezones. For unknown timezone-names using the default timezone of Wordpress (probably the local timezone).  
 
 === Recurrent events, Timezone,  Daylight Saving Time ===
@@ -166,6 +166,7 @@ Test results and comparison with Google and Outlook calendar have been uploaded 
 === From the ical specifications ===
 ~~~
 see http://www.ietf.org/rfc/rfc5545.txt for specification of te ical format.
+or https://icalendar.org/iCalendar-RFC-5545/
 (see 3.3.10. [Page 38] Recurrence Rule in specification
   .____________._________.________._________.________.
   |            |DAILY    |WEEKLY  |MONTHLY  |YEARLY  |
@@ -202,7 +203,8 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 * since v1.2.0 Wordpress version 5.3.0 is required because of the use of wp_date() 
 
 == Changelog ==
-
+* 2.2.0 after an issue of gonzob (@gonzob) in WP support forum: 'Bug with repeating events
+' improved handling of EXDATE so that also the first event of a recurrent set can be excluded.
 * 2.1.5 20230824 after an issue of johansam (@johansam) in wp support forum: 'Warning: Undefined array key
 ' reviewed and improved initialising of options for legacy widget.
 * 2.1.4 20230725 tested with WordPress 6.3-RC1 running Twenty Twenty-Two theme.    
