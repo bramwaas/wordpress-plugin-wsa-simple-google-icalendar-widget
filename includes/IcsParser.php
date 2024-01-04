@@ -346,7 +346,7 @@ END:VCALENDAR';
                 if (empty($e->exdate) || !in_array($e->start, $e->exdate)) {
                    $this->events[] = $e;
                    if (!empty($e->recurid)){
-                       $this->$replaceevents[] = array($e->UID, $e->recurid );
+                       $this->replaceevents[] = array($e->UID, $e->recurid );
                    }
                 }
                 // Recurring event?
@@ -671,10 +671,12 @@ END:VCALENDAR';
                 && $e->start <= $this->penddate
                 ) {
                     if (!empty($this->replaceevents) && empty($e->recurid)){
-                        $a = explode ($e->uid, '_', 2);
-                        $e_uid = (count($a) > 1) ? $a[2] : $a[1];
-                        if (  !in_array(array($e_uid, $e->start ), $this->replaceevents)) {
-                            continue;
+                        $a = explode ('_', $e->uid, 2);
+                        $e_uid = (count($a) > 1) ? $a[1] : $a[0];
+                        $e->description = $e->description . '. e_uid= ' . $e_uid . '. $e->uid =' .$e->uid;
+                         if ( in_array(array($e_uid, $e->start ), $this->replaceevents, true)) {
+                            $e->description = "VERWIJDEREN " . $e_uid ;
+//TODO                            continue;
                         }
                     }
                     $i++;
