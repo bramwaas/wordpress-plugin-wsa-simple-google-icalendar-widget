@@ -275,6 +275,13 @@ END:VCALENDAR';
      */
     protected $events = [];
     /**
+     * The array of events with RECURRENCE-ID parsed from the ics file, that may replace events with the same UID and Start-datetime.
+     *
+     * @var    array array of event objects
+     * @since  2.2.0
+     */
+    protected $replaceevents = [];
+    /**
      * Timestamp of the start time fo parsing, set by parse function.
      *
      * @var    int
@@ -338,6 +345,9 @@ END:VCALENDAR';
                 $e->cal_ord = $cal_ord;
                 if (empty($e->exdate) || !in_array($e->start, $e->exdate)) {
                    $this->events[] = $e;
+                   if (!empty($e->recurid)){
+                       $this->$replaceevents[] = array($e->UID, $e->recurid );
+                   }
                 }
                 // Recurring event?
                 if (isset($e->rrule) && $e->rrule !== '') {
@@ -658,7 +668,9 @@ END:VCALENDAR';
         $i=0;
         foreach ($this->events as $e) {
             if (($e->end >= $this->now)
-                && $e->start <= $this->penddate) {
+                && $e->start <= $this->penddate
+                && (empty($this->replaceevents) || !in_array(array(explode($e->UID,'_',2 )[1], $e->start ), $this->replaceevents))
+                ) {
                     $i++;
                     if ($i > $this->event_count) {
                         break;
@@ -701,7 +713,7 @@ END:VCALENDAR';
         $date = \DateTime::createFromFormat('Ymd His e', substr($datetime,0,8) . ' ' . $hms. ' ' . $tzid);
         $timestamp = $date->getTimestamp();
         return $timestamp;
-    }
+    } 
     /**
      * Checks if a time zone is a recognised Windows (non-CLDR) time zone
      *
@@ -777,6 +789,7 @@ END:VCALENDAR';
             $value = "";
             $tzid = '';
             $isdate = false;
+            $isperiod = false;
             //bw 20171108 added, because sometimes there is timezone or other info after DTSTART, or DTEND
             //     eg. DTSTART;TZID=Europe/Amsterdam, or  DTSTART;VALUE=DATE:20171203
             $tl = explode(";", $list[0]);
@@ -790,7 +803,14 @@ END:VCALENDAR';
                             $tzid = $dtl[1];
                             break;
                         case 'VALUE':
-                            $isdate = ('DATE' == $dtl[1]);
+                            switch($dtl[1]) {
+                                case 'DATE':
+                                    $isdate = true;
+                                    break;
+                                case 'PERIOD':
+                                    $isperiod = true;
+                                    break;
+                            }
                             break;
                     }
                 }
@@ -834,19 +854,18 @@ END:VCALENDAR';
                     case "EXDATE":
                         $dtl = explode(",", $value);
                         foreach ($dtl as $value) {
-                            $eventObj->exdate[] = $this->parseIcsDateTime($value, $tzid);
+                            $eventObj->exdate[] = $this->parseIcsDateTime($value, $tzid );
                         }
                         break;
-// not implemented yet                        
-//                     case "RDATE":
-//                         $dtl = explode(",", $value);
-//                         foreach ($dtl as $value) {
-//                             $eventObj->rdate[] = $this->parseIcsPeriodOrDateTime($value, $tzid);
-//                         }
-//                         break;
-// PERIOD = period-explicit OR period-start; period-explicit = date-time "/" date-time;  period-start = date-time "/" dur-value
+                    case "RECURRENCE-ID":
+                        $tz = $this->parseIanaTimezoneid ($tzid,$value);
+                        $tzid = $tz->getName();
+                        $eventObj->recurtzid = $tzid;
+                        $eventObj->recuridisdate = $isdate;
+                        $eventObj->recurid = $this->parseIcsDateTime($value, $tzid);
+                        break;
                 }
-            }else { // count($list) <= 1
+             }else { // count($list) <= 1
                 if (strlen($l) > 1) {
                     $desc = str_replace(array('\;', '\,', '\r\n','\n', '\r'), array(';', ',', "\n","\n","\n"), substr($l,1));
                     switch($tokenprev) {
