@@ -669,8 +669,14 @@ END:VCALENDAR';
         foreach ($this->events as $e) {
             if (($e->end >= $this->now)
                 && $e->start <= $this->penddate
-                && (empty($this->replaceevents) || !empty($e->recurid) || !in_array(array(explode($e->UID,'_',2 )[1], $e->start ), $this->replaceevents))
                 ) {
+                    if (!empty($this->replaceevents) && empty($e->recurid)){
+                        $a = explode ($e->uid, '_', 2);
+                        $e_uid = (count($a) > 1) ? $a[2] : $a[1];
+                        if (  !in_array(array($e_uid, $e->start ), $this->replaceevents)) {
+                            continue;
+                        }
+                    }
                     $i++;
                     if ($i > $this->event_count) {
                         break;
