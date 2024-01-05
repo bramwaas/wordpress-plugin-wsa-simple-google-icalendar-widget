@@ -1,7 +1,7 @@
 <?php
 /**
  * a simple ICS parser.
- * @copyright Copyright (C) 2017 - 2022 Bram Waasdorp. All rights reserved.
+ * @copyright Copyright (C) 2017 - 2024 Bram Waasdorp. All rights reserved.
  * @license GNU General Public License version 3 or later
  *
  * note that this class does not implement all ICS functionality.
@@ -41,6 +41,7 @@
  *   Parse event DURATION; (only) When DTEND is empty: determine end from start plus duration, when duration is empty and start is DATE start plus one day, else = start
  *   Parse event BYSETPOS; Parse WKST (default MO)
  * 2.2.0 improved handling of EXDATE so that also the first event of a recurrent set can be excluded.
+ *   Parse Recurrence-ID to support changes in individual recurrent events in Google Calendar. Remove _ chars from UID. 
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget;
 
@@ -56,18 +57,18 @@ class IcsParser {
      */
     private static $example_events = 'BEGIN:VCALENDAR
 BEGIN:VEVENT
-DTSTART:20220626T150000
-DTEND:20220626T160000
+DTSTART:20240127T150000
+DTEND:20240127T160000
 RRULE:FREQ=WEEKLY;INTERVAL=3;BYDAY=SU,WE,SA
 UID:a-1
-DESCRIPTION:Description event every 3 weeks sunday wednesday and saturday. t
+DESCRIPTION:Description event every 3 weeks sunday wednesday and saturday. T
  est A-Z.\nLine 2 of description.
 LOCATION:Located at home or somewhere else
 SUMMARY: Every 3 weeks sunday wednesday and saturday
 END:VEVENT
 BEGIN:VEVENT
-DTSTART:20220629T143000
-DTEND:20220629T153000
+DTSTART:20240129T143000
+DTEND:20240129T153000
 RRULE:FREQ=MONTHLY;COUNT=24;BYMONTHDAY=29
 UID:a-2
 DESCRIPTION:
@@ -75,8 +76,8 @@ LOCATION:
 SUMMARY:Example Monthly day 29
 END:VEVENT
 BEGIN:VEVENT
-DTSTART;VALUE=DATE:20220618
-//DTEND;VALUE=DATE:20220620
+DTSTART;VALUE=DATE:20240127
+//DTEND;VALUE=DATE:20240128
 DURATION:P1DT23H59M60S
 RRULE:FREQ=MONTHLY;COUNT=13;BYDAY=4SA
 UID:a-3
@@ -673,13 +674,8 @@ END:VCALENDAR';
                     if (!empty($this->replaceevents) && empty($e->recurid)){
                         $a = explode ('_', $e->uid, 2);
                         $e_uid = (count($a) > 1) ? $a[1] : $a[0];
-                        $e->description = $e->description . '. e_uid= ' . $e_uid . '. $e->uid =' .$e->uid . 'repevents:';
-                        foreach ($this->replaceevents as $re){
-                            $e->description = $e->description . '<br>rUID:' . $re[0] . 'rDate:' . $re[1];
-                        }
                         if ( in_array(array($e_uid, $e->start ), $this->replaceevents, true)) {
-                            $e->description = "VERWIJDEREN " . $e_uid ;
-                            //TODO                            continue;
+                            continue;
                         }
                     }
                     $i++;
@@ -857,7 +853,7 @@ END:VCALENDAR';
                         $eventObj->duration = $value;
                         break;
                     case "UID":
-                        $eventObj->uid = $value;
+                        $eventObj->uid = str_replace('_', '', $value);
                         break;
                     case "RRULE":
                         $eventObj->rrule = $value;
