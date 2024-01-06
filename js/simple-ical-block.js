@@ -15,7 +15,7 @@
  *   excerptlength initialised with '' so cannot be integer, all parseInt(value) followed bij || 0,1,or 2  because result must comply type validation of REST endpoint and '' or NaN don't. (rest_invalid_type)
  *   preponed 'b' to blockid, because html id must not start with number.
  *   wp.components.ServerSideRender deprecated replaced by serverSideRender and dependency wp-server-side-render; clear_cache_now false after 1 second, to prevent excessive calling of calendar
- * 20240106 Added help to (some) settings.
+ * 20240106 Added help to (some) settings. Changed the text domain to simple-google-icalendar-widget to make translations work by following the WP standard
  */
 ( function(blocks, i18n, element, blockEditor, components, serverSideRender ) {
 	var el = element.createElement;
@@ -118,18 +118,18 @@
    			    {className: 'components-panel__body is-opened'},
                 el(
                     TextControl,
-                    {   label: __('Title:', 'simple_ical'),
+                    {   label: __('Title:', 'simple-google-icalendar-widget'),
                         value: props.attributes.title,
-                        help: __('Title of this instance of the widget', 'simple_ical'),
+                        help: __('Title of this instance of the widget', 'simple-google-icalendar-widget'),
                         onChange: function( value ) { props.setAttributes( { title: value } );},
  
                     }
                 ),
                 el(
                     TextControl,
-                    {   label: __('Calendar ID, or iCal URL:', 'simple_ical'),
+                    {   label: __('Calendar ID, or iCal URL:', 'simple-google-icalendar-widget'),
                         value: props.attributes.calendar_id,
-                        help: __("The Google calendar ID, or the URL of te iCal file to display, or #example, or comma separated list of ID's. Optional you can add a html-class separated by a semicolon to some or all ID's to distinguish calendars in the lay-out.", 'simple_ical'),  
+                        help: __("The Google calendar ID, or the URL of te iCal file to display, or #example, or comma separated list of ID's. Optional you can add a html-class separated by a semicolon to some or all ID's to distinguish calendars in the lay-out.", 'simple-google-icalendar-widget'),  
                         onChange: function( value ) { props.setAttributes( { calendar_id: value } );},
 
 
@@ -137,68 +137,68 @@
                 ),
                 el(
                     TextControl,
-                    {   label: __('Number of events displayed:', 'simple_ical'),
+                    {   label: __('Number of events displayed:', 'simple-google-icalendar-widget'),
                         value: props.attributes.event_count,
                         onChange: function( value ) { props.setAttributes( { event_count: Math.max((parseInt(value) || 1),1) } );},
                     }
                 ),
                 el(
                     TextControl,
-                    {   label: __('Number of days after today with events displayed:', 'simple_ical'),
+                    {   label: __('Number of days after today with events displayed:', 'simple-google-icalendar-widget'),
                         value: props.attributes.event_period,
                         onChange: function( value ) { props.setAttributes( { event_period: Math.max((parseInt(value) || 1),1) } );},
                     }
                 ),
                 el(
                     SelectControl,
-                    {   label: __('Lay-out:', 'simple_ical'),
+                    {   label: __('Lay-out:', 'simple-google-icalendar-widget'),
                         value: props.attributes.layout,
                         onChange: function( value ) { props.setAttributes( { layout: parseInt(value) } );},
 					    options:  [
-							        { value: 1, label: __('Startdate higher level', 'simple_ical') },
-							        { value: 2, label: __('Start with summary', 'simple_ical') },
-								    { value: 3, label: __('Old style', 'simple_ical') }
+							        { value: 1, label: __('Startdate higher level', 'simple-google-icalendar-widget') },
+							        { value: 2, label: __('Start with summary', 'simple-google-icalendar-widget') },
+								    { value: 3, label: __('Old style', 'simple-google-icalendar-widget') }
     							] 
                     }
                 ),
                 el(
                     TextControl,
-                    {   label: __('Date format first line:', 'simple_ical'),
+                    {   label: __('Date format first line:', 'simple-google-icalendar-widget'),
                         value: props.attributes.dateformat_lg,
                         onChange: function( value ) { props.setAttributes( { dateformat_lg: value } );},
                     }
                 ),
                 el(
                     TextControl,
-                    {   label: __('Enddate format first line:', 'simple_ical'),
+                    {   label: __('Enddate format first line:', 'simple-google-icalendar-widget'),
                         value: props.attributes.dateformat_lgend,
                         onChange: function( value ) { props.setAttributes( { dateformat_lgend: value } );},
                     }
                 ),
                 el(
                     TextControl,
-                    {   label: __('Time format time summary line:', 'simple_ical'),
+                    {   label: __('Time format time summary line:', 'simple-google-icalendar-widget'),
                         value: props.attributes.dateformat_tsum,
                         onChange: function( value ) { props.setAttributes( { dateformat_tsum: value } );},
                     }
                 ),
                 el(
                     TextControl,
-                    {   label: __('Time format end time summary line:', 'simple_ical'),
+                    {   label: __('Time format end time summary line:', 'simple-google-icalendar-widget'),
                         value: props.attributes.dateformat_tsend,
                         onChange: function( value ) { props.setAttributes( { dateformat_tsend: value } );},
                     }
                 ),
                 el(
                     TextControl,
-                    {   label: __('Time format start time:', 'simple_ical'),
+                    {   label: __('Time format start time:', 'simple-google-icalendar-widget'),
                         value: props.attributes.dateformat_tstart,
                         onChange: function( value ) { props.setAttributes( { dateformat_tstart: value } );},
                     }
                 ),
                 el(
                     TextControl,
-                    {   label: __('Time format end time:', 'simple_ical'),
+                    {   label: __('Time format end time:', 'simple-google-icalendar-widget'),
                         value: props.attributes.dateformat_tend,
                         onChange: function( value ) { props.setAttributes( { dateformat_tend: value } );},
                     }
@@ -208,7 +208,7 @@
                     {  href: 'admin.php?page=simple_ical_info',
 					   target: '_blank',
                     },
-					__('Need help?', 'simple_ical')
+					__('Need help?', 'simple-google-icalendar-widget')
                 )
             )
             ),
@@ -216,14 +216,14 @@
 				{key: 'advancedsetting'},
                 el(
                     TextControl,
-                    {   label: __('Cache expiration time in minutes:', 'simple_ical'),
+                    {   label: __('Cache expiration time in minutes:', 'simple-google-icalendar-widget'),
                         value: props.attributes.cache_time,
                         onChange: function( value ) { props.setAttributes( { cache_time: Math.max((parseInt(value) || 1),2) } );},
                     }
                 ),
                 el(
                     TextControl,
-                    {   label: __('Excerpt length, max length of description:', 'simple_ical'),
+                    {   label: __('Excerpt length, max length of description:', 'simple-google-icalendar-widget'),
                         value: props.attributes.excerptlength,
                         onChange: function( value ) {parsed =  parseInt(value);
                                                      if (isNaN(parsed)) {parsed = ''};
@@ -232,80 +232,80 @@
                 ),
                 el(
                     SelectControl,
-                    {   label: __('Tag for summary:', 'simple_ical'),
+                    {   label: __('Tag for summary:', 'simple-google-icalendar-widget'),
                         value: props.attributes.tag_sum,
-                        help: __('If not using bootstrap h4, div or strong may be a better choice then a', 'simple_ical'),
+                        help: __('If not using bootstrap h4, div or strong may be a better choice then a', 'simple-google-icalendar-widget'),
                         onChange: function( value ) { props.setAttributes( { tag_sum: value } );},
 					    options:  [
-							        { value: 'a', label: __('a (link)', 'simple_ical') },
-							        { value: 'b', label: __('b (attention, bold)', 'simple_ical') },
-								    { value: 'div', label: __('div', 'simple_ical') },
-								    { value: 'h4', label: __('h4 (sub header)', 'simple_ical') },
-								    { value: 'h5', label: __('h5 (sub header)', 'simple_ical') },
-								    { value: 'h6', label: __('h6 (sub header)', 'simple_ical') },
-							        { value: 'i', label: __('i (idiomatic, italic)', 'simple_ical') },
-								    { value: 'span', label: __('span', 'simple_ical') },
-								    { value: 'strong', label: __('strong', 'simple_ical') },
-							        { value: 'u', label: __('u (unarticulated, underline )', 'simple_ical') }
+							        { value: 'a', label: __('a (link)', 'simple-google-icalendar-widget') },
+							        { value: 'b', label: __('b (attention, bold)', 'simple-google-icalendar-widget') },
+								    { value: 'div', label: __('div', 'simple-google-icalendar-widget') },
+								    { value: 'h4', label: __('h4 (sub header)', 'simple-google-icalendar-widget') },
+								    { value: 'h5', label: __('h5 (sub header)', 'simple-google-icalendar-widget') },
+								    { value: 'h6', label: __('h6 (sub header)', 'simple-google-icalendar-widget') },
+							        { value: 'i', label: __('i (idiomatic, italic)', 'simple-google-icalendar-widget') },
+								    { value: 'span', label: __('span', 'simple-google-icalendar-widget') },
+								    { value: 'strong', label: __('strong', 'simple-google-icalendar-widget') },
+							        { value: 'u', label: __('u (unarticulated, underline )', 'simple-google-icalendar-widget') }
     							] 
                     }
                 ),
                 el(
                     TextControl,
-                    {   label: __('Suffix group class:', 'simple_ical'),
+                    {   label: __('Suffix group class:', 'simple-google-icalendar-widget'),
                         value: props.attributes.suffix_lg_class,
-                        help: __('Suffix to add after css-class around the event set, start with space to keep the original class and add another class (list-group).', 'simple_ical'),
+                        help: __('Suffix to add after css-class around the event set, start with space to keep the original class and add another class (list-group).', 'simple-google-icalendar-widget'),
                         onChange: function( value ) { props.setAttributes( { suffix_lg_class: value } );},
                     }
                 ),
                 el(
                     TextControl,
-                    {   label: __('Suffix event start class:', 'simple_ical'),
+                    {   label: __('Suffix event start class:', 'simple-google-icalendar-widget'),
                         value: props.attributes.suffix_lgi_class,
-                        help: __('Suffix to add after the css-class around each event occurrence, start with space to keep the original class (list-group-item), and add another class.', 'simple_ical'),
+                        help: __('Suffix to add after the css-class around each event occurrence, start with space to keep the original class (list-group-item), and add another class.', 'simple-google-icalendar-widget'),
                         onChange: function( value ) { props.setAttributes( { suffix_lgi_class: value } );},
                     }
                 ),
                 el(
                     TextControl,
-                    {   label: __('Suffix event details class:', 'simple_ical'),
+                    {   label: __('Suffix event details class:', 'simple-google-icalendar-widget'),
                         value: props.attributes.suffix_lgia_class,
-                        help: __('Suffix to add after the css-class around the event summary and details, start with space to keep the original class (ical_summary and ical_details) and add another class.', 'simple_ical'),
+                        help: __('Suffix to add after the css-class around the event summary and details, start with space to keep the original class (ical_summary and ical_details) and add another class.', 'simple-google-icalendar-widget'),
                         onChange: function( value ) { props.setAttributes( { suffix_lgia_class: value } );},
                     }
                 ),
                 el(
                     ToggleControl,
-                    {   label: __('Allow safe html in description and summary.', 'simple_ical'),
+                    {   label: __('Allow safe html in description and summary.', 'simple-google-icalendar-widget'),
                         checked: props.attributes.allowhtml,
                         onChange: function( value ) { props.setAttributes( { allowhtml: value } );},
                     }
                 ),
                 el(
                     TextControl,
-                    {   label: __('Closing HTML after available events:', 'simple_ical'),
+                    {   label: __('Closing HTML after available events:', 'simple-google-icalendar-widget'),
                         value: props.attributes.after_events,
                         onChange: function( value ) { props.setAttributes( { after_events: value } );},
                     }
                 ),
                 el(
                     TextControl,
-                    {   label: __('Closing HTML when no events:', 'simple_ical'),
+                    {   label: __('Closing HTML when no events:', 'simple-google-icalendar-widget'),
                         value: props.attributes.no_events,
                         onChange: function( value ) { props.setAttributes( { no_events: value } );},
                     }
                 ),
                 el(
                     ToggleControl,
-                    {   label: __('Clear cache.', 'simple_ical'),
+                    {   label: __('Clear cache.', 'simple-google-icalendar-widget'),
                         checked: props.attributes.clear_cache_now,
                         onChange: function( value ) { props.setAttributes( { clear_cache_now: value } );},
                     }
                 ),
                 el(
                     Button,
-                    {   text: __('Reset ID.', 'simple_ical'),
-                        label: __('Reset ID, only necessary after duplicating block', 'simple_ical'),
+                    {   text: __('Reset ID.', 'simple-google-icalendar-widget'),
+                        label: __('Reset ID, only necessary after duplicating block', 'simple-google-icalendar-widget'),
                         showTooltip: true,
                         variant: 'secondary',
                         onClick: function( ) { props.setAttributes( { blockid: 'b' + props.clientId } );},
@@ -313,9 +313,9 @@
                 ),
                 el(
                     TextControl,
-                    {   label: __('HTML anchor:', 'simple_ical'),
+                    {   label: __('HTML anchor:', 'simple-google-icalendar-widget'),
                         value: props.attributes.anchorId,
-                        help: __('HTML anchor for this block. Type one or two words no spaces to create a unique web address for this block, called an "anchor". Then you can link directly to this section on your page. You can als use this ID to make parts of your extra css refer specific to this block', 'simple_ical'),
+                        help: __('HTML anchor for this block. Type one or two words no spaces to create a unique web address for this block, called an "anchor". Then you can link directly to this section on your page. You can als use this ID to make parts of your extra css refer specific for this block', 'simple-google-icalendar-widget'),
                         onChange: function( value ) { props.setAttributes( { anchorId: value } );},
                     }
                 )

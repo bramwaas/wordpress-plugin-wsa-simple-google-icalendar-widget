@@ -43,7 +43,7 @@
  * 2.2.0 improved handling of EXDATE so that also the first event of a recurrent set can be excluded.
  *   Parse Recurrence-ID to support changes in individual recurrent events in Google Calendar. Remove _ chars from UID. 
  */
-namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalenderWidget;
+namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
 class IcsParser {
     

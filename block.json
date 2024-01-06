@@ -7,8 +7,8 @@
     "description": "Block that displays events from a public calendar or iCal file.",
     "keywords": [ "calendar", "ical", "event", "events", "google", "outlook", "iCalendar", "holydays", "ics" ],
     "icon": "calendar-alt",
-    "version": "2.1.3",
-    "textdomain": "simple_ical",
+    "version": "2.2.0",
+    "textdomain": "simple-google-icalendar-widget",
     "example": {"attributes": {
         "title": "Example events.",
         "calendar_id": "#example",
