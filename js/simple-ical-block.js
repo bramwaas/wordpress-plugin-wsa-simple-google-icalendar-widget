@@ -4,7 +4,7 @@
  * Move styles to stylesheets - both edit and front-end.
  * and use attributes and editable fields
  * attributes as Inspectorcontrols (settings)
- * v2.1.4
+ * v2.2.0
  * 20230625 added quotes to the options of the Layout SelectControl,
  *  add parseInt to all integers in transform, added conversion dateformat_lgend and _tsend and anchorid = blockid
  * 20230420 added parseInt on line 147(now 148) to keep layout in block-editor
@@ -15,6 +15,7 @@
  *   excerptlength initialised with '' so cannot be integer, all parseInt(value) followed bij || 0,1,or 2  because result must comply type validation of REST endpoint and '' or NaN don't. (rest_invalid_type)
  *   preponed 'b' to blockid, because html id must not start with number.
  *   wp.components.ServerSideRender deprecated replaced by serverSideRender and dependency wp-server-side-render; clear_cache_now false after 1 second, to prevent excessive calling of calendar
+ * 20240106 Added help to (some) settings.
  */
 ( function(blocks, i18n, element, blockEditor, components, serverSideRender ) {
 	var el = element.createElement;
@@ -119,14 +120,19 @@
                     TextControl,
                     {   label: __('Title:', 'simple_ical'),
                         value: props.attributes.title,
+                        help: __('Title of this instance of the widget', 'simple_ical'),
                         onChange: function( value ) { props.setAttributes( { title: value } );},
+ 
                     }
                 ),
                 el(
                     TextControl,
                     {   label: __('Calendar ID, or iCal URL:', 'simple_ical'),
                         value: props.attributes.calendar_id,
+                        help: __("The Google calendar ID, or the URL of te iCal file to display, or #example, or comma separated list of ID's. Optional you can add a html-class separated by a semicolon to some or all ID's to distinguish calendars in the lay-out.", 'simple_ical'),  
                         onChange: function( value ) { props.setAttributes( { calendar_id: value } );},
+
+
                     }
                 ),
                 el(
@@ -228,6 +234,7 @@
                     SelectControl,
                     {   label: __('Tag for summary:', 'simple_ical'),
                         value: props.attributes.tag_sum,
+                        help: __('If not using bootstrap h4, div or strong may be a better choice then a', 'simple_ical'),
                         onChange: function( value ) { props.setAttributes( { tag_sum: value } );},
 					    options:  [
 							        { value: 'a', label: __('a (link)', 'simple_ical') },
@@ -247,6 +254,7 @@
                     TextControl,
                     {   label: __('Suffix group class:', 'simple_ical'),
                         value: props.attributes.suffix_lg_class,
+                        help: __('Suffix to add after css-class around the event set, start with space to keep the original class and add another class (list-group).', 'simple_ical'),
                         onChange: function( value ) { props.setAttributes( { suffix_lg_class: value } );},
                     }
                 ),
@@ -254,6 +262,7 @@
                     TextControl,
                     {   label: __('Suffix event start class:', 'simple_ical'),
                         value: props.attributes.suffix_lgi_class,
+                        help: __('Suffix to add after the css-class around each event occurrence, start with space to keep the original class (list-group-item), and add another class.', 'simple_ical'),
                         onChange: function( value ) { props.setAttributes( { suffix_lgi_class: value } );},
                     }
                 ),
@@ -261,6 +270,7 @@
                     TextControl,
                     {   label: __('Suffix event details class:', 'simple_ical'),
                         value: props.attributes.suffix_lgia_class,
+                        help: __('Suffix to add after the css-class around the event summary and details, start with space to keep the original class (ical_summary and ical_details) and add another class.', 'simple_ical'),
                         onChange: function( value ) { props.setAttributes( { suffix_lgia_class: value } );},
                     }
                 ),
@@ -305,6 +315,7 @@
                     TextControl,
                     {   label: __('HTML anchor:', 'simple_ical'),
                         value: props.attributes.anchorId,
+                        help: __('HTML anchor for this block. Type one or two words no spaces to create a unique web address for this block, called an "anchor". Then you can link directly to this section on your page. You can als use this ID to make parts of your extra css refer specific to this block', 'simple_ical'),
                         onChange: function( value ) { props.setAttributes( { anchorId: value } );},
                     }
                 )

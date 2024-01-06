@@ -205,7 +205,8 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 == Changelog ==
 * 2.2.0 after an issue of gonzob (@gonzob) in WP support forum: 'Bug with repeating events
 ' improved handling of EXDATE so that also the first event of a recurrent set can be excluded.  
-Parse Recurrence-ID to support changes in individual recurrent events in Google Calendar. Remove _ chars from UID.
+Basic parse Recurrence-ID (only one Recurrence-ID event to replace one occurrence of the recurrent set) to support changes in individual recurrent events in Google Calendar. Remove _ chars from UID.  
+Add help text's in block settings panel.
 * 2.1.5 20230824 after an issue of johansam (@johansam) in wp support forum: 'Warning: Undefined array key
 ' reviewed and improved initialising of options for legacy widget.
 * 2.1.4 20230725 tested with WordPress 6.3-RC1 running Twenty Twenty-Two theme.    
