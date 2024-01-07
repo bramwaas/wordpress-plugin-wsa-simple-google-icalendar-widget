@@ -3,7 +3,7 @@ Plugin name: Simple Google Calendar Outlook Events Block Widget
 Contributors: bramwaas
 Tags: Event Calendar, Google Calendar, iCal, Events, Block, Calendar, iCalendar, Outlook, iCloud
 Requires at least: 5.3.0
-Tested up to: 6.3
+Tested up to: 6.4
 Requires PHP: 5.3.0
 Stable tag: trunk
 License: GPLv2 or later
@@ -125,6 +125,42 @@ Check if you can download the ics file you have designated in the widget with a 
 
  Yes you can, since v1.2.0, I have tested with [https://p24-calendars.icloud.com/holiday/NL_nl.ics](https://p24-calendars.icloud.com/holiday/NL_nl.ics) .
 
+= How do I set different colours and text size for the dates, the summary, and the details? =
+
+There is no setting for the color or font of parts in this plugin.
+My philosophy is that layout and code/content should be separated as much as possible.
+Furthermore, the plugin should seamlessly fit the style of the website and be fully customizable via CSS
+
+So for color and font, the settings of the theme are used and are then applied via CSS.
+But you can give each element within the plugin its own style (such as color and font size) from the theme via CSS.
+
+If you know your theme css well and it contains classes you want to use on these fields you can add those class-names in
+the Advanced settings: &#34;SUFFIX GROUP CLASS:&#34;, &#34;SUFFIX EVENT START CLASS:&#34; and &#34;SUFFIX EVENT DETAILS CLASS:&#34;
+
+Otherwise you can add a block of additional CSS (or extra css or user css or something like that), which is possible with most themes.   
+IMPORTANT:   
+In order to target the CSS very specifically to the simple-ical-block, it is best to enter something unique in the settings of the block/widget under Advanced in &#34;HTML ANCHOR&#34;, for example &#39;Simple-ical-Block-1&#39; the code translated into a high-level ID of the block.
+With the next block of additional CSS you can make the Dates red and 24 px, the Summary blue and 16 px,
+and the Details green with a gray background.
+
+~~~
+/*additional CSS for Simple-ical-Block-1 */
+&#35;Simple-ical-Block-1 .ical-date {
+color: #ff0000;
+font-size: 24px;
+}
+&#35;Simple-ical-Block-1 .ical_summary {
+color: #0000ff;
+font-size: 16px;
+}
+&#35;Simple-ical-Block-1 .ical_details {
+color: #00ff00;
+background-color: gray;
+font-size: 16px;
+}
+/*end additional CSS for Simple-ical-Block-1 */
+~~~
+
 = How do I contribute to Simple Google Calendar Outlook Events Widget? =
 
 We'd love your help! Here's a few things you can do:
@@ -144,7 +180,7 @@ We'd love your help! Here's a few things you can do:
 * End of repeating by COUNT or UNTIL
 * By day month, monthday or setpos (BYDAY, BYMONTH, BYMONTHDAY, BYSETPOS) no other by...   
   (not parsed: BYWEEKNO, BYYEARDAY, BYHOUR, BYMINUTE, RDATE)
-* Exclude events on EXDATE from repeat (after evaluating BYSETPOS)
+* Exclude events on EXDATE from recurrence set (after evaluating BYSETPOS)
 * Respects Timezone and Day Light Saving time. Build and tested with Iana timezones as used in php, Google, and Apple now also tested with Microsoft timezones and unknown timezones. For unknown timezone-names using the default timezone of Wordpress (probably the local timezone).  
 
 === Recurrent events, Timezone,  Daylight Saving Time ===
@@ -164,8 +200,10 @@ Theoretically this could als happen with recurrent events in the same timezone w
 Test results and comparison with Google and Outlook calendar have been uploaded as DayLightSavingTime test.xlsx.
   
 === From the ical specifications ===
+
 ~~~
 see http://www.ietf.org/rfc/rfc5545.txt for specification of te ical format.
+or https://icalendar.org/iCalendar-RFC-5545/
 (see 3.3.10. [Page 38] Recurrence Rule in specification
   .____________._________.________._________.________.
   |            |DAILY    |WEEKLY  |MONTHLY  |YEARLY  |
@@ -187,6 +225,7 @@ see http://www.ietf.org/rfc/rfc5545.txt for specification of te ical format.
              special expand for MONTHLY if BYMONTH present; otherwise,
              special expand for YEARLY.
 ~~~
+
 (This widget is a Fork of version 0.7 of that simple google calendar widget by NBoehr
 https://nl.wordpress.org/plugins/simple-google-calendar-widget/)
 
@@ -202,7 +241,11 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 * since v1.2.0 Wordpress version 5.3.0 is required because of the use of wp_date() 
 
 == Changelog ==
-
+* 2.2.0 after an issue of gonzob (@gonzob) in WP support forum: 'Bug with repeating events
+' improved handling of EXDATE so that also the first event of a recurrent set can be excluded.  
+Basic parse Recurrence-ID (only one Recurrence-ID event to replace one occurrence of the recurrent set) to support changes in individual recurrent events in Google Calendar. Remove _ chars from UID.  
+Changed textdomain from simple_ical to simple-google-icalendar-widget to make translations work by following the WP standard.  
+Add help text's in block settings panel.
 * 2.1.5 20230824 after an issue of johansam (@johansam) in wp support forum: 'Warning: Undefined array key
 ' reviewed and improved initialising of options for legacy widget.
 * 2.1.4 20230725 tested with WordPress 6.3-RC1 running Twenty Twenty-Two theme.    
