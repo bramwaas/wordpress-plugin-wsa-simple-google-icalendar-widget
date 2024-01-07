@@ -135,31 +135,31 @@ So for color and font, the settings of the theme are used and are then applied v
 But you can give each element within the plugin its own style (such as color and font size) from the theme via CSS.
 
 If you know your theme css well and it contains classes you want to use on these fields you can add those class-names in
-the Advanced settings: "SUFFIX GROUP CLASS:", "SUFFIX EVENT START CLASS:" and "SUFFIX EVENT DETAILS CLASS:"
+the Advanced settings: &#34;SUFFIX GROUP CLASS:&#34;, &#34;SUFFIX EVENT START CLASS:&#34; and &#34;SUFFIX EVENT DETAILS CLASS:&#34;
 
 Otherwise you can add a block of additional CSS (or extra css or user css or something like that), which is possible with most themes.   
 IMPORTANT:   
-In order to target the CSS very specifically to the simple-ical-block, it is best to enter something unique in the settings of the block/widget under Advanced in "HTML ANCHOR", for example “Simple-ical-Block-1” the code translated into a high-level ID of the block.
+In order to target the CSS very specifically to the simple-ical-block, it is best to enter something unique in the settings of the block/widget under Advanced in &#34;HTML ANCHOR&#34;, for example &#39;Simple-ical-Block-1&#39; the code translated into a high-level ID of the block.
 With the next block of additional CSS you can make the Dates red and 24 px, the Summary blue and 16 px,
 and the Details green with a gray background.
 
-```
+~~~
 /*additional CSS for Simple-ical-Block-1 */
-#Simple-ical-Block-1 .ical-date {
+&#35;Simple-ical-Block-1 .ical-date {
 color: #ff0000;
 font-size: 24px;
 }
-#Simple-ical-Block-1 .ical_summary {
+&#35;Simple-ical-Block-1 .ical_summary {
 color: #0000ff;
 font-size: 16px;
 }
-#Simple-ical-Block-1 .ical_details {
+&#35;Simple-ical-Block-1 .ical_details {
 color: #00ff00;
 background-color: gray;
 font-size: 16px;
 }
 /*end additional CSS for Simple-ical-Block-1 */
-```
+~~~
 
 = How do I contribute to Simple Google Calendar Outlook Events Widget? =
 
