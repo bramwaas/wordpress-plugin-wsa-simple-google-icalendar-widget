@@ -200,6 +200,7 @@ Theoretically this could als happen with recurrent events in the same timezone w
 Test results and comparison with Google and Outlook calendar have been uploaded as DayLightSavingTime test.xlsx.
   
 === From the ical specifications ===
+
 ~~~
 see http://www.ietf.org/rfc/rfc5545.txt for specification of te ical format.
 or https://icalendar.org/iCalendar-RFC-5545/
@@ -224,6 +225,7 @@ or https://icalendar.org/iCalendar-RFC-5545/
              special expand for MONTHLY if BYMONTH present; otherwise,
              special expand for YEARLY.
 ~~~
+
 (This widget is a Fork of version 0.7 of that simple google calendar widget by NBoehr
 https://nl.wordpress.org/plugins/simple-google-calendar-widget/)
 
