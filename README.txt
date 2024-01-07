@@ -125,6 +125,42 @@ Check if you can download the ics file you have designated in the widget with a 
 
  Yes you can, since v1.2.0, I have tested with [https://p24-calendars.icloud.com/holiday/NL_nl.ics](https://p24-calendars.icloud.com/holiday/NL_nl.ics) .
 
+= How do I set different colours and text size for the dates, the summary, and the details? =
+
+There is no setting for the color or font of parts in this plugin.
+My philosophy is that layout and code/content should be separated as much as possible.
+Furthermore, the plugin should seamlessly fit the style of the website and be fully customizable via CSS
+
+So for color and font, the settings of the theme are used and are then applied via CSS.
+But you can give each element within the plugin its own style (such as color and font size) from the theme via CSS.
+
+If you know your theme css well and it contains classes you want to use on these fields you can add those class-names in
+the Advanced settings: "SUFFIX GROUP CLASS:", "SUFFIX EVENT START CLASS:" and "SUFFIX EVENT DETAILS CLASS:"
+
+Otherwise you can add a block of additional CSS (or extra css or user css or something like that), which is possible with most themes.   
+IMPORTANT:   
+In order to target the CSS very specifically to the simple-ical-block, it is best to enter something unique in the settings of the block/widget under Advanced in "HTML ANCHOR", for example “Simple-ical-Block-1” the code translated into a high-level ID of the block.
+With the next block of additional CSS you can make the Dates red and 24 px, the Summary blue and 16 px,
+and the Details green with a gray background.
+
+```
+/*additional CSS for Simple-ical-Block-1 */
+#Simple-ical-Block-1 .ical-date {
+color: #ff0000;
+font-size: 24px;
+}
+#Simple-ical-Block-1 .ical_summary {
+color: #0000ff;
+font-size: 16px;
+}
+#Simple-ical-Block-1 .ical_details {
+color: #00ff00;
+background-color: gray;
+font-size: 16px;
+}
+/*end additional CSS for Simple-ical-Block-1 */
+```
+
 = How do I contribute to Simple Google Calendar Outlook Events Widget? =
 
 We'd love your help! Here's a few things you can do:
@@ -144,7 +180,7 @@ We'd love your help! Here's a few things you can do:
 * End of repeating by COUNT or UNTIL
 * By day month, monthday or setpos (BYDAY, BYMONTH, BYMONTHDAY, BYSETPOS) no other by...   
   (not parsed: BYWEEKNO, BYYEARDAY, BYHOUR, BYMINUTE, RDATE)
-* Exclude events on EXDATE from repeat (after evaluating BYSETPOS)
+* Exclude events on EXDATE from recurrence set (after evaluating BYSETPOS)
 * Respects Timezone and Day Light Saving time. Build and tested with Iana timezones as used in php, Google, and Apple now also tested with Microsoft timezones and unknown timezones. For unknown timezone-names using the default timezone of Wordpress (probably the local timezone).  
 
 === Recurrent events, Timezone,  Daylight Saving Time ===
@@ -166,6 +202,7 @@ Test results and comparison with Google and Outlook calendar have been uploaded 
 === From the ical specifications ===
 ~~~
 see http://www.ietf.org/rfc/rfc5545.txt for specification of te ical format.
+or https://icalendar.org/iCalendar-RFC-5545/
 (see 3.3.10. [Page 38] Recurrence Rule in specification
   .____________._________.________._________.________.
   |            |DAILY    |WEEKLY  |MONTHLY  |YEARLY  |
@@ -202,9 +239,13 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 * since v1.2.0 Wordpress version 5.3.0 is required because of the use of wp_date() 
 
 == Changelog ==
-* 20231104 tested with 6.4-RC3.
+* 2.2.0 after an issue of gonzob (@gonzob) in WP support forum: 'Bug with repeating events
+' improved handling of EXDATE so that also the first event of a recurrent set can be excluded.  
+Basic parse Recurrence-ID (only one Recurrence-ID event to replace one occurrence of the recurrent set) to support changes in individual recurrent events in Google Calendar. Remove _ chars from UID.  
+Changed textdomain from simple_ical to simple-google-icalendar-widget to make translations work by following the WP standard.  
+Add help text's in block settings panel.
 * 2.1.5 20230824 after an issue of johansam (@johansam) in wp support forum: 'Warning: Undefined array key
-' reviewed and improved initialising of options for legacy widget.   
+' reviewed and improved initialising of options for legacy widget.
 * 2.1.4 20230725 tested with WordPress 6.3-RC1 running Twenty Twenty-Two theme.    
 20230626 added quotes to the options of the Layout SelectControl in simple-ical-block.js conform / Block Editor Handbook / Reference Guides / Component Reference / SelectControl to emphasize that the return value is a string;   
 To make transform smoother: Add parseInt to all integers in transform and added missing transformations in block.js     
