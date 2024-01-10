@@ -314,7 +314,8 @@ END:VCALENDAR';
         $this->p_start = time();
         $this->calendar_ids = $calendar_ids;
         $this->event_cache = $event_cache;
-        $this->p_end = (0 < $event_period) ? strtotime("+$event_period day"): $this->p_start;
+        $this->p_end = ((0 < $event_period) ? strtotime("+$event_period day"): $this->p_start) + ($event_cache * 60) + 86400;
+        $this->p_start = $this->p_start - 86400;
     }
     /**
      * Parse ical string to individual events
@@ -947,7 +948,11 @@ END:VCALENDAR';
     {
         $transientId = 'SimpleicalBlock'  . $instance['blockid']   ;
         $ep = $instance['event_period'];
+        $timezone = new \DateTimeZone(get_option('timezone_string'));
+        $pdt_start = new \DateTime('@' . time());
+        $pdt_start->setTimezone($timezone);
         $p_start = time();
+        $pdt_end = clone($pdt_start);
         $p_end = (0 < $ep) ? strtotime("+$ep day"): $this->p_start;
         if ($instance['clear_cache_now']) delete_transient($transientId);
         if(false === ($data = get_transient($transientId))) {
