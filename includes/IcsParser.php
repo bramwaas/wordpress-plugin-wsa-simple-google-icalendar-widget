@@ -42,6 +42,7 @@
  *   Parse event BYSETPOS; Parse WKST (default MO)
  * 2.2.0 improved handling of EXDATE so that also the first event of a recurrent set can be excluded.
  *   Parse Recurrence-ID to support changes in individual recurrent events in Google Calendar. Remove _ chars from UID. 
+ * 2.3.0 limit events after caching.  
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
@@ -663,11 +664,11 @@ END:VCALENDAR';
      *
      * @return  array       remaining event objects.
      */
-    public function getFutureEvents( ) {
+    public function getFutureEvents($data_events ) {
         //
         $newEvents = array();
         $i=0;
-        foreach ($this->events as $e) {
+        foreach ($data_events as $e) {
             if (($e->end >= $this->now)
                 && $e->start <= $this->penddate
                 ) {
@@ -925,16 +926,16 @@ END:VCALENDAR';
     static function getData($instance)
     {
         $transientId = 'SimpleicalBlock'  . $instance['blockid']   ;
+        $parser = new IcsParser($instance['calendar_id'], $instance['event_count'], $instance['event_period']);
         if ($instance['clear_cache_now']) delete_transient($transientId);
         if(false === ($data = get_transient($transientId))) {
-            $parser = new IcsParser($instance['calendar_id'], $instance['event_count'], $instance['event_period']);
             $data = $parser->fetch( );
             // do not cache data if fetching failed
             if ($data) {
                 set_transient($transientId, $data, $instance['cache_time']*60);
             }
         }
-        return $data;
+        return $parser->getFutureEvents($data);
     }
     /**
      * Fetches from calender using calendar_ids, event_count and
@@ -982,7 +983,7 @@ END:VCALENDAR';
         } // end foreach
         
         usort($this->events, array($this, "eventSortComparer"));
-        return $this->getFutureEvents();
+        return $this->events;
     }
     
     private static function getCalendarUrl($calId)
