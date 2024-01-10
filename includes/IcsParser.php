@@ -665,7 +665,7 @@ END:VCALENDAR';
      * 
      * @param  array of objects $data_events events parsed or cached.
      * $param int timestamp $p_start start datetime of period/window with events displayed
-     * $param int timestamp $p_end end datetime of period/window with events displayed
+     * $param int timestamp $p_end (not included) end datetime of period/window with events displayed
      * @param  int $e_count limits the maximum number of events  
      *
      * @return  array       remaining event objects.
@@ -676,7 +676,7 @@ END:VCALENDAR';
         $i=0;
         foreach ($data_events as $e) {
             if (($e->end >= $p_start)
-                && $e->start <= $p_end
+                && $e->start < $p_end
                 ) {
                     $i++;
                     if ($i > $e_count) {
@@ -947,13 +947,14 @@ END:VCALENDAR';
     static function getData($instance)
     {
         $transientId = 'SimpleicalBlock'  . $instance['blockid']   ;
-        $ep = $instance['event_period'];
-        $timezone = new \DateTimeZone(get_option('timezone_string'));
+        $tz = new \DateTimeZone(get_option('timezone_string'));
         $pdt_start = new \DateTime('@' . time());
-        $pdt_start->setTimezone($timezone);
-        $p_start = time();
-        $pdt_end = clone($pdt_start);
-        $p_end = (0 < $ep) ? strtotime("+$ep day"): $this->p_start;
+        $pdt_start->setTimezone($tz);
+        $p_start = $pdt_start->modify("today")->getTimestamp();
+        $ep = (empty($instance['event_period']) || 1 > $instance['event_period']) ? 1: $instance['event_period'] + 1;
+        $p_end = $pdt_start->modify("+$ep day")->getTimestamp();
+        //        $p_start = time();
+//        $p_end =  strtotime("+$ep day"): $this->p_start;
         if ($instance['clear_cache_now']) delete_transient($transientId);
         if(false === ($data = get_transient($transientId))) {
             $parser = new IcsParser($instance['calendar_id'], $instance['cache_time'], $instance['event_period']);
