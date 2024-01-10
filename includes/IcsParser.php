@@ -669,7 +669,7 @@ END:VCALENDAR';
      *
      * @return  array       remaining event objects.
      */
-    public function getFutureEvents($data_events, $p_start, $p_end, $e_count ) {
+    static function getFutureEvents($data_events, $p_start, $p_end, $e_count ) {
         //
         $newEvents = array();
         $i=0;
@@ -949,16 +949,16 @@ END:VCALENDAR';
         $ep = $instance['event_period'];
         $p_start = time();
         $p_end = (0 < $ep) ? strtotime("+$ep day"): $this->p_start;
-        $parser = new IcsParser($instance['calendar_id'], $instance['cache_time'], $instance['event_period']);
         if ($instance['clear_cache_now']) delete_transient($transientId);
         if(false === ($data = get_transient($transientId))) {
+            $parser = new IcsParser($instance['calendar_id'], $instance['cache_time'], $instance['event_period']);
             $data = $parser->fetch( );
             // do not cache data if fetching failed
             if ($data) {
                 set_transient($transientId, $data, $instance['cache_time']*60);
             }
         }
-        return $parser->getFutureEvents($data, $p_start, $p_end, $instance['event_count']);
+        return self::getFutureEvents($data, $p_start, $p_end, $instance['event_count']);
     }
     /**
      * Fetches from calender using calendar_ids and event_period
