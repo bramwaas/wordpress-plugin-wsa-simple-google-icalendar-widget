@@ -170,6 +170,13 @@
                     }
                 ),
                 el(
+                   'a',
+                    {  href: 'admin.php?page=simple_ical_info',
+					   target: '_blank',
+                    },
+					__('More info', 'simple-google-icalendar-widget')
+                ),
+                el(
                     TextControl,
                     {   label: __('Enddate format first line:', 'simple-google-icalendar-widget'),
                         value: props.attributes.dateformat_lgend,
