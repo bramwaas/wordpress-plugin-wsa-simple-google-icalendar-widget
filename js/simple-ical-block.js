@@ -166,6 +166,15 @@
                     TextControl,
                     {   label: __('Date format first line:', 'simple-google-icalendar-widget'),
                         value: props.attributes.dateformat_lg,
+                        help:    el(
+							'a',
+							{
+								href: 'admin.php?page=simple_ical_info',
+								target: '_blank',
+							},
+							__('More info', 'simple-google-icalendar-widget')
+						),
+
                         onChange: function( value ) { props.setAttributes( { dateformat_lg: value } );},
                     }
                 ),
