@@ -40,7 +40,6 @@
     var TextControl = components.TextControl;
     var ToggleControl = components.ToggleControl;
     var SelectControl = components.SelectControl;
-    var Tooltip = components.Tooltip;
     var useEffect = element.useEffect;
 	blocks.registerBlockType( 'simplegoogleicalenderwidget/simple-ical-block', {
         icon: iconEl,
@@ -163,24 +162,21 @@
     							] 
                     }
                 ),
-				el(Tooltip, {
-					text: el(
-						'a',
-						{
-							href: 'admin.php?page=simple_ical_info',
-							target: '_blank',
-						},
-						__('More info', 'simple-google-icalendar-widget')
-					),
-					children: el(
-						TextControl,
-						{
-							label: __('Date format first line:', 'simple-google-icalendar-widget'),
-							value: props.attributes.dateformat_lg,
-							onChange: function(value) { props.setAttributes({ dateformat_lg: value }); },
-						}
-					)
-				}
+				el(
+					TextControl,
+					{
+						label: __('Date format first line:', 'simple-google-icalendar-widget'),
+						help: el(
+							'a',
+							{
+								href: 'admin.php?page=simple_ical_info',
+								target: '_blank',
+							},
+							__('More info', 'simple-google-icalendar-widget')
+						),
+						value: props.attributes.dateformat_lg,
+						onChange: function(value) { props.setAttributes({ dateformat_lg: value }); },
+					}
 				),
                 el(
                     TextControl,
