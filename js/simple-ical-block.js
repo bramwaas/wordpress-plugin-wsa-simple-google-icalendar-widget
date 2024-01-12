@@ -169,7 +169,7 @@
 						help: el(
 							'a',
 							{
-								href: 'admin.php?page=simple_ical_info',
+								href: 'admin.php?page=simple_ical_info#dateformat-lg',
 								target: '_blank',
 							},
 							__('More info', 'simple-google-icalendar-widget')
@@ -244,7 +244,14 @@
                     SelectControl,
                     {   label: __('Tag for summary:', 'simple-google-icalendar-widget'),
                         value: props.attributes.tag_sum,
-                        help: __('If not using bootstrap h4, div or strong may be a better choice then a', 'simple-google-icalendar-widget'),
+						help: el(
+							'a',
+							{
+								href: 'admin.php?page=simple_ical_info#tag-sum',
+								target: '_blank',
+							},
+							__('More info', 'simple-google-icalendar-widget')
+						),
                         onChange: function( value ) { props.setAttributes( { tag_sum: value } );},
 					    options:  [
 							        { value: 'a', label: __('a (link)', 'simple-google-icalendar-widget') },
