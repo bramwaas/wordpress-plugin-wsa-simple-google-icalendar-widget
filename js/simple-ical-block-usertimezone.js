@@ -6,5 +6,5 @@
 (function() {
 
   var userTimezoneString = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  document.cookie = "userTimezoneString=" +  userTimezoneString;
+  document.cookie = "simplegoogleicalendarwidget=" +  userTimezoneString + "; max-age=3600; secure; SameSite=Lax";
 })();
