@@ -7,7 +7,7 @@
     "description": "Block that displays events from a public calendar or iCal file.",
     "keywords": [ "calendar", "ical", "event", "events", "google", "outlook", "iCalendar", "holydays", "ics" ],
     "icon": "calendar-alt",
-    "version": "2.2.0",
+    "version": "2.3.0",
     "textdomain": "simple-google-icalendar-widget",
 	"attributes": {
 		"wptype": {"type": "string"},
@@ -45,5 +45,6 @@
     "supports": {
         "align": true
     },
-    "editorScript": "file:js/simple-ical-block.js"
+    "editorScript": "file:js/simple-ical-block.js",
+    "script": "file:js/simple-ical-block-usertimezone.js"
   }

@@ -138,7 +138,7 @@ class SimpleicalBlock {
         $old_timezone = date_default_timezone_get();
         $tzid_ui = wp_timezone_string();
 
-        wp_enqueue_script('get-user-timezone', '/wp-content/plugins/simple-google-icalendar-widget/js/simple-ical-block-usertimezone.js', array(),'2.3.0',);
+//        wp_enqueue_script('get-user-timezone', '/wp-content/plugins/simple-google-icalendar-widget/js/simple-ical-block-usertimezone.js', array(),'2.3.0',);
         $uc_tz = empty($_COOKIE['simplegoogleicalendarwidget']) ? 'ONBEKEND?': $_COOKIE['simplegoogleicalendarwidget'];
         echo '<h2>Cookies</h2><p>' . $uc_tz .'</p>';
 
