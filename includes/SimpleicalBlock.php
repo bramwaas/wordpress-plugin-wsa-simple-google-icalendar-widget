@@ -137,6 +137,12 @@ class SimpleicalBlock {
         }
         $old_timezone = date_default_timezone_get();
         $tzid_ui = wp_timezone_string();
+        if (wp_register_script( 'get-user-timezone', '/wp-content/plugins/simple-google-icalendar-widget/js/simple-ical-block-usertimezone.js' ))
+        {
+            wp_enqueue_script('get-user-timezone', '', array(),'2.3.0',);
+            $uc_tz = $COOKIE['userTimezoneString'];
+            echo '<h1>Timezone</h1><p>' . $uc_tz .'</p>';
+        }
         $layout = (isset($instance['layout'])) ? $instance['layout'] : 3;
         $sn = 0;
         $dflg = (isset($instance['dateformat_lg'])) ? $instance['dateformat_lg'] : 'l jS \of F' ;
