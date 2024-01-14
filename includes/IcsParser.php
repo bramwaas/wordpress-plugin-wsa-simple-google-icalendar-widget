@@ -315,7 +315,7 @@ END:VCALENDAR';
         $this->p_start = time();
         $this->calendar_ids = $calendar_ids;
         $this->event_cache = $event_cache;
-        $this->p_end = ((0 < $event_period) ? strtotime("+$event_period day"): $this->p_start) + ($event_cache * 60) + 86400;
+        $this->p_end = ((0 < $event_period) ? strtotime("+$event_period day"): $this->p_start) + ($event_cache * 60) + 172800;
         $this->p_start = $this->p_start - 86400;
     }
     /**
@@ -949,13 +949,21 @@ END:VCALENDAR';
     {
         $transientId = 'SimpleicalBlock'  . $instance['blockid']   ;
         $tz = new \DateTimeZone($instance['tzid_ui']);
-        $pdt_start = new \DateTime('@' . time());
+        $now = time();
+        $pdt_start = new \DateTime('@' . $now);
         $pdt_start->setTimezone($tz);
         $p_start = $pdt_start->modify("today")->getTimestamp();
         $ep = (empty($instance['event_period']) || 1 > $instance['event_period']) ? 1: $instance['event_period'] + 1;
         $p_end = $pdt_start->modify("+$ep day")->getTimestamp();
-        //        $p_start = time();
-//        $p_end =  strtotime("+$ep day"): $this->p_start;
+        if ('2' == $instance['period_limits'] || '3' == $instance['period_limits']){
+            $p_start = $now;
+        }
+        if ('3' == $instance['period_limits'] || '4' == $instance['period_limits']){
+            $ep = $ep - 1;
+            $pdt_start->setTimestamp($now);
+            $p_end = $pdt_start->modify("+$ep day")->getTimestamp();
+            
+        }
         if ($instance['clear_cache_now']) delete_transient($transientId);
         if(false === ($data = get_transient($transientId))) {
             $parser = new IcsParser($instance['calendar_id'], $instance['cache_time'], $instance['event_period']);
