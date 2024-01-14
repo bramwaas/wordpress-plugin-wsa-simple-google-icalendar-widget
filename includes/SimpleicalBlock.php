@@ -38,7 +38,7 @@ class SimpleicalBlock {
      * deafault value for block_attributes (or instance)
      * @var array
      */
-    static $default_block_attributes =   array(
+    static $default_block_attributes = [
         'wptype' => 'block',
         'blockid' => 'AZ',
         //         'title' => __('Events', 'simple-google-icalendar-widget'),
@@ -49,6 +49,7 @@ class SimpleicalBlock {
         'layout' => 3,
         'dateformat_lg' => 'l jS \of F',
         'dateformat_lgend' => '',
+        'period_limits' => '1',
         'tag_sum' => 'a',
         'dateformat_tsum' => 'G:i ',
         'dateformat_tsend' => '',
@@ -64,7 +65,7 @@ class SimpleicalBlock {
         'clear_cache_now' => false,
         'className'=>'',
         'anchorId'=> '',
-    );
+    ];
     
     /**
      * Block init register block with help of block.json
@@ -114,7 +115,7 @@ class SimpleicalBlock {
      */
     static function render_block($block_attributes, $content) {
         $block_attributes = wp_parse_args((array) $block_attributes,
-            (array ('title' => __('Events', 'simple-google-icalendar-widget')) + self::$default_block_attributes));
+            (array ('title' => __('Events', 'simple-google-icalendar-widget'), 'tzid_ui' => wp_timezone_string()) + self::$default_block_attributes));
         $block_attributes['anchorId'] = sanitize_html_class($block_attributes['anchorId'], $block_attributes['blockid']);
         
         $output = '';
@@ -135,12 +136,9 @@ class SimpleicalBlock {
         if (!isset($instance['wptype']) || 'block' == $instance['wptype']) {
             echo '<h3 class="widget-title block-title">' . $instance['title'] . '</h3>';
         }
-
         $sn = 0;
-
+        $data_sib = 'client TZID=' . $instance['tzid_ui'];
         $old_timezone = date_default_timezone_get();
-        $tzid_ui = (empty($instance['tzid_ui'])) ? wp_timezone_string() : $instance['tzid_ui'];
-        $period_limits = (empty($instance['period_limits'])) ? '1' : $instance['period_limits'];
         $layout = (isset($instance['layout'])) ? $instance['layout'] : 3;
         $dflg = (isset($instance['dateformat_lg'])) ? $instance['dateformat_lg'] : 'l jS \of F' ;
         $dflgend = (isset($instance['dateformat_lgend'])) ? $instance['dateformat_lgend'] : '' ;
@@ -155,8 +153,8 @@ class SimpleicalBlock {
         if (!in_array($instance['tag_sum'], self::$allowed_tags_sum)) $instance['tag_sum'] = 'a';
         $data = IcsParser::getData($instance);
         if (!empty($data) && is_array($data)) {
-            date_default_timezone_set($tzid_ui);
-            echo '<ul class="list-group' .  $instance['suffix_lg_class'] . ' simple-ical-widget">';
+            date_default_timezone_set($instance['tzid_ui']);
+            echo '<ul class="list-group' .  $instance['suffix_lg_class'] . ' simple-ical-widget" data-sib="' . $data_sib . '"> ';
             $curdate = '';
             foreach($data as $e) {
                 $idlist = explode("@", esc_attr($e->uid) );

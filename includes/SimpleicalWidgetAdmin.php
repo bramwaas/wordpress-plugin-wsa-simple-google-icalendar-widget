@@ -114,10 +114,10 @@ class SimpleicalWidgetAdmin {
         
         echo('<span id="period-limits"></span>');
         _e('<p><strong>Period limits</strong></p>', 'simple-google-icalendar-widget');
-        _e('<p>Determination  of start and end time of periode where events are displayed.<br>"Time of day", or "Full day"</p>', 'simple-google-icalendar-widget');
+        _e('<p>Determination  of start and end time of periode where events are displayed.<br>"Time of day", or "Whole  day"</p>', 'simple-google-icalendar-widget');
         _e('<p>With "Time of day" as limit at both ends: <br>The "Number of days after today" is the number of 24-hour periods after the current time. It is a window that moves as the day progresses.', 'simple-google-icalendar-widget');
         _e('<br>So, if today is Monday at 9am and you have a 3-day window, then events that start before 9am on Thursday will be shown, but an event that starts at 1pm will not.<br>As the day progresses, any of today&quot;s events that are completed before the current time will drop off the top of the list, and events that fall within the window will appear at the bottom. ', 'simple-google-icalendar-widget');
-        _e('<br>"Full Day" as limit moves the Start of the window to the beginning of the day (0:00 AM) in local time and/or moves the End to the beginning of the next day.</p>', 'simple-google-icalendar-widget');
+        _e('<br>"Whole  Day" as limit moves the Start of the window to the beginning of the day (0:00 AM) in local time and/or moves the End to the beginning of the next day.</p>', 'simple-google-icalendar-widget');
         _e('<p>Only available in block.</p>', 'simple-google-icalendar-widget');
         
         _e('<p><strong>Suffix group class</strong></p>', 'simple-google-icalendar-widget');

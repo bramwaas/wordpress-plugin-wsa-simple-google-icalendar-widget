@@ -254,10 +254,10 @@
 						),
                         onChange: function( value ) { props.setAttributes( { period_limits: value } );},
 					    options:  [
-							        { value: '1', label: __('Start Full day, End Full day', 'simple-google-icalendar-widget') },
-							        { value: '2', label: __('Start Time of day, End Full day', 'simple-google-icalendar-widget') },
+							        { value: '1', label: __('Start Whole  day, End Whole  day', 'simple-google-icalendar-widget') },
+							        { value: '2', label: __('Start Time of day, End Whole  day', 'simple-google-icalendar-widget') },
 								    { value: '3', label: __('Start Time of day, End Time of day', 'simple-google-icalendar-widget') },
-								    { value: '4', label: __('Start Full day, End Time of day', 'simple-google-icalendar-widget') }
+								    { value: '4', label: __('Start Whole  day, End Time of day', 'simple-google-icalendar-widget') }
     							] 
                     }
                 ),

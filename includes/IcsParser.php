@@ -42,7 +42,8 @@
  *   Parse event BYSETPOS; Parse WKST (default MO)
  * 2.2.0 improved handling of EXDATE so that also the first event of a recurrent set can be excluded.
  *   Parse Recurrence-ID to support changes in individual recurrent events in Google Calendar. Remove _ chars from UID. 
- * 2.3.0 limit events after caching. get_option('timezone_string') changed in wp_timezone_string().  
+ * 2.3.0 limit events after caching. process the different types of period endpoints (Time of day, Whole day). 
+ *   get_option('timezone_string') changed in wp_timezone_string().  
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
@@ -947,7 +948,7 @@ END:VCALENDAR';
     static function getData($instance)
     {
         $transientId = 'SimpleicalBlock'  . $instance['blockid']   ;
-        $tz = new \DateTimeZone(wp_timezone_string());
+        $tz = new \DateTimeZone($instance['tzid_ui']);
         $pdt_start = new \DateTime('@' . time());
         $pdt_start->setTimezone($tz);
         $p_start = $pdt_start->modify("today")->getTimestamp();
