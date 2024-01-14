@@ -135,15 +135,13 @@ class SimpleicalBlock {
         if (!isset($instance['wptype']) || 'block' == $instance['wptype']) {
             echo '<h3 class="widget-title block-title">' . $instance['title'] . '</h3>';
         }
-        $old_timezone = date_default_timezone_get();
-        $tzid_ui = wp_timezone_string();
 
-//        wp_enqueue_script('get-user-timezone', '/wp-content/plugins/simple-google-icalendar-widget/js/simple-ical-block-usertimezone.js', array(),'2.3.0',);
-        $uc_tz = empty($_COOKIE['simplegoogleicalendarwidget']) ? 'ONBEKEND?': $_COOKIE['simplegoogleicalendarwidget'];
-        echo '<h2>Cookies</h2><p>' . $uc_tz .'</p>';
-
-        $layout = (isset($instance['layout'])) ? $instance['layout'] : 3;
         $sn = 0;
+
+        $old_timezone = date_default_timezone_get();
+        $tzid_ui = (empty($instance['tzid_ui'])) ? wp_timezone_string() : $instance['tzid_ui'];
+        $period_limits = (empty($instance['period_limits'])) ? '1' : $instance['period_limits'];
+        $layout = (isset($instance['layout'])) ? $instance['layout'] : 3;
         $dflg = (isset($instance['dateformat_lg'])) ? $instance['dateformat_lg'] : 'l jS \of F' ;
         $dflgend = (isset($instance['dateformat_lgend'])) ? $instance['dateformat_lgend'] : '' ;
         $dftsum = (isset($instance['dateformat_tsum'])) ? $instance['dateformat_tsum'] : 'G:i ' ;

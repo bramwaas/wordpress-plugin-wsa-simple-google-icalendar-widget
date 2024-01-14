@@ -242,6 +242,27 @@
                 ),
                 el(
                     SelectControl,
+                    {   label: __('Period limits:', 'simple-google-icalendar-widget'),
+                        value: props.attributes.period_limits,
+						help: el(
+							'a',
+							{
+								href: 'admin.php?page=simple_ical_info#period-limits',
+								target: '_blank',
+							},
+							__('More info', 'simple-google-icalendar-widget')
+						),
+                        onChange: function( value ) { props.setAttributes( { period_limits: value } );},
+					    options:  [
+							        { value: '1', label: __('Start Full day, End Full day', 'simple-google-icalendar-widget') },
+							        { value: '2', label: __('Start Time of day, End Full day', 'simple-google-icalendar-widget') },
+								    { value: '3', label: __('Start Time of day, End Time of day', 'simple-google-icalendar-widget') },
+								    { value: '4', label: __('Start Full day, End Time of day', 'simple-google-icalendar-widget') }
+    							] 
+                    }
+                ),
+                el(
+                    SelectControl,
                     {   label: __('Tag for summary:', 'simple-google-icalendar-widget'),
                         value: props.attributes.tag_sum,
 						help: el(
