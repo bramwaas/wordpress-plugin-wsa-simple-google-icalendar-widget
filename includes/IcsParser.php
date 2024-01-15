@@ -325,7 +325,8 @@ END:VCALENDAR';
      * @param   string      $cal_class the html-class for this calendar
      * @param   int         $cal_ord   order in list of this calendar
      *
-     * @return  array       $this->events the parsed event objects.
+     * @return  void        $this->events is filled with the parsed event objects.
+     *                      $this->replaceevents is filedd with id's of replaced events (to remove them)
      *
      * @since
      */
@@ -347,11 +348,11 @@ END:VCALENDAR';
                 $e = $this->parseVevent($eventStr);
                 $e->cal_class = $cal_class;
                 $e->cal_ord = $cal_ord;
-                if (empty($e->exdate) || !in_array($e->start, $e->exdate)) {
+                if (!empty($e->recurid)){
+                    $this->replaceevents[] = array($e->uid, $e->recurid );
+                }
+                if ($this->p_start <= $e->end && $this->p_end > $e->start && (empty($e->exdate) || ! in_array($e->start, $e->exdate))) {
                     $this->events[] = $e;
-                    if (!empty($e->recurid)){
-                        $this->replaceevents[] = array($e->uid, $e->recurid );
-                    }
                 }
                 // Recurring event?
                 if (isset($e->rrule) && $e->rrule !== '') {
@@ -676,8 +677,8 @@ END:VCALENDAR';
         $newEvents = array();
         $i=0;
         foreach ($data_events as $e) {
-            if (($e->end >= $p_start)
-                && $e->start < $p_end
+            if (($p_start) <= $e->end
+                && $p_end > $e->start 
                 ) {
                     $i++;
                     if ($i > $e_count) {
