@@ -939,6 +939,7 @@ END:VCALENDAR';
      *
      * @param array $instance the block attributes
      *    ['blockid']      to create transientid
+     *    ['tzid_ui']      if avail create ['tz_ui]', else try wp_timezone, or as last resort 'UTC'. 
      *    ['cache_time'] / ['transient_time'] time the transient cache is valid in minutes.
      *    ['calendar_id'] id's or url's of the calendar(s) to fetch data
      *    ['event_count']  max number of events to return
@@ -949,10 +950,22 @@ END:VCALENDAR';
     static function getData($instance)
     {
         $transientId = 'SimpleicalBlock'  . $instance['blockid']   ;
-        $tz = new \DateTimeZone($instance['tzid_ui']);
+        if (! empty($instance['tzid_ui']))
+            try {
+                $instance['tz_ui'] = new \DateTimeZone($instance['tzid_ui']);
+            } catch (\Exception $exc) {}
+        if (empty($instance['tz_ui']))
+            try {
+                $instance['tzid_ui'] = wp_timezone_string();
+                $instance['tz_ui'] = new \DateTimeZone($instance['tzid_ui']);
+            } catch (\Exception $exc) {}
+        if (empty($instance['tz_ui'])) {
+            $instance['tzid_ui'] = 'UTC';
+            $instance['tz_ui'] = new \DateTimeZone('UTC');
+        } 
         $now = time();
         $pdt_start = new \DateTime('@' . $now);
-        $pdt_start->setTimezone($tz);
+        $pdt_start->setTimezone($instance['tz_ui']);
         $p_start = $pdt_start->modify("today")->getTimestamp();
         $ep = (empty($instance['event_period']) || 1 > $instance['event_period']) ? 1: $instance['event_period'] + 1;
         $p_end = $pdt_start->modify("+$ep day")->getTimestamp();
@@ -967,7 +980,7 @@ END:VCALENDAR';
         }
         if ($instance['clear_cache_now']) delete_transient($transientId);
         if(false === ($data = get_transient($transientId))) {
-            $parser = new IcsParser($instance['calendar_id'], $instance['cache_time'], $instance['event_period']);
+            $parser = new IcsParser($instance['calendar_id'], $instance['cache_time'], $instance['event_period'], $instance['tzid_ui'] );
             $data = $parser->fetch( );
             // do not cache data if fetching failed
             if ($data) {
