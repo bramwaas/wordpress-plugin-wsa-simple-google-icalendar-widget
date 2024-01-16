@@ -25,12 +25,27 @@ class RestController extends WP_REST_Controller {
      */
     protected static $instance;
 
-    
+    /**
+     * Instantiate class and register routes.
+     *
+     * @return  void
+     *
+     * @since       2.3.0
+     *
+     */
     public static function init_and_register_routes() {
         self::getInstance();
         self::$instance->register_routes();
     }
     
+    /**
+     * Register routes.
+     *
+     * @return  void
+     *
+     * @since       2.3.0
+     *
+     */
     public function register_routes() {
         $version = '1';
         $namespace = 'simple-google-icalendar-widget/v' . $version;
@@ -51,7 +66,19 @@ class RestController extends WP_REST_Controller {
                 'args'                => $this->get_endpoint_args_for_item_schema( true ),
             ),
         ) );
-        register_rest_route( $namespace, '/' . $base . '/(?P<id>[\d]+)', array(
+        register_rest_route( $namespace, '/' . $base . '/block-content/(?P<tz>[\w]+)', array(
+            array(
+                'methods'             => WP_REST_Server::READABLE,
+                'callback'            => array( $this, 'get_block_content' ),
+                'permission_callback' => array( $this,'get_block_content_permissions_check'),
+                'args'                => array(
+//                    'context' => array(
+//                        'default' => 'view',
+//                    ),
+                ),
+            ),
+        ) );
+/*        register_rest_route( $namespace, '/' . $base . '/(?P<id>[\d]+)', array(
             array(
                 'methods'             => WP_REST_Server::READABLE,
                 'callback'            => array( $this, 'get_item' ),
@@ -79,10 +106,31 @@ class RestController extends WP_REST_Controller {
                 ),
             ),
         ) );
-        register_rest_route( $namespace, '/' . $base . '/schema', array(
+*/
+register_rest_route( $namespace, '/' . $base . '/schema', array(
             'methods'  => WP_REST_Server::READABLE,
             'callback' => array( $this, 'get_public_item_schema' ),
         ) );
+    }
+    /**
+     * Get one item from the collection
+     *
+     * @param WP_REST_Request $request Full data about the request.
+     * @return WP_Error|WP_REST_Response
+     * $since 2.3.0 
+     */
+    public function get_block_content( $request ) {
+        //get parameters from request
+        $params = $request->get_params();
+        $item = array('content' => 'Inhoud');//do a query, call another class, etc
+        $data = $this->prepare_item_for_response( $item, $request );
+        
+        //return a response or error based on some conditional
+        if ( 1 == 1 ) {
+            return new WP_REST_Response( $data, 200 );
+        } else {
+            return new WP_Error( 'code', __( 'Not possible to get block content', 'text-domain' ) );
+        }
     }
     
     /**
@@ -92,7 +140,7 @@ class RestController extends WP_REST_Controller {
      * @return WP_Error|WP_REST_Response
      */
     public function get_items( $request ) {
-        $items = array(); //do a query, call another class, etc
+        $items = array('get_items'=>'content get items'); //do a query, call another class, etc
         $data = array();
         foreach( $items as $item ) {
             $itemdata = $this->prepare_item_for_response( $item, $request );
@@ -178,6 +226,18 @@ class RestController extends WP_REST_Controller {
         
         return new WP_Error( 'cant-delete', __( 'message', 'text-domain' ), array( 'status' => 500 ) );
     }
+    /**
+     * Check if a given request has access to block_content
+     *
+     * @param WP_REST_Request $request Full data about the request.
+     * @return WP_Error|bool
+     * @since 2.3.0
+     */
+    public function get_block_content_permissions_check( $request ) {
+        //return true; <--use to make readable by all
+        return true;
+        return current_user_can( 'edit_something' );
+    }
     
     /**
      * Check if a given request has access to get items
@@ -187,6 +247,7 @@ class RestController extends WP_REST_Controller {
      */
     public function get_items_permissions_check( $request ) {
         //return true; <--use to make readable by all
+        return true;
         return current_user_can( 'edit_something' );
     }
     
@@ -248,6 +309,7 @@ class RestController extends WP_REST_Controller {
      * @return mixed
      */
     public function prepare_item_for_response( $item, $request ) {
+        return $item;
         return array();
     }
     
