@@ -24,7 +24,45 @@ class RestController extends WP_REST_Controller {
      * @since  2.3.0
      */
     protected static $instance;
-
+    /**
+     * The namespace of this controller's route.
+     *
+     * @since 4.7.0
+     * @var string
+     */
+//    protected $namespace;
+    
+    /**
+     * The base of this controller's route.
+     *
+     * @since 4.7.0
+     * @var string
+     */
+//    protected $rest_base;
+    
+    /**
+     * Cached results of get_item_schema.
+     *
+     * @since 5.3.0
+     * @var array
+     */
+//    protected $schema;
+    /**
+     * Constructor.
+     *
+     * initial values ​​for $namespace string, $rest_base string defined in extended class WP_REST_Controller
+     *    their is also a variable $schema array defined to cache results of the schema.
+     *
+     * @return  void  ($this RestController object)
+     *
+     * @since       2.3.0
+     */
+    public function __construct()
+    {
+        $this->namespace = 'simple-google-icalendar-widget/';
+        $this->rest_base = 'block-content';
+    }
+    
     /**
      * Instantiate class and register routes.
      *
@@ -47,26 +85,7 @@ class RestController extends WP_REST_Controller {
      *
      */
     public function register_routes() {
-        $version = '1';
-        $namespace = 'simple-google-icalendar-widget/v' . $version;
-        $base = 'route';
-        register_rest_route( $namespace, '/' . $base, array(
-            array(
-                'methods'             => WP_REST_Server::READABLE,
-                'callback'            => array( $this, 'get_items' ),
-                'permission_callback' => array( $this, 'get_items_permissions_check' ),
-                'args'                => array(
-                    
-                ),
-            ),
-            array(
-                'methods'             => WP_REST_Server::CREATABLE,
-                'callback'            => array( $this, 'create_item' ),
-                'permission_callback' => array( $this, 'create_item_permissions_check' ),
-                'args'                => $this->get_endpoint_args_for_item_schema( true ),
-            ),
-        ) );
-        register_rest_route( $namespace, '/' . $base . '/block-content/(?P<tz>[\w]+)', array(
+        register_rest_route( $this->namespace, '/v1/' . $this->rest_base . '/(?P<tz>[\w]+)', array(
             array(
                 'methods'             => WP_REST_Server::READABLE,
                 'callback'            => array( $this, 'get_block_content' ),
@@ -78,36 +97,7 @@ class RestController extends WP_REST_Controller {
                 ),
             ),
         ) );
-/*        register_rest_route( $namespace, '/' . $base . '/(?P<id>[\d]+)', array(
-            array(
-                'methods'             => WP_REST_Server::READABLE,
-                'callback'            => array( $this, 'get_item' ),
-                'permission_callback' => array( $this, 'get_item_permissions_check' ),
-                'args'                => array(
-                    'context' => array(
-                        'default' => 'view',
-                    ),
-                ),
-            ),
-            array(
-                'methods'             => WP_REST_Server::EDITABLE,
-                'callback'            => array( $this, 'update_item' ),
-                'permission_callback' => array( $this, 'update_item_permissions_check' ),
-                'args'                => $this->get_endpoint_args_for_item_schema( false ),
-            ),
-            array(
-                'methods'             => WP_REST_Server::DELETABLE,
-                'callback'            => array( $this, 'delete_item' ),
-                'permission_callback' => array( $this, 'delete_item_permissions_check' ),
-                'args'                => array(
-                    'force' => array(
-                        'default' => false,
-                    ),
-                ),
-            ),
-        ) );
-*/
-register_rest_route( $namespace, '/' . $base . '/schema', array(
+        register_rest_route( $this->namespace, '/v1/' . $this->rest_base . '/schema', array(
             'methods'  => WP_REST_Server::READABLE,
             'callback' => array( $this, 'get_public_item_schema' ),
         ) );
@@ -133,99 +123,6 @@ register_rest_route( $namespace, '/' . $base . '/schema', array(
         }
     }
     
-    /**
-     * Get a collection of items
-     *
-     * @param WP_REST_Request $request Full data about the request.
-     * @return WP_Error|WP_REST_Response
-     */
-    public function get_items( $request ) {
-        $items = array('get_items'=>'content get items'); //do a query, call another class, etc
-        $data = array();
-        foreach( $items as $item ) {
-            $itemdata = $this->prepare_item_for_response( $item, $request );
-            $data[] = $this->prepare_response_for_collection( $itemdata );
-        }
-        
-        return new WP_REST_Response( $data, 200 );
-    }
-    
-    /**
-     * Get one item from the collection
-     *
-     * @param WP_REST_Request $request Full data about the request.
-     * @return WP_Error|WP_REST_Response
-     */
-    public function get_item( $request ) {
-        //get parameters from request
-        $params = $request->get_params();
-        $item = array();//do a query, call another class, etc
-        $data = $this->prepare_item_for_response( $item, $request );
-        
-        //return a response or error based on some conditional
-        if ( 1 == 1 ) {
-            return new WP_REST_Response( $data, 200 );
-        } else {
-            return new WP_Error( 'code', __( 'message', 'text-domain' ) );
-        }
-    }
-    
-    /**
-     * Create one item from the collection
-     *
-     * @param WP_REST_Request $request Full data about the request.
-     * @return WP_Error|WP_REST_Response
-     */
-    public function create_item( $request ) {
-        $item = $this->prepare_item_for_database( $request );
-        
-        if ( function_exists( 'slug_some_function_to_create_item' ) ) {
-            $data = slug_some_function_to_create_item( $item );
-            if ( is_array( $data ) ) {
-                return new WP_REST_Response( $data, 200 );
-            }
-        }
-        
-        return new WP_Error( 'cant-create', __( 'message', 'text-domain' ), array( 'status' => 500 ) );
-    }
-    
-    /**
-     * Update one item from the collection
-     *
-     * @param WP_REST_Request $request Full data about the request.
-     * @return WP_Error|WP_REST_Response
-     */
-    public function update_item( $request ) {
-        $item = $this->prepare_item_for_database( $request );
-        
-        if ( function_exists( 'slug_some_function_to_update_item' ) ) {
-            $data = slug_some_function_to_update_item( $item );
-            if ( is_array( $data ) ) {
-                return new WP_REST_Response( $data, 200 );
-            }
-        }
-        
-        return new WP_Error( 'cant-update', __( 'message', 'text-domain' ), array( 'status' => 500 ) );
-    }
-    
-    /**
-     * Delete one item from the collection
-     *
-     * @param WP_REST_Request $request Full data about the request.
-     * @return WP_Error|WP_REST_Response
-     */
-    public function delete_item( $request ) {
-        $item = $this->prepare_item_for_database( $request );
-        
-        if ( function_exists( 'slug_some_function_to_delete_item' ) ) {
-            $deleted = slug_some_function_to_delete_item( $item );
-            if ( $deleted ) {
-                return new WP_REST_Response( true, 200 );
-            }
-        }
-        
-        return new WP_Error( 'cant-delete', __( 'message', 'text-domain' ), array( 'status' => 500 ) );
-    }
     /**
      * Check if a given request has access to block_content
      *
