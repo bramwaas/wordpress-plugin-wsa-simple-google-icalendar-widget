@@ -112,14 +112,15 @@ class RestController extends WP_REST_Controller {
     public function get_block_content( $request ) {
         //get parameters from request
         $params = $request->get_params();
-        $item = array('content' => 'Inhoud');//do a query, call another class, etc
+        $content = SimpleicalBlock::render_block(['calendar_id'=>'#example','tz_ui'=>''],[]);
+        $item = array('content' => $content, 'params' => $params);//do a query, call another class, etc
         $data = $this->prepare_item_for_response( $item, $request );
         
         //return a response or error based on some conditional
         if ( 1 == 1 ) {
             return new WP_REST_Response( $data, 200 );
         } else {
-            return new WP_Error( 'code', __( 'Not possible to get block content', 'text-domain' ) );
+            return new WP_Error( '404', __( 'Not possible to get block content', 'text-domain' ) );
         }
     }
     
