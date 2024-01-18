@@ -25,29 +25,6 @@ class RestController extends WP_REST_Controller {
      */
     protected static $instance;
     /**
-     * The namespace of this controller's route.
-     *
-     * @since 4.7.0
-     * @var string
-     */
-//    protected $namespace;
-    
-    /**
-     * The base of this controller's route.
-     *
-     * @since 4.7.0
-     * @var string
-     */
-//    protected $rest_base;
-    
-    /**
-     * Cached results of get_item_schema.
-     *
-     * @since 5.3.0
-     * @var array
-     */
-//    protected $schema;
-    /**
      * Constructor.
      *
      * initial values ​​for $namespace string, $rest_base string defined in extended class WP_REST_Controller
@@ -78,30 +55,32 @@ class RestController extends WP_REST_Controller {
     
     /**
      * Register routes.
-     *
+     *  the 'schema' in a rest route equates to an OPTIONS request.
+
      * @return  void
      *
      * @since       2.3.0
      *
      */
     public function register_routes() {
-        register_rest_route( $this->namespace, '/v1/' . $this->rest_base . '/(?P<tz>[\w]+)', array(
+        register_rest_route( $this->namespace, '/v1/' . $this->rest_base, array(
             array(
-                'methods'             => WP_REST_Server::READABLE,
+                'methods'             => 'GET, POST',
                 'callback'            => array( $this, 'get_block_content' ),
                 'permission_callback' => array( $this,'get_block_content_permissions_check'),
                 'args'                => array(
-//                    'context' => array(
-//                        'default' => 'view',
-//                    ),
+                   'context' => array(
+                       'default' => 'view',
+                   ),
                 ),
-            ),
+            ),     
+            'schema' => array ($this, 'get_block_content_schema'),
         ) );
         register_rest_route( $this->namespace, '/v1/' . $this->rest_base . '/schema', array(
             'methods'  => WP_REST_Server::READABLE,
-            'callback' => array( $this, 'get_public_item_schema' ),
+            'callback' => array( $this, 'get_block_content_schema' ),
         ) );
-    }
+     }
     /**
      * Get one item from the collection
      *
@@ -123,6 +102,44 @@ class RestController extends WP_REST_Controller {
             return new WP_Error( '404', __( 'Not possible to get block content', 'text-domain' ) );
         }
     }
+    /**
+     * Get schema for block_content.
+     *
+     * @return array The schema
+     * 
+     */
+    public function get_block_content_schema() {
+        if ( $this->schema ) {
+            // Since WordPress 5.3, the schema can be cached in the $schema property.
+            return $this->schema;
+        }
+        
+        $this->schema = array(
+            // This tells the spec of JSON Schema we are using which is draft 4.
+            '$schema'              => 'http://json-schema.org/draft-04/schema#',
+            // The title property marks the identity of the resource.
+            'title'                => 'block-content',
+            'type'                 => 'object',
+            // In JSON Schema you can specify object properties in the properties attribute.
+            'properties'           => array(
+                'content' => array(
+                    'description'  => esc_html__( 'The content for the block.', 'my-textdomain' ),
+                    'type'         => 'string',
+                    'context'      => array( 'view', 'edit', 'embed' ),
+                    'readonly'     => true,
+                ),
+                'params' => array(
+                    'description'  => esc_html__( 'The parameters used.', 'my-textdomain' ),
+                    'type'         => 'array',
+                    'context'      => array( 'view' ),
+                    'readonly'     => true,
+                ),
+            ),
+        );
+        
+        return $this->schema;
+    }
+    
     
     /**
      * Check if a given request has access to block_content
