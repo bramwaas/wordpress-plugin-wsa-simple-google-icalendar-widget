@@ -72,37 +72,40 @@ class SimpleicalBlock {
      *
      * @param .
      */
-    static function init_block() {
-        register_block_type( dirname(__DIR__) .'/block.json',
-            array(
-//                 'attributes' => [
-//                     'wptype' => ['type' => 'string'],
-//                     'blockid' => ['type' => 'string'],
-//                     'title' => ['type' => 'string', 'default' => __('Events', 'simple-google-icalendar-widget')],
-//                     'calendar_id' => ['type' => 'string', 'default' => ''],
-//                     'event_count' => ['type' => 'integer', 'default' => 10],
-//                     'event_period' => ['type' => 'integer', 'default' => 92],
-//                     'layout' => ['type' => 'integer', 'default' => 3],
-//                     'cache_time' => ['type' => 'integer', 'default' => 60],
-//                     'dateformat_lg' => ['type' => 'string', 'default' => 'l jS \of F'],
-//                     'dateformat_lgend' => ['type' => 'string', 'default' => ''],
-//                     'tag_sum' => ['type' => 'string', 'enum' => self::$allowed_tags_sum, 'default' => 'a'],
-//                     'dateformat_tsum' => ['type' => 'string', 'default' => 'G:i '],
-//                     'dateformat_tsend' => ['type' => 'string', 'default' => ''],
-//                     'dateformat_tstart' => ['type' => 'string', 'default' => 'G:i'],
-//                     'dateformat_tend' => ['type' => 'string', 'default' => ' - G:i '],
-//                     'excerptlength' => ['type' => 'string', ''],
-//                     'suffix_lg_class' => ['type' => 'string', 'default' => ''],
-//                     'suffix_lgi_class' => ['type' => 'string', 'default' => ' py-0'],
-//                     'suffix_lgia_class' => ['type' => 'string', 'default' => ''],
-//                     'allowhtml' => ['type' => 'boolean', 'default' => false],
-//                     'after_events' => ['type' => 'string', 'default' => ''],
-//                     'no_events' => ['type' => 'string', 'default' => ''],
-//                     'clear_cache_now' => ['type' => 'boolean', 'default' => false],
-//                     'anchorId' => ['type' => 'string', 'default' => ''],
-//                 ],
-                'render_callback' => array('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalBlock', 'render_block'))
-            );
+    static function init_block()
+    {
+        register_block_type(dirname(__DIR__) . '/block.json', array(
+            // 'attributes' => [
+            // 'wptype' => ['type' => 'string'],
+            // 'blockid' => ['type' => 'string'],
+            // 'title' => ['type' => 'string', 'default' => __('Events', 'simple-google-icalendar-widget')],
+            // 'calendar_id' => ['type' => 'string', 'default' => ''],
+            // 'event_count' => ['type' => 'integer', 'default' => 10],
+            // 'event_period' => ['type' => 'integer', 'default' => 92],
+            // 'layout' => ['type' => 'integer', 'default' => 3],
+            // 'cache_time' => ['type' => 'integer', 'default' => 60],
+            // 'dateformat_lg' => ['type' => 'string', 'default' => 'l jS \of F'],
+            // 'dateformat_lgend' => ['type' => 'string', 'default' => ''],
+            // 'tag_sum' => ['type' => 'string', 'enum' => self::$allowed_tags_sum, 'default' => 'a'],
+            // 'dateformat_tsum' => ['type' => 'string', 'default' => 'G:i '],
+            // 'dateformat_tsend' => ['type' => 'string', 'default' => ''],
+            // 'dateformat_tstart' => ['type' => 'string', 'default' => 'G:i'],
+            // 'dateformat_tend' => ['type' => 'string', 'default' => ' - G:i '],
+            // 'excerptlength' => ['type' => 'string', ''],
+            // 'suffix_lg_class' => ['type' => 'string', 'default' => ''],
+            // 'suffix_lgi_class' => ['type' => 'string', 'default' => ' py-0'],
+            // 'suffix_lgia_class' => ['type' => 'string', 'default' => ''],
+            // 'allowhtml' => ['type' => 'boolean', 'default' => false],
+            // 'after_events' => ['type' => 'string', 'default' => ''],
+            // 'no_events' => ['type' => 'string', 'default' => ''],
+            // 'clear_cache_now' => ['type' => 'boolean', 'default' => false],
+            // 'anchorId' => ['type' => 'string', 'default' => ''],
+            // ],
+            'render_callback' => array(
+                'WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalBlock',
+                'render_block'
+            )
+        ));
     }
     /**
      * Render the content of the block
