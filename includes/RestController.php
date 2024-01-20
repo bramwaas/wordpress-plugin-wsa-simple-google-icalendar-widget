@@ -37,7 +37,7 @@ class RestController extends WP_REST_Controller {
     public function __construct()
     {
         $this->namespace = 'simple-google-icalendar-widget/';
-        $this->rest_base = 'block-content';
+        $this->rest_base = 'content-by-';
     }
     
     /**
@@ -63,20 +63,20 @@ class RestController extends WP_REST_Controller {
      *
      */
     public function register_routes() {
-        register_rest_route( $this->namespace, '/v1/' . $this->rest_base, array(
+        register_rest_route( $this->namespace, '/v1/' . $this->rest_base .'attributes', array(
             array(
                 'methods'             => 'GET, POST',
-                'callback'            => array( $this, 'get_block_content' ),
+                'callback'            => array( $this, 'get_content_by_attributes' ),
                 'permission_callback' => array( $this,'get_block_content_permissions_check'),
                 'args'                => array(
-                   'context' => array(
-                       'default' => 'view',
+                   'calendar_id' => array(
+                       'default' => '#example',
                    ),
                 ),
             ),     
             'schema' => array ($this, 'get_block_content_schema'),
         ) );
-        register_rest_route( $this->namespace, '/v1/' . $this->rest_base . '/schema', array(
+        register_rest_route( $this->namespace, '/v1/' . $this->rest_base . 'attributes/schema', array(
             'methods'  => WP_REST_Server::READABLE,
             'callback' => array( $this, 'get_block_content_schema' ),
         ) );
@@ -88,18 +88,18 @@ class RestController extends WP_REST_Controller {
      * @return WP_Error|WP_REST_Response
      * $since 2.3.0 
      */
-    public function get_block_content( $request ) {
+    public function get_content_by_attributes( $request ) {
         //get parameters from request
         $params = $request->get_params();
-        $content = SimpleicalBlock::render_block(['calendar_id'=>'#example','tz_ui'=>''],[]);
-        $item = array('content' => $content, 'params' => $params);//do a query, call another class, etc
+        $content = SimpleicalBlock::render_block($params,[]);
+        $item = array('content' => $content, 'params' => $params);
         $data = $this->prepare_item_for_response( $item, $request );
         
         //return a response or error based on some conditional
         if ( 1 == 1 ) {
             return new WP_REST_Response( $data, 200 );
         } else {
-            return new WP_Error( '404', __( 'Not possible to get block content', 'text-domain' ) );
+            return new WP_Error( '404', __( 'Not possible to get block content', 'simple-google-icalendar-widget' ) );
         }
     }
     /**
@@ -123,13 +123,13 @@ class RestController extends WP_REST_Controller {
             // In JSON Schema you can specify object properties in the properties attribute.
             'properties'           => array(
                 'content' => array(
-                    'description'  => esc_html__( 'The content for the block.', 'my-textdomain' ),
+                    'description'  => esc_html__( 'The content for the block.', 'simple-google-icalendar-widget' ),
                     'type'         => 'string',
                     'context'      => array( 'view', 'edit', 'embed' ),
                     'readonly'     => true,
                 ),
                 'params' => array(
-                    'description'  => esc_html__( 'The parameters used.', 'my-textdomain' ),
+                    'description'  => esc_html__( 'The parameters used.', 'simple-google-icalendar-widget' ),
                     'type'         => 'array',
                     'context'      => array( 'view' ),
                     'readonly'     => true,
