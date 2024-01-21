@@ -38,7 +38,7 @@ class SimpleicalBlock {
      * deafault value for block_attributes (or instance)
      * @var array
      */
-    static $default_block_attributes =   array(
+    static $default_block_attributes = [
         'wptype' => 'block',
         'blockid' => 'AZ',
         //         'title' => __('Events', 'simple-google-icalendar-widget'),
@@ -49,6 +49,7 @@ class SimpleicalBlock {
         'layout' => 3,
         'dateformat_lg' => 'l jS \of F',
         'dateformat_lgend' => '',
+        'period_limits' => '1',
         'tag_sum' => 'a',
         'dateformat_tsum' => 'G:i ',
         'dateformat_tsend' => '',
@@ -64,44 +65,47 @@ class SimpleicalBlock {
         'clear_cache_now' => false,
         'className'=>'',
         'anchorId'=> '',
-    );
+    ];
     
     /**
      * Block init register block with help of block.json
      *
      * @param .
      */
-    static function init_block() {
-        register_block_type( dirname(__DIR__) .'/block.json',
-            array(
-//                 'attributes' => [
-//                     'wptype' => ['type' => 'string'],
-//                     'blockid' => ['type' => 'string'],
-//                     'title' => ['type' => 'string', 'default' => __('Events', 'simple-google-icalendar-widget')],
-//                     'calendar_id' => ['type' => 'string', 'default' => ''],
-//                     'event_count' => ['type' => 'integer', 'default' => 10],
-//                     'event_period' => ['type' => 'integer', 'default' => 92],
-//                     'layout' => ['type' => 'integer', 'default' => 3],
-//                     'cache_time' => ['type' => 'integer', 'default' => 60],
-//                     'dateformat_lg' => ['type' => 'string', 'default' => 'l jS \of F'],
-//                     'dateformat_lgend' => ['type' => 'string', 'default' => ''],
-//                     'tag_sum' => ['type' => 'string', 'enum' => self::$allowed_tags_sum, 'default' => 'a'],
-//                     'dateformat_tsum' => ['type' => 'string', 'default' => 'G:i '],
-//                     'dateformat_tsend' => ['type' => 'string', 'default' => ''],
-//                     'dateformat_tstart' => ['type' => 'string', 'default' => 'G:i'],
-//                     'dateformat_tend' => ['type' => 'string', 'default' => ' - G:i '],
-//                     'excerptlength' => ['type' => 'string', ''],
-//                     'suffix_lg_class' => ['type' => 'string', 'default' => ''],
-//                     'suffix_lgi_class' => ['type' => 'string', 'default' => ' py-0'],
-//                     'suffix_lgia_class' => ['type' => 'string', 'default' => ''],
-//                     'allowhtml' => ['type' => 'boolean', 'default' => false],
-//                     'after_events' => ['type' => 'string', 'default' => ''],
-//                     'no_events' => ['type' => 'string', 'default' => ''],
-//                     'clear_cache_now' => ['type' => 'boolean', 'default' => false],
-//                     'anchorId' => ['type' => 'string', 'default' => ''],
-//                 ],
-                'render_callback' => array('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalBlock', 'render_block'))
-            );
+    static function init_block()
+    {
+        register_block_type(dirname(__DIR__) . '/block.json', array(
+            // 'attributes' => [
+            // 'wptype' => ['type' => 'string'],
+            // 'blockid' => ['type' => 'string'],
+            // 'title' => ['type' => 'string', 'default' => __('Events', 'simple-google-icalendar-widget')],
+            // 'calendar_id' => ['type' => 'string', 'default' => ''],
+            // 'event_count' => ['type' => 'integer', 'default' => 10],
+            // 'event_period' => ['type' => 'integer', 'default' => 92],
+            // 'layout' => ['type' => 'integer', 'default' => 3],
+            // 'cache_time' => ['type' => 'integer', 'default' => 60],
+            // 'dateformat_lg' => ['type' => 'string', 'default' => 'l jS \of F'],
+            // 'dateformat_lgend' => ['type' => 'string', 'default' => ''],
+            // 'tag_sum' => ['type' => 'string', 'enum' => self::$allowed_tags_sum, 'default' => 'a'],
+            // 'dateformat_tsum' => ['type' => 'string', 'default' => 'G:i '],
+            // 'dateformat_tsend' => ['type' => 'string', 'default' => ''],
+            // 'dateformat_tstart' => ['type' => 'string', 'default' => 'G:i'],
+            // 'dateformat_tend' => ['type' => 'string', 'default' => ' - G:i '],
+            // 'excerptlength' => ['type' => 'string', ''],
+            // 'suffix_lg_class' => ['type' => 'string', 'default' => ''],
+            // 'suffix_lgi_class' => ['type' => 'string', 'default' => ' py-0'],
+            // 'suffix_lgia_class' => ['type' => 'string', 'default' => ''],
+            // 'allowhtml' => ['type' => 'boolean', 'default' => false],
+            // 'after_events' => ['type' => 'string', 'default' => ''],
+            // 'no_events' => ['type' => 'string', 'default' => ''],
+            // 'clear_cache_now' => ['type' => 'boolean', 'default' => false],
+            // 'anchorId' => ['type' => 'string', 'default' => ''],
+            // ],
+            'render_callback' => array(
+                'WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalBlock',
+                'render_block'
+            )
+        ));
     }
     /**
      * Render the content of the block
@@ -114,7 +118,7 @@ class SimpleicalBlock {
      */
     static function render_block($block_attributes, $content) {
         $block_attributes = wp_parse_args((array) $block_attributes,
-            (array ('title' => __('Events', 'simple-google-icalendar-widget')) + self::$default_block_attributes));
+            (array ('title' => __('Events', 'simple-google-icalendar-widget'), 'tzid_ui' => wp_timezone_string()) + self::$default_block_attributes));
         $block_attributes['anchorId'] = sanitize_html_class($block_attributes['anchorId'], $block_attributes['blockid']);
         
         $output = '';
@@ -135,10 +139,10 @@ class SimpleicalBlock {
         if (!isset($instance['wptype']) || 'block' == $instance['wptype']) {
             echo '<h3 class="widget-title block-title">' . $instance['title'] . '</h3>';
         }
-        $old_timezone = date_default_timezone_get();
-        $tzid_ui = wp_timezone_string();
-        $layout = (isset($instance['layout'])) ? $instance['layout'] : 3;
         $sn = 0;
+        $data_sib = 'client TZID=' . $instance['tzid_ui'];
+        $old_timezone = date_default_timezone_get();
+        $layout = (isset($instance['layout'])) ? $instance['layout'] : 3;
         $dflg = (isset($instance['dateformat_lg'])) ? $instance['dateformat_lg'] : 'l jS \of F' ;
         $dflgend = (isset($instance['dateformat_lgend'])) ? $instance['dateformat_lgend'] : '' ;
         $dftsum = (isset($instance['dateformat_tsum'])) ? $instance['dateformat_tsum'] : 'G:i ' ;
@@ -152,8 +156,8 @@ class SimpleicalBlock {
         if (!in_array($instance['tag_sum'], self::$allowed_tags_sum)) $instance['tag_sum'] = 'a';
         $data = IcsParser::getData($instance);
         if (!empty($data) && is_array($data)) {
-            date_default_timezone_set($tzid_ui);
-            echo '<ul class="list-group' .  $instance['suffix_lg_class'] . ' simple-ical-widget">';
+            date_default_timezone_set($instance['tzid_ui']);
+            echo '<ul class="list-group' .  $instance['suffix_lg_class'] . ' simple-ical-widget" data-sib="' . $data_sib . '"> ';
             $curdate = '';
             foreach($data as $e) {
                 $idlist = explode("@", esc_attr($e->uid) );
