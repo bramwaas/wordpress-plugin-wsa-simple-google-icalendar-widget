@@ -236,7 +236,6 @@ class SimpleicalBlock {
                 echo '</ul></li>';
             }
             echo '</ul>';
-            date_default_timezone_set($old_timezone);
             echo wp_kses($instance['after_events'],'post');
         }
         else {
