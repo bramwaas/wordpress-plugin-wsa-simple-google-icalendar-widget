@@ -25,6 +25,8 @@
  * 2.1.3 20230418 Added optional placeholder HTML output when no upcoming events are avalable. Also added optional output after the events list (when upcoming events are available).
  * 2.1.5 20230824 default_block_attributes as static variable and alowed_tags_sum made public to use same values also in the widget, option anchorId moved to render_block.
  * 2.2.0 20240106 changed text domain to simple-google-icalendar-widget
+ * 2.3.0 remove definition of attributes, leave it to block.json 
+ *    improvement of working with client timezone: add client timezone as an extra parameter to wp_date because date_default_timezone_set has no effect   
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
@@ -141,7 +143,18 @@ class SimpleicalBlock {
         }
         $sn = 0;
         $data_sib = 'client TZID=' . $instance['tzid_ui'];
-        $old_timezone = date_default_timezone_get();
+        try {
+            $instance['tz_ui'] = new \DateTimeZone($instance['tzid_ui']);
+        } catch (\Exception $exc) {}
+        if (empty($instance['tz_ui']))
+            try {
+                $instance['tzid_ui'] = wp_timezone_string();
+                $instance['tz_ui'] = new \DateTimeZone($instance['tzid_ui']);
+            } catch (\Exception $exc) {}
+        if (empty($instance['tz_ui'])) {
+            $instance['tzid_ui'] = 'UTC';
+            $instance['tz_ui'] = new \DateTimeZone('UTC');
+        }
         $layout = (isset($instance['layout'])) ? $instance['layout'] : 3;
         $dflg = (isset($instance['dateformat_lg'])) ? $instance['dateformat_lg'] : 'l jS \of F' ;
         $dflgend = (isset($instance['dateformat_lgend'])) ? $instance['dateformat_lgend'] : '' ;
@@ -156,13 +169,12 @@ class SimpleicalBlock {
         if (!in_array($instance['tag_sum'], self::$allowed_tags_sum)) $instance['tag_sum'] = 'a';
         $data = IcsParser::getData($instance);
         if (!empty($data) && is_array($data)) {
-            date_default_timezone_set($instance['tzid_ui']);
             echo '<ul class="list-group' .  $instance['suffix_lg_class'] . ' simple-ical-widget" data-sib="' . $data_sib . '"> ';
             $curdate = '';
             foreach($data as $e) {
                 $idlist = explode("@", esc_attr($e->uid) );
                 $itemid = $instance['blockid'] .'_' . strval(++$sn) . '_' . $idlist[0];
-                $evdate = wp_kses(wp_date( $dflg, $e->start), 'post');
+                $evdate = wp_kses(wp_date( $dflg, $e->start, $instance['tz_ui']), 'post');
                 $cal_class = ((!empty($e->cal_class)) ? ' ' . sanitize_html_class($e->cal_class): '');
                 if ( !$instance['allowhtml']) {
                     if (!empty($e->summary)) $e->summary = htmlspecialchars($e->summary);
@@ -170,9 +182,9 @@ class SimpleicalBlock {
                     if (!empty($e->location)) $e->location = htmlspecialchars($e->location);
                 }
                 if (date('yz', $e->start) != date('yz', $e->end)) {
-                    $evdate = str_replace(array("</div><div>", "</h4><h4>", "</h5><h5>", "</h6><h6>" ), '', $evdate . wp_kses(wp_date( $dflgend, $e->end - 1) , 'post'));
+                    $evdate = str_replace(array("</div><div>", "</h4><h4>", "</h5><h5>", "</h6><h6>" ), '', $evdate . wp_kses(wp_date( $dflgend, $e->end - 1, $instance['tz_ui']) , 'post'));
                 }
-                $evdtsum = (($e->startisdate === false) ? wp_kses(wp_date( $dftsum, $e->start) . wp_date( $dftsend, $e->end), 'post') : '');
+                $evdtsum = (($e->startisdate === false) ? wp_kses(wp_date( $dftsum, $e->start, $instance['tz_ui']) . wp_date( $dftsend, $e->end, $instance['tz_ui']), 'post') : '');
                 if ($layout < 2 && $curdate != $evdate) {
                     if  ($curdate != '') { echo '</ul></li>';}
                     echo '<li class="list-group-item' .  $sflgi . ' head">' .
@@ -209,8 +221,8 @@ class SimpleicalBlock {
                     echo   $e->description ,(strrpos($e->description, '<br>') === (strlen($e->description) - 4)) ? '' : '<br>';
                 }
                 if ($e->startisdate === false && date('yz', $e->start) === date('yz', $e->end))	{
-                    echo '<span class="time">', wp_kses(wp_date( $dftstart, $e->start ), 'post'),
-                    '</span><span class="time">', wp_kses(wp_date( $dftend, $e->end ), 'post'), '</span> ' ;
+                    echo '<span class="time">', wp_kses(wp_date( $dftstart, $e->start, $instance['tz_ui'] ), 'post'),
+                    '</span><span class="time">', wp_kses(wp_date( $dftend, $e->end, $instance['tz_ui'] ), 'post'), '</span> ' ;
                 } else {
                     echo '';
                 }
