@@ -5,11 +5,11 @@
  * @package    Simple Google iCalendar Block
  * @subpackage Block
  * @author     Bram Waasdorp <bram@waasdorpsoekhan.nl>
- * @copyright  Copyright (c)  2022 - 2023, Bram Waasdorp
+ * @copyright  Copyright (c)  2022 - 2024, Bram Waasdorp
  * @link       https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  * @license    http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * Gutenberg Block functions since v2.1.2 also used for widget.
- * Version: 2.2.0
+ * Version: 2.3.0
  * 20220427 namespaced and renamed after classname.
  * 20220430 try with static calls
  * 20220509 fairly correct front-end display. attributes back to block.json
