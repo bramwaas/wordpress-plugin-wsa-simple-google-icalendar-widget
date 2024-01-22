@@ -1,6 +1,6 @@
 /**
  * FetchREST.js
- * zelf aanroepende javascript functie om REST output te demonstreren.
+ * plain javascript function to demonstrate/test REST output.
  * v2.2.0
 */ 
 (function() {
