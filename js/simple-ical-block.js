@@ -16,7 +16,7 @@
  *   preponed 'b' to blockid, because html id must not start with number.
  *   wp.components.ServerSideRender deprecated replaced by serverSideRender and dependency wp-server-side-render; clear_cache_now false after 1 second, to prevent excessive calling of calendar
  * 20240106 Added help to (some) settings. Changed the text domain to simple-google-icalendar-widget to make translations work by following the WP standard
- *   wrong part of blockname "simplegoogleicalenderwidget" cannot be changed because it is safed in the page and changing and changing invalidates the block.
+ *   wrong part of blockname "simplegoogleicalenderwidget" cannot be changed because it is safed in the page and changing gives an error.
  */
 ( function(blocks, i18n, element, blockEditor, components, serverSideRender ) {
 	var el = element.createElement;
@@ -162,22 +162,20 @@
     							] 
                     }
                 ),
-				el(
-					TextControl,
-					{
-						label: __('Date format first line:', 'simple-google-icalendar-widget'),
-						help: el(
-							'a',
-							{
-								href: 'admin.php?page=simple_ical_info#dateformat-lg',
-								target: '_blank',
-							},
-							__('More info', 'simple-google-icalendar-widget')
-						),
-						value: props.attributes.dateformat_lg,
-						onChange: function(value) { props.setAttributes({ dateformat_lg: value }); },
-					}
-				),
+                el(
+                    TextControl,
+                    {   label: __('Date format first line:', 'simple-google-icalendar-widget'),
+                        value: props.attributes.dateformat_lg,
+                        onChange: function( value ) { props.setAttributes( { dateformat_lg: value } );},
+                    }
+                ),
+                el(
+                   'a',
+                    {  href: 'admin.php?page=simple_ical_info',
+					   target: '_blank',
+                    },
+					__('More info', 'simple-google-icalendar-widget')
+                ),
                 el(
                     TextControl,
                     {   label: __('Enddate format first line:', 'simple-google-icalendar-widget'),
@@ -242,37 +240,9 @@
                 ),
                 el(
                     SelectControl,
-                    {   label: __('Period limits:', 'simple-google-icalendar-widget'),
-                        value: props.attributes.period_limits,
-						help: el(
-							'a',
-							{
-								href: 'admin.php?page=simple_ical_info#period-limits',
-								target: '_blank',
-							},
-							__('More info', 'simple-google-icalendar-widget')
-						),
-                        onChange: function( value ) { props.setAttributes( { period_limits: value } );},
-					    options:  [
-							        { value: '1', label: __('Start Whole  day, End Whole  day', 'simple-google-icalendar-widget') },
-							        { value: '2', label: __('Start Time of day, End Whole  day', 'simple-google-icalendar-widget') },
-								    { value: '3', label: __('Start Time of day, End Time of day', 'simple-google-icalendar-widget') },
-								    { value: '4', label: __('Start Whole  day, End Time of day', 'simple-google-icalendar-widget') }
-    							] 
-                    }
-                ),
-                el(
-                    SelectControl,
                     {   label: __('Tag for summary:', 'simple-google-icalendar-widget'),
                         value: props.attributes.tag_sum,
-						help: el(
-							'a',
-							{
-								href: 'admin.php?page=simple_ical_info#tag-sum',
-								target: '_blank',
-							},
-							__('More info', 'simple-google-icalendar-widget')
-						),
+                        help: __('If not using bootstrap h4, div or strong may be a better choice then a', 'simple-google-icalendar-widget'),
                         onChange: function( value ) { props.setAttributes( { tag_sum: value } );},
 					    options:  [
 							        { value: 'a', label: __('a (link)', 'simple-google-icalendar-widget') },
