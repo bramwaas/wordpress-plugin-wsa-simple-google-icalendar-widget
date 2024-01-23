@@ -70,10 +70,6 @@ if (!class_exists('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\Simplei
     require_once( 'includes/SimpleicalBlock.php' );
     class_alias('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalBlock', 'SimpleicalBlock');
 }
-if (!class_exists('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\RestController')) {
-     require_once( 'includes/RestController.php' );
-     class_alias('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\RestController', 'RestController');
-}
 if (!class_exists('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalWidgetAdmin')) {
     require_once('includes/SimpleicalWidgetAdmin.php');
     class_alias('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalWidgetAdmin', 'SimpleicalWidgetAdmin');
@@ -81,7 +77,6 @@ if (!class_exists('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\Simplei
 if ( is_wp_version_compatible( '5.9' ) )   { // block widget
     // Static class method call with name of the class
     add_action( 'init', array ('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalBlock', 'init_block') );
-    add_action( 'rest_api_init', array ('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\RestController', 'init_and_register_routes') );
     
 } // end function_exists( 'register_block_type' )
 
