@@ -25,6 +25,7 @@
  * 2.1.3 20230418 Added optional placeholder HTML output when no upcoming events are avalable. Also added optional output after the events list (when upcoming events are available).
  * 2.1.5 20230824 default_block_attributes as static variable and alowed_tags_sum made public to use same values also in the widget, option anchorId moved to render_block.
  * 2.2.0 20240106 changed text domain to simple-google-icalendar-widget
+ * 2.2.1 20240123 don't display description line when excerpt-length = 0
  * 2.3.0 remove definition of attributes, leave it to block.json 
  *    improvement of working with client timezone: add client timezone as an extra parameter to wp_date because date_default_timezone_set has no effect   
  */
@@ -162,7 +163,7 @@ class SimpleicalBlock {
         $dftsend = (isset($instance['dateformat_tsend'])) ? $instance['dateformat_tsend'] : '' ;
         $dftstart = (isset($instance['dateformat_tstart'])) ? $instance['dateformat_tstart'] : 'G:i' ;
         $dftend = (isset($instance['dateformat_tend'])) ? $instance['dateformat_tend'] : ' - G:i ' ;
-        $excerptlength = (isset($instance['excerptlength'])) ? $instance['excerptlength'] : '' ;
+        $excerptlength = (isset($instance['excerptlength']) && ' ' < trim($instance['excerptlength']) ) ? (int) $instance['excerptlength'] : '' ;
         $instance['suffix_lg_class'] = wp_kses($instance['suffix_lg_class'], 'post');
         $sflgi = wp_kses($instance['suffix_lgi_class'], 'post');
         $sflgia = wp_kses($instance['suffix_lgia_class'], 'post');
