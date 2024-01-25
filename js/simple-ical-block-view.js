@@ -4,13 +4,14 @@
  * why this is better than plain javascript Fetch API I don't know yet.
  * v2.3.0
 */ 
-( function(blocks, i18n, element, blockEditor, components, apiFetch ) {
+( function(/* i18n, */ apiFetch ) {
 	const fpath = "/simple-google-icalendar-widget/v1/content-by-attributes";
-	let paramsObj = {
+    var apiFetch = apiFetch.apiFetch;
+		let paramsObj = {
 		"after_events" :"",
 		"allowhtml" :false,
-		"anchorId" :"Simple-ical-Block-1",
-		"blockid" :"b19146a0c-f760-495f-8560-8cd988b1590d",
+		"anchorId" :"Simple-ical-Block-2",
+		"blockid" :"c19146a0c-f760-495f-8560-8cd988b1590d",
 		"cache_time" :60,
 		"calendar_id" :"#example,https://calendar.google.com/calendar/ical/nl.dutch%23holiday%40group.v.calendar.google.com/public/basic.ics",
 		"clear_cache_now" :false,
@@ -61,15 +62,13 @@
 	}
 	);
 
-	function processRestResponse(value) {
-		document.getElementById("content").innerHTML = value.content;
-		document.getElementById("params").innerHTML = JSON.stringify(value.params);
-	}
-}( window.wp.blocks,
-   window.wp.i18n,
-   window.wp.element,
-   window.wp.blockEditor,
-   window.wp.components,
-//   window.wp.serverSideRender
+//	function processRestResponse(value) {
+//		document.getElementById("content").innerHTML = value.content;
+//		document.getElementById("params").innerHTML = JSON.stringify(value.params);
+//	}
+}( //window.wp.blocks,
+//   window.wp.i18n,
+   //window.wp.element,
+  // window.wp.components,
    window.wp.api-fetch
  ));
