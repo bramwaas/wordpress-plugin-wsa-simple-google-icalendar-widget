@@ -47,5 +47,6 @@
         "align": true
     },
     "editorScript": "file:./js/simple-ical-block.js",
+    "script": "file:./js/simple-ical-block-view.js",
     "viewScript": "file:./js/simple-ical-block-usertimezone.js"
   }
