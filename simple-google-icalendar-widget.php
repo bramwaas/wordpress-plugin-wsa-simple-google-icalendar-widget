@@ -38,6 +38,7 @@
  *   bw 20230823 v2.1.5 added defaults from SimpleicalBlock block_attributes for all used keys in instance to prevent Undefined array key warnings/errors.
  *   bw 20240106 v2.2.0 Changed the text domain to simple-google-icalendar-widget to make translations work by following the WP standard
  *   bw 20240123 v2.2.1 after an isue of black88mx6 in support forum: don't display description line when excerpt-length = 0
+ *   bw 20240125 v2.3.0 v2 dir for older versions eg block.json version 2 for WP6.3 -
  */
 /*
  Simple Google Calendar Outlook Events Widget
@@ -79,14 +80,19 @@ if (!class_exists('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\Simplei
     require_once('includes/SimpleicalWidgetAdmin.php');
     class_alias('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalWidgetAdmin', 'SimpleicalWidgetAdmin');
 }
-if ( is_wp_version_compatible( '5.9' ) )   { // block widget
+if ( is_wp_version_compatible( '6.3' ) )   { // block  v3
     // Static class method call with name of the class
     add_action( 'init', array ('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalBlock', 'init_block') );
     add_action( 'rest_api_init', array ('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\RestController', 'init_and_register_routes') );
     
-} // end function_exists( 'register_block_type' )
+} // end wp-version > 6.3 block v3
+else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
+    add_action( 'init', array ('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalBlock', 'init_block_v2') );
+    add_action( 'rest_api_init', array ('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\RestController', 'init_and_register_routes') );
+    
+} // end wp-version > 5.9 block v2
 
-{ //old widget
+{ //old widget always
     
     if ( !class_exists( 'Simple_iCal_Widget' ) ) {
         class Simple_iCal_Widget extends WP_Widget

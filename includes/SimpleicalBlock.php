@@ -27,7 +27,8 @@
  * 2.2.0 20240106 changed text domain to simple-google-icalendar-widget
  * 2.2.1 20240123 don't display description line when excerpt-length = 0
  * 2.3.0 remove definition of attributes, leave it to block.json 
- *    improvement of working with client timezone: add client timezone as an extra parameter to wp_date because date_default_timezone_set has no effect   
+ *    improvement of working with client timezone: add client timezone as an extra parameter to wp_date because date_default_timezone_set has no effect
+ *    block default version 3 version 2    
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
@@ -69,7 +70,6 @@ class SimpleicalBlock {
         'className'=>'',
         'anchorId'=> '',
     ];
-    
     /**
      * Block init register block with help of block.json
      *
@@ -78,6 +78,20 @@ class SimpleicalBlock {
     static function init_block()
     {
         register_block_type(dirname(__DIR__) . '/block.json', array(
+            'render_callback' => array(
+                'WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalBlock',
+                'render_block'
+            )
+        ));
+    }
+    /**
+     * Block init register block with help of block.json
+     *
+     * @param .
+     */
+    static function init_block_v2()
+    {
+        register_block_type(dirname(__DIR__) . '/v2/block.json', array(
             // 'attributes' => [
             // 'wptype' => ['type' => 'string'],
             // 'blockid' => ['type' => 'string'],

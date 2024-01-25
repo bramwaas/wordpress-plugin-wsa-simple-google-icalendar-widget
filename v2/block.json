@@ -1,6 +1,6 @@
 {
     "$schema": "https://json.schemastore.org/block.json",
-    "apiVersion": 3,
+    "apiVersion": 2,
     "title": "Simple ical Block",
     "name": "simplegoogleicalenderwidget/simple-ical-block",
     "category": "widgets",
@@ -46,6 +46,6 @@
     "supports": {
         "align": true
     },
-    "editorScript": "file:./js/simple-ical-block.js",
-    "viewScript": "file:./js/simple-ical-block-usertimezone.js"
+    "editorScript": "file:../js/simple-ical-block.js",
+    "viewScript": "file:../js/simple-ical-block-usertimezone.js"
   }
