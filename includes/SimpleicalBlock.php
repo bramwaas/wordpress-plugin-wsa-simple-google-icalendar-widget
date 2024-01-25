@@ -28,7 +28,7 @@
  * 2.2.1 20240123 don't display description line when excerpt-length = 0
  * 2.3.0 remove definition of attributes, leave it to block.json 
  *    improvement of working with client timezone: add client timezone as an extra parameter to wp_date because date_default_timezone_set has no effect
- *    block default version 3 version 2    
+ *    block default version 3 version 2; add <span class="dsc"> to description output to make it easier to refer to in css   
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
@@ -233,7 +233,7 @@ class SimpleicalBlock {
                     }
                     }
                     $e->description = str_replace("\n", '<br>', wp_kses($e->description,'post') );
-                    echo   $e->description ,(strrpos($e->description, '<br>') === (strlen($e->description) - 4)) ? '' : '<br>';
+                    echo   '<span class="dsc">', $e->description ,(strrpos($e->description, '<br>') === (strlen($e->description) - 4)) ? '' : '<br>', '</span>';
                 }
                 if ($e->startisdate === false && date('yz', $e->start) === date('yz', $e->end))	{
                     echo '<span class="time">', wp_kses(wp_date( $dftstart, $e->start, $instance['tz_ui'] ), 'post'),
