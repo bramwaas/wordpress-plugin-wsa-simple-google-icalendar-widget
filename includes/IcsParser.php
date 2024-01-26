@@ -43,7 +43,7 @@
  * 2.2.0 improved handling of EXDATE so that also the first event of a recurrent set can be excluded.
  *   Parse Recurrence-ID to support changes in individual recurrent events in Google Calendar. Remove _ chars from UID. 
  * 2.3.0 limit events after caching. process the different types of period endpoints (Time of day, Whole day). 
- *   get_option('timezone_string') changed in wp_timezone_string().  
+ *   get_option('timezone_string') changed in wp_timezone_string().  Modulo 4 for period_limits (default 1 Whole day, whole day; 2 Time of day, Wd; 3 Td, Td; 0 Wd, Td) 
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
@@ -969,19 +969,15 @@ END:VCALENDAR';
         $p_start = $pdt_start->modify("today")->getTimestamp();
         $ep = (empty($instance['event_period']) || 1 > $instance['event_period']) ? 1: $instance['event_period'] + 1;
         $p_end = $pdt_start->modify("+$ep day")->getTimestamp();
-        switch ($instance['period_limits']) {
-            case '2':
-            case '3':
-            case '6':
-            case '7':
+        switch ($instance['period_limits'] % 4) {
+            case 2:
+            case 3:
                 {
                     $p_start = $now;
                 }
                 break;
-            case '3':
-            case '4':
-            case '7':
-            case '8':
+            case 3:
+            case 0:
                 {
                     $ep = $ep - 1;
                     $pdt_start->setTimestamp($now);

@@ -45,7 +45,6 @@ class SimpleicalBlock {
     static $default_block_attributes = [
         'wptype' => 'block',
         'blockid' => 'AZ',
-        //         'title' => __('Events', 'simple-google-icalendar-widget'),
         'calendar_id' => '',
         'event_count' => 10,
         'event_period' => 92,
@@ -140,7 +139,11 @@ class SimpleicalBlock {
         
         $output = '';
         ob_start();
-        self::display_block($block_attributes);
+        if (4 >= $block_attributes['period_limits'] ) {
+            self::display_block($block_attributes);
+        } else {
+            self::display_rest_start($block_attributes);
+        }
         $output = $output . ob_get_clean();
         return '<div id="' . $block_attributes['anchorId'] .'" class="' . $block_attributes['className'] . ((isset($block_attributes['align'])) ? (' align' . $block_attributes['align']) : ' ') .'" data-sib-id="' . $block_attributes['blockid'] . '" >' . $output . '</div>';
     }
@@ -258,6 +261,18 @@ class SimpleicalBlock {
             
         }
         echo '<br class="clear" />';
+    }
+    /**
+     * Starting point for REST processing display of block or widget.
+     *
+     * @see
+     *
+     * @param array $instance Saved attribute/option values from database.
+     */
+    static function display_rest_start($instance)
+    {
+        $sib_id = 'sib'  . $instance['blockid'];
+        echo '<span id=#' . $sib_id  . " data-sib-attr='" . json_encode($instance) . "' ></span>";
     }
     
 } // end class SimpleicalBlock
