@@ -969,14 +969,24 @@ END:VCALENDAR';
         $p_start = $pdt_start->modify("today")->getTimestamp();
         $ep = (empty($instance['event_period']) || 1 > $instance['event_period']) ? 1: $instance['event_period'] + 1;
         $p_end = $pdt_start->modify("+$ep day")->getTimestamp();
-        if ('2' == $instance['period_limits'] || '3' == $instance['period_limits']){
-            $p_start = $now;
-        }
-        if ('3' == $instance['period_limits'] || '4' == $instance['period_limits']){
-            $ep = $ep - 1;
-            $pdt_start->setTimestamp($now);
-            $p_end = $pdt_start->modify("+$ep day")->getTimestamp();
-            
+        switch ($instance['period_limits']) {
+            case '2':
+            case '3':
+            case '6':
+            case '7':
+                {
+                    $p_start = $now;
+                }
+                break;
+            case '3':
+            case '4':
+            case '7':
+            case '8':
+                {
+                    $ep = $ep - 1;
+                    $pdt_start->setTimestamp($now);
+                    $p_end = $pdt_start->modify("+$ep day")->getTimestamp();
+                }
         }
         if ($instance['clear_cache_now']) delete_transient($transientId);
         if(false === ($data = get_transient($transientId))) {

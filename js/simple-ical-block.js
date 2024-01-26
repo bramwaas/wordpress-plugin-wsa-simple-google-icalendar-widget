@@ -4,7 +4,7 @@
  * Move styles to stylesheets - both edit and front-end.
  * and use attributes and editable fields
  * attributes as Inspectorcontrols (settings)
- * v2.2.0
+ * v2.3.0
  * 20230625 added quotes to the options of the Layout SelectControl,
  *  add parseInt to all integers in transform, added conversion dateformat_lgend and _tsend and anchorid = blockid
  * 20230420 added parseInt on line 147(now 148) to keep layout in block-editor
@@ -257,7 +257,11 @@
 							        { value: '1', label: __('Start Whole  day, End Whole  day', 'simple-google-icalendar-widget') },
 							        { value: '2', label: __('Start Time of day, End Whole  day', 'simple-google-icalendar-widget') },
 								    { value: '3', label: __('Start Time of day, End Time of day', 'simple-google-icalendar-widget') },
-								    { value: '4', label: __('Start Whole  day, End Time of day', 'simple-google-icalendar-widget') }
+								    { value: '4', label: __('Start Whole  day, End Time of day', 'simple-google-icalendar-widget') },
+							        { value: '5', label: __('Start Whole  day, End Whole  day, use Client Timezone', 'simple-google-icalendar-widget') },
+							        { value: '6', label: __('Start Time of day, End Whole  day, use Client Timezone', 'simple-google-icalendar-widget') },
+								    { value: '7', label: __('Start Time of day, End Time of day, use Client Timezone', 'simple-google-icalendar-widget') },
+								    { value: '8', label: __('Start Whole  day, End Time of day, use Client Timezone', 'simple-google-icalendar-widget') }
     							] 
                     }
                 ),

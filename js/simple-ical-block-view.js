@@ -4,9 +4,9 @@
  * why this is better than plain javascript Fetch API I don't know yet.
  * v2.3.0
 */ 
-( function(/* i18n, */ apiFetch ) {
+( function(apiFetch ) {
 	const fpath = "/simple-google-icalendar-widget/v1/content-by-attributes";
-    var apiFetch = apiFetch.apiFetch;
+//    var apiFetch = apiFetch;
 		let paramsObj = {
 		"after_events" :"",
 		"allowhtml" :false,
@@ -35,40 +35,17 @@
 	};
 	paramsObj.tzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-//	let responsePromise = requestREST(url, paramsObj);
-//	responsePromise.then(function(value) { processRestResponse(value); },
-//		function(error) { console.log(error); }
-//	);
-//	async function requestREST(url = "", paramsObj = {}) {
-//		const response = await fetch(url, {
-//			method: "POST", // *GET, POST, OPTIONS, PUT, DELETE, etc.
-//			mode: "cors", // no-cors, *cors, same-origin
-//			cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-//			credentials: "same-origin", // include, *same-origin, omit
-//			headers: { "Content-Type": "application/json", }, // 'Content-Type': 'application/x-www-form-urlencoded',
-//			redirect: "follow", // manual, *follow, error
-//			referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-//			body: JSON.stringify(paramsObj), // body data type must match "Content-Type" header
-//		});
-//		const rJson = await response.json();
-//		return rJson;
-//	}
 	apiFetch({
 		path: fpath,
 		method: 'POST',
 		data: paramsObj,
 	}).then((res) => {
-		console.log(res);
+//		console.log(res);
+		document.getElementById("content").innerHTML = res.content;
+//		document.getElementById("params").innerHTML = JSON.stringify(res.params);
 	}
 	);
-
-//	function processRestResponse(value) {
-//		document.getElementById("content").innerHTML = value.content;
-//		document.getElementById("params").innerHTML = JSON.stringify(value.params);
-//	}
-}( //window.wp.blocks,
+}( // call params
 //   window.wp.i18n,
-   //window.wp.element,
-  // window.wp.components,
-   window.wp.api-fetch
+   window.wp.apiFetch
  ));
