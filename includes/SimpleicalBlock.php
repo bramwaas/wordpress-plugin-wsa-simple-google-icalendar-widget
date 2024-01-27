@@ -45,6 +45,7 @@ class SimpleicalBlock {
     static $default_block_attributes = [
         'wptype' => 'block',
         'blockid' => 'AZ',
+        'postid' => '0',
         'calendar_id' => '',
         'event_count' => 10,
         'event_period' => 92,
@@ -140,12 +141,14 @@ class SimpleicalBlock {
         $output = '';
         ob_start();
         if (4 >= $block_attributes['period_limits'] ) {
+            echo '<div id="' . $block_attributes['anchorId'] .'" class="' . $block_attributes['className'] . ((isset($block_attributes['align'])) ? (' align' . $block_attributes['align']) : ' ') .'" data-sib-id="' . $block_attributes['blockid'] . '" >';
             self::display_block($block_attributes);
+            echo '</div>';
         } else {
             self::display_rest_start($block_attributes);
         }
         $output = $output . ob_get_clean();
-        return '<div id="' . $block_attributes['anchorId'] .'" class="' . $block_attributes['className'] . ((isset($block_attributes['align'])) ? (' align' . $block_attributes['align']) : ' ') .'" data-sib-id="' . $block_attributes['blockid'] . '" >' . $output . '</div>';
+        return $output; 
     }
     /**
      * Front-end display of block or widget.
@@ -267,12 +270,15 @@ class SimpleicalBlock {
      *
      * @see
      *
-     * @param array $instance Saved attribute/option values from database.
+     * @param array $block_attributes Saved attribute/option values from database.
      */
-    static function display_rest_start($instance)
+    static function display_rest_start($block_attributes)
     {
-        $sib_id = 'sib'  . $instance['blockid'];
-        echo '<span id=#' . $sib_id  . " data-sib-attr='" . json_encode($instance) . "' ></span>";
+        $sib_id = 'sib'. $block_attributes['postid'] . '-'  . $block_attributes['blockid'];
+        $parm = ['postid' => $block_attributes['postid'], 'blockid' => $block_attributes['blockid'], ];
+        echo '<div id="' . $block_attributes['anchorId'] .'" class="' . $block_attributes['className'] . ((isset($block_attributes['align'])) ? (' align' . $block_attributes['align']) : ' ') .'" ' . 
+           " data-sib-parm='" . json_encode($parm) . "' >";
+        echo 'Processing</div>';
     }
     
 } // end class SimpleicalBlock

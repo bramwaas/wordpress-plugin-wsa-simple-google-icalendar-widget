@@ -11,6 +11,7 @@
     "textdomain": "simple-google-icalendar-widget",
 	"attributes": {
 		"wptype": {"type": "string"},
+		"postid": {"type": "string"},
 		"blockid": {"type": "string"},
 		"title": {"type": "string", "default": "Events"},
 		"calendar_id": {"type": "string", "default": ""},
