@@ -133,12 +133,14 @@ class SimpleicalBlock {
      *
      * @param array $block_attributes the block attributes (that are changed from default therefore first merged with defaults.)
      * @param array $content as saved in post by save in ...block.js
+     * @param object $block the bolck that is rendered
      * @return string  HTML to render for the block (frontend)
      */
-    static function render_block($block_attributes, $content, $block) {
+    static function render_block($block_attributes, $content = null, $block = null) {
         $block_attributes = wp_parse_args((array) $block_attributes,
-            (array ('title' => __('Events', 'simple-google-icalendar-widget'), 'postid' => $block->context['postId'] , 'tzid_ui' => wp_timezone_string()) + self::$default_block_attributes));
+            (array ('title' => __('Events', 'simple-google-icalendar-widget'), 'tzid_ui' => wp_timezone_string()) + self::$default_block_attributes));
         $block_attributes['anchorId'] = sanitize_html_class($block_attributes['anchorId'], $block_attributes['blockid']);
+        $block_attributes['postid'] = (empty($block)) ? 0 : $block->context['postId']; 
         
         $output = '';
         ob_start();
