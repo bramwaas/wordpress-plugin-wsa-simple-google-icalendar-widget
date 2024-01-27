@@ -70,10 +70,12 @@ class SimpleicalBlock {
         'className'=>'',
         'anchorId'=> '',
     ];
+
     /**
      * Block init register block with help of block.json
      *
-     * @param .
+     * @param
+     *            .
      */
     static function init_block()
     {
@@ -133,9 +135,9 @@ class SimpleicalBlock {
      * @param array $content as saved in post by save in ...block.js
      * @return string  HTML to render for the block (frontend)
      */
-    static function render_block($block_attributes, $content) {
+    static function render_block($block_attributes, $content, $block) {
         $block_attributes = wp_parse_args((array) $block_attributes,
-            (array ('title' => __('Events', 'simple-google-icalendar-widget'), 'tzid_ui' => wp_timezone_string()) + self::$default_block_attributes));
+            (array ('title' => __('Events', 'simple-google-icalendar-widget'), 'postid' => $block->context['postId'] , 'tzid_ui' => wp_timezone_string()) + self::$default_block_attributes));
         $block_attributes['anchorId'] = sanitize_html_class($block_attributes['anchorId'], $block_attributes['blockid']);
         
         $output = '';
