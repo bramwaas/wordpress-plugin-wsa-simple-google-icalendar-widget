@@ -30,22 +30,24 @@ let paramsObj = {
 	"tag_sum": "div",
 	"title": "Events (default) js"
 };
-
-(function getBlockByIds(paramsObj) {
-	const fpath = "/simple-google-icalendar-widget/v1/content-by-attributes";
 	paramsObj.tzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
-	window.wp.apiFetch({
-		path: fpath,
-		method: 'POST',
-		data: paramsObj,
-	}).then((res) => {
-				console.log(res);
-		document.getElementById("content").innerHTML = res.content;
-		//		document.getElementById("params").innerHTML = JSON.stringify(res.params);
+
+function getBlockByIds(paramsObj) {
+	const fpath = "/simple-google-icalendar-widget/v1/content-by-attributes";
+	const nodeList = document.querySelectorAll('[data-sib-parm]');
+	for (let i = 0; i < nodeList.length; i++) {
+		console.log(nodeList[i])
+		window.wp.apiFetch({
+			path: fpath,
+			method: 'POST',
+			data: paramsObj,
+		}).then((res) => {
+			console.log(res);
+			nodeList[i].innerHTML = res.content;
+		}
+		);
 	}
-	);
 }
-);
 getBlockByIds( // call params
 	//   window.wp.i18n,
 	paramsObj
