@@ -140,7 +140,6 @@ class SimpleicalBlock {
         $block_attributes = wp_parse_args((array) $block_attributes,
             (array ('title' => __('Events', 'simple-google-icalendar-widget'), 'tzid_ui' => wp_timezone_string()) + self::$default_block_attributes));
         $block_attributes['anchorId'] = sanitize_html_class($block_attributes['anchorId'], $block_attributes['blockid']);
-        $block_attributes['postid'] = (empty($block)) ? 0 : $block->context['postId']; 
         
         $output = '';
         ob_start();
@@ -149,7 +148,7 @@ class SimpleicalBlock {
             self::display_block($block_attributes);
             echo '</div>';
         } else {
-            self::display_rest_start($block_attributes);
+            self::display_rest_start($block_attributes, $content, $block);
         }
         $output = $output . ob_get_clean();
         return $output; 
@@ -275,14 +274,18 @@ class SimpleicalBlock {
      * @see
      *
      * @param array $block_attributes Saved attribute/option values from database.
+     * @param string $content Saved content from database.
+     * @param object $block saved Block (context) from database.
      */
-    static function display_rest_start($block_attributes)
+    static function display_rest_start($block_attributes, $content = null, $block = null)
     {
-        $sib_id = 'sib'. $block_attributes['postid'] . '-'  . $block_attributes['blockid'];
-        $parm = ['postid' => $block_attributes['postid'], 'blockid' => $block_attributes['blockid'], ];
+        $postid = (empty($block) || empty($block->context['postId'])) ? 0 : $block->context['postId'];
+        $transientId = 'sib-r-' . $block_attributes['blockid'];
+        $parm = ['postid' => $postid, 'blockid' => $block_attributes['blockid'], ];
         echo '<div id="' . $block_attributes['anchorId'] .'" class="' . $block_attributes['className'] . ((isset($block_attributes['align'])) ? (' align' . $block_attributes['align']) : ' ') .'" ' . 
            " data-sib-parm='" . json_encode($parm) . "' >";
         echo 'Processing</div>';
+        set_transient($transientId, $block_attributes, 60);
     }
     
 } // end class SimpleicalBlock

@@ -4,42 +4,16 @@
  * why this is better than plain javascript Fetch API I don't know yet.
  * v2.3.0
 */ 
-let paramsObj = {
-	"after_events": "",
-	"allowhtml": false,
-	"anchorId": "Simple-ical-Block-2",
-	"blockid": "c19146a0c-f760-495f-8560-8cd988b1590d",
-	"cache_time": 60,
-	"calendar_id": "#example,https://calendar.google.com/calendar/ical/nl.dutch%23holiday%40group.v.calendar.google.com/public/basic.ics",
-	"clear_cache_now": false,
-	"dateformat_lg": "l jS \\of F",
-	"dateformat_lgend": "",
-	"dateformat_tend": " - G:i ",
-	"dateformat_tsend": "",
-	"dateformat_tstart": "G:i",
-	"dateformat_tsum": "G:i ",
-	"event_count": 5,
-	"event_period": 92,
-	"excerptlength": "",
-	"layout": 3,
-	"no_events": "",
-	"period_limits": "1",
-	"suffix_lg_class": "",
-	"suffix_lgi_class": " py-0",
-	"suffix_lgia_class": "",
-	"tag_sum": "div",
-	"title": "Events (default) js"
-};
-	const ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
+let paramsObj = {};
+const ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 function getBlockByIds(paramsObj2) {
-	const fpath = "/simple-google-icalendar-widget/v1/content-by-attributes";
+	const fpath = "/simple-google-icalendar-widget/v1/content-by-ids";
 	const nodeList = document.querySelectorAll('[data-sib-parm]');
 	for (let i = 0; i < nodeList.length; i++) {
-//		console.log(nodeList[i])
-        paramsObj = JSON.parse( nodeList[i].getAttribute('data-sib-parm'));
-        paramsObj.tzid_ui = ptzid_ui;
-        console.log(paramsObj);
+		paramsObj = JSON.parse(nodeList[i].getAttribute('data-sib-parm'));
+		paramsObj.tzid_ui = ptzid_ui;
+		console.log(paramsObj);
 		window.wp.apiFetch({
 			path: fpath,
 			method: 'POST',
@@ -47,13 +21,11 @@ function getBlockByIds(paramsObj2) {
 		}).then((res) => {
 			console.log(res);
 			nodeList[i].innerHTML = res.content;
+			nodeList[i].setAttribute('data-sib-id', paramsObj.blockid);
 		}
 		);
 	}
 }
-getBlockByIds( // call params
-	//   window.wp.i18n,
-	paramsObj 
+getBlockByIds(
+	paramsObj
 );
-
- 

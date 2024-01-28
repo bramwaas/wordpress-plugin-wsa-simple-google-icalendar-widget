@@ -63,37 +63,98 @@ class RestController extends WP_REST_Controller {
      *
      */
     public function register_routes() {
+        register_rest_route( $this->namespace, '/v1/' . $this->rest_base .'ids', array(
+            array(
+                'methods'             => 'GET, POST',
+                'callback'            => array( $this, 'get_content_by_ids' ),
+                'permission_callback' => array( $this,'get_block_content_permissions_check'),
+                'args'                => array(
+                   'blockid' => array(
+                       'default' => '',
+                   ),
+                    'postid' => array(
+                        'default' => '',
+                    ),
+                    'tzid_ui' => array(
+                        'default' => null,
+                    ),
+                ),
+            ),     
+            'schema' => array ($this, 'get_content_by_ids_schema'),
+        ) );
+        register_rest_route( $this->namespace, '/v1/' . $this->rest_base . 'ids/schema', array(
+            'methods'  => WP_REST_Server::READABLE,
+            'callback' => array( $this, 'get_content_by_ids_schema' ),
+        ) );
         register_rest_route( $this->namespace, '/v1/' . $this->rest_base .'attributes', array(
             array(
                 'methods'             => 'GET, POST',
                 'callback'            => array( $this, 'get_content_by_attributes' ),
                 'permission_callback' => array( $this,'get_block_content_permissions_check'),
                 'args'                => array(
-                   'calendar_id' => array(
-                       'default' => '#example',
-                   ),
+                    'calendar_id' => array(
+                        'default' => '#example',
+                    ),
                 ),
-            ),     
-            'schema' => array ($this, 'get_block_content_schema'),
+            ),
+            'schema' => array ($this, 'get_content_by_attributes_schema'),
         ) );
         register_rest_route( $this->namespace, '/v1/' . $this->rest_base . 'attributes/schema', array(
             'methods'  => WP_REST_Server::READABLE,
-            'callback' => array( $this, 'get_block_content_schema' ),
+            'callback' => array( $this, 'get_content_by_attributes_schema' ),
         ) );
-     }
+    }
+
     /**
-     * Get one item from the collection
+     * Get block content wth blockid, postid, and client timezone from request
+     *
+     * @param WP_REST_Request $request
+     *            Full data about the request.
+     * @return WP_Error|WP_REST_Response $since 2.3.0
+     */
+    public function get_content_by_ids($request)
+    {
+        // get parameters from request
+        $params = $request->get_params();
+        $transientId = 'sib-r-' . $params['blockid'];
+         if (false === ($block_attributes = get_transient($transientId))) {
+            $content = "Attributes not found in transient";
+            /*
+             * $parser = new IcsParser($instance['calendar_id'], $instance['cache_time'], $instance['event_period'], $instance['tzid_ui'] );
+             * $data = $parser->fetch( );
+             * // do not cache data if fetching failed
+             * if ($data) {
+             * set_transient($transientId, $data, $instance['cache_time']*60);
+             * }
+             */
+        } else {
+            $block_attributes = wp_parse_args((array) $params, $block_attributes);
+            $block_attributes['period_limits'] = $block_attributes['period_limits'] % 4;
+            $content = SimpleicalBlock::render_block($block_attributes, []);
+            $data = $this->prepare_item_for_response([
+                'content' => $content,
+                'params' => $params
+            ], $request);
+        }
+        // return a response or error based on some conditional
+        if (1 == 1) {
+            return new WP_REST_Response($data, 200);
+        } else {
+            return new WP_Error( '404', __( 'Not possible to get block content', 'simple-google-icalendar-widget' ) );
+        }
+    }
+    /**
+     * Get block content with attributes from request.
      *
      * @param WP_REST_Request $request Full data about the request.
      * @return WP_Error|WP_REST_Response
-     * $since 2.3.0 
+     * $since 2.3.0
      */
     public function get_content_by_attributes( $request ) {
         //get parameters from request
         $params = $request->get_params();
         $content = SimpleicalBlock::render_block($params,[]);
-        $item = array('content' => $content, 'params' => $params);
-        $data = $this->prepare_item_for_response( $item, $request );
+        $data = $this->prepare_item_for_response( ['content' => $content, 'params' => $params], $request );
         
         //return a response or error based on some conditional
         if ( 1 == 1 ) {
@@ -108,7 +169,44 @@ class RestController extends WP_REST_Controller {
      * @return array The schema
      * 
      */
-    public function get_block_content_schema() {
+    public function get_content_by_ids_schema() {
+        if ( $this->schema ) {
+            // Since WordPress 5.3, the schema can be cached in the $schema property.
+            return $this->schema;
+        }
+        
+        $this->schema = array(
+            // This tells the spec of JSON Schema we are using which is draft 4.
+            '$schema'              => 'http://json-schema.org/draft-04/schema#',
+            // The title property marks the identity of the resource.
+            'title'                => 'block-content',
+            'type'                 => 'object',
+            // In JSON Schema you can specify object properties in the properties attribute.
+            'properties'           => array(
+                'content' => array(
+                    'description'  => esc_html__( 'The content for the block.', 'simple-google-icalendar-widget' ),
+                    'type'         => 'string',
+                    'context'      => array( 'view', 'edit', 'embed' ),
+                    'readonly'     => true,
+                ),
+                'params' => array(
+                    'description'  => esc_html__( 'The parameters used.', 'simple-google-icalendar-widget' ),
+                    'type'         => 'array',
+                    'context'      => array( 'view' ),
+                    'readonly'     => true,
+                ),
+            ),
+        );
+        
+        return $this->schema;
+    }
+    /**
+     * Get schema for block_content.
+     *
+     * @return array The schema
+     *
+     */
+    public function get_content_by_attributes_schema() {
         if ( $this->schema ) {
             // Since WordPress 5.3, the schema can be cached in the $schema property.
             return $this->schema;
