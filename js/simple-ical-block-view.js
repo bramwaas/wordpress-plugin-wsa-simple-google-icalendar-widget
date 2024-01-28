@@ -30,14 +30,16 @@ let paramsObj = {
 	"tag_sum": "div",
 	"title": "Events (default) js"
 };
-	paramsObj.tzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
+	const ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-function getBlockByIds(paramsObj) {
+function getBlockByIds(paramsObj2) {
 	const fpath = "/simple-google-icalendar-widget/v1/content-by-attributes";
 	const nodeList = document.querySelectorAll('[data-sib-parm]');
 	for (let i = 0; i < nodeList.length; i++) {
 //		console.log(nodeList[i])
-        paramsObj = nodeList[i].getAttribute('data-sib-parm');
+        paramsObj = JSON.parse( nodeList[i].getAttribute('data-sib-parm'));
+        paramsObj.tzid_ui = ptzid_ui;
+        console.log(paramsObj);
 		window.wp.apiFetch({
 			path: fpath,
 			method: 'POST',
@@ -51,7 +53,7 @@ function getBlockByIds(paramsObj) {
 }
 getBlockByIds( // call params
 	//   window.wp.i18n,
-	paramsObj
+	paramsObj 
 );
 
  
