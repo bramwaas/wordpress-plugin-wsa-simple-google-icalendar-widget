@@ -36,7 +36,8 @@ function getBlockByIds(paramsObj) {
 	const fpath = "/simple-google-icalendar-widget/v1/content-by-attributes";
 	const nodeList = document.querySelectorAll('[data-sib-parm]');
 	for (let i = 0; i < nodeList.length; i++) {
-		console.log(nodeList[i])
+//		console.log(nodeList[i])
+        paramsObj = nodeList[i].getAttribute('data-sib-parm');
 		window.wp.apiFetch({
 			path: fpath,
 			method: 'POST',
