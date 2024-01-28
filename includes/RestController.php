@@ -129,7 +129,8 @@ class RestController extends WP_REST_Controller {
              */
         } else {
             $block_attributes = wp_parse_args((array) $params, $block_attributes);
-            $block_attributes['period_limits'] = $block_attributes['period_limits'] % 4;
+//            $block_attributes['period_limits'] = $block_attributes['period_limits'] % 4;
+            $block_attributes['rest_end'] = true;
             $content = SimpleicalBlock::render_block($block_attributes, []);
             $data = $this->prepare_item_for_response([
                 'content' => $content,

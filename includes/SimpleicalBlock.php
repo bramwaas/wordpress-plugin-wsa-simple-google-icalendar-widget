@@ -126,32 +126,41 @@ class SimpleicalBlock {
             )
         ));
     }
+
     /**
      * Render the content of the block
      *
      * see
      *
-     * @param array $block_attributes the block attributes (that are changed from default therefore first merged with defaults.)
-     * @param array $content as saved in post by save in ...block.js
-     * @param object $block the bolck that is rendered
-     * @return string  HTML to render for the block (frontend)
+     * @param array $block_attributes
+     *            the block attributes (that are changed from default therefore first merged with defaults.)
+     * @param array $content
+     *            as saved in post by save in ...block.js
+     * @param object $block
+     *            the bolck that is rendered
+     * @return string HTML to render for the block (frontend)
      */
-    static function render_block($block_attributes, $content = null, $block = null) {
-        $block_attributes = wp_parse_args((array) $block_attributes,
-            (array ('title' => __('Events', 'simple-google-icalendar-widget'), 'tzid_ui' => wp_timezone_string()) + self::$default_block_attributes));
+    static function render_block($block_attributes, $content = null, $block = null)
+    {
+        $block_attributes = wp_parse_args((array) $block_attributes, (array(
+            'title' => __('Events', 'simple-google-icalendar-widget'),
+            'tzid_ui' => wp_timezone_string()
+        ) + self::$default_block_attributes));
         $block_attributes['anchorId'] = sanitize_html_class($block_attributes['anchorId'], $block_attributes['blockid']);
-        
+
         $output = '';
         ob_start();
-        if (4 >= $block_attributes['period_limits'] ) {
-            echo '<div id="' . $block_attributes['anchorId'] .'" class="' . $block_attributes['className'] . ((isset($block_attributes['align'])) ? (' align' . $block_attributes['align']) : ' ') .'" data-sib-id="' . $block_attributes['blockid'] . '" >';
+        if (4 >= $block_attributes['period_limits']) {
+            echo '<div id="' . $block_attributes['anchorId'] . '" class="' . $block_attributes['className'] . ((isset($block_attributes['align'])) ? (' align' . $block_attributes['align']) : ' ') . '" data-sib-id="' . $block_attributes['blockid'] . '" >';
             self::display_block($block_attributes);
             echo '</div>';
+        } else if ($block_attributes['rest_end']) {
+            self::display_block($block_attributes);
         } else {
             self::display_rest_start($block_attributes, $content, $block);
         }
         $output = $output . ob_get_clean();
-        return $output; 
+        return $output;
     }
     /**
      * Front-end display of block or widget.
