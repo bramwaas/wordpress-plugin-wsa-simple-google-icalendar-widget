@@ -4,6 +4,7 @@
  * why this is better than plain javascript Fetch API I don't know yet.
  * v2.3.0
 */ 
+let ms = Date.now();
 let rresult = null;
 getBlockByIds(
 	{}
@@ -19,6 +20,7 @@ function getBlockByIds(paramsObj2) {
 		paramsObj.postid = nodeList[i].getAttribute('data-sib-pid');
 		console.log(paramsObj);
 		nodeList[i].setAttribute('data-sib-st', 'f1');
+		ms = Date.now();
 		fetchFromRest(paramsObj, nodeList[i]);
 	}
 }
@@ -30,10 +32,11 @@ function fetchFromRest(dobj, ni) {
 		method: 'POST',
 		data: dobj,
 	}).then((res) => {
+		ni.setAttribute('data-sib-st', 'completed-' + (Date.now() - ms));
 		console.log(res);
 		rresult = res;
 		ni.innerHTML = res.content;
-		ni.setAttribute('data-sib-st', 'completed');
+//		ni.setAttribute('data-sib-st', 'completed-' + (d_now.getTime() - time));
 	},
 	(error) => {
 		ni.innerHTML = '<p>Code: ' + error.code + '<br>Msg: ' + error.message + '</p>' ;
