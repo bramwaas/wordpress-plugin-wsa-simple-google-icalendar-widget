@@ -4,9 +4,12 @@
  * why this is better than plain javascript Fetch API I don't know yet.
  * v2.3.0
 */ 
+let rresult = null;
+getBlockByIds(
+	{}
+);
 
 function getBlockByIds(paramsObj2) {
-	const fpath = "/simple-google-icalendar-widget/v1/content-by-ids";
 	const nodeList = document.querySelectorAll('[data-sib-st]');
 	const ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
 	let paramsObj = {};
@@ -15,18 +18,26 @@ function getBlockByIds(paramsObj2) {
 		paramsObj.blockid = nodeList[i].getAttribute('data-sib-id');
 		paramsObj.postid = nodeList[i].getAttribute('data-sib-pid');
 		console.log(paramsObj);
-		window.wp.apiFetch({
-			path: fpath,
-			method: 'POST',
-			data: paramsObj,
-		}).then((res) => {
-			console.log(res);
-			nodeList[i].innerHTML = res.content;
-			nodeList[i].setAttribute('data-sib-st', 'completed');
-		}
-		);
+		nodeList[i].setAttribute('data-sib-st', 'f1');
+		fetchFromRest(paramsObj, nodeList[i]);
 	}
 }
-getBlockByIds(
-	{}
-);
+
+function fetchFromRest(dobj, ni) {
+	const fpath = "/simple-google-icalendar-widget/v1/content-by-ids";
+	window.wp.apiFetch({
+		path: fpath,
+		method: 'POST',
+		data: dobj,
+	}).then((res) => {
+		console.log(res);
+		rresult = res;
+		ni.innerHTML = res.content;
+		ni.setAttribute('data-sib-st', 'completed');
+	},
+	(error) => {
+		ni.innerHTML = '<p>Code: ' + error.code + '<br>Msg: ' + error.message + '</p>' ;
+	}
+	);
+
+}
