@@ -4,6 +4,7 @@
  * why this is better than plain javascript Fetch API I don't know yet.
  * v2.3.0
 **/ 
+const endpoint = document.querySelector('link[rel="https://api.w.org/"]').href + "simple-google-icalendar-widget/v1/content-by-ids";
 let ms = Date.now();
 let fms = 0;
 let rresult = null;
@@ -27,9 +28,8 @@ function getBlockByIds(paramsObj2) {
 }
 
 function fetchFromRest(dobj, ni) {
-	const url = "https://dev1.waasdorpsoekhan.nl/wp6/wp-json/simple-google-icalendar-widget/v1/content-by-ids";
-
-	requestREST(url, dobj).then((res) => {
+	let mcatch = { "content": "" };
+	requestREST(endpoint, dobj).then((res) => {
 		fms = (Date.now() - ms);
 		ni.setAttribute('data-sib-st', 'completed-' + fms);
 		console.log(res);
@@ -43,16 +43,18 @@ function fetchFromRest(dobj, ni) {
 	);
 	async function requestREST(url = "", dobj = {}) {
 		try {
-		const response = await fetch(url, {
-			method: "POST", 
-			cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-			headers: { "Content-Type": "application/json", }, 
-			body: JSON.stringify(dobj), 
-		});
-		const rJson = await response.json();
-		return rJson;
-	} catch (error) {console.error("Error:", error);};
-	} 
+			const response = await fetch(url, {
+				method: "POST",
+				cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+				headers: { "Content-Type": "application/json", },
+				body: JSON.stringify(dobj),
+			});
+			const rJson = await response.json();
+			return rJson;
+		} catch (error) { console.error("Error:", error); };
+		mcatch.content = '<h3 class="widget-title"> Error fetching data, try again </h3><p>- fms:' + fms + '</p>'
+		return JSON.stringify(mcatch);
+	}
 
 }
 
