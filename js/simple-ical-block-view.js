@@ -42,6 +42,7 @@ function fetchFromRest(dobj, ni) {
 		}
 	);
 	async function requestREST(url = "", dobj = {}) {
+		try {
 		const response = await fetch(url, {
 			method: "POST", 
 			cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
@@ -50,7 +51,8 @@ function fetchFromRest(dobj, ni) {
 		});
 		const rJson = await response.json();
 		return rJson;
-	}
+	} catch (error) {console.error("Error:", error);};
+	} 
 
 }
 
