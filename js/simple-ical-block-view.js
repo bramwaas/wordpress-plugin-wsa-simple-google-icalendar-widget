@@ -5,6 +5,7 @@
  * v2.3.0
 **/ 
 let ms = Date.now();
+let fms = 0;
 let rresult = null;
 getBlockByIds(
 	{}
@@ -28,28 +29,24 @@ function getBlockByIds(paramsObj2) {
 function fetchFromRest(dobj, ni) {
 	const url = "https://dev1.waasdorpsoekhan.nl/wp6/wp-json/simple-google-icalendar-widget/v1/content-by-ids";
 
-	let responsePromise = requestREST(url, dobj);
-	responsePromise.then((res) => {
-		ni.setAttribute('data-sib-st', 'completed_' + (Date.now() - ms));
+	requestREST(url, dobj).then((res) => {
+		fms = (Date.now() - ms);
+		ni.setAttribute('data-sib-st', 'completed-' + fms);
 		console.log(res);
 		rresult = res;
-		ni.innerHTML = res.content;
-		//		ni.setAttribute('data-sib-st', 'completed-' + (d_now.getTime() - time));
+		ni.innerHTML = res.content + '<div>fms:' + fms + '</div>';
+		//		ni.setAttribute('data-sib-st', 'completed-' + fms);
 	},
 		(error) => {
-			ni.innerHTML = '<p>= Code: ' + error.code + '<br>= Msg: ' + error.message + '</p>';
+			ni.innerHTML = '<p>= Code: ' + error.code + '<br>= Msg: ' + error.message + '</p>' + + '<div>= Fms:' + fms + '</div>';
 		}
 	);
 	async function requestREST(url = "", dobj = {}) {
 		const response = await fetch(url, {
-			method: "POST", // *GET, POST, OPTIONS, PUT, DELETE, etc.
-			mode: "cors", // no-cors, *cors, same-origin
+			method: "POST", 
 			cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-			credentials: "same-origin", // include, *same-origin, omit
-			headers: { "Content-Type": "application/json", }, // 'Content-Type': 'application/x-www-form-urlencoded',
-			redirect: "follow", // manual, *follow, error
-			referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-			body: JSON.stringify(dobj), // body data type must match "Content-Type" header
+			headers: { "Content-Type": "application/json", }, 
+			body: JSON.stringify(dobj), 
 		});
 		const rJson = await response.json();
 		return rJson;
