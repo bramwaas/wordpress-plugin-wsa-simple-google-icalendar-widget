@@ -40,21 +40,52 @@ function fetchFromRest(dobj, ni) {
 			throw new Error(`HTTP error, status = ${response.status}`);
 		}
 		return response.json();
-	}).then((res) => {fetchOk(res);}
+	}).then((res) => {fetchOk(res, '1');}
 	).catch((error) => {
-		ni.setAttribute('data-sib-st', 'Error :' + error.code + ':' + error.message + 'fms :' + fms);
-		ni.innerHTML = '<p>= Code: ' + error.code + '<br>= Msg: ' + error.message + '</p>' + + '<div>=Error Fms:' + fms + '</div>';
+		fetch(endpoint, {
+			method: "POST",
+			cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+			headers: { "Content-Type": "application/json", },
+			body: JSON.stringify(dobj),
+		}).then((response) => {
+			if (!response.ok) {
+				throw new Error(`HTTP error, status = ${response.status}`);
+			}
+			return response.json();
+		}).then((res) => { fetchOk(res, '2'); }
+		).catch((error) => {
+			ni.setAttribute('data-sib-st', 'Error :' + error.code + ':' + error.message + 'fms :' + fms);
+			ni.innerHTML = '<p>= Code: ' + error.code + '<br>= Msg: ' + error.message + '</p>' + + '<div>=Error Fms:' + fms + '</div>';
+		})
 	})
 
-	function fetchOk(res) {
+	function fetchOk(res, stry) {
 		fms = (Date.now() - ms);
-		ni.setAttribute('data-sib-st', 'completed-' + fms);
+		ni.setAttribute('data-sib-st', 'completed-' + stry + '-' + fms);
 		console.log(res);
 		rresult = res;
-		ni.innerHTML = res.content + '<div>Res fms:' + fms + '</div>';
+		ni.innerHTML = res.content + '<div>Res try:' + stry + ' fms:' + fms + '</div>';
 		//		ni.setAttribute('data-sib-st', 'completed-' + fms);
 	}
 
 
 }
 
+/*
+	fetch(endpoint, {
+		method: "POST",
+		cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+		headers: { "Content-Type": "application/json", },
+		body: JSON.stringify(dobj),
+	}).then((response) => {
+		if (!response.ok) {
+			throw new Error(`HTTP error, status = ${response.status}`);
+		}
+		return response.json();
+	}).then((res) => {fetchOk(res);}
+	).catch((error) => {
+		ni.setAttribute('data-sib-st', 'Error :' + error.code + ':' + error.message + 'fms :' + fms);
+		ni.innerHTML = '<p>= Code: ' + error.code + '<br>= Msg: ' + error.message + '</p>' + + '<div>=Error Fms:' + fms + '</div>';
+	})
+
+*/
