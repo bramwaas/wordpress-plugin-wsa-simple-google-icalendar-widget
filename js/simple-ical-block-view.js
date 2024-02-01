@@ -34,11 +34,12 @@ function fetchFromRest(dobj, ni) {
 		ni.setAttribute('data-sib-st', 'completed-' + fms);
 		console.log(res);
 		rresult = res;
-		ni.innerHTML = res.content + '<div>fms:' + fms + '</div>';
+		ni.innerHTML = res.content + '<div>Res fms:' + fms + '</div>';
 		//		ni.setAttribute('data-sib-st', 'completed-' + fms);
 	},
 		(error) => {
-			ni.innerHTML = '<p>= Code: ' + error.code + '<br>= Msg: ' + error.message + '</p>' + + '<div>= Fms:' + fms + '</div>';
+			ni.setAttribute('data-sib-st', 'Error :' + error.code + ':' + error.message + 'fms :' + fms);
+			ni.innerHTML = '<p>= Code: ' + error.code + '<br>= Msg: ' + error.message + '</p>' + + '<div>=Error Fms:' + fms + '</div>';
 		}
 	);
 	async function requestREST(url = "", dobj = {}) {
@@ -52,7 +53,7 @@ function fetchFromRest(dobj, ni) {
 			const rJson = await response.json();
 			return rJson;
 		} catch (error) { console.error("Error:", error); };
-		mcatch.content = '<h3 class="widget-title"> Error fetching data, try again </h3><p>- fms:' + fms + '</p>'
+		mcatch.content = '<h3 class="widget-title"> Error fetching data, try again </h3><p>- Catch fms:' + fms + '</p>'
 		return JSON.stringify(mcatch);
 	}
 
