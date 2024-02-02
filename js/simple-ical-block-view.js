@@ -7,6 +7,7 @@
 const endpoint = document.querySelector('link[rel="https://api.w.org/"]').href + "simple-google-icalendar-widget/v1/content-by-ids";
 let ms = Date.now();
 let fms = 0;
+let stry = 1;
 let rresult = null;
 getBlockByIds(
 	{}
@@ -40,7 +41,7 @@ function fetchFromRest(dobj, ni) {
 			throw new Error(`HTTP error, status = ${response.status}`);
 		}
 		return response.json();
-	}).then((res) => {fetchOk(res, '1');}
+	}).then((res) => { fetchOk(res, stry);}
 	).catch((error) => {
 		fetch(endpoint, {
 			method: "POST",
@@ -52,10 +53,11 @@ function fetchFromRest(dobj, ni) {
 				throw new Error(`HTTP error, status = ${response.status}`);
 			}
 			return response.json();
-		}).then((res) => { fetchOk(res, '2'); }
+		}).then((res) => {stry = '2'; 
+			fetchOk(res, stry); }
 		).catch((error) => {
-			ni.setAttribute('data-sib-st', 'Error :' + error.code + ':' + error.message + 'fms :' + fms);
-			ni.innerHTML = '<p>= Code: ' + error.code + '<br>= Msg: ' + error.message + '</p>' + + '<div>=Error Fms:' + fms + '</div>';
+			ni.setAttribute('data-sib-st', 'Error :' + error.code + ':' + error.message + ' try:' + stry + 'fms :' + fms);
+			ni.innerHTML = '<p>= Code: ' + error.code + '<br>= Msg: ' + error.message + '</p><div>=Error try:' + stry + ' Fms:' + fms + '</div>';
 		})
 	})
 
