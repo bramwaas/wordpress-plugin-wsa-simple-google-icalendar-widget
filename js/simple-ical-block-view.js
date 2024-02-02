@@ -29,7 +29,7 @@ function getBlockByIds(paramsObj2) {
 }
 
 function fetchFromRest(dobj, ni) {
-//	let mcatch = { "content": "<p>Catch</p>", "params": {} };
+	//	let mcatch = { "content": "<p>Catch</p>", "params": {} };
 
 	fetch(endpoint, {
 		method: "POST",
@@ -37,11 +37,12 @@ function fetchFromRest(dobj, ni) {
 		headers: { "Content-Type": "application/json", },
 		body: JSON.stringify(dobj),
 	}).then((response) => {
-		if (!response.ok) {
+		if (!response.ok) {	stry = 'nok1';
 			throw new Error(`HTTP error, status = ${response.status}`);
 		}
 		return response.json();
-	}).then((res) => { fetchOk(res, stry);}
+
+	}).then((res) => { fetchOk(res, stry); }
 	).catch((error) => {
 		fetch(endpoint, {
 			method: "POST",
@@ -49,13 +50,14 @@ function fetchFromRest(dobj, ni) {
 			headers: { "Content-Type": "application/json", },
 			body: JSON.stringify(dobj),
 		}).then((response) => {
-			if (!response.ok) {
+			if (!response.ok) {	stry = 'nok2';
 				throw new Error(`HTTP error, status = ${response.status}`);
 			}
+			stry = '2';
 			return response.json();
-		}).then((res) => {stry = '2'; 
-			fetchOk(res, stry); }
+		}).then((res) => { fetchOk(res, stry); }
 		).catch((error) => {
+			fms = (Date.now() - ms);
 			ni.setAttribute('data-sib-st', 'Error :' + error.code + ':' + error.message + ' try:' + stry + 'fms :' + fms);
 			ni.innerHTML = '<p>= Code: ' + error.code + '<br>= Msg: ' + error.message + '</p><div>=Error try:' + stry + ' Fms:' + fms + '</div>';
 		})
