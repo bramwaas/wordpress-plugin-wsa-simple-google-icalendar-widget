@@ -154,7 +154,7 @@ class SimpleicalBlock {
             echo '<div id="' . $block_attributes['anchorId'] . '" class="' . $block_attributes['className'] . ((isset($block_attributes['align'])) ? (' align' . $block_attributes['align']) : ' ') . '" data-sib-id="' . $block_attributes['blockid'] . '" >';
             self::display_block($block_attributes);
             echo '</div>';
-        } else if ($block_attributes['rest_end']) {
+        } else if (!empty($block_attributes['rest_end'])) {
             self::display_block($block_attributes);
         } else {
             self::display_rest_start($block_attributes, $content, $block);
