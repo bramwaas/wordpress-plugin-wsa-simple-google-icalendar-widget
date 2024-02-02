@@ -37,11 +37,12 @@ function fetchFromRest(dobj, ni) {
 		headers: { "Content-Type": "application/json", },
 		body: JSON.stringify(dobj),
 	}).then((response) => {
-		if (!response.ok) {	stry = 'nok1';
+		console.log(response);
+		if (!response.ok) {
+			stry = 'nok1';
 			throw new Error(`HTTP error, status = ${response.status}`);
 		}
 		return response.json();
-
 	}).then((res) => { fetchOk(res, stry); }
 	).catch((error) => {
 		fetch(endpoint, {
@@ -50,8 +51,10 @@ function fetchFromRest(dobj, ni) {
 			headers: { "Content-Type": "application/json", },
 			body: JSON.stringify(dobj),
 		}).then((response) => {
-			if (!response.ok) {	stry = 'nok2';
-				throw new Error(`HTTP error, status = ${response.status}`);
+			console.log(response);
+			if (!response.ok) {
+				stry = 'nok2';
+				throw new Error(`HTTP error, status = ${response.status}`, { cause: error });
 			}
 			stry = '2';
 			return response.json();
