@@ -119,6 +119,7 @@ class RestController extends WP_REST_Controller {
         $transientId = 'sib-r-' . $params['blockid'];
          if (false === ($block_attributes = get_transient($transientId))) {
             $content = "Attributes not found in transient";
+            return new WP_Error( '404', __( "Attributes not found in transient", 'simple-google-icalendar-widget' ) );
             /*
              * $parser = new IcsParser($instance['calendar_id'], $instance['cache_time'], $instance['event_period'], $instance['tzid_ui'] );
              * $data = $parser->fetch( );
@@ -138,10 +139,10 @@ class RestController extends WP_REST_Controller {
             ], $request);
         }
         // return a response or error based on some conditional
-        if (1 == 1) {
-            return new WP_REST_Response($data, 200);
-        } else {
+        if (empty($data)) {
             return new WP_Error( '404', __( 'Not possible to get block content', 'simple-google-icalendar-widget' ) );
+        } else {
+            return new WP_REST_Response($data, 200);
         }
     }
     /**
@@ -158,10 +159,10 @@ class RestController extends WP_REST_Controller {
         $data = $this->prepare_item_for_response( ['content' => $content, 'params' => $params], $request );
         
         //return a response or error based on some conditional
-        if ( 1 == 1 ) {
-            return new WP_REST_Response( $data, 200 );
-        } else {
+        if (empty($data)) {
             return new WP_Error( '404', __( 'Not possible to get block content', 'simple-google-icalendar-widget' ) );
+        } else {
+            return new WP_REST_Response($data, 200);
         }
     }
     /**
