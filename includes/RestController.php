@@ -25,6 +25,13 @@ class RestController extends WP_REST_Controller {
      */
     protected static $instance;
     /**
+     * Debug var content
+     *
+     * @var    static
+     * @since  2.3.0
+     */
+    protected static $content;
+    /**
      * Constructor.
      *
      * initial values ​​for $namespace string, $rest_base string defined in extended class WP_REST_Controller
@@ -116,16 +123,35 @@ class RestController extends WP_REST_Controller {
     {
         // get parameters from request
         $params = $request->get_params();
+        if (empty($params['blockid'])) return new WP_Error( '404', __( 'Empty blockid. Not possible to get block content', 'simple-google-icalendar-widget' ) );
+        
         $transientId = 'sib-r-' . $params['blockid'];
-         if (false === ($block_attributes = get_transient($transientId))) {
-//            return new WP_Error( '404', __( "Attributes not found in transient", 'simple-google-icalendar-widget' ) );
-            $content = "<p>Attributes not found in transient</p>";
-            
-            $data = $this->prepare_item_for_response([
-                'content' => $content,
+//         if (false === ($block_attributes = get_transient($transientId)))
+if (true)
+         {
+             if (empty($params['postid'])) return new WP_Error( '404', __( 'Empty postid. Not possible to get block content', 'simple-google-icalendar-widget' ) );
+             $content_post = get_post($params['postid'])->post_content;
+             $blocks = parse_blocks($content_post);
+//             self::$content = '<p>Debug:<br>'; 
+             if (false === ($block_attributes = self::find_block_attributes($blocks, $params['blockid'], 
+                 'simplegoogleicalenderwidget/simple-ical-block', 10 ))){
+//                 self::$content .= 'Attributes not found in recursive search </p>';
+             }
+             else {
+//            self::$content .= 'Found attributes:<br>'; 
+/*             foreach ($attrs as $aname => $avalue) {
+                 self::$content .= $aname . ' => ' . $avalue . '<br>';
+             }
+             self::$content .= '</p>';
+*///            return new WP_Error( '404', __( "Attributes not found in transient", 'simple-google-icalendar-widget' ) );
+//            $content = "<p>Attributes not found in transient</p>";
+             }
+             
+/*            $data = $this->prepare_item_for_response([
+                'content' => self::$content,
                 'params' => $params
             ], $request);
-            /*
+*/            /*
              * $parser = new IcsParser($instance['calendar_id'], $instance['cache_time'], $instance['event_period'], $instance['tzid_ui'] );
              * $data = $parser->fetch( );
              * // do not cache data if fetching failed
@@ -133,7 +159,8 @@ class RestController extends WP_REST_Controller {
              * set_transient($transientId, $data, $instance['cache_time']*60);
              * }
              */
-        } else {
+         }
+//        } else {
             $block_attributes = wp_parse_args((array) $params, $block_attributes);
 //            $block_attributes['period_limits'] = $block_attributes['period_limits'] % 4;
             $block_attributes['rest_end'] = true;
@@ -142,7 +169,7 @@ class RestController extends WP_REST_Controller {
                 'content' => $content,
                 'params' => $params
             ], $request);
-        }
+//        }
         // return a response or error based on some conditional
         if (isset($data)) {
             return new WP_REST_Response($data, 200);
@@ -377,5 +404,35 @@ class RestController extends WP_REST_Controller {
             self::$instance = new RestController;
         return self::$instance;
     }
+    /**
+     * Method to recursively attributes from multidimensional array of blocks.
+     *
+     * @param array $blocks blocks haystack
+     * @param string $bid needle 1 attr['blockid']
+     * @param string $bname  needle 2 name of block
+     * $params int $depth depth of  recursion.
+     * @return  array $attributes of false
+     *
+     * @since       2.3.0
+     *
+     */
+    public static function find_block_attributes($blocks, $bid, $bname, $depth = 5 )
+    {
+        $depth = $depth - 1;
+        foreach ($blocks as $block){
+            if (!empty($block['blockName']) && $block['blockName'] == $bname 
+                && !empty($block['attrs']['blockid']) && $block['attrs']['blockid'] == $bid ) {
+            //found
+                  return $block['attrs'];
+            }
+             if (0 < $depth && !empty($block['innerBlocks'])) {
+                //maybe in innerblock.
+                 $result = self::find_block_attributes($block['innerBlocks'], $bid, $bname, $depth );
+                if (false !== $result) return $result;
+            } 
+        }
+        return false;
+    }
     
+
 }
