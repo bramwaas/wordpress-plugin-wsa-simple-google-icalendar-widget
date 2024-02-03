@@ -118,8 +118,13 @@ class RestController extends WP_REST_Controller {
         $params = $request->get_params();
         $transientId = 'sib-r-' . $params['blockid'];
          if (false === ($block_attributes = get_transient($transientId))) {
-            $content = "Attributes not found in transient";
-            return new WP_Error( '404', __( "Attributes not found in transient", 'simple-google-icalendar-widget' ) );
+//            return new WP_Error( '404', __( "Attributes not found in transient", 'simple-google-icalendar-widget' ) );
+            $content = "<p>Attributes not found in transient</p>";
+            
+            $data = $this->prepare_item_for_response([
+                'content' => $content,
+                'params' => $params
+            ], $request);
             /*
              * $parser = new IcsParser($instance['calendar_id'], $instance['cache_time'], $instance['event_period'], $instance['tzid_ui'] );
              * $data = $parser->fetch( );

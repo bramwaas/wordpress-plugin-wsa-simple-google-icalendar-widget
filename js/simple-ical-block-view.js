@@ -45,6 +45,9 @@ function fetchFromRest(dobj, ni) {
 		return response.json();
 	}).then((res) => { fetchOk(res, stry); }
 	).catch((error) => {
+		fms = (Date.now() - ms);
+		console.log('Try:' + stry + 'fms :' + fms);
+		console.log(error);
 		fetch(endpoint, {
 			method: "POST",
 			cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
@@ -61,6 +64,8 @@ function fetchFromRest(dobj, ni) {
 		}).then((res) => { fetchOk(res, stry); }
 		).catch((error) => {
 			fms = (Date.now() - ms);
+			console.log('Try:' + stry + 'fms :' + fms);
+			console.log(error);
 			ni.setAttribute('data-sib-st', 'Error :' + error.code + ':' + error.message + ' try:' + stry + 'fms :' + fms);
 			ni.innerHTML = '<p>= Code: ' + error.code + '<br>= Msg: ' + error.message + '</p><div>=Error try:' + stry + ' Fms:' + fms + '</div>';
 		})
