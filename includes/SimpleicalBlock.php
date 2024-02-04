@@ -279,10 +279,8 @@ class SimpleicalBlock {
     }
 
     /**
-     * Starting point for REST processing display of block or widget.
+     * Placeholder starting point for REST processing display of block or widget.
      * cache data (although maybe with wrong timezone) in transient to accelerate REST proces
-     *
-     * @see
      *
      * @param array $block_attributes
      *            Saved attribute/option values from database.
@@ -294,19 +292,14 @@ class SimpleicalBlock {
     static function display_rest_start($block_attributes, $content = null, $block = null)
     {
         $postid = (empty($block) || empty($block->context['postId'])) ? 0 : $block->context['postId'];
-        $transientId = 'sib-r-' . $block_attributes['blockid'];
         $parm = [
             'postid' => $postid,
             'blockid' => $block_attributes['blockid']
         ];
         echo '<div id="' . $block_attributes['anchorId'] . '" class="' . $block_attributes['className'] . ((isset($block_attributes['align'])) ? (' align' . $block_attributes['align']) : ' ') . '" ' . ' data-sib-id="' . $block_attributes['blockid'] . '" data-sib-pid="' . $postid . '" data-sib-st="start"  >';
-        echo '<h3 class="widget-title block-title">' . $block_attributes['title'] . '</h3>';
-        echo '<p>Processing</p></div>';
-        //
-        // $data = IcsParser::getData($block_attributes);
-        // if (!empty($data) && is_array($data)) {
-        // }
-        set_transient($transientId, $block_attributes, 300);
+        echo '<h3 class="widget-title block-title">' . $block_attributes['title'] . '</h3><p>';
+        _e( 'Processing', 'simple-google-icalendar-widget');
+        echo '</p></div>';
     }
     
 } // end class SimpleicalBlock

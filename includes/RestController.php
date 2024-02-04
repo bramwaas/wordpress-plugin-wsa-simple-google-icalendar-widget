@@ -124,53 +124,20 @@ class RestController extends WP_REST_Controller {
         // get parameters from request
         $params = $request->get_params();
         if (empty($params['blockid'])) return new WP_Error( '404', __( 'Empty blockid. Not possible to get block content', 'simple-google-icalendar-widget' ) );
-        
-        $transientId = 'sib-r-' . $params['blockid'];
-//         if (false === ($block_attributes = get_transient($transientId)))
-if (true)
-         {
              if (empty($params['postid'])) return new WP_Error( '404', __( 'Empty postid. Not possible to get block content', 'simple-google-icalendar-widget' ) );
              $content_post = get_post($params['postid'])->post_content;
              $blocks = parse_blocks($content_post);
-//             self::$content = '<p>Debug:<br>'; 
              if (false === ($block_attributes = self::find_block_attributes($blocks, $params['blockid'], 
                  'simplegoogleicalenderwidget/simple-ical-block', 10 ))){
-//                 self::$content .= 'Attributes not found in recursive search </p>';
+                 return new WP_Error( '404', __( 'No content block content found', 'simple-google-icalendar-widget' ) );
              }
-             else {
-//            self::$content .= 'Found attributes:<br>'; 
-/*             foreach ($attrs as $aname => $avalue) {
-                 self::$content .= $aname . ' => ' . $avalue . '<br>';
-             }
-             self::$content .= '</p>';
-*///            return new WP_Error( '404', __( "Attributes not found in transient", 'simple-google-icalendar-widget' ) );
-//            $content = "<p>Attributes not found in transient</p>";
-             }
-             
-/*            $data = $this->prepare_item_for_response([
-                'content' => self::$content,
-                'params' => $params
-            ], $request);
-*/            /*
-             * $parser = new IcsParser($instance['calendar_id'], $instance['cache_time'], $instance['event_period'], $instance['tzid_ui'] );
-             * $data = $parser->fetch( );
-             * // do not cache data if fetching failed
-             * if ($data) {
-             * set_transient($transientId, $data, $instance['cache_time']*60);
-             * }
-             */
-         }
-//        } else {
             $block_attributes = wp_parse_args((array) $params, $block_attributes);
-//            $block_attributes['period_limits'] = $block_attributes['period_limits'] % 4;
             $block_attributes['rest_end'] = true;
             $content = SimpleicalBlock::render_block($block_attributes, []);
             $data = $this->prepare_item_for_response([
                 'content' => $content,
                 'params' => $params
             ], $request);
-//        }
-        // return a response or error based on some conditional
         if (isset($data)) {
             return new WP_REST_Response($data, 200);
         } else {
@@ -416,7 +383,7 @@ if (true)
      * @since       2.3.0
      *
      */
-    public static function find_block_attributes($blocks, $bid, $bname, $depth = 5 )
+    public static function find_block_attributes($blocks, $bid, $bname, $depth = 10 )
     {
         $depth = $depth - 1;
         foreach ($blocks as $block){
