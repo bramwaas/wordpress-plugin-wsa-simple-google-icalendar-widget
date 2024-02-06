@@ -30,7 +30,7 @@ function getBlockByIds(paramsObj2) {
 
 function fetchFromRest(dobj, ni) {
 	//	let mcatch = { "content": "<p>Catch</p>", "params": {} };
-
+    stry = 1;
 	fetch(endpoint, {
 		method: "POST",
 		cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
@@ -39,15 +39,17 @@ function fetchFromRest(dobj, ni) {
 	}).then((response) => {
 		console.log(response);
 		if (!response.ok) {
-			stry = 'nok1';
+			stry = 10;
 			throw new Error(`HTTP error, status = ${response.status}`);
 		}
 		return response.json();
 	}).then((res) => { fetchOk(res, stry); }
 	).catch((error) => {
+        stry = stry + 100;
 		fms = (Date.now() - ms);
 		console.log('Try:' + stry + 'fms :' + fms);
 		console.log(error);
+    stry = 2;
 		fetch(endpoint, {
 			method: "POST",
 			cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
@@ -56,13 +58,14 @@ function fetchFromRest(dobj, ni) {
 		}).then((response) => {
 			console.log(response);
 			if (!response.ok) {
-				stry = 'nok2';
+			stry = 20;
+		console.log('Try:' + stry + 'fms :' + fms);
 				throw new Error(`HTTP error, status = ${response.status}`, { cause: error });
 			}
-			stry = '2';
 			return response.json();
 		}).then((res) => { fetchOk(res, stry); }
 		).catch((error) => {
+			stry = stry + 200;
 			fms = (Date.now() - ms);
 			console.log('Try:' + stry + 'fms :' + fms);
 			console.log(error);

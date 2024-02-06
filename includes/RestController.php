@@ -127,6 +127,10 @@ class RestController extends WP_REST_Controller {
              if (empty($params['postid'])) return new WP_Error( '404', __( 'Empty postid. Not possible to get block content', 'simple-google-icalendar-widget' ) );
              $content_post = get_post($params['postid'])->post_content;
              $blocks = parse_blocks($content_post);
+//TODO footer blocks
+             $content_post = get_post(44)->post_content;
+             $blocks = array_merge($blocks, parse_blocks($content_post));
+//             
              if (false === ($block_attributes = self::find_block_attributes($blocks, $params['blockid'], 
                  'simplegoogleicalenderwidget/simple-ical-block', 10 ))){
                  return new WP_Error( '404', __( 'No content block content found', 'simple-google-icalendar-widget' ) );

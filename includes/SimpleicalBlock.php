@@ -292,14 +292,19 @@ class SimpleicalBlock {
     static function display_rest_start($block_attributes, $content = null, $block = null)
     {
         $postid = (empty($block) || empty($block->context['postId'])) ? 0 : $block->context['postId'];
-        $parm = [
-            'postid' => $postid,
-            'blockid' => $block_attributes['blockid']
-        ];
-        echo '<div id="' . $block_attributes['anchorId'] . '" class="' . $block_attributes['className'] . ((isset($block_attributes['align'])) ? (' align' . $block_attributes['align']) : ' ') . '" ' . ' data-sib-id="' . $block_attributes['blockid'] . '" data-sib-pid="' . $postid . '" data-sib-st="start"  >';
+        $context = '<div>Context</div><p>';
+            foreach ($block->context as $cn => $cv ) {
+                $context .= $cn . ':' . $cv . '<br>';
+            }
+        $context .= '</p>';
+        echo '<div id="' . $block_attributes['anchorId'] . '" class="' . $block_attributes['className']
+            . ((isset($block_attributes['align'])) ? (' align' . $block_attributes['align']) : ' ') . '" ' . ' data-sib-id="' . $block_attributes['blockid']
+            . '" data-sib-pid="' . $postid .  '" data-sib-st="start"' .'data-sib-apid"' . ((isset($block_attributes['postid'])) ? ($block_attributes['postid']) : ' ')
+            . '" >';
         echo '<h3 class="widget-title block-title">' . $block_attributes['title'] . '</h3><p>';
         _e( 'Processing', 'simple-google-icalendar-widget');
         echo '</p></div>';
+        echo $context;
     }
     
 } // end class SimpleicalBlock
