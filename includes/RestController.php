@@ -130,8 +130,14 @@ class RestController extends WP_REST_Controller {
              if (false === ($block_attributes = self::find_block_attributes($blocks, $params['blockid'],
                  'simplegoogleicalenderwidget/simple-ical-block', 10 ))){
                  //TODO footer blocks
-                $content_post = get_post(44)->post_content;
-                $blocks = array_merge($blocks, parse_blocks($content_post));
+             $posttypes = array_diff(get_post_types(),['post','page', 'attachment', 'revision','nav_menu_item','custom_css', 'customize_changeset', 'oembed_cache', 'user_request']);
+             $post_ids = get_posts(array('post_type' => $posttypes, 'numberposts' => -1, 'fields' => 'ids'));
+             foreach ($post_ids as $postid){
+                 $content_post = get_post($postid)->post_content;
+                 $blocks = parse_blocks($content_post);
+                 if (false !== ($block_attributes = self::find_block_attributes($blocks, $params['blockid'],
+                     'simplegoogleicalenderwidget/simple-ical-block', 10 ))) break;
+             }
              //
              }
              if (false === ($block_attributes = self::find_block_attributes($blocks, $params['blockid'], 
