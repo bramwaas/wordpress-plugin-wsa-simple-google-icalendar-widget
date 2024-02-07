@@ -306,6 +306,7 @@ class SimpleicalBlock {
         _e( 'Processing', 'simple-google-icalendar-widget');
         echo '</p></div>';
 //        echo $context;
+        echo '<div><button onclick="getBlockByIds({})" >' . __('Retry', 'simple-google-icalendar-widget') . '</button></div>';
     }
     
 } // end class SimpleicalBlock
