@@ -8,7 +8,6 @@ const endpoint = document.querySelector('link[rel="https://api.w.org/"]').href +
 let ms = Date.now();
 let fms = 0;
 let stry = 1;
-let rresult = null;
 getBlockByIds(
 	{}
 );
@@ -29,8 +28,7 @@ function getBlockByIds(paramsObj2) {
 }
 
 function fetchFromRest(dobj, ni) {
-	//	let mcatch = { "content": "<p>Catch</p>", "params": {} };
-    stry = 1;
+	stry = 1;
 	fetch(endpoint, {
 		method: "POST",
 		cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
@@ -43,64 +41,18 @@ function fetchFromRest(dobj, ni) {
 			throw new Error(`HTTP error, status = ${response.status}`);
 		}
 		return response.json();
-	}).then((res) => { fetchOk(res, stry); }
-	).catch((error) => {
-        stry = stry + 100;
-		fms = (Date.now() - ms);
-		console.log('Try:' + stry + 'fms :' + fms);
-		console.log(error);
-    stry = 2;
-		fetch(endpoint, {
-			method: "POST",
-			cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-			headers: { "Content-Type": "application/json", },
-			body: JSON.stringify(dobj),
-		}).then((response) => {
-			console.log(response);
-			if (!response.ok) {
-			stry = 20;
-		console.log('Try:' + stry + 'fms :' + fms);
-				throw new Error(`HTTP error, status = ${response.status}`, { cause: error });
-			}
-			return response.json();
-		}).then((res) => { fetchOk(res, stry); }
-		).catch((error) => {
-			stry = stry + 200;
-			fms = (Date.now() - ms);
-			console.log('Try:' + stry + 'fms :' + fms);
-			console.log(error);
-			ni.setAttribute('data-sib-st', 'Error :' + error.code + ':' + error.message + ' try:' + stry + 'fms :' + fms);
-			ni.innerHTML = '<p>= Code: ' + error.code + '<br>= Msg: ' + error.message + '</p><div>=Error try:' + stry + ' Fms:' + fms + '</div>';
-		})
-	})
-
-	function fetchOk(res, stry) {
+	}).then((res) => {
 		fms = (Date.now() - ms);
 		ni.setAttribute('data-sib-st', 'completed-' + stry + '-' + fms);
 		console.log(res);
-		rresult = res;
 		ni.innerHTML = res.content + '<div>Res try:' + stry + ' fms:' + fms + '</div>';
-		//		ni.setAttribute('data-sib-st', 'completed-' + fms);
 	}
-
-
-}
-
-/*
-	fetch(endpoint, {
-		method: "POST",
-		cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-		headers: { "Content-Type": "application/json", },
-		body: JSON.stringify(dobj),
-	}).then((response) => {
-		if (!response.ok) {
-			throw new Error(`HTTP error, status = ${response.status}`);
-		}
-		return response.json();
-	}).then((res) => {fetchOk(res);}
 	).catch((error) => {
-		ni.setAttribute('data-sib-st', 'Error :' + error.code + ':' + error.message + 'fms :' + fms);
-		ni.innerHTML = '<p>= Code: ' + error.code + '<br>= Msg: ' + error.message + '</p>' + + '<div>=Error Fms:' + fms + '</div>';
+		stry = stry + 200;
+		fms = (Date.now() - ms);
+		console.log('Try:' + stry + 'fms :' + fms);
+		console.log(error);
+		ni.setAttribute('data-sib-st', 'Error :' + error.code + ':' + error.message + ' try:' + stry + 'fms :' + fms);
+		ni.innerHTML = '<p>= Code: ' + error.code + '<br>= Msg: ' + error.message + '</p><div>=Error try:' + stry + ' Fms:' + fms + '</div>';
 	})
-
-*/
+}

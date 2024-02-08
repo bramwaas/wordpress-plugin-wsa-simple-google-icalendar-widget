@@ -292,12 +292,11 @@ class SimpleicalBlock {
     static function display_rest_start($block_attributes, $content = null, $block = null)
     {
         $postid = (empty($block) || empty($block->context['postId'])) ? 0 : $block->context['postId'];
+//         wp_enqueue_script(  "simplegoogleicalenderwidget-simple-ical-block-view-script-js", 
+//             plugins_url( '/js/simple-ical-block-view.js', __DIR__ ) , [], 
+//             '2.3.0-' . filemtime( plugin_dir_path( __DIR__ ) . '/js/simple-ical-block-view.js' )
+//             , ['strategy' => 'defer'] );
         
-//         $context = '<div>Footer</div><p>';
-//                $context .= '$content=' . print_r($content,true)  
-//                . '<br>$block=' . print_r($block, true) 
-//         $context .= 'Types=' . print_r($query,true)    ;
-//         $context .= '</p>';
         echo '<div id="' . $block_attributes['anchorId'] . '" class="' . $block_attributes['className']
             . ((isset($block_attributes['align'])) ? (' align' . $block_attributes['align']) : ' ') . '" ' . ' data-sib-id="' . $block_attributes['blockid']
             . '" data-sib-pid="' . $postid .  '" data-sib-st="start"' .'data-sib-apid"' . ((isset($block_attributes['postid'])) ? ($block_attributes['postid']) : ' ')
