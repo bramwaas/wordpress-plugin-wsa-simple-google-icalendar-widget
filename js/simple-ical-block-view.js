@@ -9,27 +9,9 @@ let endpoint = '';
 let ms = Date.now();
 let fms = 0;
 let stry = 1;
-getBlockByIds(
-	{}
-);
 
-function getBlockByIds(paramsObj2) {
-	const nodeList = document.querySelectorAll('[data-sib-st]');
-	const ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
-	let paramsObj = {};
-	for (let i = 0; i < nodeList.length; i++) {
-		endpoint = nodeList[i].getAttribute('data-sib-ep') + "simple-google-icalendar-widget/v1/content-by-ids";
-		paramsObj.tzid_ui = ptzid_ui;
-		paramsObj.blockid = nodeList[i].getAttribute('data-sib-id');
-		paramsObj.postid = nodeList[i].getAttribute('data-sib-pid');
-		console.log(paramsObj);
-		nodeList[i].setAttribute('data-sib-st', 'f1');
-		ms = Date.now();
-		fetchFromRest(paramsObj, nodeList[i]);
-	}
-}
-
-function fetchFromRest(dobj, ni) {
+window.sib = {
+fetchFromRest: function (dobj, ni) {
 	stry = 1;
 	fetch(endpoint, {
 		method: "POST",
@@ -58,3 +40,26 @@ function fetchFromRest(dobj, ni) {
 		ni.innerHTML = '<p>= Code: ' + error.code + '<br>= Msg: ' + error.message + '</p><div>=Error try:' + stry + ' Fms:' + fms + '</div>';
 	})
 }
+,
+
+getBlockByIds: function (paramsObj2) {
+	const nodeList = document.querySelectorAll('[data-sib-st]');
+	const ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
+	let paramsObj = {};
+	for (let i = 0; i < nodeList.length; i++) {
+		endpoint = nodeList[i].getAttribute('data-sib-ep') + "simple-google-icalendar-widget/v1/content-by-ids";
+		paramsObj.tzid_ui = ptzid_ui;
+		paramsObj.blockid = nodeList[i].getAttribute('data-sib-id');
+		paramsObj.postid = nodeList[i].getAttribute('data-sib-pid');
+		console.log(paramsObj);
+		nodeList[i].setAttribute('data-sib-st', 'f1');
+		ms = Date.now();
+		window.sib.fetchFromRest(paramsObj, nodeList[i]);
+	}
+}
+
+}
+
+window.sib.getBlockByIds(
+	{}
+);
