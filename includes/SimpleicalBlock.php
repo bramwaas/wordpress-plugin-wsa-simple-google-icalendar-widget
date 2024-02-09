@@ -294,7 +294,7 @@ class SimpleicalBlock {
         $postid = (empty($block) || empty($block->context['postId'])) ? 0 : $block->context['postId'];
         echo '<div id="' . $block_attributes['anchorId'] . '" class="' . $block_attributes['className']
             . ((isset($block_attributes['align'])) ? (' align' . $block_attributes['align']) : ' ') . '" ' . ' data-sib-id="' . $block_attributes['blockid']
-            . '" data-sib-pid="' . $postid .  '" data-sib-st="start"' .'data-sib-apid"' . ((isset($block_attributes['postid'])) ? ($block_attributes['postid']) : ' ')
+            . '" data-sib-pid="' . $postid .  '" data-sib-st="start"' .'data-sib-apid="' . ((isset($block_attributes['postid'])) ? ($block_attributes['postid']) : ' ')
             . '" data-sib-ep="' . get_rest_url()
             . '" >';
         echo '<h3 class="widget-title block-title">' . $block_attributes['title'] . '</h3><p>';
