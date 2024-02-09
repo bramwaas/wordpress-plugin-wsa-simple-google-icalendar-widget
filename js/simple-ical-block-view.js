@@ -10,7 +10,7 @@ let ms = Date.now();
 let fms = 0;
 let stry = 1;
 
-window.sib = {
+window.simpleIcalBlock = {
 fetchFromRest: function (dobj, ni) {
 	stry = 1;
 	fetch(endpoint, {
@@ -54,12 +54,12 @@ getBlockByIds: function (paramsObj2) {
 		console.log(paramsObj);
 		nodeList[i].setAttribute('data-sib-st', 'f1');
 		ms = Date.now();
-		window.sib.fetchFromRest(paramsObj, nodeList[i]);
+		window.simpleIcalBlock.fetchFromRest(paramsObj, nodeList[i]);
 	}
 }
 
 }
 
-window.sib.getBlockByIds(
+window.simpleIcalBlock.getBlockByIds(
 	{}
 );
