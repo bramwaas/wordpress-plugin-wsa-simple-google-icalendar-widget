@@ -1,7 +1,6 @@
 /**
  * simple-ical-block-view.js
- * view simple-ical-block output with extra client parameter tzid_ui using REST fetched @wordpress/api-fetch 
- * why this is better than plain javascript Fetch API I don't know yet.
+ * view simple-ical-block output with extra client parameter tzid_ui using REST 
  * v2.3.0
 **/
 //const endpoint = document.querySelector('link[rel="https://api.w.org/"]').href + "simple-google-icalendar-widget/v1/content-by-ids";
@@ -54,7 +53,7 @@ window.simpleIcalBlock = {
 			console.log(paramsObj);
 			nodeList[i].setAttribute('data-sib-st', 'f1');
 			ms = Date.now();
-			window.simpleIcalBlock.fetchFromRest(paramsObj, nodeList[i]);
+			this.fetchFromRest(paramsObj, nodeList[i]);
 		}
 	}
 
