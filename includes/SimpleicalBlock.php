@@ -85,6 +85,9 @@ class SimpleicalBlock {
                 'render_block'
             )
         ));
+        add_action( 'enqueue_block_assets', array(
+            'WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalBlock','enqueue_block_script') );
+        
     }
     /**
      * Block init register block with help of block.json
@@ -126,7 +129,17 @@ class SimpleicalBlock {
             )
         ));
     }
-
+/**
+ * enqueue scripts for use in editor on block code (iframe) 
+ */
+    static function enqueue_block_script(){
+                wp_enqueue_script(  "simplegoogleicalenderwidget-simple-ical-block-view-script",
+                    plugins_url( '/js/simple-ical-block-view.js', __DIR__ ) , [],
+                    '2.3.0-' . filemtime( plugin_dir_path( __DIR__ ) . '/js/simple-ical-block-view.js' )
+                    , ['strategy' => 'defer'] );
+        
+    }
+    
     /**
      * Render the content of the block
      *
