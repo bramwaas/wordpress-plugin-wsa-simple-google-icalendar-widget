@@ -164,7 +164,7 @@ class SimpleicalBlock {
         $output = '';
         ob_start();
         if (4 >= $block_attributes['period_limits']) {
-            echo '<div id="' . $block_attributes['anchorId'] . '" class="' . $block_attributes['className'] . ((isset($block_attributes['align'])) ? (' align' . $block_attributes['align']) : ' ') . '" data-sib-id="' . $block_attributes['blockid'] . '" >';
+            echo '<div id="' . $block_attributes['anchorId'] . ((isset($block_attributes['align'])) ? (' align' . $block_attributes['align']) : ' ') . '" data-sib-id="' . $block_attributes['blockid'] . '" >';
             self::display_block($block_attributes);
             echo '</div>';
         } else if (!empty($block_attributes['rest_end'])) {
@@ -305,7 +305,7 @@ class SimpleicalBlock {
     static function display_rest_start($block_attributes, $content = null, $block = null)
     {
         $postid = (empty($block) || empty($block->context['postId'])) ? 0 : $block->context['postId'];
-        echo '<div id="' . $block_attributes['anchorId'] . '" class="' . $block_attributes['className']
+        echo '<div id="' . $block_attributes['anchorId'] 
             . ((isset($block_attributes['align'])) ? (' align' . $block_attributes['align']) : ' ') . '" ' . ' data-sib-id="' . $block_attributes['blockid']
             . '" data-sib-pid="' . $postid .  '" data-sib-st="start"' .'data-sib-apid="' . ((isset($block_attributes['postid'])) ? ($block_attributes['postid']) : ' ')
             . '" data-sib-ep="' . get_rest_url()
