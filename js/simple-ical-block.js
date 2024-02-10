@@ -93,6 +93,9 @@
  	           if ( ! props.attributes.blockid ) { props.setAttributes( { blockid: 'b' + props.clientId  } );}
             }, []); 
 			useEffect(function() {
+ 	            props.setAttributes( { postid:  '' + props.context ['postId']  } );
+            }, []); 
+			useEffect(function() {
 				if ( props.attributes.clear_cache_now ) {			   
 					var x = setTimeout(stopCC, 1000);
                		function stopCC () { props.setAttributes( { clear_cache_now: false  } );}	
