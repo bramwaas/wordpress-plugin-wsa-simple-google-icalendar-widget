@@ -135,7 +135,7 @@ class SimpleicalBlock {
     static function enqueue_block_script(){
                 wp_enqueue_script(  "simplegoogleicalenderwidget-simple-ical-block-view-script",
                     plugins_url( '/js/simple-ical-block-view.js', __DIR__ ) , [],
-                    '2.3.0-' . filemtime( plugin_dir_path( __DIR__ ) . '/js/simple-ical-block-view.js' )
+                    '2.3.0-' . filemtime( plugin_dir_path( __DIR__ ) . 'js/simple-ical-block-view.js' )
                     , ['strategy' => 'defer'] );
         
     }

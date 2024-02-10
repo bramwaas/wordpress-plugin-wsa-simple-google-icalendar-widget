@@ -108,8 +108,11 @@ class RestController extends WP_REST_Controller {
         ) );
         register_rest_route( $this->namespace, '/v1/' . $this->rest_base . 'attributes/schema', array(
             'methods'  => WP_REST_Server::READABLE,
-            'callback' => array( $this, 'get_content_by_attributes_schema' ),
-        ) );
+            'callback' => array(
+                $this,
+                'get_content_by_attributes_schema'
+            )
+        ));
     }
 
     /**
@@ -123,38 +126,56 @@ class RestController extends WP_REST_Controller {
     {
         // get parameters from request
         $params = $request->get_params();
-        if (empty($params['blockid'])) return new WP_Error( '404', __( 'Empty blockid. Not possible to get block content', 'simple-google-icalendar-widget' ) );
-             if (empty($params['postid'])) return new WP_Error( '404', __( 'Empty postid. Not possible to get block content', 'simple-google-icalendar-widget' ) );
-             $content_post = get_post($params['postid'])->post_content;
-             $blocks = parse_blocks($content_post);
-             if (false === ($block_attributes = self::find_block_attributes($blocks, $params['blockid'],
-                 'simplegoogleicalenderwidget/simple-ical-block', 10 ))){
-                 //TODO footer blocks
-             $posttypes = array_diff(get_post_types(),['post','page', 'attachment', 'revision','nav_menu_item','custom_css', 'customize_changeset', 'oembed_cache', 'user_request']);
-             $post_ids = get_posts(array('post_type' => $posttypes, 'numberposts' => -1, 'fields' => 'ids'));
-             foreach ($post_ids as $postid){
-                 $content_post = get_post($postid)->post_content;
-                 $blocks = parse_blocks($content_post);
-                 if (false !== ($block_attributes = self::find_block_attributes($blocks, $params['blockid'],
-                     'simplegoogleicalenderwidget/simple-ical-block', 10 ))) break;
-             }
-             //
-             }
-             if (false === ($block_attributes = self::find_block_attributes($blocks, $params['blockid'], 
-                 'simplegoogleicalenderwidget/simple-ical-block', 10 ))){
-                 return new WP_Error( '404', __( 'No content block content found', 'simple-google-icalendar-widget' ) );
-             }
-            $block_attributes = wp_parse_args((array) $params, $block_attributes);
-            $block_attributes['rest_end'] = true;
-            $content = SimpleicalBlock::render_block($block_attributes, []);
-            $data = $this->prepare_item_for_response([
-                'content' => $content,
-                'params' => $params
-            ], $request);
+        $blocks = [];
+        if (empty($params['blockid']))
+            return new WP_Error('404', __('Empty blockid. Not possible to get block content', 'simple-google-icalendar-widget'));
+        if (! empty($params['postid'])) {
+            $post = get_post((int) $params['postid']);
+            if (! empty($post)) {
+                $content_post = get_post($post)->post_content;
+                $blocks = parse_blocks($content_post);
+            }
+        }
+        if (empty($blocks) || false === ($block_attributes = self::find_block_attributes($blocks, $params['blockid'], 'simplegoogleicalenderwidget/simple-ical-block', 10))) {
+            // TODO footer blocks
+            $posttypes = array_diff(get_post_types(), [
+                'post',
+                'page',
+                'attachment',
+                'revision',
+                'nav_menu_item',
+                'custom_css',
+                'customize_changeset',
+                'oembed_cache',
+                'user_request'
+            ]);
+            $post_ids = get_posts(array(
+                'post_type' => $posttypes,
+                'numberposts' => - 1,
+                'fields' => 'ids'
+            ));
+            foreach ($post_ids as $postid) {
+                $content_post = get_post($postid)->post_content;
+                $blocks = parse_blocks($content_post);
+                if (false !== ($block_attributes = self::find_block_attributes($blocks, $params['blockid'], 'simplegoogleicalenderwidget/simple-ical-block', 10)))
+                    break;
+            }
+            //
+        }
+        if (false === ($block_attributes = self::find_block_attributes($blocks, $params['blockid'], 'simplegoogleicalenderwidget/simple-ical-block', 10))) {
+            return new WP_Error('404', __('No content block content found', 'simple-google-icalendar-widget'));
+        }
+        $block_attributes = wp_parse_args((array) $params, $block_attributes);
+        $block_attributes['rest_end'] = true;
+        $content = SimpleicalBlock::render_block($block_attributes, []);
+        $data = $this->prepare_item_for_response([
+            'content' => $content,
+            'params' => $params
+        ], $request);
         if (isset($data)) {
             return new WP_REST_Response($data, 200);
         } else {
-            return new WP_Error( '404', __( 'Not possible to get block content', 'simple-google-icalendar-widget' ) );
+            return new WP_Error('404', __('Not possible to get block content', 'simple-google-icalendar-widget'));
         }
     }
     /**
