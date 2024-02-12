@@ -1,15 +1,13 @@
 /**
  * simple-ical-block-view.js
  * view simple-ical-block output with extra client parameter tzid_ui using REST 
+ * restRoot for endpoint passed via inlinescript and this script in enqueue_block_assets 
  * v2.3.0
 **/
-//const endpoint = document.querySelector('link[rel="https://api.w.org/"]').href + "simple-google-icalendar-widget/v1/content-by-ids";
-let endpoint = '';
-let ms = Date.now();
-let fms = 0;
-let stry = 1;
+const endpoint = window.simpleIcalBlock.restRoot + "simple-google-icalendar-widget/v1/content-by-ids";
+let ms = Date.now(), fms = 0, stry = 1;
 
-window.simpleIcalBlock = {
+window.simpleIcalBlock = {...(window.simpleIcalBlock || {}), ...{
 	fetchFromRest: function(dobj, ni) {
 		stry = 1;
 		fetch(endpoint, {
@@ -46,7 +44,6 @@ window.simpleIcalBlock = {
 		const ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
 		let paramsObj = {};
 		for (let i = 0; i < nodeList.length; i++) {
-			endpoint = nodeList[i].getAttribute('data-sib-ep') + "simple-google-icalendar-widget/v1/content-by-ids";
 			paramsObj.tzid_ui = ptzid_ui;
 			paramsObj.blockid = nodeList[i].getAttribute('data-sib-id');
 			paramsObj.postid = nodeList[i].getAttribute('data-sib-pid');
@@ -56,7 +53,7 @@ window.simpleIcalBlock = {
 			this.fetchFromRest(paramsObj, nodeList[i]);
 		}
 	}
-
+}
 }
 
 window.simpleIcalBlock.getBlockByIds(

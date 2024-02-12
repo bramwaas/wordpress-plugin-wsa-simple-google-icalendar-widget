@@ -129,15 +129,16 @@ class SimpleicalBlock {
             )
         ));
     }
-/**
- * enqueue scripts for use in editor on block code (iframe) 
- */
-    static function enqueue_block_script(){
-                wp_enqueue_script(  "simplegoogleicalenderwidget-simple-ical-block-view-script",
-                    plugins_url( '/js/simple-ical-block-view.js', __DIR__ ) , [],
-                    '2.3.0-' . filemtime( plugin_dir_path( __DIR__ ) . 'js/simple-ical-block-view.js' )
-                    , ['strategy' => 'defer'] );
-        
+
+    /**
+     * enqueue scripts for use in editor on block code (iframe)
+     */
+    static function enqueue_block_script()
+    {
+        wp_enqueue_script('simplegoogleicalenderwidget-simple-ical-block-view-script', plugins_url('/js/simple-ical-block-view.js', __DIR__), [], '2.3.0-' . filemtime(plugin_dir_path(__DIR__) . 'js/simple-ical-block-view.js'), [
+            'strategy' => 'defer'
+        ]);
+        wp_add_inline_script('simplegoogleicalenderwidget-simple-ical-block-view-script', '(window.simpleIcalBlock=window.simpleIcalBlock || {}).restRoot = "' . get_rest_url() . '"', 'before');
     }
     
     /**
@@ -308,7 +309,6 @@ class SimpleicalBlock {
         echo '<div id="' . $block_attributes['anchorId'] . '" class="' . $block_attributes['className']
             . ((isset($block_attributes['align'])) ? (' align' . $block_attributes['align']) : ' ') . '" ' . ' data-sib-id="' . $block_attributes['blockid']
             . '" data-sib-pid="' . $postid .  '" data-sib-st="start"' .'data-sib-apid="' . ((isset($block_attributes['postid'])) ? ($block_attributes['postid']) : ' ')
-            . '" data-sib-ep="' . get_rest_url()
             . '" >';
         echo '<h3 class="widget-title block-title">' . $block_attributes['title'] . '</h3><p>';
         _e( 'Processing', 'simple-google-icalendar-widget');

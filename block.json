@@ -48,6 +48,5 @@
     "supports": {
         "align": true
     },
-	"editorScript": [ "file:./js/simple-ical-block.js"],
-    "viewScript": "file:./js/simple-ical-block-view.js"
+	"editorScript": "file:./js/simple-ical-block.js"
   }
