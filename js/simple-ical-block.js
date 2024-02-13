@@ -109,7 +109,14 @@
             }, [props.attributes.layout]); 
 			return 	el(
                'div',
-               useBlockProps ({key: 'simple_ical'}),
+               useBlockProps ({key: 'simple_ical',
+					id: props.attributes.anchorId,
+					className: props.attributes.className,
+					"data-sib-st": "0-start",
+					"data-sib-id": props.attributes.blockid,
+					"data-sib-pid": props.attributes.postid,
+               }),
+				'xyz Pocessing editor',
           el( ServerSideRender, {
                 block: 'simplegoogleicalenderwidget/simple-ical-block',
                 attributes: props.attributes,
@@ -371,7 +378,7 @@
 				'div',
 				useBlockProps.save({
 					id: props.attributes.anchorId,
-					className: (props.attributes.className),
+					className: props.attributes.className,
 					"data-sib-st": "0-start",
 					"data-sib-id": props.attributes.blockid,
 					"data-sib-pid": props.attributes.postid,
