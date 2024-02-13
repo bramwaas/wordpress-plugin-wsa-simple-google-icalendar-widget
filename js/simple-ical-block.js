@@ -366,6 +366,19 @@
                 )
             )			); 
 		},
+		save: function(props) {
+			return el(
+				'div',
+				useBlockProps.save({
+					id: props.attributes.anchorId,
+					className: (props.attributes.className),
+					"data-sib-st": "0-start",
+					"data-sib-id": props.attributes.blockid,
+					"data-sib-pid": props.attributes.postid,
+				}),
+				'xyz Pocessing'
+			);
+		}
 	} );
 }( window.wp.blocks,
    window.wp.i18n,
