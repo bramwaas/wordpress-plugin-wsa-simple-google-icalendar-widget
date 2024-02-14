@@ -131,14 +131,16 @@ class SimpleicalBlock {
     }
 
     /**
-     * enqueue scripts for use in editor on block code (iframe)
+     * enqueue scripts for use in client view and editor (when is_admin() ) on block code (iframe)
      */
     static function enqueue_block_script()
     {
-        wp_enqueue_script('simplegoogleicalenderwidget-simple-ical-block-view-script', plugins_url('/js/simple-ical-block-view.js', __DIR__), [], '2.3.0-' . filemtime(plugin_dir_path(__DIR__) . 'js/simple-ical-block-view.js'), [
-            'strategy' => 'defer'
-        ]);
-        wp_add_inline_script('simplegoogleicalenderwidget-simple-ical-block-view-script', '(window.simpleIcalBlock=window.simpleIcalBlock || {}).restRoot = "' . get_rest_url() . '"', 'before');
+        if (! is_admin()) {
+            wp_enqueue_script('simplegoogleicalenderwidget-simple-ical-block-view-script', plugins_url('/js/simple-ical-block-view.js', __DIR__), [], '2.3.0-' . filemtime(plugin_dir_path(__DIR__) . 'js/simple-ical-block-view.js'), [
+                'strategy' => 'defer'
+            ]);
+            wp_add_inline_script('simplegoogleicalenderwidget-simple-ical-block-view-script', '(window.simpleIcalBlock=window.simpleIcalBlock || {}).restRoot = "' . get_rest_url() . '"', 'before');
+        }
     }
     
     /**
@@ -164,7 +166,9 @@ class SimpleicalBlock {
 
         $output = '';
         ob_start();
-        if (4 >= $block_attributes['period_limits']) {
+        echo '<!-- attr ssr :' . print_r($block_attributes, true)  . ' -->';
+        if ((!empty($block_attributes['ssr']) && $block_attributes['ssr']) || (4 >= $block_attributes['period_limits'])) {
+            echo '<!-- admin or no rest Blok wrapper attr:' . get_block_wrapper_attributes() . ' -->';
             echo '<div id="' . $block_attributes['anchorId'] . '" class="' . $block_attributes['className'] . ((isset($block_attributes['align'])) ? (' align' . $block_attributes['align']) : ' ') . '" data-sib-id="' . $block_attributes['blockid'] . '" >';
             self::display_block($block_attributes);
             echo '</div>';
@@ -181,67 +185,67 @@ class SimpleicalBlock {
      *
      * @see
      *
-     * @param array $instance Saved attribute/option values from database.
+     * @param array $attributes Saved attribute/option values from database.
      */
-    static function display_block($instance)
+    static function display_block($attributes)
     {
-        if (!isset($instance['wptype']) || 'block' == $instance['wptype']) {
-            echo '<h3 class="widget-title block-title">' . $instance['title'] . '</h3>';
+        if (!isset($attributes['wptype']) || 'block' == $attributes['wptype']) {
+            echo '<h3 class="widget-title block-title">' . $attributes['title'] . '</h3>';
         }
         $sn = 0;
-        $data_sib = 'client TZID=' . $instance['tzid_ui'];
+        $data_sib = 'client TZID=' . $attributes['tzid_ui'];
         try {
-            $instance['tz_ui'] = new \DateTimeZone($instance['tzid_ui']);
+            $attributes['tz_ui'] = new \DateTimeZone($attributes['tzid_ui']);
         } catch (\Exception $exc) {}
-        if (empty($instance['tz_ui']))
+        if (empty($attributes['tz_ui']))
             try {
-                $instance['tzid_ui'] = wp_timezone_string();
-                $instance['tz_ui'] = new \DateTimeZone($instance['tzid_ui']);
+                $attributes['tzid_ui'] = wp_timezone_string();
+                $attributes['tz_ui'] = new \DateTimeZone($attributes['tzid_ui']);
             } catch (\Exception $exc) {}
-        if (empty($instance['tz_ui'])) {
-            $instance['tzid_ui'] = 'UTC';
-            $instance['tz_ui'] = new \DateTimeZone('UTC');
+        if (empty($attributes['tz_ui'])) {
+            $attributes['tzid_ui'] = 'UTC';
+            $attributes['tz_ui'] = new \DateTimeZone('UTC');
         }
-        $layout = (isset($instance['layout'])) ? $instance['layout'] : 3;
-        $dflg = (isset($instance['dateformat_lg'])) ? $instance['dateformat_lg'] : 'l jS \of F' ;
-        $dflgend = (isset($instance['dateformat_lgend'])) ? $instance['dateformat_lgend'] : '' ;
-        $dftsum = (isset($instance['dateformat_tsum'])) ? $instance['dateformat_tsum'] : 'G:i ' ;
-        $dftsend = (isset($instance['dateformat_tsend'])) ? $instance['dateformat_tsend'] : '' ;
-        $dftstart = (isset($instance['dateformat_tstart'])) ? $instance['dateformat_tstart'] : 'G:i' ;
-        $dftend = (isset($instance['dateformat_tend'])) ? $instance['dateformat_tend'] : ' - G:i ' ;
-        $excerptlength = (isset($instance['excerptlength']) && ' ' < trim($instance['excerptlength']) ) ? (int) $instance['excerptlength'] : '' ;
-        $instance['suffix_lg_class'] = wp_kses($instance['suffix_lg_class'], 'post');
-        $sflgi = wp_kses($instance['suffix_lgi_class'], 'post');
-        $sflgia = wp_kses($instance['suffix_lgia_class'], 'post');
-        if (!in_array($instance['tag_sum'], self::$allowed_tags_sum)) $instance['tag_sum'] = 'a';
-        $data = IcsParser::getData($instance);
+        $layout = (isset($attributes['layout'])) ? $attributes['layout'] : 3;
+        $dflg = (isset($attributes['dateformat_lg'])) ? $attributes['dateformat_lg'] : 'l jS \of F' ;
+        $dflgend = (isset($attributes['dateformat_lgend'])) ? $attributes['dateformat_lgend'] : '' ;
+        $dftsum = (isset($attributes['dateformat_tsum'])) ? $attributes['dateformat_tsum'] : 'G:i ' ;
+        $dftsend = (isset($attributes['dateformat_tsend'])) ? $attributes['dateformat_tsend'] : '' ;
+        $dftstart = (isset($attributes['dateformat_tstart'])) ? $attributes['dateformat_tstart'] : 'G:i' ;
+        $dftend = (isset($attributes['dateformat_tend'])) ? $attributes['dateformat_tend'] : ' - G:i ' ;
+        $excerptlength = (isset($attributes['excerptlength']) && ' ' < trim($attributes['excerptlength']) ) ? (int) $attributes['excerptlength'] : '' ;
+        $attributes['suffix_lg_class'] = wp_kses($attributes['suffix_lg_class'], 'post');
+        $sflgi = wp_kses($attributes['suffix_lgi_class'], 'post');
+        $sflgia = wp_kses($attributes['suffix_lgia_class'], 'post');
+        if (!in_array($attributes['tag_sum'], self::$allowed_tags_sum)) $attributes['tag_sum'] = 'a';
+        $data = IcsParser::getData($attributes);
         if (!empty($data) && is_array($data)) {
-            echo '<ul class="list-group' .  $instance['suffix_lg_class'] . ' simple-ical-widget" data-sib="' . $data_sib . '"> ';
+            echo '<ul class="list-group' .  $attributes['suffix_lg_class'] . ' simple-ical-widget" data-sib="' . $data_sib . '"> ';
             $curdate = '';
             foreach($data as $e) {
                 $idlist = explode("@", esc_attr($e->uid) );
-                $itemid = $instance['blockid'] .'_' . strval(++$sn) . '_' . $idlist[0];
-                $evdate = wp_kses(wp_date( $dflg, $e->start, $instance['tz_ui']), 'post');
+                $itemid = $attributes['blockid'] .'_' . strval(++$sn) . '_' . $idlist[0];
+                $evdate = wp_kses(wp_date( $dflg, $e->start, $attributes['tz_ui']), 'post');
                 $cal_class = ((!empty($e->cal_class)) ? ' ' . sanitize_html_class($e->cal_class): '');
-                if ( !$instance['allowhtml']) {
+                if ( !$attributes['allowhtml']) {
                     if (!empty($e->summary)) $e->summary = htmlspecialchars($e->summary);
                     if (!empty($e->description)) $e->description = htmlspecialchars($e->description);
                     if (!empty($e->location)) $e->location = htmlspecialchars($e->location);
                 }
                 if (date('yz', $e->start) != date('yz', $e->end)) {
-                    $evdate = str_replace(array("</div><div>", "</h4><h4>", "</h5><h5>", "</h6><h6>" ), '', $evdate . wp_kses(wp_date( $dflgend, $e->end - 1, $instance['tz_ui']) , 'post'));
+                    $evdate = str_replace(array("</div><div>", "</h4><h4>", "</h5><h5>", "</h6><h6>" ), '', $evdate . wp_kses(wp_date( $dflgend, $e->end - 1, $attributes['tz_ui']) , 'post'));
                 }
-                $evdtsum = (($e->startisdate === false) ? wp_kses(wp_date( $dftsum, $e->start, $instance['tz_ui']) . wp_date( $dftsend, $e->end, $instance['tz_ui']), 'post') : '');
+                $evdtsum = (($e->startisdate === false) ? wp_kses(wp_date( $dftsum, $e->start, $attributes['tz_ui']) . wp_date( $dftsend, $e->end, $attributes['tz_ui']), 'post') : '');
                 if ($layout < 2 && $curdate != $evdate) {
                     if  ($curdate != '') { echo '</ul></li>';}
                     echo '<li class="list-group-item' .  $sflgi . ' head">' .
-                        '<span class="ical-date">' . ucfirst($evdate) . '</span><ul class="list-group' .  $instance['suffix_lg_class'] . '">';
+                        '<span class="ical-date">' . ucfirst($evdate) . '</span><ul class="list-group' .  $attributes['suffix_lg_class'] . '">';
                 }
                 echo '<li class="list-group-item' .  $sflgi . $cal_class . '">';
                 if ($layout == 3 && $curdate != $evdate) {
-                    echo '<span class="ical-date">' . ucfirst($evdate) . '</span>' . (('a' == $instance['tag_sum'] ) ? '<br>': '');
+                    echo '<span class="ical-date">' . ucfirst($evdate) . '</span>' . (('a' == $attributes['tag_sum'] ) ? '<br>': '');
                 }
-                echo  '<' . $instance['tag_sum'] . ' class="ical_summary' .  $sflgia . (('a' == $instance['tag_sum'] ) ? '" data-toggle="collapse" data-bs-toggle="collapse" href="#'.
+                echo  '<' . $attributes['tag_sum'] . ' class="ical_summary' .  $sflgia . (('a' == $attributes['tag_sum'] ) ? '" data-toggle="collapse" data-bs-toggle="collapse" href="#'.
                     $itemid . '" aria-expanded="false" aria-controls="'.
                     $itemid . '">' : '">') ;
                 if ($layout != 2)	{
@@ -250,11 +254,11 @@ class SimpleicalBlock {
                 if(!empty($e->summary)) {
                     echo str_replace("\n", '<br>', wp_kses($e->summary,'post'));
                 }
-                echo	'</' . $instance['tag_sum'] . '>' ;
+                echo	'</' . $attributes['tag_sum'] . '>' ;
                 if ($layout == 2) {
                     echo '<span>', $evdate, $evdtsum, '</span>';
                 }
-                echo '<div class="ical_details' .  $sflgia . (('a' == $instance['tag_sum'] ) ? ' collapse' : '') . '" id="',  $itemid, '">';
+                echo '<div class="ical_details' .  $sflgia . (('a' == $attributes['tag_sum'] ) ? ' collapse' : '') . '" id="',  $itemid, '">';
                 if(!empty($e->description) && trim($e->description) > '' && $excerptlength !== 0) {
                     if ($excerptlength !== '' && strlen($e->description) > $excerptlength) {$e->description = substr($e->description, 0, $excerptlength + 1);
                     if (rtrim($e->description) !== $e->description) {$e->description = substr($e->description, 0, $excerptlength);}
@@ -268,8 +272,8 @@ class SimpleicalBlock {
                     echo   '<span class="dsc">', $e->description ,(strrpos($e->description, '<br>') === (strlen($e->description) - 4)) ? '' : '<br>', '</span>';
                 }
                 if ($e->startisdate === false && date('yz', $e->start) === date('yz', $e->end))	{
-                    echo '<span class="time">', wp_kses(wp_date( $dftstart, $e->start, $instance['tz_ui'] ), 'post'),
-                    '</span><span class="time">', wp_kses(wp_date( $dftend, $e->end, $instance['tz_ui'] ), 'post'), '</span> ' ;
+                    echo '<span class="time">', wp_kses(wp_date( $dftstart, $e->start, $attributes['tz_ui'] ), 'post'),
+                    '</span><span class="time">', wp_kses(wp_date( $dftend, $e->end, $attributes['tz_ui'] ), 'post'), '</span> ' ;
                 } else {
                     echo '';
                 }
@@ -283,10 +287,10 @@ class SimpleicalBlock {
                 echo '</ul></li>';
             }
             echo '</ul>';
-            echo wp_kses($instance['after_events'],'post');
+            echo wp_kses($attributes['after_events'],'post');
         }
         else {
-            echo wp_kses($instance['no_events'],'post');
+            echo wp_kses($attributes['no_events'],'post');
             
         }
         echo '<br class="clear" />';
@@ -305,16 +309,17 @@ class SimpleicalBlock {
      */
     static function display_rest_start($block_attributes, $content = null, $block = null)
     {
+        echo '<!-- Rest start Blok wrapper attr:' . get_block_wrapper_attributes() . ' -->';
         $postid = (empty($block) || empty($block->context['postId'])) ? 0 : $block->context['postId'];
         echo '<div id="' . $block_attributes['anchorId'] . '" class="' . $block_attributes['className']
             . ((isset($block_attributes['align'])) ? (' align' . $block_attributes['align']) : ' ') . '" ' . ' data-sib-id="' . $block_attributes['blockid']
-            . '" data-sib-pid="' . $postid .  '" data-sib-st="start"' .'data-sib-apid="' . ((isset($block_attributes['postid'])) ? ($block_attributes['postid']) : ' ')
+            . '" data-sib-pid="' . $postid .  '" data-sib-st="0-start"' .'data-sib-apid="' . ((isset($block_attributes['postid'])) ? ($block_attributes['postid']) : ' ')
             . '" >';
         echo '<h3 class="widget-title block-title">' . $block_attributes['title'] . '</h3><p>';
         _e( 'Processing', 'simple-google-icalendar-widget');
         echo '</p></div>';
 //        echo $context;
-        echo '<div><button onclick="window.simpleIcalBlock.getBlockByIds({})" >' . __('Retry', 'simple-google-icalendar-widget') . '</button></div>';
+        echo '<div><button onclick="window.simpleIcalBlock.getBlockByIds()" >' . __('Retry', 'simple-google-icalendar-widget') . '</button></div>';
     }
     
 } // end class SimpleicalBlock
