@@ -28,7 +28,8 @@
  * 2.2.1 20240123 don't display description line when excerpt-length = 0
  * 2.3.0 remove definition of attributes, leave it to block.json 
  *    improvement of working with client timezone: add client timezone as an extra parameter to wp_date because date_default_timezone_set has no effect
- *    block default version 3 version 2; add <span class="dsc"> to description output to make it easier to refer to in css   
+ *    block default version 3 version 2; add <span class="dsc"> to description output to make it easier to refer to in css 
+ *    title with more wptypes, no display of empty title, title output secured with wp_kses (to display empty title line use <>.  
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
@@ -189,8 +190,8 @@ class SimpleicalBlock {
      */
     static function display_block($attributes)
     {
-        if (!isset($attributes['wptype']) || 'block' == $attributes['wptype']) {
-            echo '<h3 class="widget-title block-title">' . $attributes['title'] . '</h3>';
+        if (!empty($attributes['title']) && (empty($attributes['wptype']) || in_array( $attributes['wptype'],['block','ssr']))) {
+            echo '<h3 class="widget-title block-title">' . wp_kses($attributes['title'],'post') . '</h3>';
         }
         $sn = 0;
         $data_sib = 'client TZID=' . $attributes['tzid_ui'];

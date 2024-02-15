@@ -17,6 +17,8 @@
  *   wp.components.ServerSideRender deprecated replaced by serverSideRender and dependency wp-server-side-render; clear_cache_now false after 1 second, to prevent excessive calling of calendar
  * 20240106 Added help to (some) settings. Changed the text domain to simple-google-icalendar-widget to make translations work by following the WP standard
  *   wrong part of blockname "simplegoogleicalenderwidget" cannot be changed because it is safed in the page and changing and changing invalidates the block.
+ * 20240215 Adjustment of attributes provided when calling server side render: period limits modulo 4 so as not to enter Rest Server mode;
+ *   wptype 'ssr'.
  */
 (function(blocks, i18n, element, blockEditor, components, serverSideRender) {
 	var el = element.createElement;
@@ -89,7 +91,7 @@
 		},
 
 		edit: function(props) {
-  			let attrssr = { ...props.attributes,...{"ssr": true},}; 
+  			let attrssr = { ...props.attributes,...{"wptype": "ssr"},...{"period_limits": '' + (props.attributes.period_limits % 4)}}; 
 			useEffect(function() {
 				if (!props.attributes.blockid) { props.setAttributes({ blockid: 'b' + props.clientId }); }
 			}, []);
