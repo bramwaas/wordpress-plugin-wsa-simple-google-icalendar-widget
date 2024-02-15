@@ -852,6 +852,8 @@ END:VCALENDAR';
                 // trim() to remove \n\r\0
                 $value = trim($list[1]);
 //Todo Add unescape \\ to \ and improve \, to ,   \; to ;  chars that should be escaped following the text specification preg_replace?
+//    remove esc slashes after SUM, DESC and LOC are composed not after retrieving each part. 
+// First remove \\ with explode than others with str_replace        
                 $desc = str_replace(array('\;', '\,', '\r\n','\n', '\r'), array(';', ',', "\n","\n","\n"), $value);
                 $tokenprev = $token;
                 switch($token) {
@@ -935,6 +937,17 @@ END:VCALENDAR';
             $eventObj->endisdate = $eventObj->startisdate;
         }
         return $eventObj;
+    }
+    /**
+     * Removes escape backslash from  \\ to \ and improve \, to ,   \; to ;
+     *
+     * @param string $text text with escape slashes
+     *
+     * @return string array event objects
+     */
+    static function unescapeText($text)
+    {
+        return $text;
     }
     /**
      * Gets data from calender or transient cache

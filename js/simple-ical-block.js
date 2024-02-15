@@ -93,10 +93,10 @@
 		},
 
 		edit: function(props) {
-  			let attrssr = { ...props.attributes,...{"wptype": "ssr"},...{"period_limits": '' + (props.attributes.period_limits % 4)}}; 
+			let attrssr;
 			useEffect(function() {
 				if (!props.attributes.blockid) { props.setAttributes({ blockid: 'b' + props.clientId }); };
-				if (4 < props.attributes.period_limits) {probs.setAttributes({tzid_ui: ptzid_ui}) }
+				if (4 < props.attributes.period_limits) {props.setAttributes({tzid_ui: ptzid_ui}) };
 			}, []);
 			useEffect(function() {
 				props.setAttributes({ postid: '' + props.context['postId'] });
@@ -120,7 +120,7 @@
 				}),
 				el(ServerSideRender, {
 					block: 'simplegoogleicalenderwidget/simple-ical-block',
-					attributes: attrssr,
+					attributes: {...props.attributes, "wptype": "ssr", "period_limits": '' + (props.attributes.period_limits % 4)},
 					httpMethod: 'POST'
 				}
 				),

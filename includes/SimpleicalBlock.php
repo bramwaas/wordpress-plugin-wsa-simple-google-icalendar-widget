@@ -190,7 +190,7 @@ class SimpleicalBlock {
      */
     static function display_block($attributes)
     {
-        if (!empty($attributes['title']) && (empty($attributes['wptype']) || in_array( $attributes['wptype'],['block','ssr']))) {
+        if (!empty($attributes['title']) && (empty($attributes['wptype']) || in_array( $attributes['wptype'],['block','ssr','REST']))) {
             echo '<h3 class="widget-title block-title">' . wp_kses($attributes['title'],'post') . '</h3>';
         }
         $sn = 0;

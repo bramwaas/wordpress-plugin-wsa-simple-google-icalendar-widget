@@ -39,12 +39,11 @@ window.simpleIcalBlock = {...(window.simpleIcalBlock || {}), ...{
 	}
 	,
 
-	getBlockByIds: function(paramsObj2) {
+	getBlockByIds: function() {
 		const nodeList = document.querySelectorAll('[data-sib-st]');
 		const ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
-		let paramsObj = {};
+		let paramsObj = {"wptype": "REST", "tzid_ui":ptzid_ui};
 		for (let i = 0; i < nodeList.length; i++) {
-			paramsObj.tzid_ui = ptzid_ui;
 			paramsObj.blockid = nodeList[i].getAttribute('data-sib-id');
 			paramsObj.postid = nodeList[i].getAttribute('data-sib-pid');
 			console.log(paramsObj);
@@ -57,5 +56,5 @@ window.simpleIcalBlock = {...(window.simpleIcalBlock || {}), ...{
 }
 
 window.simpleIcalBlock.getBlockByIds(
-	{}
+	
 );
