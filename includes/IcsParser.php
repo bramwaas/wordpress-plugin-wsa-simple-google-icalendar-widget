@@ -43,7 +43,8 @@
  * 2.2.0 improved handling of EXDATE so that also the first event of a recurrent set can be excluded.
  *   Parse Recurrence-ID to support changes in individual recurrent events in Google Calendar. Remove _ chars from UID. 
  * 2.3.0 limit events after caching. process the different types of period endpoints (Time of day, Whole day). 
- *   get_option('timezone_string') changed in wp_timezone_string().  Modulo 4 for period_limits (default 1 Whole day, whole day; 2 Time of day, Wd; 3 Td, Td; 0 Wd, Td) 
+ *   get_option('timezone_string') changed in wp_timezone_string().  Modulo 4 for period_limits (default 1 Whole day, whole day; 2 Time of day, Wd; 3 Td, Td; 0 Wd, Td)
+ *   Add unescape \\ to \ and improve \, to ,   \; to ;  chars that should be escaped following the text specification.    
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
@@ -65,17 +66,17 @@ RRULE:FREQ=WEEKLY;INTERVAL=3;BYDAY=SU,WE,SA
 UID:a-1
 DESCRIPTION:Description event every 3 weeks sunday wednesday and saturday. T
  est A-Z.\nLine 2 of description.
-LOCATION:Located at home or somewhere else
-SUMMARY: Every 3 weeks sunday wednesday and saturday
+LOCATION:Located at home \, or somewhere else
+SUMMARY: Every 3 weeks sunday\\wednesday \\ saturday
 END:VEVENT
 BEGIN:VEVENT
 DTSTART:20240129T143000
 DTEND:20240129T153000
 RRULE:FREQ=MONTHLY;COUNT=24;BYMONTHDAY=29
 UID:a-2
-DESCRIPTION:
+DESCRIPTION:Monthly day 29
 LOCATION:
-SUMMARY:Example Monthly day 29
+SUMMARY:Example\; Monthly day 29
 END:VEVENT
 BEGIN:VEVENT
 DTSTART;VALUE=DATE:20240127
@@ -850,6 +851,7 @@ END:VCALENDAR';
             if (count($list) > 1 && strlen($token) > 1 && substr($token, 0, 1) > ' ') { //all tokens start with a alphabetic char , otherwise it is a continuation of a description with a colon in it.
                 // trim() to remove \n\r\0
                 $value = trim($list[1]);
+//Todo Add unescape \\ to \ and improve \, to ,   \; to ;  chars that should be escaped following the text specification preg_replace?
                 $desc = str_replace(array('\;', '\,', '\r\n','\n', '\r'), array(';', ',', "\n","\n","\n"), $value);
                 $tokenprev = $token;
                 switch($token) {

@@ -43,6 +43,8 @@
 	var ToggleControl = components.ToggleControl;
 	var SelectControl = components.SelectControl;
 	var useEffect = element.useEffect;
+	const ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
 	blocks.registerBlockType('simplegoogleicalenderwidget/simple-ical-block', {
 		icon: iconEl,
 
@@ -93,7 +95,8 @@
 		edit: function(props) {
   			let attrssr = { ...props.attributes,...{"wptype": "ssr"},...{"period_limits": '' + (props.attributes.period_limits % 4)}}; 
 			useEffect(function() {
-				if (!props.attributes.blockid) { props.setAttributes({ blockid: 'b' + props.clientId }); }
+				if (!props.attributes.blockid) { props.setAttributes({ blockid: 'b' + props.clientId }); };
+				if (4 < props.attributes.period_limits) {probs.setAttributes({tzid_ui: ptzid_ui}) }
 			}, []);
 			useEffect(function() {
 				props.setAttributes({ postid: '' + props.context['postId'] });
