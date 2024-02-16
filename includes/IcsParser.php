@@ -851,20 +851,16 @@ END:VCALENDAR';
             if (count($list) > 1 && strlen($token) > 1 && substr($token, 0, 1) > ' ') { //all tokens start with a alphabetic char , otherwise it is a continuation of a description with a colon in it.
                 // trim() to remove \n\r\0
                 $value = trim($list[1]);
-//Todo Add unescape \\ to \ and improve \, to ,   \; to ;  chars that should be escaped following the text specification preg_replace?
-//    remove esc slashes after SUM, DESC and LOC are composed not after retrieving each part. 
-// First remove \\ with explode than others with str_replace        
-                $desc = str_replace(array('\;', '\,', '\r\n','\n', '\r'), array(';', ',', "\n","\n","\n"), $value);
                 $tokenprev = $token;
                 switch($token) {
                     case "SUMMARY":
-                        $eventObj->summary = $desc;
+                        $eventObj->summary = $value;
                         break;
                     case "DESCRIPTION":
-                        $eventObj->description = $desc;
+                        $eventObj->description = $value;
                         break;
                     case "LOCATION":
-                        $eventObj->location = $desc;
+                        $eventObj->location = $value;
                         break;
                     case "DTSTART":
                         $tz = $this->parseIanaTimezoneid ($tzid,$value);
@@ -902,7 +898,7 @@ END:VCALENDAR';
                 }
             }else { // count($list) <= 1
                 if (strlen($l) > 1) {
-                    $desc = str_replace(array('\;', '\,', '\r\n','\n', '\r'), array(';', ',', "\n","\n","\n"), substr($l,1));
+                    $desc = substr($l,1);
                     switch($tokenprev) {
                         case "SUMMARY":
                             $eventObj->summary .= $desc;
@@ -917,6 +913,9 @@ END:VCALENDAR';
                 }
             }
         }
+        $eventObj->summary = self::unescText($eventObj->summary);
+        $eventObj->description = self::unescText($eventObj->description);
+        $eventObj->location = self::unescText($eventObj->location);
         if (!isset($eventObj->end)) {
             if (isset($eventObj->duration)) {
                 $timezone = new \DateTimeZone((isset($eventObj->tzid)&& $eventObj->tzid !== '') ? $eventObj->tzid : $this->timezone_string);
@@ -940,14 +939,19 @@ END:VCALENDAR';
     }
     /**
      * Removes escape backslash from  \\ to \ and improve \, to ,   \; to ;
+     * replaces \n or \N by char 0x0A that may be coverted in <br> for html later.
      *
      * @param string $text text with escape slashes
      *
      * @return string array event objects
      */
-    static function unescapeText($text)
+    static function unescText($t)
     {
-        return $text;
+        $a = explode('\\\\',$t);
+        foreach ($a as &$l){
+            $l = str_replace(['\;', '\,', '\n', '\N'], [';', ',', "\n", "\n"], $l);
+        }
+        return implode('\\', $a);
     }
     /**
      * Gets data from calender or transient cache
