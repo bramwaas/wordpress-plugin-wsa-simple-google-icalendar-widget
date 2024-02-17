@@ -6,14 +6,14 @@
  * attributes as Inspectorcontrols (settings)
  * v2.3.0
  * 20230625 added quotes to the options of the Layout SelectControl,
- *  add parseInt to all integers in transform, added conversion dateformat_lgend and _tsend and anchorid = blockid
+ *  add parseInt to all integers in transform, added conversion dateformat_lgend and _tsend and anchorid = sibid
  * 20230420 added parseInt on line 147(now 148) to keep layout in block-editor
  * 20230418 Added after_events and no_events HTML output after available events, or istead of unavailable events.
  * 20230401 use select 'layout' in stead of 'start with summary' to create more lay-out options.
  * 20220622  added enddate/times for startdate and starttime added Id as anchor.
- * 20220517  try to find a unique blockid from  clientId (only once) 
+ * 20220517  try to find a unique sibid from  clientId (only once) 
  *   excerptlength initialised with '' so cannot be integer, all parseInt(value) followed bij || 0,1,or 2  because result must comply type validation of REST endpoint and '' or NaN don't. (rest_invalid_type)
- *   preponed 'b' to blockid, because html id must not start with number.
+ *   preponed 'b' to sibid, because html id must not start with number.
  *   wp.components.ServerSideRender deprecated replaced by serverSideRender and dependency wp-server-side-render; clear_cache_now false after 1 second, to prevent excessive calling of calendar
  * 20240106 Added help to (some) settings. Changed the text domain to simple-google-icalendar-widget to make translations work by following the WP standard
  *   wrong part of blockname "simplegoogleicalenderwidget" cannot be changed because it is safed in the page and changing and changing invalidates the block.
@@ -84,7 +84,7 @@
 							after_events: instance.raw.after_events,
 							no_events: instance.raw.no_events,
 							tag_sum: instance.raw.tag_sum,
-							anchorId: instance.raw.blockid,
+							anchorId: instance.raw.sibid,
 							className: 'Simple_iCal_Widget',
 						});
 					},
@@ -93,17 +93,25 @@
 		},
 
 		edit: function(props) {
-			let attrssr;
 			useEffect(function() {
-				if (!props.attributes.blockid) { props.setAttributes({ blockid: 'b' + props.clientId }); };
-				if (4 < props.attributes.period_limits) {props.setAttributes({tzid_ui: ptzid_ui}) };
-			}, []);
-			useEffect(function() {
+				if ((!props.attributes.sibid) && (props.attributes.blockid)) { props.setAttributes({ sibid: props.attributes.blockid });
+				                                                                props.setattributes({blockid: null}) }
+				if (!props.attributes.sibid) { props.setAttributes({ sibid: 'b' + props.clientId }); };
 				props.setAttributes({ postid: '' + props.context['postId'] });
 			}, []);
 			useEffect(function() {
+				if (4 < props.attributes.period_limits) {
+					props.setAttributes({tzid_ui: ptzid_ui}) 
+					props.setAttributes({wptype: 'rest_ph'})
+					}
+				else {
+					props.setAttributes({tzid_ui: null}) 
+					props.setAttributes({wptype: 'block'})
+					};
+			}, [props.attributes.period_limits]);
+			useEffect(function() {
 				if (props.attributes.clear_cache_now) {
-					var x = setTimeout(stopCC, 1000);
+					let x = setTimeout(stopCC, 1000);
 					function stopCC() { props.setAttributes({ clear_cache_now: false }); }
 				}
 			}, [props.attributes.clear_cache_now]);
@@ -120,7 +128,7 @@
 				}),
 				el(ServerSideRender, {
 					block: 'simplegoogleicalenderwidget/simple-ical-block',
-					attributes: {...props.attributes, "wptype": "ssr", "period_limits": '' + (props.attributes.period_limits % 4)},
+					attributes: {...props.attributes, "wptype": "ssr"},
 					httpMethod: 'POST'
 				}
 				),
@@ -386,7 +394,7 @@
 							label: __('Reset ID, only necessary after duplicating block', 'simple-google-icalendar-widget'),
 							showTooltip: true,
 							variant: 'secondary',
-							onClick: function() { props.setAttributes({ blockid: 'b' + props.clientId }); },
+							onClick: function() { props.setAttributes({ sibid: 'b' + props.clientId }); },
 						}
 					),
 					el(

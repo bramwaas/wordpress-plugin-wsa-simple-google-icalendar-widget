@@ -8,7 +8,7 @@
  License: GPL3
  Tested up to: 6.4
  Requires at least: 5.3
- Requires PHP:  5.3.0 tested with 7.4
+ Requires PHP:  5.3.0 tested with 8
  Text Domain:  simple-google-icalendar-widget
  Domain Path:  /languages
  *   bw 20201122 v1.2.0 find solution for DTSTART and DTEND without time by explicit using isDate and only displaying times when isDate === false.;
@@ -133,7 +133,7 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
                 
                 // title widget
                 $title = apply_filters('widget_title', $instance['title']);
-                echo sprintf($args['before_widget'], $instance['blockid'], 'Simple_iCal_Widget ') ;
+                echo sprintf($args['before_widget'], $instance['sibid'], 'Simple_iCal_Widget ') ;
                 if(isset($instance['title'])) {
                     echo $args['before_title'], $title, $args['after_title'];
                 }
@@ -212,7 +212,7 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
                 $instance['after_events'] = ($new_instance['after_events']);
                 $instance['no_events'] = ($new_instance['no_events']);
                 $instance['allowhtml'] = !empty($new_instance['allowhtml']);
-                $instance['blockid'] = strip_tags($new_instance['blockid']);
+                $instance['sibid'] = strip_tags($new_instance['sibid']);
                 
                 return $instance;
             }
@@ -228,12 +228,12 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
                 
                 $default = wp_parse_args((array) array(
                     'wptype' => 'widget',
-                    'blockid' => 'W' . uniqid(),
+                    'sibid' => 'W' . uniqid(),
                 ),
                     (array ('title' => __('Events', 'simple-google-icalendar-widget')) + SimpleicalBlock::$default_block_attributes));
                 
                 $instance = wp_parse_args((array) $instance, $default);
-                $nwblockid = 'w' . uniqid();
+                $nwsibid = 'w' . uniqid();
                 
                 ?>
         <p>
@@ -333,11 +333,11 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
           <input class="widefat" id="<?php echo $this->get_field_id('no_events'); ?>" name="<?php echo $this->get_field_name('no_events'); ?>" type="text" value="<?php echo esc_attr($instance['no_events']); ?>" />
         </p>
          <p>
-          <button class="button" id="<?php echo $this->get_field_id('reset_id'); ?>" name="<?php echo $this->get_field_name('reset_id'); ?>" onclick="document.getElementById('<?php echo $this->get_field_id('blockid'); ?>').value = '<?php echo $nwblockid; ?>'" type="button" ><?php _e('Reset ID.', 'simple-google-icalendar-widget')  ?></button>
+          <button class="button" id="<?php echo $this->get_field_id('reset_id'); ?>" name="<?php echo $this->get_field_name('reset_id'); ?>" onclick="document.getElementById('<?php echo $this->get_field_id('sibid'); ?>').value = '<?php echo $nwsibid; ?>'" type="button" ><?php _e('Reset ID.', 'simple-google-icalendar-widget')  ?></button>
           <label for="<?php echo $this->get_field_id('reset_id'); ?>"><?php _e('Reset ID, only necessary to clear cache or after duplicating block.', 'simple-google-icalendar-widget'); ?></label> 
         </p>
         <p>
-          <input class="widefat" id="<?php echo $this->get_field_id('blockid'); ?>" name="<?php echo $this->get_field_name('blockid'); ?>" type="hidden" value="<?php echo esc_attr($instance['blockid']); ?>" />
+          <input class="widefat" id="<?php echo $this->get_field_id('sibid'); ?>" name="<?php echo $this->get_field_name('sibid'); ?>" type="hidden" value="<?php echo esc_attr($instance['sibid']); ?>" />
         </p>
         <p>
             <?php echo '<a href="' . admin_url('admin.php?page=simple_ical_info') . '" target="_blank">' ; 

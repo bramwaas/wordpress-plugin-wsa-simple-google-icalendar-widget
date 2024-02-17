@@ -76,7 +76,7 @@ class RestController extends WP_REST_Controller {
                 'callback'            => array( $this, 'get_content_by_ids' ),
                 'permission_callback' => array( $this,'get_block_content_permissions_check'),
                 'args'                => array(
-                   'blockid' => array(
+                   'sibid' => array(
                        'default' => '',
                    ),
                     'postid' => array(
@@ -116,7 +116,7 @@ class RestController extends WP_REST_Controller {
     }
 
     /**
-     * Get block content wth blockid, postid, and client timezone from request
+     * Get block content wth sibid, postid, and client timezone from request
      *
      * @param WP_REST_Request $request
      *            Full data about the request.
@@ -127,8 +127,8 @@ class RestController extends WP_REST_Controller {
         // get parameters from request
         $params = $request->get_params();
         $blocks = [];
-        if (empty($params['blockid']))
-            return new WP_Error('404', __('Empty blockid. Not possible to get block content', 'simple-google-icalendar-widget'));
+        if (empty($params['sibid']))
+            return new WP_Error('404', __('Empty sibid. Not possible to get block content', 'simple-google-icalendar-widget'));
         if (! empty($params['postid'])) {
             $post = get_post((int) $params['postid']);
             if (! empty($post)) {
@@ -136,7 +136,7 @@ class RestController extends WP_REST_Controller {
                 $blocks = parse_blocks($content_post);
             }
         }
-        if (empty($blocks) || false === ($block_attributes = self::find_block_attributes($blocks, $params['blockid'], 'simplegoogleicalenderwidget/simple-ical-block', 10))) {
+        if (empty($blocks) || false === ($block_attributes = self::find_block_attributes($blocks, $params['sibid'], 'simplegoogleicalenderwidget/simple-ical-block', 10))) {
             // TODO footer blocks
             $posttypes = array_diff(get_post_types(), [
                 'post',
@@ -157,12 +157,12 @@ class RestController extends WP_REST_Controller {
             foreach ($post_ids as $postid) {
                 $content_post = get_post($postid)->post_content;
                 $blocks = parse_blocks($content_post);
-                if (false !== ($block_attributes = self::find_block_attributes($blocks, $params['blockid'], 'simplegoogleicalenderwidget/simple-ical-block', 10)))
+                if (false !== ($block_attributes = self::find_block_attributes($blocks, $params['sibid'], 'simplegoogleicalenderwidget/simple-ical-block', 10)))
                     break;
             }
             //
         }
-        if (false === ($block_attributes = self::find_block_attributes($blocks, $params['blockid'], 'simplegoogleicalenderwidget/simple-ical-block', 10))) {
+        if (false === ($block_attributes = self::find_block_attributes($blocks, $params['sibid'], 'simplegoogleicalenderwidget/simple-ical-block', 10))) {
             return new WP_Error('404', __('No content block content found', 'simple-google-icalendar-widget'));
         }
         $block_attributes = wp_parse_args((array) $params, $block_attributes);
@@ -409,7 +409,7 @@ class RestController extends WP_REST_Controller {
      * Method to recursively attributes from multidimensional array of blocks.
      *
      * @param array $blocks blocks haystack
-     * @param string $bid needle 1 attr['blockid']
+     * @param string $bid needle 1 attr['sibid']
      * @param string $bname  needle 2 name of block
      * $params int $depth depth of  recursion.
      * @return  array $attributes of false
@@ -422,7 +422,7 @@ class RestController extends WP_REST_Controller {
         $depth = $depth - 1;
         foreach ($blocks as $block){
             if (!empty($block['blockName']) && $block['blockName'] == $bname 
-                && !empty($block['attrs']['blockid']) && $block['attrs']['blockid'] == $bid ) {
+                && !empty($block['attrs']['sibid']) && $block['attrs']['sibid'] == $bid ) {
             //found
                   return $block['attrs'];
             }

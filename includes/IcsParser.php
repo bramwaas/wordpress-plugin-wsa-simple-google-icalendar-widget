@@ -913,9 +913,9 @@ END:VCALENDAR';
                 }
             }
         }
-        $eventObj->summary = self::unescText($eventObj->summary);
-        $eventObj->description = self::unescText($eventObj->description);
-        $eventObj->location = self::unescText($eventObj->location);
+        if (!empty($eventObj->summary)) {$eventObj->summary = self::unescText($eventObj->summary);}
+        if (!empty($eventObj->description)) {$eventObj->description = self::unescText($eventObj->description);}
+        if (!empty($eventObj->location)) {$eventObj->location = self::unescText($eventObj->location);}
         if (!isset($eventObj->end)) {
             if (isset($eventObj->duration)) {
                 $timezone = new \DateTimeZone((isset($eventObj->tzid)&& $eventObj->tzid !== '') ? $eventObj->tzid : $this->timezone_string);
@@ -957,7 +957,7 @@ END:VCALENDAR';
      * Gets data from calender or transient cache
      *
      * @param array $instance the block attributes
-     *    ['blockid']      to create transientid
+     *    ['sibid']      to create transientid
      *    ['tzid_ui']      if avail create ['tz_ui]', else try wp_timezone, or as last resort 'UTC'. 
      *    ['cache_time'] / ['transient_time'] time the transient cache is valid in minutes.
      *    ['calendar_id'] id's or url's of the calendar(s) to fetch data
@@ -968,7 +968,7 @@ END:VCALENDAR';
      */
     static function getData($instance)
     {
-        $transientId = 'SimpleicalBlock'  . $instance['blockid']   ;
+        $transientId = 'SimpleicalBlock'  . $instance['sibid']   ;
         if (! empty($instance['tzid_ui']))
             try {
                 $instance['tz_ui'] = new \DateTimeZone($instance['tzid_ui']);

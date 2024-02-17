@@ -44,7 +44,7 @@ window.simpleIcalBlock = {...(window.simpleIcalBlock || {}), ...{
 		const ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
 		let paramsObj = {"wptype": "REST", "tzid_ui":ptzid_ui};
 		for (let i = 0; i < nodeList.length; i++) {
-			paramsObj.blockid = nodeList[i].getAttribute('data-sib-id');
+			paramsObj.sibid = nodeList[i].getAttribute('data-sib-id');
 			paramsObj.postid = nodeList[i].getAttribute('data-sib-pid');
 			console.log(paramsObj);
 			nodeList[i].setAttribute('data-sib-st', 'f1');
