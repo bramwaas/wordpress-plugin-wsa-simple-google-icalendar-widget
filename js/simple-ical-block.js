@@ -95,7 +95,7 @@
 		edit: function(props) {
 			useEffect(function() {
 				if ((!props.attributes.sibid) && (props.attributes.blockid)) { props.setAttributes({ sibid: props.attributes.blockid });
-				                                                                props.setattributes({blockid: null}) }
+				                                                                props.setAttributes({blockid: null}) }
 				if (!props.attributes.sibid) { props.setAttributes({ sibid: 'b' + props.clientId }); };
 				props.setAttributes({ postid: '' + props.context['postId'] });
 			}, []);
