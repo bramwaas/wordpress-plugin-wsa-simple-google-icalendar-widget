@@ -87,7 +87,8 @@ if ( is_wp_version_compatible( '6.3' ) )   { // block  v3
     
 } // end wp-version > 6.3 block v3
 else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
-    add_action( 'init', array ('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalBlock', 'init_block_v2') );
+    add_action( 'init', array ('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalBlock', 'init_block') );
+//    add_action( 'init', array ('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalBlock', 'init_block_v2') );
     add_action( 'rest_api_init', array ('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\RestController', 'init_and_register_routes') );
     
 } // end wp-version > 5.9 block v2
@@ -212,8 +213,10 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
                 $instance['after_events'] = ($new_instance['after_events']);
                 $instance['no_events'] = ($new_instance['no_events']);
                 $instance['allowhtml'] = !empty($new_instance['allowhtml']);
+                if (!empty($new_instance['blockid']) && empty($new_instance['sibid'])) {
+                        $new_instance['sibid'] = $new_instance['blockid'];
+                }
                 $instance['sibid'] = strip_tags($new_instance['sibid']);
-                
                 return $instance;
             }
             /**
