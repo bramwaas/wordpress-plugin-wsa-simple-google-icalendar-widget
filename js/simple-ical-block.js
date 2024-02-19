@@ -94,9 +94,10 @@
 
 		edit: function(props) {
 			useEffect(function() {
-				if ((!props.attributes.sibid) && (props.attributes.blockid)) { props.setAttributes({ sibid: props.attributes.blockid });
-				                                                                props.setAttributes({blockid: null}) }
-				if (!props.attributes.sibid) { props.setAttributes({ sibid: 'b' + props.clientId }); };
+				if ((typeof props.attributes.sibid !== 'string') && (typeof props.attributes.blockid == 'string')) {
+					props.setAttributes({ sibid: props.attributes.blockid });
+				}
+				if (typeof props.attributes.sibid !== 'string') { props.setAttributes({ sibid: 'b' + props.clientId }); };
 				props.setAttributes({ postid: '' + props.context['postId'] });
 			}, []);
 			useEffect(function() {
@@ -115,12 +116,6 @@
 					function stopCC() { props.setAttributes({ clear_cache_now: false }); }
 				}
 			}, [props.attributes.clear_cache_now]);
-			useEffect(function() {
-				if (props.attributes.startwsum) {
-					props.setAttributes({ layout: 2 });
-					props.setAttributes({ startwsum: false });
-				}
-			}, [props.attributes.layout]);
 			return el(
 				'div',
 				useBlockProps({
