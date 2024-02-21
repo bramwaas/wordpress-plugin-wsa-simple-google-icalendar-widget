@@ -195,7 +195,7 @@ class SimpleicalBlock
 
         $output = '';
         ob_start();
-echo '<!-- attr  :' . print_r($block_attributes, true) . ' -->';
+//echo '<!-- attr  :' . print_r($block_attributes, true) . ' -->';
         switch ($block_attributes['wptype']) {
             case 'REST':
                 // Block displayed via REST
