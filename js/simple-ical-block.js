@@ -43,7 +43,7 @@
 	var ToggleControl = components.ToggleControl;
 	var SelectControl = components.SelectControl;
 	var useEffect = element.useEffect;
-	const ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
+	var ptzid_ui;
 
 	blocks.registerBlockType('simplegoogleicalenderwidget/simple-ical-block', {
 		icon: iconEl,
@@ -93,23 +93,17 @@
 		},
 
 		edit: function(props) {
-			useEffect(function() {
 				if ((typeof props.attributes.sibid !== 'string') && (typeof props.attributes.blockid == 'string')) {
 					props.setAttributes({ sibid: props.attributes.blockid });
 				}
-				if (typeof props.attributes.sibid !== 'string') { props.setAttributes({ sibid: 'b' + props.clientId }); };
+				else if (typeof props.attributes.sibid !== 'string') { props.setAttributes({ sibid: 'b' + props.clientId }); };
 				props.setAttributes({ postid: '' + props.context['postId'] });
-			}, []);
-			useEffect(function() {
 				if (4 < props.attributes.period_limits) {
-					props.setAttributes({tzid_ui: ptzid_ui}) 
-					props.setAttributes({wptype: 'rest_ph'})
+					ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
 					}
 				else {
-					props.setAttributes({tzid_ui: null}) 
-					props.setAttributes({wptype: 'block'})
+					ptzid_ui = '';
 					};
-			}, [props.attributes.period_limits]);
 			useEffect(function() {
 				if (props.attributes.clear_cache_now) {
 					let x = setTimeout(stopCC, 1000);
@@ -123,7 +117,9 @@
 				}),
 				el(ServerSideRender, {
 					block: 'simplegoogleicalenderwidget/simple-ical-block',
-					attributes: {...props.attributes, "wptype": "ssr"},
+					attributes: {...props.attributes,
+					 "wptype": "ssr",
+					 "tzid_ui": ptzid_ui  },
 					httpMethod: 'POST'
 				}
 				),
@@ -282,7 +278,17 @@
 								},
 								__('More info', 'simple-google-icalendar-widget')
 							),
-							onChange: function(value) { props.setAttributes({ period_limits: value }); },
+							onChange: function(value) {
+								props.setAttributes({ period_limits: value });
+								if (4 < value) {
+									ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
+									props.setAttributes({ wptype: 'rest_ph' })
+								}
+								else {
+									ptzid_ui = '';
+									props.setAttributes({ wptype: 'block' })
+								} 
+							},
 							options: [
 								{ value: '1', label: __('Start Whole  day, End Whole  day', 'simple-google-icalendar-widget') },
 								{ value: '2', label: __('Start Time of day, End Whole  day', 'simple-google-icalendar-widget') },

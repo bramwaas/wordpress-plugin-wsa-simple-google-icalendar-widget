@@ -87,8 +87,8 @@ if ( is_wp_version_compatible( '6.3' ) )   { // block  v3
     
 } // end wp-version > 6.3 block v3
 else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
-    add_action( 'init', array ('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalBlock', 'init_block') );
-//    add_action( 'init', array ('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalBlock', 'init_block_v2') );
+//    add_action( 'init', array ('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalBlock', 'init_block') );
+    add_action( 'init', array ('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalBlock', 'init_block_v2') );
     add_action( 'rest_api_init', array ('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\RestController', 'init_and_register_routes') );
     
 } // end wp-version > 5.9 block v2
@@ -134,7 +134,7 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
                 
                 // title widget
                 $title = apply_filters('widget_title', $instance['title']);
-                echo sprintf($args['before_widget'], $instance['sibid'], 'Simple_iCal_Widget ') ;
+                echo sprintf($args['before_widget'],  (' data-sib-id="' . $instance['sibid'] . '" data-sib-pid="" '),  'Simple_iCal_Widget ') ;
                 if(isset($instance['title'])) {
                     echo $args['before_title'], $title, $args['after_title'];
                 }
