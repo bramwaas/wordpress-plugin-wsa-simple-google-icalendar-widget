@@ -61,7 +61,7 @@ class SimpleicalBlock
      */
     static $default_block_attributes = [
         'wptype' => 'block',
-        'sibid' => 'AZ',
+        'sibid' => '',
         'postid' => '0',
         'calendar_id' => '',
         'event_count' => 10,
@@ -192,6 +192,8 @@ class SimpleicalBlock
         ) + self::$default_block_attributes));
         $block_attributes['anchorId'] = sanitize_html_class($block_attributes['anchorId'], $block_attributes['sibid']);
         if (empty($block_attributes['tzid_ui'])){$block_attributes['tzid_ui'] = wp_timezone_string();};
+        if (empty($block_attributes['sibid']) && !empty($block_attributes['blockid'])){$block_attributes['sibid'] = $block_attributes['blockid'];};
+        
 
         $output = '';
         ob_start();
