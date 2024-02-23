@@ -197,7 +197,6 @@ class SimpleicalBlock
 
         $output = '';
         ob_start();
-//echo '<!-- attr  :' . print_r($block_attributes, true) . ' -->';
         switch ($block_attributes['wptype']) {
             case 'REST':
                 // Block displayed via REST
@@ -235,7 +234,8 @@ class SimpleicalBlock
      */
     static function display_block($attributes)
     {
-        if (! empty($attributes['title']) && (empty($attributes['wptype']) || ('widget' != ($attributes['wptype'])))) {
+echo '<!-- attr  :' . print_r($attributes, true) . ' -->';
+        if (('b' == substr($attributes['sibid'],0,1))) {
             echo '<h3 class="widget-title block-title">' . wp_kses($attributes['title'], 'post') . '</h3>';
         }
         $sn = 0;

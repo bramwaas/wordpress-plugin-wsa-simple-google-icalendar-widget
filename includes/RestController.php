@@ -18,6 +18,13 @@ class RestController extends WP_REST_Controller {
      * Register the routes for the objects of the controller.
      */
     /**
+     * Prefix for name option with widget attributes/instance 
+     *
+     * @var    static
+     * @since  2.3.0
+     */
+    protected static $sib_attr_pf;
+    /**
      * Instance container.
      *
      * @var    static
@@ -166,7 +173,6 @@ class RestController extends WP_REST_Controller {
             return new WP_Error('404', __('No content block content found', 'simple-google-icalendar-widget'));
         }
         $block_attributes = wp_parse_args((array) $params, $block_attributes);
-        $block_attributes['rest_end'] = true;
         $content = SimpleicalBlock::render_block($block_attributes, []);
         $data = $this->prepare_item_for_response([
             'content' => $content,
