@@ -235,7 +235,11 @@ class SimpleicalBlock
     static function display_block($attributes)
     {
 echo '<!-- attr  :' . print_r($attributes, true) . ' -->';
-if (! empty($attributes['title']) && ('b' == substr($attributes['sibid'],0,1))) {
+if (true or 'w' == substr($attributes['sibid'],0,1)){
+    $instances = get_option('widget_' . 'simple_ical_widget');
+    echo '<!-- instance  :' . print_r($instances, true) . ' -->';
+}
+    if (! empty($attributes['title']) && (! empty($attributes['sibid']) && 'b' == substr($attributes['sibid'],0,1))) {
             echo '<h3 class="widget-title block-title">' . wp_kses($attributes['title'], 'post') . '</h3>';
         }
         $sn = 0;

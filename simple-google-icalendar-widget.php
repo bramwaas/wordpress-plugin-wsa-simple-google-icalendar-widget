@@ -215,7 +215,19 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
                 $instance['after_events'] = ($new_instance['after_events']);
                 $instance['no_events'] = ($new_instance['no_events']);
                 $instance['allowhtml'] = !empty($new_instance['allowhtml']);
+                if (!empty($new_instance['blockid']) && empty($new_instance['sibid'])) {
+                    $new_instance['sibid'] = $new_instance['blockid'];
+                    $instance['blockid'] = NULL;
+                }
                 $instance['sibid'] = strip_tags($new_instance['sibid']);
+                
+                $instances = get_option('widget_' . 'simple_ical_widget');
+                if (empty($instances['sib']))
+                    $instances['sib'] = (!empty($instance['sibid'])) ? [$instance['sibid'] => $instance] : ['test' => $instance];
+                    else
+                        $instances['sib'][(!empty($instance['sibid'])) ? $instance['sibid'] : 'test2'] = $instance;
+                update_option( 'widget_simple_ical_widget', $instances);
+                        
                 return $instance;
             }
             /**
