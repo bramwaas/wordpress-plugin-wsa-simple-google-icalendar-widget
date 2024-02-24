@@ -199,6 +199,7 @@ class SimpleicalBlock
         ob_start();
         switch ($block_attributes['wptype']) {
             case 'REST':
+            case 'REST_W':
                 // Block displayed via REST
                 self::display_block($block_attributes);
                 break;

@@ -146,8 +146,10 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
                 // lay-out block:
                 $instance['clear_cache_now'] = false;
 
-                SimpleicalBlock::display_block($instance);
-                
+                if ('rest_ph' == $instance['wptype'] )
+                    SimpleicalBlock::render_block($instance);
+                else
+                    SimpleicalBlock::display_block($instance);
                 // end lay-out block
                 // after widget
                 echo $args['after_widget'];
