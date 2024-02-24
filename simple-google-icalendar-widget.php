@@ -98,7 +98,7 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
     if ( !class_exists( 'Simple_iCal_Widget' ) ) {
         class Simple_iCal_Widget extends WP_Widget
         {
-            /*
+           /*
              * contruct the old widget
              *
              */
@@ -221,12 +221,10 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
                 }
                 $instance['sibid'] = strip_tags($new_instance['sibid']);
                 
-                $instances = get_option('widget_' . 'simple_ical_widget');
-                if (empty($instances['sib']))
+                $instances = get_option('widget_simple_ical_widget');
+                if (!empty($instance['sibid']))
                     $instances['sib'] = (!empty($instance['sibid'])) ? [$instance['sibid'] => $instance] : ['test' => $instance];
-                    else
-                        $instances['sib'][(!empty($instance['sibid'])) ? $instance['sibid'] : 'test2'] = $instance;
-                update_option( 'widget_simple_ical_widget', $instances);
+                    update_option( 'widget_simple_ical_widget', $instances);
                         
                 return $instance;
             }
@@ -242,13 +240,15 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
                 
                 $default = wp_parse_args((array) array(
                     'wptype' => 'widget',
-                    'sibid' => 'W' . uniqid(),
                 ),
                     (array ('title' => __('Events', 'simple-google-icalendar-widget')) + SimpleicalBlock::$default_block_attributes));
                 
-                if (!empty($instance['blockid']) && empty($instance['sibid'])) {
-                    $instance['sibid'] = $instance['blockid'];
-                    $instance['blockid'] = NULL;
+                if (empty($instance['sibid'])) {
+                    if  (!empty($instance['blockid'])) {
+                        $instance['sibid'] = $instance['blockid'];
+                        $instance['blockid'] = NULL;
+                    }
+                    $instance['sibid'] = 'W' . uniqid();
                 }
                 $instance = wp_parse_args((array) $instance, $default);
                 $nwsibid = 'w' . uniqid();

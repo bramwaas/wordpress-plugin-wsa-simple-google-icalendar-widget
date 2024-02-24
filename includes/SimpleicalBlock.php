@@ -236,7 +236,7 @@ class SimpleicalBlock
     {
 echo '<!-- attr  :' . print_r($attributes, true) . ' -->';
 if (true or 'w' == substr($attributes['sibid'],0,1)){
-    $instances = get_option('widget_' . 'simple_ical_widget');
+    $instances = get_option('widget_simple_ical_widget');
     echo '<!-- instance  :' . print_r($instances, true) . ' -->';
 }
     if (! empty($attributes['title']) && (! empty($attributes['sibid']) && 'b' == substr($attributes['sibid'],0,1))) {
