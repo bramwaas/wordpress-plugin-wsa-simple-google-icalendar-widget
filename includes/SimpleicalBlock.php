@@ -86,7 +86,12 @@ class SimpleicalBlock
         'clear_cache_now' => false,
         'period_limits' => '1',
         'className' => '',
-        'anchorId' => ''
+        'anchorId' => '',
+        'before_widget' => '<div id="%1$s" class="block %2$s" %3$s>',
+        'after_widget'  => '</div>',
+        'before_title'  => '<h3 class="block-title widget-title">',
+        'after_title'   => '</h3>'
+        
     ];
 
     /**
