@@ -129,22 +129,21 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
              */
             public function widget($args, $instance)
             {
+                foreach ($args as $k => &$arg){
+                    if (empty($arg) || '' == trim($arg)){
+                        $arg = SimpleicalBlock::$default_block_attributes[$k];
+                    }
+                }
                 $instance = array_merge(SimpleicalBlock::$default_block_attributes,
                     $args,
                     ['title' => __('Events', 'simple-google-icalendar-widget'),
                      'tzid_ui' => wp_timezone_string(),
                      'wptype' => 'widget'],
                     $instance  );
-                echo '<!-- args      :' . print_r($args, true) . ' -->' . PHP_EOL;
-                echo '<!-- instance  :' . print_r($instance, true) . ' -->'. PHP_EOL;
-                
                 
                 if (! empty($instance['period_limits']) && is_numeric($instance['period_limits']) && 4 < $instance['period_limits']) {
                     $instance['wptype'] = 'rest_ph';
                 }
-
-                // title widget
-                echo sprintf($args['before_widget'], (' data-sib-id="' . $instance['sibid'] . '" data-sib-pid="" '), 'Simple_iCal_Widget ');
                 // lay-out block:
                 $instance['clear_cache_now'] = false;
 
@@ -153,8 +152,6 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
                 else
                     SimpleicalBlock::display_block($instance);
                 // end lay-out block
-                // after widget
-                echo $args['after_widget'];
             }
             /**
              * Sanitize widget form values as they are saved.

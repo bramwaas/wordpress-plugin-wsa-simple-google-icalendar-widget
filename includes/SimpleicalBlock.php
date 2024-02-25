@@ -189,12 +189,12 @@ class SimpleicalBlock
      *            the bolck that is rendered
      * @return string HTML to render for the block (frontend)
      */
-    static function render_block($p_attributes, $content = null, $block = null)
+    static function render_block($block_attributes, $content = null, $block = null)
     {
         $block_attributes = array_merge(self::$default_block_attributes,
             ['title' => __('Events', 'simple-google-icalendar-widget'),
              'tzid_ui' => wp_timezone_string()],
-            $p_attributes  );
+            $block_attributes  );
         $block_attributes['anchorId'] = sanitize_html_class($block_attributes['anchorId'], $block_attributes['sibid']);
         if (empty($block_attributes['tzid_ui'])){$block_attributes['tzid_ui'] = wp_timezone_string();};
         if (empty($block_attributes['sibid']) && !empty($block_attributes['blockid'])){$block_attributes['sibid'] = $block_attributes['blockid'];};
@@ -209,11 +209,13 @@ class SimpleicalBlock
                 break;
             case 'rest_ph':
                 // Placeholder starting point for REST processing display of block or widget.
-                echo '<div id="' . $block_attributes['anchorId'] . '" ' . get_block_wrapper_attributes() . ' data-sib-id="' . $block_attributes['sibid'] . '" data-sib-pid="' . ((empty($block) || empty($block->context['postId'])) ? 0 : $block->context['postId']) . '" data-sib-st="0-start" >';
-                echo $attributes['before_title'] . wp_kses($attributes['title'], 'post') . $attributes['after_title']  . '<p>';
+                // echo '<div id="' . $block_attributes['anchorId'] . '" ' . get_block_wrapper_attributes() . ' data-sib-id="' . $block_attributes['sibid'] . '" data-sib-pid="' . ((empty($block) || empty($block->context['postId'])) ? 0 : $block->context['postId']) . '" data-sib-st="0-start" >';
+                echo sprintf($block_attributes['before_widget'], ($block_attributes['anchorId'] . '" data-sib-id="' . $block_attributes['sibid'] . '" data-sib-pid="'
+                    . ((empty($block) || empty($block->context['postId'])) ? 0 : $block->context['postId']) . '" data-sib-st="0-start'), get_block_wrapper_attributes());
+                echo $block_attributes['before_title'] . wp_kses($block_attributes['title'], 'post') . $block_attributes['after_title']  . '<p>';
                 _e('Processing', 'simple-google-icalendar-widget');
-                echo '</p>' . $attributes['after_widget'];
-                echo '<div><button onclick="window.simpleIcalBlock.getBlockByIds()" >' . __('Retry', 'simple-google-icalendar-widget') . '</button></div>';
+                echo '</p>' . $block_attributes['after_widget'];
+                echo '<button onclick="window.simpleIcalBlock.getBlockByIds()" >' . __('Retry', 'simple-google-icalendar-widget') . '</button></div>';
                 break;
             case 'block':
             case 'ssr':
