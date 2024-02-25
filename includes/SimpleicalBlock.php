@@ -87,9 +87,9 @@ class SimpleicalBlock
         'period_limits' => '1',
         'className' => '',
         'anchorId' => '',
-        'before_widget' => '<div id="%1$s" class="block %2$s" %3$s>',
+        'before_widget' => '<div id="%1$s" %2$s>',
         'after_widget'  => '</div>',
-        'before_title'  => '<h3 class="block-title widget-title">',
+        'before_title'  => '<h3 class="widget-title block-title">',
         'after_title'   => '</h3>'
         
     ];
@@ -189,17 +189,16 @@ class SimpleicalBlock
      *            the bolck that is rendered
      * @return string HTML to render for the block (frontend)
      */
-    static function render_block($block_attributes, $content = null, $block = null)
+    static function render_block($p_attributes, $content = null, $block = null)
     {
-        $block_attributes = wp_parse_args((array) $block_attributes, (array(
-            'title' => __('Events', 'simple-google-icalendar-widget'),
-            'tzid_ui' => wp_timezone_string()
-        ) + self::$default_block_attributes));
+        $block_attributes = array_merge(self::$default_block_attributes,
+            ['title' => __('Events', 'simple-google-icalendar-widget'),
+             'tzid_ui' => wp_timezone_string()],
+            $p_attributes  );
         $block_attributes['anchorId'] = sanitize_html_class($block_attributes['anchorId'], $block_attributes['sibid']);
         if (empty($block_attributes['tzid_ui'])){$block_attributes['tzid_ui'] = wp_timezone_string();};
         if (empty($block_attributes['sibid']) && !empty($block_attributes['blockid'])){$block_attributes['sibid'] = $block_attributes['blockid'];};
         
-
         $output = '';
         ob_start();
         switch ($block_attributes['wptype']) {
@@ -211,9 +210,9 @@ class SimpleicalBlock
             case 'rest_ph':
                 // Placeholder starting point for REST processing display of block or widget.
                 echo '<div id="' . $block_attributes['anchorId'] . '" ' . get_block_wrapper_attributes() . ' data-sib-id="' . $block_attributes['sibid'] . '" data-sib-pid="' . ((empty($block) || empty($block->context['postId'])) ? 0 : $block->context['postId']) . '" data-sib-st="0-start" >';
-                echo '<h3 class="widget-title block-title">' . $block_attributes['title'] . '</h3><p>';
+                echo $attributes['before_title'] . wp_kses($attributes['title'], 'post') . $attributes['after_title']  . '<p>';
                 _e('Processing', 'simple-google-icalendar-widget');
-                echo '</p></div>';
+                echo '</p>' . $attributes['after_widget'];
                 echo '<div><button onclick="window.simpleIcalBlock.getBlockByIds()" >' . __('Retry', 'simple-google-icalendar-widget') . '</button></div>';
                 break;
             case 'block':
@@ -221,7 +220,7 @@ class SimpleicalBlock
                 // Block rendered serverside, or in admin via serversiderenderer
                 echo '<div id="' . $block_attributes['anchorId'] . '" ' . get_block_wrapper_attributes() . ' data-sib-id="' . $block_attributes['sibid'] . '" >';
                 self::display_block($block_attributes);
-                echo '</div>';
+                echo $attributes['after_widget'];
                 break;
             default:
                 echo "<!-- unknown wptype:" . $block_attributes['wptype'] . "-->" . PHP_EOL;
@@ -240,13 +239,9 @@ class SimpleicalBlock
      */
     static function display_block($attributes)
     {
-echo '<!-- attr  :' . print_r($attributes, true) . ' -->';
-if (true or 'w' == substr($attributes['sibid'],0,1)){
-    $instances = get_option('widget_simple_ical_widget');
-    echo '<!-- instance  :' . print_r($instances, true) . ' -->';
-}
-    if (! empty($attributes['title']) && (! empty($attributes['sibid']) && 'b' == substr($attributes['sibid'],0,1))) {
-            echo '<h3 class="widget-title block-title">' . wp_kses($attributes['title'], 'post') . '</h3>';
+//        echo '<!-- attr  :' . print_r($attributes, true) . ' -->'. PHP_EOL;
+    if (! empty($attributes['title'])) {
+        echo $attributes['before_title'] . wp_kses($attributes['title'], 'post') . $attributes['after_title'];
         }
         $sn = 0;
         $data_sib = 'client TZID=' . $attributes['tzid_ui'];
