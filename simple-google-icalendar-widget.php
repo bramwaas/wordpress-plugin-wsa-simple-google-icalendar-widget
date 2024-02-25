@@ -147,7 +147,7 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
                 $instance['clear_cache_now'] = false;
 
                 if ('rest_ph' == $instance['wptype'] )
-                    SimpleicalBlock::render_block($instance);
+                   echo SimpleicalBlock::render_block($instance);
                 else
                     SimpleicalBlock::display_block($instance);
                 // end lay-out block
