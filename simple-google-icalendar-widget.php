@@ -149,8 +149,13 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
 
                 if ('rest_ph' == $instance['wptype'] )
                    echo SimpleicalBlock::render_block($instance);
-                else
+                   else {
+                       if (! empty($instance['title'])) {
+                           echo $args['before_title'] . wp_kses($instance['title'], 'post') . $args['after_title'];
+                       }
+                       
                     SimpleicalBlock::display_block($instance);
+                   }
                 // end lay-out block
             }
             /**

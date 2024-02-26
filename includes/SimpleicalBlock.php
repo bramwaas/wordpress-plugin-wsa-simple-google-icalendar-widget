@@ -211,7 +211,8 @@ class SimpleicalBlock
                 // Placeholder starting point for REST processing display of block or widget.
                 // echo '<div id="' . $block_attributes['anchorId'] . '" ' . get_block_wrapper_attributes() . ' data-sib-id="' . $block_attributes['sibid'] . '" data-sib-pid="' . ((empty($block) || empty($block->context['postId'])) ? 0 : $block->context['postId']) . '" data-sib-st="0-start" >';
                 echo sprintf($block_attributes['before_widget'], ($block_attributes['anchorId'] . '" data-sib-id="' . $block_attributes['sibid'] . '" data-sib-pid="'
-                    . ((empty($block) || empty($block->context['postId'])) ? 0 : $block->context['postId']) . '" data-sib-st="0-start'), get_block_wrapper_attributes());
+                    . ((empty($block) || empty($block->context['postId'])) ? 0 : $block->context['postId']) 
+                    . '" data-sib-st="0-start' . ((empty($block_attributes['title'])) ?'" data-sib-notitle="true':'')), get_block_wrapper_attributes());
                 echo $block_attributes['before_title'] . wp_kses($block_attributes['title'], 'post') . $block_attributes['after_title']  . '<p>';
                 _e('Processing', 'simple-google-icalendar-widget');
                 echo '</p>' . $block_attributes['after_widget'];
@@ -221,6 +222,9 @@ class SimpleicalBlock
             case 'ssr':
                 // Block rendered serverside, or in admin via serversiderenderer
                 echo '<div id="' . $block_attributes['anchorId'] . '" ' . get_block_wrapper_attributes() . ' data-sib-id="' . $block_attributes['sibid'] . '" >';
+                if (! empty($block_attributes['title'])) {
+                    echo $block_attributes['before_title'] . wp_kses($block_attributes['title'], 'post') . $block_attributes['after_title'];
+                }
                 self::display_block($block_attributes);
                 echo $attributes['after_widget'];
                 break;
@@ -242,9 +246,6 @@ class SimpleicalBlock
     static function display_block($attributes)
     {
 //        echo '<!-- attr  :' . print_r($attributes, true) . ' -->'. PHP_EOL;
-    if (! empty($attributes['title'])) {
-        echo $attributes['before_title'] . wp_kses($attributes['title'], 'post') . $attributes['after_title'];
-        }
         $sn = 0;
         $data_sib = 'client TZID=' . $attributes['tzid_ui'];
         try {

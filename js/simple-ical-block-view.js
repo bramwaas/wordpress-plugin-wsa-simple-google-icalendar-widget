@@ -5,7 +5,7 @@
  * v2.3.0
 **/
 const endpoint = window.simpleIcalBlock.restRoot + "simple-google-icalendar-widget/v1/content-by-ids";
-let ms = Date.now(), fms = 0, stry = 1;
+let ms = Date.now(), fms = 0, stry = 1, titl;
 
 window.simpleIcalBlock = {...(window.simpleIcalBlock || {}), ...{
 	fetchFromRest: function(dobj, ni) {
@@ -26,7 +26,8 @@ window.simpleIcalBlock = {...(window.simpleIcalBlock || {}), ...{
 			fms = (Date.now() - ms);
 			ni.setAttribute('data-sib-st', 'completed-' + stry + '-' + fms);
 			console.log(res);
-			ni.innerHTML = res.content + '<div>Res try:' + stry + ' fms:' + fms + '</div>';
+			if (ni.getAttribute('data-sib-notitle')) titl = ''; else titl = ni.firstElementChild.outerHTML;
+			ni.innerHTML = titl + res.content + '<div>Res try:' + stry + ' fms:' + fms + '</div>';
 		}
 		).catch((error) => {
 			stry = stry + 200;
