@@ -26,7 +26,7 @@ window.simpleIcalBlock = {...(window.simpleIcalBlock || {}), ...{
 			fms = (Date.now() - ms);
 			ni.setAttribute('data-sib-st', 'completed-' + stry + '-' + fms);
 			console.log(res);
-			if (ni.getAttribute('data-sib-notitle')) titl = ''; else titl = ni.firstElementChild.outerHTML;
+			if (ni.getAttribute('data-sib-notitle')) titl = ''; else titl = ni.querySelector( '[data-sib-t="true"]' ).outerHTML;
 			ni.innerHTML = titl + res.content + '<div>Res try:' + stry + ' fms:' + fms + '</div>';
 		}
 		).catch((error) => {

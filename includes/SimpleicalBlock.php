@@ -208,7 +208,19 @@ class SimpleicalBlock
                 self::display_block($block_attributes);
                 break;
             case 'rest_ph':
+                
                 // Placeholder starting point for REST processing display of block or widget.
+//                echo '<!-- REST option  :' . print_r(get_option('widget_simple_ical_widget'), true) . ' -->'. PHP_EOL;
+//                echo '<!-- REST attr  :' . $block_attributes['sibid'] . PHP_EOL
+//                    . print_r(get_option('widget_simple_ical_widget')['sib'][$block_attributes['sibid']], true) . ' -->'. PHP_EOL;
+                if (false === stripos('id="%1$s"', $block_attributes['before_widget']) ) {
+                    $l = explode (' ', $block_attributes['before_widget'],2);
+                    $block_attributes['before_widget'] = implode(' id="%1$s" ', $l);
+                }
+                if (false === stripos(' data-sib-t="true" ', $block_attributes['before_title']) ) {
+                    $l = explode (' ', $block_attributes['before_title'],2);
+                    $block_attributes['before_title'] = implode(' data-sib-t="true" ', $l);
+                }
                 $wrapperattr = (is_wp_version_compatible( '5.6' ) ) ? get_block_wrapper_attributes(): '';
                 echo sprintf($block_attributes['before_widget'], ($block_attributes['anchorId'] . '" data-sib-id="' . $block_attributes['sibid'] . '" data-sib-pid="'
                     . ((empty($block) || empty($block->context['postId'])) ? 0 : $block->context['postId']) 

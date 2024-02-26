@@ -146,12 +146,13 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
                 // lay-out block:
                 $instance['clear_cache_now'] = false;
 
-                if ('rest_ph' == $instance['wptype'] )
-                   echo SimpleicalBlock::render_block($instance);
+                if ('rest_ph' == $instance['wptype'] ) {
+                    echo SimpleicalBlock::render_block($instance);
+                }
                 else {
                     echo sprintf($args['before_widget'],
                         ($instance['sibid'] . '" data-sib-id="' . $instance['sibid'] ),
-                        'Simple_iCal_Widget ') ;
+                        $instance['className']) ;
                     if (! empty($instance['title'])) {
                            $title = apply_filters('widget_title', $instance['title']);
                            echo $args['before_title'], $title, $args['after_title'];
@@ -233,7 +234,7 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
                 
                 $instances = get_option('widget_simple_ical_widget');
                 if (!empty($instance['sibid']))
-                    $instances['sib'] = (!empty($instance['sibid'])) ? [$instance['sibid'] => $instance] : ['test' => $instance];
+                    $instances['sib'][$instance['sibid']] =  $instance;
                     update_option( 'widget_simple_ical_widget', $instances);
                         
                 return $instance;
