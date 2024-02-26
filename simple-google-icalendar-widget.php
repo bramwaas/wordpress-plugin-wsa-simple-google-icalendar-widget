@@ -129,13 +129,12 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
              */
             public function widget($args, $instance)
             {
-                foreach ($args as $k => &$arg){
-                    if (empty($arg) || '' == trim($arg)){
-                        $arg = SimpleicalBlock::$default_block_attributes[$k];
-                    }
+                foreach ($args as $k => $arg){
+                    if (empty($instance[$k]) && !empty($arg) && ' ' < trim($arg)){
+                        $instance[$k] = $arg;
+                    } 
                 }
                 $instance = array_merge(SimpleicalBlock::$default_block_attributes,
-                    $args,
                     ['title' => __('Events', 'simple-google-icalendar-widget'),
                      'tzid_ui' => wp_timezone_string(),
                      'wptype' => 'widget'],
@@ -149,14 +148,19 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
 
                 if ('rest_ph' == $instance['wptype'] )
                    echo SimpleicalBlock::render_block($instance);
-                   else {
-                       if (! empty($instance['title'])) {
-                           echo $args['before_title'] . wp_kses($instance['title'], 'post') . $args['after_title'];
+                else {
+                    echo sprintf($args['before_widget'],
+                        ($instance['sibid'] . '" data-sib-id="' . $instance['sibid'] ),
+                        'Simple_iCal_Widget ') ;
+                    if (! empty($instance['title'])) {
+                           $title = apply_filters('widget_title', $instance['title']);
+                           echo $args['before_title'], $title, $args['after_title'];
                        }
                        
                     SimpleicalBlock::display_block($instance);
+                    echo $args['after_widget'];
                    }
-                // end lay-out block
+                   // end lay-out block
             }
             /**
              * Sanitize widget form values as they are saved.
