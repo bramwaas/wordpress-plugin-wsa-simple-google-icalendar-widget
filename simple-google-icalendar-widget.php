@@ -129,6 +129,7 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
              */
             public function widget($args, $instance)
             {
+                  
                 foreach ($args as $k => $arg){
                     if (empty($instance[$k]) && !empty($arg) && ' ' < trim($arg)){
                         $instance[$k] = $arg;
@@ -145,23 +146,26 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
                 }
                 // lay-out block:
                 $instance['clear_cache_now'] = false;
-
+                echo sprintf($args['before_widget'],
+                    ('w-' . $instance['sibid'] . '" data-sib-id="' . $instance['sibid'] ),
+                    $args['classname']) ;
                 if ('rest_ph' == $instance['wptype'] ) {
+                    if (!empty($args['before_widget'])) {
+                       $instance['before_widget'] = '<span id="%1$s" %2$s>';
+                       $instance['after_widget'] = '</span>';
+                    }
                     echo SimpleicalBlock::render_block($instance);
                 }
                 else {
-                    echo sprintf($args['before_widget'],
-                        ($instance['sibid'] . '" data-sib-id="' . $instance['sibid'] ),
-                        $instance['className']) ;
                     if (! empty($instance['title'])) {
                            $title = apply_filters('widget_title', $instance['title']);
                            echo $args['before_title'], $title, $args['after_title'];
                        }
                        
                     SimpleicalBlock::display_block($instance);
-                    echo $args['after_widget'];
                    }
                    // end lay-out block
+                   echo $args['after_widget'];
             }
             /**
              * Sanitize widget form values as they are saved.
