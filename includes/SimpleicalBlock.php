@@ -203,7 +203,6 @@ class SimpleicalBlock
         ob_start();
         switch ($block_attributes['wptype']) {
             case 'REST':
-            case 'REST_W':
                 // Block displayed via REST
                 self::display_block($block_attributes);
                 break;
@@ -252,7 +251,6 @@ class SimpleicalBlock
      */
     static function display_block($attributes)
     {
-//        echo '<!-- attr  :' . print_r($attributes, true) . ' -->'. PHP_EOL;
         $sn = 0;
         $data_sib = 'client TZID=' . $attributes['tzid_ui'];
         try {

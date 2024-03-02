@@ -32,13 +32,6 @@ class RestController extends WP_REST_Controller {
      */
     protected static $instance;
     /**
-     * Debug var content
-     *
-     * @var    static
-     * @since  2.3.0
-     */
-    protected static $content;
-    /**
      * Constructor.
      *
      * initial values ​​for $namespace string, $rest_base string defined in extended class WP_REST_Controller
@@ -136,21 +129,8 @@ class RestController extends WP_REST_Controller {
         $blocks = [];
         if (empty($params['sibid']))
             return new WP_Error('404', __('Empty sibid. Not possible to get block content', 'simple-google-icalendar-widget'));
-            if ('W' == strtoupper( substr($params['sibid'], 0, 1))) {
+        if ('W' == strtoupper(substr($params['sibid'], 0, 1))) {
             $block_attributes = get_option('widget_simple_ical_widget')['sib'][$params['sibid']];
-            $block_attributes['wptype'] = 'REST_W';
-// // test
-//             $content = "";
-//             foreach ($block_attributes as $k => $v){
-//                 $content .= $k . '=>' . $v . '<br>';             }
-
-//             $data = $this->prepare_item_for_response([
-//                 'content' => $content,
-//                 'params' => $params
-//             ], $request);
-//             return new WP_REST_Response($data, 200);
-// //test        
-        
         } else {
             if (! empty($params['postid'])) {
                 $post = get_post((int) $params['postid']);
@@ -187,9 +167,9 @@ class RestController extends WP_REST_Controller {
             if (false === ($block_attributes = self::find_block_attributes($blocks, $params['sibid'], 'simplegoogleicalenderwidget/simple-ical-block', 10))) {
                 return new WP_Error('404', __('No content block content found', 'simple-google-icalendar-widget'));
             }
-            $block_attributes['wptype'] = 'REST';
         }
-        $block_attributes = wp_parse_args((array) $params, $block_attributes);
+        $block_attributes['wptype'] = 'REST';
+        $block_attributes = array_merge($block_attributes, $params);
         $content = SimpleicalBlock::render_block($block_attributes, []);
         $data = $this->prepare_item_for_response([
             'content' => $content,

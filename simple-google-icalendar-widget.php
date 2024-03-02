@@ -237,7 +237,6 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
                 $instance['allowhtml'] = !empty($new_instance['allowhtml']);
                 if (!empty($new_instance['blockid']) && empty($new_instance['sibid'])) {
                     $new_instance['sibid'] = $new_instance['blockid'];
-                    $instance['blockid'] = NULL;
                 }
                 $instance['sibid'] = strip_tags($new_instance['sibid']);
                 
@@ -245,7 +244,6 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
                 if (!empty($instance['sibid'])) {
                     if (!empty($instances['sib']) && !empty($old_instance['sibid']) && ($instance['sibid'] != $old_instance['sibid'])) {
                         unset($instances['sib'][$old_instance['sibid']]);
-//                          unset($instances['sib']); 
                     }
                     $instances['sib'][$instance['sibid']] =  array_diff_assoc($instance, SimpleicalBlock::$default_block_attributes);
                     update_option( 'widget_simple_ical_widget', $instances);
@@ -262,17 +260,18 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
             public function form($instance)
             {
                 
-                $default = wp_parse_args((array) array(
+                $default = wp_parse_args( [
                     'wptype' => 'widget',
-                ),
-                    (array ('title' => __('Events', 'simple-google-icalendar-widget')) + SimpleicalBlock::$default_block_attributes));
+                    'title' => __('Events', 'simple-google-icalendar-widget'),
+                ],
+                    SimpleicalBlock::$default_block_attributes);
                 
                 if (empty($instance['sibid'])) {
                     if  (!empty($instance['blockid'])) {
                         $instance['sibid'] = $instance['blockid'];
                         unset($instance['blockid']);
                     }
-                    $instance['sibid'] = 'W' . bin2hex(random_bytes(7));
+                    else $instance['sibid'] = 'W' . bin2hex(random_bytes(7));
                 }
                 $instance = wp_parse_args((array) $instance, $default);
                 $nwsibid = 'w' .  bin2hex(random_bytes(7));
@@ -391,7 +390,7 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
           <label for="<?php echo $this->get_field_id('reset_id'); ?>"><?php _e('Reset ID, only necessary to clear cache or after duplicating block.', 'simple-google-icalendar-widget'); ?></label> 
         </p>
         <p>
-          <input class="widefat" id="<?php echo $this->get_field_id('sibid'); ?>" name="<?php echo $this->get_field_name('sibid'); ?>" type="text" value="<?php echo esc_attr($instance['sibid']); ?>" />
+          <input class="widefat" id="<?php echo $this->get_field_id('sibid'); ?>" name="<?php echo $this->get_field_name('sibid'); ?>" type="hidden" value="<?php echo esc_attr($instance['sibid']); ?>" />
         </p>
         <p>
             <?php echo '<a href="' . admin_url('admin.php?page=simple_ical_info') . '" target="_blank">' ; 
