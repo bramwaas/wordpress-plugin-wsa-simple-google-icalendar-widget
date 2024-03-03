@@ -130,7 +130,11 @@ class RestController extends WP_REST_Controller {
         if (empty($params['sibid']))
             return new WP_Error('404', __('Empty sibid. Not possible to get block content', 'simple-google-icalendar-widget'));
         if ('W' == strtoupper(substr($params['sibid'], 0, 1))) {
-            $block_attributes = get_option('widget_simple_ical_widget')['sib'][$params['sibid']];
+            if (! empty($params['postid']) &&is_numeric($params['postid'])) {
+                $block_attributes = get_option('widget_simple_ical_widget')[$params['postid']];
+            } else {
+            $block_attributes = get_option('widget_simple_ical_widget')[$params['sibid']];
+            }
         } else {
             if (! empty($params['postid'])) {
                 $post = get_post((int) $params['postid']);

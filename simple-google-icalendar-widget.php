@@ -154,6 +154,7 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
                     $args['classname']) ;
                 $instances = get_option('widget_simple_ical_widget');
                 echo '<!-- INSTANCES  :' . print_r($instances, true) . ' -->'. PHP_EOL;
+                echo '<!-- widgetnr  :' . print_r($this->number, true) . ' -->'. PHP_EOL;
                 if ('rest_ph' == $instance['wptype'] ) {
                     if (!empty($args['before_widget'])) {
                        $instance['before_widget'] = '<span id="%1$s" %2$s>';
@@ -241,13 +242,18 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
                 $instance['sibid'] = strip_tags($new_instance['sibid']);
                 
                 $instances = get_option('widget_simple_ical_widget');
+                if (!empty($this->number && is_numeric($this->number))) {
+                    $instance['postid'] = (string) $this->number;
+                    $instances[$instance['postid']] = $instance;
+                } else 
                 if (!empty($instance['sibid'])) {
                     if (!empty($instances['sib']) && !empty($old_instance['sibid']) && ($instance['sibid'] != $old_instance['sibid'])) {
-                        unset($instances['sib'][$old_instance['sibid']]);
+                        unset($instances[$old_instance['sibid']]);
                     }
-                    $instances['sib'][$instance['sibid']] =  array_diff_assoc($instance, SimpleicalBlock::$default_block_attributes);
-                    update_option( 'widget_simple_ical_widget', $instances);
+                    unset($instances['sib']); 
+                    $instances[$instance['sibid']] =  array_diff_assoc($instance, SimpleicalBlock::$default_block_attributes);
                 }
+                update_option( 'widget_simple_ical_widget', $instances);
                 return $instance;
             }
             /**
