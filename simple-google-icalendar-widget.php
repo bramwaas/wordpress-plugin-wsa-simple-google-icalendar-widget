@@ -102,7 +102,7 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
     add_action( 'wp_enqueue_scripts', 'enqueue_view_script');
     /**
      * enqueue scripts for use in client REST view
-     * for v 6.3 up args array strategy = defer, else infooter = that array is casted to boolean true. 
+     * for v 6.3 up args array strategy = defer, else in_footer = that array is casted to boolean true. 
      */
     function enqueue_view_script()
     {
