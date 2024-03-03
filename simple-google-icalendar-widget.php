@@ -38,7 +38,9 @@
  *   bw 20230823 v2.1.5 added defaults from SimpleicalBlock block_attributes for all used keys in instance to prevent Undefined array key warnings/errors.
  *   bw 20240106 v2.2.0 Changed the text domain to simple-google-icalendar-widget to make translations work by following the WP standard
  *   bw 20240123 v2.2.1 after an isue of black88mx6 in support forum: don't display description line when excerpt-length = 0
- *   bw 20240125 v2.3.0 v2 dir for older versions eg block.json version 2 for WP6.3 -
+ *   bw 20240125 v2.3.0 v2 dir for older versions eg block.json version 2 for WP6.3 - Extra save instance/attributes in option 'widget_simple_ical_widget', like in standaard
+ *      wp-widget in array with widget number as index (in Elementor and maybe other pagebuilders instance is saved else and widget number is not numeric
+ *      then sibid is used) so that the attributes are available for REST call.
  */
 /*
  Simple Google Calendar Outlook Events Widget
@@ -154,6 +156,7 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
                     $args['classname']) ;
                 $instances = get_option('widget_simple_ical_widget');
                 echo '<!-- INSTANCES  :' . print_r($instances, true) . ' -->'. PHP_EOL;
+                echo '<!-- postid  :' . print_r($instance['postid'], true) . ' -->'. PHP_EOL;
                 echo '<!-- widgetnr  :' . print_r($this->number, true) . ' -->'. PHP_EOL;
                 if ('rest_ph' == $instance['wptype'] ) {
                     if (!empty($args['before_widget'])) {
@@ -185,7 +188,6 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
              */
             public function update($new_instance, $old_instance)
             {
-//                $instance = $old_instance;
                 $instance['title'] = strip_tags($new_instance['title']);
                 
                 $instance['calendar_id'] = htmlspecialchars($new_instance['calendar_id']);
@@ -239,6 +241,7 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
                 if (!empty($new_instance['blockid']) && empty($new_instance['sibid'])) {
                     $new_instance['sibid'] = $new_instance['blockid'];
                 }
+                $instance['anchorId'] = strip_tags($new_instance['anchorId']);
                 $instance['sibid'] = strip_tags($new_instance['sibid']);
                 
                 $instances = get_option('widget_simple_ical_widget');
@@ -250,7 +253,6 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
                     if (!empty($instances['sib']) && !empty($old_instance['sibid']) && ($instance['sibid'] != $old_instance['sibid'])) {
                         unset($instances[$old_instance['sibid']]);
                     }
-                    unset($instances['sib']); 
                     $instances[$instance['sibid']] =  array_diff_assoc($instance, SimpleicalBlock::$default_block_attributes);
                 }
                 update_option( 'widget_simple_ical_widget', $instances);
@@ -391,12 +393,16 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
           <label for="<?php echo $this->get_field_id('no_events'); ?>"><?php _e('Closing HTML when no events:', 'simple-google-icalendar-widget'); ?></label> 
           <input class="widefat" id="<?php echo $this->get_field_id('no_events'); ?>" name="<?php echo $this->get_field_name('no_events'); ?>" type="text" value="<?php echo esc_attr($instance['no_events']); ?>" />
         </p>
-         <p>
-          <button class="button" id="<?php echo $this->get_field_id('reset_id'); ?>" name="<?php echo $this->get_field_name('reset_id'); ?>" onclick="document.getElementById('<?php echo $this->get_field_id('sibid'); ?>').value = '<?php echo $nwsibid; ?>'" type="button" ><?php _e('Reset ID.', 'simple-google-icalendar-widget')  ?></button>
-          <label for="<?php echo $this->get_field_id('reset_id'); ?>"><?php _e('Reset ID, only necessary to clear cache or after duplicating block.', 'simple-google-icalendar-widget'); ?></label> 
+        <p>
+          <label for="<?php echo $this->get_field_id('anchorId'); ?>"><?php _e('HTML anchor:', 'simple-google-icalendar-widget'); ?></label> 
+          <input class="widefat" id="<?php echo $this->get_field_id('anchorId'); ?>" name="<?php echo $this->get_field_name('anchorId'); ?>" type="text" value="<?php echo esc_attr($instance['anchorId']); ?>" />
         </p>
         <p>
           <input class="widefat" id="<?php echo $this->get_field_id('sibid'); ?>" name="<?php echo $this->get_field_name('sibid'); ?>" type="hidden" value="<?php echo esc_attr($instance['sibid']); ?>" />
+        </p>
+         <p>
+          <button class="button" id="<?php echo $this->get_field_id('reset_id'); ?>" name="<?php echo $this->get_field_name('reset_id'); ?>" onclick="document.getElementById('<?php echo $this->get_field_id('sibid'); ?>').value = '<?php echo $nwsibid; ?>'" type="button" ><?php _e('Reset ID.', 'simple-google-icalendar-widget')  ?></button>
+          <label for="<?php echo $this->get_field_id('reset_id'); ?>"><?php _e('Reset ID, only necessary to clear cache or after duplicating block.', 'simple-google-icalendar-widget'); ?></label> 
         </p>
         <p>
             <?php echo '<a href="' . admin_url('admin.php?page=simple_ical_info') . '" target="_blank">' ; 

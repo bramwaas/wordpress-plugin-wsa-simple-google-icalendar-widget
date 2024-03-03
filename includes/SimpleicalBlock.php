@@ -214,7 +214,7 @@ class SimpleicalBlock
                 }
                 $wrapperattr = (is_wp_version_compatible( '5.6' ) ) ? get_block_wrapper_attributes(): '';
                 echo sprintf($block_attributes['before_widget'], ($block_attributes['anchorId'] . '" data-sib-id="' . $block_attributes['sibid'] . '" data-sib-pid="'
-                    . ((empty($block) || empty($block->context['postId'])) ? 0 : $block->context['postId']) 
+                    . ((empty($block) || empty($block->context['postId'])) ? $block_attributes['postid'] : (string) $block->context['postId']) 
                     . '" data-sib-st="0-start' . ((empty($block_attributes['title'])) ?'" data-sib-notitle="true':'')
                     ), $wrapperattr);
                 echo $block_attributes['before_title'] . wp_kses($block_attributes['title'], 'post') . $block_attributes['after_title']  . '<p>';
