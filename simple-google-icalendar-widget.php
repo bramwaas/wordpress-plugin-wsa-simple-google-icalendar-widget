@@ -94,9 +94,23 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
     
 } // end wp-version > 5.9 block v2
 
-{ //old widget always
+{ // old widget always
+    add_action('rest_api_init', array(
+        'WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\RestController',
+        'init_and_register_routes'
+    ));
+    add_action( 'wp_enqueue_scripts', 'enqueue_view_script');
+    /**
+     * enqueue scripts for use in client REST view
+     * for v 6.3 up args array strategy = defer, else infooter = that array is casted to boolean true. 
+     */
+    function enqueue_view_script()
+    {
+        wp_enqueue_script('simplegoogleicalenderwidget-simple-ical-block-view-script', plugins_url('/js/simple-ical-block-view.js', __FILE__), [], '2.3.0-' . filemtime(plugin_dir_path(__FILE__) . 'js/simple-ical-block-view.js'), 
+            ['strategy' => 'defer' ]);
+        wp_add_inline_script('simplegoogleicalenderwidget-simple-ical-block-view-script', '(window.simpleIcalBlock=window.simpleIcalBlock || {}).restRoot = "' . get_rest_url() . '"', 'before');
+    }
     
-    add_action( 'rest_api_init', array ('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\RestController', 'init_and_register_routes') );
     
     if ( !class_exists( 'Simple_iCal_Widget' ) ) {
         class Simple_iCal_Widget extends WP_Widget

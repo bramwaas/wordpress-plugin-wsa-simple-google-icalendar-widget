@@ -108,10 +108,6 @@ class SimpleicalBlock
                 'render_block'
             )
         ));
-        add_action('enqueue_block_assets', array(
-            'WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalBlock',
-            'enqueue_block_script'
-        ));
     }
 
     /**
@@ -157,24 +153,8 @@ class SimpleicalBlock
                 'render_block'
             )
         ));
-        add_action('enqueue_block_assets', array(
-            'WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalBlock',
-            'enqueue_block_script'
-        ));
     }
 
-    /**
-     * enqueue scripts for use in client view and editor (when is_admin() ) on block code (iframe)
-     */
-    static function enqueue_block_script()
-    {
-        if (! is_admin()) {
-            wp_enqueue_script('simplegoogleicalenderwidget-simple-ical-block-view-script', plugins_url('/js/simple-ical-block-view.js', __DIR__), [], '2.3.0-' . filemtime(plugin_dir_path(__DIR__) . 'js/simple-ical-block-view.js'), [
-                'strategy' => 'defer'
-            ]);
-            wp_add_inline_script('simplegoogleicalenderwidget-simple-ical-block-view-script', '(window.simpleIcalBlock=window.simpleIcalBlock || {}).restRoot = "' . get_rest_url() . '"', 'before');
-        }
-    }
 
     /**
      * Render the content of the block
