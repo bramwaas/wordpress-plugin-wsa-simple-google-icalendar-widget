@@ -201,7 +201,7 @@ class SimpleicalBlock
                 echo $block_attributes['before_title'] . wp_kses($block_attributes['title'], 'post') . $block_attributes['after_title']  . '<p>';
                 _e('Processing', 'simple-google-icalendar-widget');
                 echo '</p>' . $block_attributes['after_widget'];
-                echo '<button onclick="window.simpleIcalBlock.getBlockByIds()" >' . __('Retry', 'simple-google-icalendar-widget') . '</button></div>';
+//                echo '<button onclick="window.simpleIcalBlock.getBlockByIds()" >' . __('Refresh', 'simple-google-icalendar-widget') . '</button></div>';
                 break;
             case 'block':
             case 'ssr':

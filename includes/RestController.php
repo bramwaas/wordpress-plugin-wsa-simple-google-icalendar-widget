@@ -172,7 +172,7 @@ class RestController extends WP_REST_Controller {
                 return new WP_Error('404', __('No content block content found', 'simple-google-icalendar-widget'));
             }
         }
-        $block_attributes['wptype'] = 'REST';
+//        $block_attributes['wptype'] = 'REST';
         $block_attributes = array_merge($block_attributes, $params);
         $content = SimpleicalBlock::render_block($block_attributes, []);
         $data = $this->prepare_item_for_response([

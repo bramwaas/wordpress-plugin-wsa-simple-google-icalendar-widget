@@ -63,12 +63,14 @@
 					transform: function({ instance }) {
 						if (!(parseInt(instance.raw.layout) > 0)) { instance.raw.layout = 3 }
 						return blocks.createBlock('simplegoogleicalenderwidget/simple-ical-block', {
+							sibid: instance.raw.sibid,
+							postid: instance.raw.postid,
+							tzid_ui: instance.raw.tzid_ui,
 							title: instance.raw.title,
 							calendar_id: instance.raw.calendar_id,
 							event_count: parseInt(instance.raw.event_count),
 							event_period: parseInt(instance.raw.event_period),
 							cache_time: parseInt(instance.raw.cache_time),
-							startwsum: false,
 							layout: parseInt(instance.raw.layout),
 							dateformat_lg: instance.raw.dateformat_lg,
 							dateformat_lgend: instance.raw.dateformat_lgend,
@@ -80,11 +82,12 @@
 							suffix_lg_class: instance.raw.suffix_lg_class,
 							suffix_lgi_class: instance.raw.suffix_lgi_class,
 							suffix_lgia_class: instance.raw.suffix_lgia_class,
+                            period_limits: instance.raw.period_limits,
 							allowhtml: instance.raw.allowhtml,
 							after_events: instance.raw.after_events,
 							no_events: instance.raw.no_events,
 							tag_sum: instance.raw.tag_sum,
-							anchorId: instance.raw.sibid,
+							anchorId: instance.raw.anchorId,
 							className: 'Simple_iCal_Widget',
 						});
 					},
