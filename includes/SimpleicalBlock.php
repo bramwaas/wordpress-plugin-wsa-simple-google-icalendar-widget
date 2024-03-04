@@ -122,6 +122,7 @@ class SimpleicalBlock
             'attributes' => [
             'wptype' => ['type' => 'string'],
             'sibid' => ['type' => 'string'],
+            'postid' => ['type' => 'string'],
             'tzid_ui'=> ['type'=> 'string'],
             'title' => ['type' => 'string', 'default' => __('Events', 'simple-google-icalendar-widget')],
             'calendar_id' => ['type' => 'string', 'default' => ''],
@@ -260,7 +261,7 @@ class SimpleicalBlock
             $attributes['tag_sum'] = 'a';
         $data = IcsParser::getData($attributes);
         if (! empty($data) && is_array($data)) {
-            echo '<ul class="list-group' . $attributes['suffix_lg_class'] . ' simple-ical-widget" data-sib="' . $data_sib . '"> ';
+            echo '<ul class="list-group' . $attributes['suffix_lg_class'] . ' simple-ical-widget" > ';
             $curdate = '';
             foreach ($data as $e) {
                 $idlist = explode("@", esc_attr($e->uid));

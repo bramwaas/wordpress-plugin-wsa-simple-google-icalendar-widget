@@ -169,9 +169,6 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
                     ('w-' . $instance['sibid'] . '" data-sib-id="' . $instance['sibid'] ),
                     $args['classname']) ;
                 $instances = get_option('widget_simple_ical_widget');
-                echo '<!-- INSTANCES  :' . print_r($instances, true) . ' -->'. PHP_EOL;
-                echo '<!-- postid  :' . print_r($instance['postid'], true) . ' -->'. PHP_EOL;
-                echo '<!-- widgetnr  :' . print_r($this->number, true) . ' -->'. PHP_EOL;
                 if ('rest_ph' == $instance['wptype'] ) {
                     if (!empty($args['before_widget'])) {
                        $instance['before_widget'] = '<span id="%1$s" %2$s>';
@@ -415,8 +412,8 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
           <input class="widefat" id="<?php echo $this->get_field_id('sibid'); ?>" name="<?php echo $this->get_field_name('sibid'); ?>" type="hidden" value="<?php echo esc_attr($instance['sibid']); ?>" />
         </p>
          <p>
-          <button class="button" id="<?php echo $this->get_field_id('reset_id'); ?>" name="<?php echo $this->get_field_name('reset_id'); ?>" onclick="document.getElementById('<?php echo $this->get_field_id('sibid'); ?>').value = '<?php echo $nwsibid; ?>'" type="button" ><?php _e('Reset ID.', 'simple-google-icalendar-widget')  ?></button>
-          <label for="<?php echo $this->get_field_id('reset_id'); ?>"><?php _e('Reset ID, only necessary to clear cache or after duplicating block.', 'simple-google-icalendar-widget'); ?></label> 
+          <button class="button" id="<?php echo $this->get_field_id('reset_id'); ?>" name="<?php echo $this->get_field_name('reset_id'); ?>" onclick="document.getElementById('<?php echo $this->get_field_id('sibid'); ?>').value = '<?php echo $nwsibid; ?>'" ><?php _e('Reset ID.', 'simple-google-icalendar-widget')  ?></button>
+          <label for="<?php echo $this->get_field_id('reset_id'); ?>"><?php _e('Reset ID, only necessary to clear cache or after duplicating block. Also change another field to save the new values to the DB', 'simple-google-icalendar-widget'); ?></label> 
         </p>
         <p>
             <?php echo '<a href="' . admin_url('admin.php?page=simple_ical_info') . '" target="_blank">' ; 

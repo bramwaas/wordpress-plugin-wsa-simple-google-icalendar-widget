@@ -54,6 +54,7 @@ class SimpleicalWidgetAdmin {
         
         _e('<p><strong>Title</strong></p>', 'simple-google-icalendar-widget');
         _e('<p>Title of this instance of the widget</p>', 'simple-google-icalendar-widget');
+        _e('<p>With empty title no html is displayed, if you want the html with empty content use &lt;&gt; or another invalid tag that will be filtered away as title</p>', 'simple-google-icalendar-widget');
         
         echo('<span id="calendar-id"></span>');
         _e('<p><strong>Calendar ID(s), or iCal URL</strong></p>', 'simple-google-icalendar-widget');
@@ -69,7 +70,7 @@ class SimpleicalWidgetAdmin {
         _e('<p>Last date to display events in number of days after today.</p>', 'simple-google-icalendar-widget');
         echo '<p><a href="#period-limits" target="_self" >';
         _e('See also', 'simple-google-icalendar-widget');
-        echo '</a></p>';
+        echo '<strong>Period limits</strong></a></p>';
         
         echo('<span id="layout"></span>');
         _e('<p><strong>Select lay-out</strong></p>', 'simple-google-icalendar-widget');
@@ -114,11 +115,13 @@ class SimpleicalWidgetAdmin {
         
         echo('<span id="period-limits"></span>');
         _e('<p><strong>Period limits</strong></p>', 'simple-google-icalendar-widget');
-        _e('<p>Determination  of start and end time of periode where events are displayed.<br>"Time of day", or "Whole  day"</p>', 'simple-google-icalendar-widget');
+        _e('<p>Determination of start and end time of periode where events are displayed and timezone.<br>"Time of day", or "Whole  day"</p>', 'simple-google-icalendar-widget');
         _e('<p>With "Time of day" as limit at both ends: <br>The "Number of days after today" is the number of 24-hour periods after the current time. It is a window that moves as the day progresses.', 'simple-google-icalendar-widget');
         _e('<br>So, if today is Monday at 9am and you have a 3-day window, then events that start before 9am on Thursday will be shown, but an event that starts at 1pm will not.<br>As the day progresses, any of today&quot;s events that are completed before the current time will drop off the top of the list, and events that fall within the window will appear at the bottom. ', 'simple-google-icalendar-widget');
-        _e('<br>"Whole  Day" as limit moves the Start of the window to the beginning of the day (0:00 AM) in local time and/or moves the End to the beginning of the next day.</p>', 'simple-google-icalendar-widget');
-        _e('<p>Only available in block.</p>', 'simple-google-icalendar-widget');
+        _e('<br>"Whole  Day" as limit moves the Start of the window to the beginning of the day (0:00 AM) in "local time" and/or moves the End to the beginning of the next day.</p>', 'simple-google-icalendar-widget');
+        _e('<p>Default all processing happens on server "local time" is measured in timezone of WordPress installation.', 'simple-google-icalendar-widget');
+        _e('<br>With "use Client Timezone" the timezone of client browser is fetched first and processing happens with this timezone setting.', 'simple-google-icalendar-widget');
+        _e('<br>At first a placeholder with title and some Id\'s to use later is created and displayed, after pageload the timezone of client browser is fetched with javascript to process the output, then this output is placed over the placeholder.</p>', 'simple-google-icalendar-widget');
         
         _e('<p><strong>Suffix group class</strong></p>', 'simple-google-icalendar-widget');
         _e('<p>Suffix to add after css-class around the event (list-group),<br>start with space to keep the original class and add another class.</p>', 'simple-google-icalendar-widget');
@@ -140,14 +143,13 @@ class SimpleicalWidgetAdmin {
         
         _e('<p><strong>Button Reset ID</strong></p>', 'simple-google-icalendar-widget');
         _e('<p>Press button Reset ID to copy the sibid from the clientid in the editor after duplicating the block, to make sibid unique again.</p>', 'simple-google-icalendar-widget');
-        _e('<p>In the legacy widget the uniqid() function is used to create a new sibid.</p>', 'simple-google-icalendar-widget');
+        _e('<p>In the legacy widget the bin2hex(random_bytes(7)) function is used to create a new sibid. Because this is not visible, the save button works only when also another field is changed.</p>', 'simple-google-icalendar-widget');
         _e('<p>Since the transient cache id is derived from the block id, this also clears the data cache once.</p>', 'simple-google-icalendar-widget');
         
         echo('<span id="html-anchor"></span>');
         _e('<p><strong>HTML anchor</strong></p>', 'simple-google-icalendar-widget');
         _e('<p>HTML anchor for this block.<br>Type one or two words - no spaces - to create a unique web address for this block, called an "anchor". Then you can link directly to this section on your page.<br>You can als use this ID to make parts of your extra css specific for this block</p>', 'simple-google-icalendar-widget');
-        _e('<p>Only available in block.</p>', 'simple-google-icalendar-widget');
-        
+
         echo('</div>');
         
     }
