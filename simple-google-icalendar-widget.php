@@ -164,16 +164,13 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
                 // lay-out block:
                 $instance['clear_cache_now'] = false;
                 
-                
                 echo sprintf($args['before_widget'],
                     ('w-' . $instance['sibid'] . '" data-sib-id="' . $instance['sibid'] ),
                     $args['classname']) ;
                 $instances = get_option('widget_simple_ical_widget');
                 if ('rest_ph' == $instance['wptype'] ) {
-                    if (!empty($args['before_widget'])) {
-                       $instance['before_widget'] = '<span id="%1$s" %2$s>';
-                       $instance['after_widget'] = '</span>';
-                    }
+                    $instance['before_widget'] = '<span id="%1$s" %2$s>';
+                    $instance['after_widget'] = '</span>';
                     echo SimpleicalBlock::render_block($instance);
                 }
                 else {
