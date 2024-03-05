@@ -252,15 +252,15 @@ End time format summary line. Default: empty , no display.
 
 *Time format start time*
 
-Time format start time. Default: G:i,
-see "Time format start time after summary"
+Time format start time. Default: G:i,    
+see "Time format start time after summary"   
 This field will only be shown when date part of enddate is equal to start date and format not empty.
 
 *Time format end time*
 
-Time format separator and end time. Default: - G:i,
-see "Time format start time after summary"
-This field will only be shown when date part of enddate is equal to start date and format not empty.
+Time format separator and end time. Default: - G:i,    
+see "Time format start time after summary"    
+This field will only be shown when date part of enddate is equal to start date and format not empty.    
 
 ====Advanced settings====     
 
