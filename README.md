@@ -239,13 +239,12 @@ End date will only be shown as date part is different from start date and format
 
 *Time format start time after summary*
 
-Start time format summary line. Default: G:i ,
-G or g = 24 or 12 hour format of an hour without leading zeros
-i = Minutes with leading zeros
-a or A = Lowercase or Uppercase Ante meridiem and Post meridiem
-make empty if you don't want to show this field.
-Linebreak before this field will be removed when summary is before first date line, if desired you can get it back by starting the format with <\b\r>
-This field will only be shown when date part of enddate is equal to start date and format not empty.
+Start time format summary line. Default: G:i ,    
+G or g = 24 or 12 hour format of an hour without leading zeros    
+i = Minutes with leading zeros    
+a or A = Lowercase or Uppercase Ante meridiem and Post meridiem make empty if you don't want to show this field.    
+Linebreak before this field will be removed when summary is before first date line, if desired you can get it back by starting the format with &lt;\b\r&gt;        
+This field will only be shown when date part of enddate is equal to start date and format not empty.   
 
 *Time format end time after summary*
 
