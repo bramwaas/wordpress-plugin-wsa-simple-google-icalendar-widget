@@ -70,7 +70,6 @@ class SimpleicalBlock
         'layout' => 3,
         'dateformat_lg' => 'l jS \of F',
         'dateformat_lgend' => '',
-        'period_limits' => '1',
         'tag_sum' => 'a',
         'dateformat_tsum' => 'G:i ',
         'dateformat_tsend' => '',
@@ -85,6 +84,7 @@ class SimpleicalBlock
         'no_events' => '',
         'clear_cache_now' => false,
         'period_limits' => '1',
+        'rest_utzui' => '',
         'className' => '',
         'anchorId' => '',
         'before_widget' => '<div id="%1$s" %2$s>',
@@ -144,7 +144,8 @@ class SimpleicalBlock
             'allowhtml' => ['type' => 'boolean', 'default' => false],
             'after_events' => ['type' => 'string', 'default' => ''],
             'no_events' => ['type' => 'string', 'default' => ''],
-            'period_limits' => ['type' => 'string', 'enum' => ['1', '2', '3', '4', '5', '6', '7', '8'], 'default' => '1'],
+            'period_limits' => ['type' => 'string', 'enum' => ['1', '2', '3', '4'], 'default' => '1'],
+            'rest_utzui' => ['type' => 'string', 'enum' => ['', '1', '2'], 'default' => ''],
             'clear_cache_now' => ['type' => 'boolean', 'default' => false],
             'anchorId' => ['type' => 'string', 'default' => ''],
             'blockid' => ['type' => 'string'],
@@ -233,7 +234,6 @@ class SimpleicalBlock
     static function display_block($attributes)
     {
         $sn = 0;
-        $data_sib = 'client TZID=' . $attributes['tzid_ui'];
         try {
             $attributes['tz_ui'] = new \DateTimeZone($attributes['tzid_ui']);
         } catch (\Exception $exc) {}

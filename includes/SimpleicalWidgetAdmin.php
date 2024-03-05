@@ -119,9 +119,13 @@ class SimpleicalWidgetAdmin {
         _e('<p>With "Time of day" as limit at both ends: <br>The "Number of days after today" is the number of 24-hour periods after the current time. It is a window that moves as the day progresses.', 'simple-google-icalendar-widget');
         _e('<br>So, if today is Monday at 9am and you have a 3-day window, then events that start before 9am on Thursday will be shown, but an event that starts at 1pm will not.<br>As the day progresses, any of today&quot;s events that are completed before the current time will drop off the top of the list, and events that fall within the window will appear at the bottom. ', 'simple-google-icalendar-widget');
         _e('<br>"Whole  Day" as limit moves the Start of the window to the beginning of the day (0:00 AM) in "local time" and/or moves the End to the beginning of the next day.</p>', 'simple-google-icalendar-widget');
+
+        echo('<span id="rest_utzui"></span>');
+        _e('<p><strong>Use client timezone settings</strong></p>', 'simple-google-icalendar-widget');
         _e('<p>Default all processing happens on server "local time" is measured in timezone of WordPress installation.', 'simple-google-icalendar-widget');
-        _e('<br>With "use Client Timezone" the timezone of client browser is fetched first and processing happens with this timezone setting.', 'simple-google-icalendar-widget');
-        _e('<br>At first a placeholder with title and some Id\'s to use later is created and displayed, after pageload the timezone of client browser is fetched with javascript to process the output, then this output is placed over the placeholder.</p>', 'simple-google-icalendar-widget');
+        _e('<br>With "Use Client Timezone" the timezone of client browser is fetched first with a REST call and processing happens with this timezone setting.', 'simple-google-icalendar-widget');
+        _e('<br>At first a placeholder with title and some Id\'s to use later is created and displayed, after pageload the timezone of client browser is fetched with javascript to process the output and get it with a REST call, then this output is placed over the placeholder.</p>', 'simple-google-icalendar-widget');
+        
         
         _e('<p><strong>Suffix group class</strong></p>', 'simple-google-icalendar-widget');
         _e('<p>Suffix to add after css-class around the event (list-group),<br>start with space to keep the original class and add another class.</p>', 'simple-google-icalendar-widget');

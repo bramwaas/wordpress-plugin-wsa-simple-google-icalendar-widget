@@ -83,6 +83,7 @@
 							suffix_lgi_class: instance.raw.suffix_lgi_class,
 							suffix_lgia_class: instance.raw.suffix_lgia_class,
                             period_limits: instance.raw.period_limits,
+                     		rest_utzui: instance.raw.rest_utzui,
 							allowhtml: instance.raw.allowhtml,
 							after_events: instance.raw.after_events,
 							no_events: instance.raw.no_events,
@@ -101,7 +102,7 @@
 				}
 				else if (typeof props.attributes.sibid !== 'string') { props.setAttributes({ sibid: 'b' + props.clientId }); };
 				props.setAttributes({ postid: '' + props.context['postId'] });
-				if (4 < props.attributes.period_limits) {
+				if ('1' == props.attributes.rest_utzui) {
 					ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
 					}
 				else {
@@ -283,7 +284,31 @@
 							),
 							onChange: function(value) {
 								props.setAttributes({ period_limits: value });
-								if (4 < value) {
+							},
+							options: [
+								{ value: '1', label: __('Start Whole  day, End Whole  day', 'simple-google-icalendar-widget') },
+								{ value: '2', label: __('Start Time of day, End Whole  day', 'simple-google-icalendar-widget') },
+								{ value: '3', label: __('Start Time of day, End Time of day', 'simple-google-icalendar-widget') },
+								{ value: '4', label: __('Start Whole  day, End Time of day', 'simple-google-icalendar-widget') },
+							]
+						}
+					),
+					el(
+						SelectControl,
+						{
+							label: __('Use client timezone settings:', 'simple-google-icalendar-widget'),
+							value: props.attributes.rest_utzui,
+							help: el(
+								'a',
+								{
+									href: 'admin.php?page=simple_ical_info#rest_utzui',
+									target: '_blank',
+								},
+								__('More info', 'simple-google-icalendar-widget')
+							),
+							onChange: function(value) {
+								props.setAttributes({ rest_utzui: value });
+								if ('' < value) {
 									ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
 									props.setAttributes({ wptype: 'rest_ph' })
 								}
@@ -293,14 +318,8 @@
 								} 
 							},
 							options: [
-								{ value: '1', label: __('Start Whole  day, End Whole  day', 'simple-google-icalendar-widget') },
-								{ value: '2', label: __('Start Time of day, End Whole  day', 'simple-google-icalendar-widget') },
-								{ value: '3', label: __('Start Time of day, End Time of day', 'simple-google-icalendar-widget') },
-								{ value: '4', label: __('Start Whole  day, End Time of day', 'simple-google-icalendar-widget') },
-								{ value: '5', label: __('Start Whole  day, End Whole  day, use Client Timezone', 'simple-google-icalendar-widget') },
-								{ value: '6', label: __('Start Time of day, End Whole  day, use Client Timezone', 'simple-google-icalendar-widget') },
-								{ value: '7', label: __('Start Time of day, End Time of day, use Client Timezone', 'simple-google-icalendar-widget') },
-								{ value: '8', label: __('Start Whole  day, End Time of day, use Client Timezone', 'simple-google-icalendar-widget') }
+								{ value: '', label: __('Use WordPress timezone settings, no REST', 'simple-google-icalendar-widget') },
+								{ value: '1', label: __('Use Client timezone settings, with REST', 'simple-google-icalendar-widget') },
 							]
 						}
 					),

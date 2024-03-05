@@ -158,7 +158,7 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
                      'wptype' => 'widget'],
                     $instance  );
                 
-                if (! empty($instance['period_limits']) && is_numeric($instance['period_limits']) && 4 < $instance['period_limits']) {
+                if (! empty($instance['rest_utzui']) &&  is_numeric($instance['rest_utzui'])) {
                     $instance['wptype'] = 'rest_ph';
                 }
                 // lay-out block:
@@ -241,6 +241,9 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
                 }
                 if(!empty($new_instance['period_limits']) &&  is_numeric($new_instance['period_limits'])) {
                     $instance['period_limits'] = strip_tags($new_instance['period_limits']);
+                }
+                if(!empty($new_instance['rest_utzui']) &&  is_numeric($new_instance['rest_utzui'])) {
+                    $instance['rest_utzui'] = strip_tags($new_instance['rest_utzui']);
                 }
                 $instance['tag_sum'] = strip_tags($new_instance['tag_sum']);
                 $instance['suffix_lg_class'] = strip_tags($new_instance['suffix_lg_class']);
@@ -360,10 +363,13 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
   			<option value="2"<?php echo ('2'==esc_attr($instance['period_limits']))?'selected':''; ?>><?php _e('Start Time of day, End Whole  day', 'simple-google-icalendar-widget'); ?></option>
   			<option value="3"<?php echo ('3'==esc_attr($instance['period_limits']))?'selected':''; ?>><?php _e('Start Time of day, End Time of day'); ?></option>
   			<option value="4"<?php echo ('4'==esc_attr($instance['period_limits']))?'selected':''; ?>><?php _e('Start Whole  day, End Time of day', 'simple-google-icalendar-widget'); ?></option>
-  			<option value="5"<?php echo ('5'==esc_attr($instance['period_limits']))?'selected':''; ?>><?php _e('Start Whole  day, End Whole  day, use Client Timezone', 'simple-google-icalendar-widget'); ?></option>
-  			<option value="6"<?php echo ('6'==esc_attr($instance['period_limits']))?'selected':''; ?>><?php _e('Start Time of day, End Whole  day, use Client Timezone'); ?></option>
-  			<option value="7"<?php echo ('7'==esc_attr($instance['period_limits']))?'selected':''; ?>><?php _e('Start Time of day, End Time of day, use Client Timezone', 'simple-google-icalendar-widget'); ?></option>
-  			<option value="8"<?php echo ('8'==esc_attr($instance['period_limits']))?'selected':''; ?>><?php _e('Start Whole  day, End Time of day, use Client Timezone', 'simple-google-icalendar-widget'); ?></option>
+  		 </select>	
+        <p>
+        <p>
+          <label for="<?php echo $this->get_field_id('rest_utzui'); ?>"><?php _e('Use client timezone settings:', 'simple-google-icalendar-widget'); ?></label> 
+          <select class="widefat" id="<?php echo $this->get_field_id('rest_utzui'); ?>" name="<?php echo $this->get_field_name('rest_utzui'); ?>" >
+  			<option value=""<?php echo (''==esc_attr($instance['rest_utzui']))?'selected':''; ?>><?php _e('Use WordPress timezone settings, no REST'); ?></option>
+            <option value="1"<?php echo ('1'==esc_attr($instance['rest_utzui']))?'selected':''; ?>><?php _e('Use Client timezone settings, with REST', 'simple-google-icalendar-widget'); ?></option>
   		 </select>	
         <p>
           <label for="<?php echo $this->get_field_id('tag_sum'); ?>"><?php _e('Tag for summary:', 'simple-google-icalendar-widget'); ?></label> 
