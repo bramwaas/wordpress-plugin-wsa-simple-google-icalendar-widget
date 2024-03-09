@@ -63,7 +63,7 @@
 					transform: function({ instance }) {
 						if (!(parseInt(instance.raw.layout) > 0)) { instance.raw.layout = 3 }
 						return blocks.createBlock('simplegoogleicalenderwidget/simple-ical-block', {
-							sibid: instance.raw.sibid,
+							sibid: 'B' + instance.raw.sibid.substr(1),
 							postid: instance.raw.postid,
 							tzid_ui: instance.raw.tzid_ui,
 							title: instance.raw.title,
@@ -102,11 +102,13 @@
 				}
 				else if (typeof props.attributes.sibid !== 'string') { props.setAttributes({ sibid: 'b' + props.clientId }); };
 				props.setAttributes({ postid: '' + props.context['postId'] });
-				if ('1' == props.attributes.rest_utzui) {
+				if ('' < props.attributes.rest_utzui) {
 					ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
+					props.setAttributes({ wptype: 'rest_ph' })
 					}
 				else {
 					ptzid_ui = '';
+					props.setAttributes({ wptype: 'block' })
 					};
 			useEffect(function() {
 				if (props.attributes.clear_cache_now) {

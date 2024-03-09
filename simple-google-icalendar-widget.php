@@ -6,9 +6,9 @@
  Author: Bram Waasdorp
  Version: 2.2.1
  License: GPL3
- Tested up to: 6.4
+ Tested up to: 6.5
  Requires at least: 5.3
- Requires PHP:  5.3.0 tested with 8
+ Requires PHP:  7.4 tested with 8
  Text Domain:  simple-google-icalendar-widget
  Domain Path:  /languages
  *   bw 20201122 v1.2.0 find solution for DTSTART and DTEND without time by explicit using isDate and only displaying times when isDate === false.;
@@ -45,7 +45,7 @@
 /*
  Simple Google Calendar Outlook Events Widget
  Copyright (C) Bram Waasdorp 2017 - 2024
- 2024-01-06
+ 2024-03-10
  Forked from Simple Google Calendar Widget v 0.7 by Nico Boehr
  
  This program is free software: you can redistribute it and/or modify
