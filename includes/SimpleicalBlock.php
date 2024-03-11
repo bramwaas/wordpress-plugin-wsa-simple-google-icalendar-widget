@@ -346,16 +346,24 @@ class SimpleicalBlock
     }
 
     /**
-     * Placeholder starting point for REST processing display of block or widget.
-     * cache data (although maybe with wrong timezone) in transient to accelerate REST proces
+     * Save attributes in widget option for use in REST call 
      *
-     * @param array $block_attributes
-     *            Saved attribute/option values from database.
-     * @param string $content
-     *            Saved content from database.
-     * @param object $block
-     *            saved Block (context) from database.
+     * @param array $instance
+     *             attributes/instance to save $instance['sibid'] is used as (new) key when $w_number is empty.
+     * @param string $old_sibid
+     *            Previous save sibid to remeove if sibid is changed.
+     * @return succes new value sibid key else false           
      */
-    static function display_rest_start($block_attributes, $content = null, $block = null)
-    {}
+    static function update_rest_attrs($instance, $old_sibid = null) {
+    
+    $instances = get_option('widget_simple_ical_widget');
+    if (!empty($instance['sibid'])) {
+        if (!empty($old_sibid) && isset($instances[$old_sibid]) && ($instance['sibid'] != $old_sibid)) {
+            unset($instances[$old_sibid]);
+        }
+        $instances[$instance['sibid']] =  array_diff_assoc($instance, SimpleicalBlock::$default_block_attributes);
+        if (update_option( 'widget_simple_ical_widget', $instances, true)) return $instance['sibid'];
+    }
+    return false;    
+    }
 } // end class SimpleicalBlock

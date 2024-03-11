@@ -255,18 +255,11 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
                 $instance['anchorId'] = strip_tags($new_instance['anchorId']);
                 $instance['sibid'] = strip_tags($new_instance['sibid']);
                 
-                $instances = get_option('widget_simple_ical_widget');
                 if (!empty($this->number && is_numeric($this->number))) {
-                    $instance['postid'] = (string) $this->number;
-                    $instances[$instance['postid']] = $instance;
-                } else 
-                if (!empty($instance['sibid'])) {
-                    if (!empty($instances['sib']) && !empty($old_instance['sibid']) && ($instance['sibid'] != $old_instance['sibid'])) {
-                        unset($instances[$old_instance['sibid']]);
-                    }
-                    $instances[$instance['sibid']] =  array_diff_assoc($instance, SimpleicalBlock::$default_block_attributes);
+                   $instance['postid'] = (string) $this->id;
                 }
-                update_option( 'widget_simple_ical_widget', $instances);
+                SimpleicalBlock::update_rest_attrs($instance, $old_instance['sibid']);
+                
                 return $instance;
             }
             /**
@@ -412,11 +405,12 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
           <input class="widefat" id="<?php echo $this->get_field_id('anchorId'); ?>" name="<?php echo $this->get_field_name('anchorId'); ?>" type="text" value="<?php echo esc_attr($instance['anchorId']); ?>" />
         </p>
         <p>
-          <input class="widefat" id="<?php echo $this->get_field_id('sibid'); ?>" name="<?php echo $this->get_field_name('sibid'); ?>" type="hidden" value="<?php echo esc_attr($instance['sibid']); ?>" />
+          <label for="<?php echo $this->get_field_id('sibid'); ?>"><?php _e('Sib ID:', 'simple-google-icalendar-widget'); ?></label> 
+          <input class="widefat" id="<?php echo $this->get_field_id('sibid'); ?>" name="<?php echo $this->get_field_name('sibid'); ?>" type="text" value="<?php echo esc_attr($instance['sibid']); ?>" readonly />
         </p>
          <p>
           <button class="button" id="<?php echo $this->get_field_id('reset_id'); ?>" name="<?php echo $this->get_field_name('reset_id'); ?>" onclick="document.getElementById('<?php echo $this->get_field_id('sibid'); ?>').value = '<?php echo $nwsibid; ?>'" ><?php _e('Reset ID.', 'simple-google-icalendar-widget')  ?></button>
-          <label for="<?php echo $this->get_field_id('reset_id'); ?>"><?php _e('Reset ID, only necessary to clear cache or after duplicating block. Also change another field to save the new values to the DB', 'simple-google-icalendar-widget'); ?></label> 
+          <label for="<?php echo $this->get_field_id('reset_id'); ?>"><?php _e('Reset ID, only necessary to clear cache or after duplicating block. You may have to change another field to save the new values to the DB', 'simple-google-icalendar-widget'); ?></label> 
         </p>
         <p>
             <?php echo '<a href="' . admin_url('admin.php?page=simple_ical_info') . '" target="_blank">' ; 

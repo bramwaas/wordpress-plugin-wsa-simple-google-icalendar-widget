@@ -168,21 +168,30 @@ class RestController extends WP_REST_Controller {
                 }
                 //
             }
-            if (false === ($block_attributes = self::find_block_attributes($blocks, $params['sibid'], 'simplegoogleicalenderwidget/simple-ical-block', 10))) {
-                return new WP_Error('404', __('No content block content found', 'simple-google-icalendar-widget'));
+            if (false === $block_attributes ) { /// werkt niet
+                $widget_block = get_option('widget_block'); // [$params['sibid']];
+                $blocks = parse_blocks($widget_block);
+                if (false === ($block_attributes = self::find_block_attributes($blocks, $params['sibid'], 'simplegoogleicalenderwidget/simple-ical-block', 10))){
+                    $block_attributes = [];
+                }
             }
         }
 //        $block_attributes['wptype'] = 'REST';
-        $block_attributes = array_merge($block_attributes, $params);
-        $content = SimpleicalBlock::render_block($block_attributes, []);
-        $data = $this->prepare_item_for_response([
-            'content' => $content,
-            'params' => $params
-        ], $request);
+            $block_attributes = array_merge($block_attributes, $params);
+            $content = SimpleicalBlock::render_block($block_attributes, []);
+            $data = $this->prepare_item_for_response([
+                'content' => $content,
+                'params' => $params
+            ], $request);
         if (isset($data)) {
             return new WP_REST_Response($data, 200);
         } else {
-            return new WP_Error('404', __('Not possible to get block content', 'simple-google-icalendar-widget'));
+            $data = $this->prepare_item_for_response([
+                'content' => '<p>' . __('Not possible to get block content', 'simple-google-icalendar-widget') .'</p>',
+                'params' => $params
+            ], $request);
+            return new WP_REST_Response($data, 404);
+//            return new WP_Error('404', __('Not possible to get block content', 'simple-google-icalendar-widget'));
         }
     }
     /**
