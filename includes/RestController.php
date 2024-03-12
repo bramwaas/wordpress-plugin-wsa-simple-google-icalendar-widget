@@ -96,7 +96,7 @@ class RestController extends WP_REST_Controller {
         register_rest_route( $this->namespace, '/v1/set-sib-attrs', array(
             array(
                 'methods'             => 'GET, POST',
-                'callback'            => array( $this, 'update_rest_attrs' ),
+                'callback'            => array( $this, 'set_sib_attrs' ),
                 'permission_callback' => array( $this,'set_sib_attrs_permissions_check'),
                 'args'                => array(
                     'attributes' => [],
@@ -194,23 +194,32 @@ class RestController extends WP_REST_Controller {
         }
     }
     /**
-     * Get block content with attributes from request.
+     * Set attributes in option.
      *
      * @param WP_REST_Request $request Full data about the request.
      * @return WP_Error|WP_REST_Response
      * $since 2.3.0
+     * eample .../wp-json/simple-google-icalendar-widget/v1/set-sib-attrs?attributes={%22a%22:%221%22,%22b%22:%222%22}&old_sibid=w234
      */
-    public function get_content_by_attributes( $request ) {
+    public function set_sib_attrs( $request ) {
         //get parameters from request
         $params = $request->get_params();
-        $content = SimpleicalBlock::render_block($params,[]);
+        $content ='';
+        foreach ($params as $key => $value){
+        $content .= 'Key:' . $key . ' value = ' . $value . '<br>';
+        }
+//        $content = SimpleicalBlock::update_rest_attrs($instance, $old_sibid = null);
         $data = $this->prepare_item_for_response( ['content' => $content, 'params' => $params], $request );
         
         //return a response or error based on some conditional
         if (isset($data)) {
             return new WP_REST_Response($data, 200);
         } else {
-            return new WP_Error( '404', __( 'Not possible to get block content', 'simple-google-icalendar-widget' ) );
+            $data = $this->prepare_item_for_response([
+                'content' => 'FALSE',
+                'params' => $params
+            ], $request);
+            return new WP_REST_Response($data, 404);
         }
     }
     /**
@@ -220,12 +229,12 @@ class RestController extends WP_REST_Controller {
      * 
      */
     public function get_content_by_ids_schema() {
-        if ( $this->schema ) {
+        if ( $this->get_content_by_ids_schema ) {
             // Since WordPress 5.3, the schema can be cached in the $schema property.
-            return $this->schema;
+            return $this->get_content_by_ids_schema;
         }
         
-        $this->schema = array(
+        $this->get_content_by_ids_schema = array(
             // This tells the spec of JSON Schema we are using which is draft 4.
             '$schema'              => 'http://json-schema.org/draft-04/schema#',
             // The title property marks the identity of the resource.
@@ -248,30 +257,30 @@ class RestController extends WP_REST_Controller {
             ),
         );
         
-        return $this->schema;
+        return $this->get_content_by_ids_schema;
     }
     /**
-     * Get schema for block_content.
+     * Get schema for set_sib_attrs_schema.
      *
      * @return array The schema
      *
      */
-    public function get_content_by_attributes_schema() {
-        if ( $this->schema ) {
+    public function set_sib_attrs_schema() {
+        if ( $this->set_sib_attrs_schema ) {
             // Since WordPress 5.3, the schema can be cached in the $schema property.
-            return $this->schema;
+            return $this->set_sib_attrs_schema;
         }
         
-        $this->schema = array(
+        $this->set_sib_attrs_schema = array(
             // This tells the spec of JSON Schema we are using which is draft 4.
             '$schema'              => 'http://json-schema.org/draft-04/schema#',
             // The title property marks the identity of the resource.
-            'title'                => 'block-content',
+            'title'                => 'set_sib_attrs',
             'type'                 => 'object',
             // In JSON Schema you can specify object properties in the properties attribute.
             'properties'           => array(
                 'content' => array(
-                    'description'  => esc_html__( 'The content for the block.', 'simple-google-icalendar-widget' ),
+                    'description'  => esc_html__( 'The result of the action.', 'simple-google-icalendar-widget' ),
                     'type'         => 'string',
                     'context'      => array( 'view', 'edit', 'embed' ),
                     'readonly'     => true,
@@ -285,7 +294,7 @@ class RestController extends WP_REST_Controller {
             ),
         );
         
-        return $this->schema;
+        return $this->set_sib_attrs_schema;
     }
     
     
@@ -308,51 +317,12 @@ class RestController extends WP_REST_Controller {
      * @param WP_REST_Request $request Full data about the request.
      * @return WP_Error|bool
      */
-    public function get_items_permissions_check( $request ) {
+    public function set_sib_attrs_permissions_check( $request ) {
         //return true; <--use to make readable by all
         return true;
         return current_user_can( 'edit_something' );
     }
     
-    /**
-     * Check if a given request has access to get a specific item
-     *
-     * @param WP_REST_Request $request Full data about the request.
-     * @return WP_Error|bool
-     */
-    public function get_item_permissions_check( $request ) {
-        return $this->get_items_permissions_check( $request );
-    }
-    
-    /**
-     * Check if a given request has access to create items
-     *
-     * @param WP_REST_Request $request Full data about the request.
-     * @return WP_Error|bool
-     */
-    public function create_item_permissions_check( $request ) {
-        return current_user_can( 'edit_something' );
-    }
-    
-    /**
-     * Check if a given request has access to update a specific item
-     *
-     * @param WP_REST_Request $request Full data about the request.
-     * @return WP_Error|bool
-     */
-    public function update_item_permissions_check( $request ) {
-        return $this->create_item_permissions_check( $request );
-    }
-    
-    /**
-     * Check if a given request has access to delete a specific item
-     *
-     * @param WP_REST_Request $request Full data about the request.
-     * @return WP_Error|bool
-     */
-    public function delete_item_permissions_check( $request ) {
-        return $this->create_item_permissions_check( $request );
-    }
     
     /**
      * Prepare the item for create or update operation
@@ -376,34 +346,6 @@ class RestController extends WP_REST_Controller {
         return array();
     }
     
-    /**
-     * Get the query params for collections
-     *
-     * @return array
-     */
-    public function get_collection_params() {
-        return array(
-            'page'     => array(
-                'description'       => 'Current page of the collection.',
-                'type'              => 'integer',
-                'default'           => 1,
-                'sanitize_callback' => 'absint',
-            ),
-            'per_page' => array(
-                'description'       => 'Maximum number of items to be returned in result set.',
-                'type'              => 'integer',
-                'default'           => 10,
-                'sanitize_callback' => 'absint',
-            ),
-            'search'   => array(
-                'description'       => 'Limit results to those matching a string.',
-                'type'              => 'string',
-                'sanitize_callback' => 'sanitize_text_field',
-            ),
-        );
-    }
-
-
     /**
      * Method to get a singleton controller instance.
      *
