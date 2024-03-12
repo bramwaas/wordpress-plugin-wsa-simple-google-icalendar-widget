@@ -44,7 +44,6 @@ class RestController extends WP_REST_Controller {
     public function __construct()
     {
         $this->namespace = 'simple-google-icalendar-widget/';
-        $this->rest_base = 'content-by-';
     }
     
     /**
@@ -69,8 +68,8 @@ class RestController extends WP_REST_Controller {
      * @since       2.3.0
      *
      */
-    public function register_routes() {
-        register_rest_route( $this->namespace, '/v1/' . $this->rest_base .'ids', array(
+    public function register_routes() { 
+        register_rest_route( $this->namespace, '/v1/content-by-ids', array(
             array(
                 'methods'             => 'GET, POST',
                 'callback'            => array( $this, 'get_content_by_ids' ),
@@ -89,28 +88,28 @@ class RestController extends WP_REST_Controller {
             ),     
             'schema' => array ($this, 'get_content_by_ids_schema'),
         ) );
-        register_rest_route( $this->namespace, '/v1/' . $this->rest_base . 'ids/schema', array(
+        register_rest_route( $this->namespace, '/v1/content-by-ids/schema', array(
             'methods'  => WP_REST_Server::READABLE,
             'callback' => array( $this, 'get_content_by_ids_schema' ),
         ) );
-        register_rest_route( $this->namespace, '/v1/' . $this->rest_base .'attributes', array(
+//        
+        register_rest_route( $this->namespace, '/v1/set-sib-attrs', array(
             array(
                 'methods'             => 'GET, POST',
-                'callback'            => array( $this, 'get_content_by_attributes' ),
-                'permission_callback' => array( $this,'get_block_content_permissions_check'),
+                'callback'            => array( $this, 'update_rest_attrs' ),
+                'permission_callback' => array( $this,'set_sib_attrs_permissions_check'),
                 'args'                => array(
-                    'calendar_id' => array(
-                        'default' => '#example',
-                    ),
+                    'attributes' => [],
+                    'prev_sib'   => [],  
                 ),
             ),
-            'schema' => array ($this, 'get_content_by_attributes_schema'),
+            'schema' => array ($this, 'set_sib_attrs_schema'),
         ) );
-        register_rest_route( $this->namespace, '/v1/' . $this->rest_base . 'attributes/schema', array(
+        register_rest_route( $this->namespace, '/v1/set-sib-attrs/schema', array(
             'methods'  => WP_REST_Server::READABLE,
             'callback' => array(
                 $this,
-                'get_content_by_attributes_schema'
+                'set_sib_attrs_schema'
             )
         ));
     }
