@@ -133,7 +133,7 @@ class RestController extends WP_REST_Controller {
             if (! empty($params['postid']) &&is_numeric($params['postid'])) {
                 $block_attributes = get_option('widget_simple_ical_widget')[$params['postid']];
             } else {
-            $block_attributes = get_option('widget_simple_ical_widget')[$params['sibid']];
+                $block_attributes = get_option(SIB_ATTR)[$params['sibid']];
             }
         } else {
             if (! empty($params['postid'])) {

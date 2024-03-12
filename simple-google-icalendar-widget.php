@@ -65,6 +65,8 @@ use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\IcsParser;
 use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalBlock;
 use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalWidgetAdmin;
 
+const SIB_ATTR = 'simple_ical_block_attrs';
+
 if (!class_exists('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\IcsParser')) {
     require_once( 'includes/IcsParser.php' );
     class_alias('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\IcsParser', 'IcsParser');

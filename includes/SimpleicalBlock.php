@@ -35,6 +35,7 @@ namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
 class SimpleicalBlock
 {
+    const SIB_ATTR = 'simple_ical_block_attrs';
 
     /**
      * tags allowed for summary
@@ -356,13 +357,13 @@ class SimpleicalBlock
      */
     static function update_rest_attrs($instance, $old_sibid = null) {
     
-    $instances = get_option('widget_simple_ical_widget');
+    $instances = get_option(SIB_ATTR);
     if (!empty($instance['sibid'])) {
         if (!empty($old_sibid) && isset($instances[$old_sibid]) && ($instance['sibid'] != $old_sibid)) {
             unset($instances[$old_sibid]);
         }
         $instances[$instance['sibid']] =  array_diff_assoc($instance, SimpleicalBlock::$default_block_attributes);
-        if (update_option( 'widget_simple_ical_widget', $instances, true)) return $instance['sibid'];
+        if (update_option( SIB_ATTR, $instances, true)) return $instance['sibid'];
     }
     return false;    
     }
