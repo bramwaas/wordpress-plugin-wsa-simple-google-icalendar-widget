@@ -99,7 +99,7 @@ class RestController extends WP_REST_Controller {
                 'callback'            => array( $this, 'set_sib_attrs' ),
                 'permission_callback' => array( $this,'set_sib_attrs_permissions_check'),
                 'args'                => array(
-                    'attributes' => [],
+                    'sibid' => [],
                     'prev_sib'   => [],  
                 ),
             ),
@@ -199,18 +199,14 @@ class RestController extends WP_REST_Controller {
      * @param WP_REST_Request $request Full data about the request.
      * @return WP_Error|WP_REST_Response
      * $since 2.3.0
-     * eample .../wp-json/simple-google-icalendar-widget/v1/set-sib-attrs?attributes={%22a%22:%221%22,%22b%22:%222%22}&old_sibid=w234
+     * example .../wp-json/simple-google-icalendar-widget/v1/set-sib-attrs?sibid=b123&test=xyz&prev_sibid=w234
      */
     public function set_sib_attrs( $request ) {
         //get parameters from request
         $params = $request->get_params();
-        $content ='';
-        foreach ($params as $key => $value){
-        $content .= 'Key:' . $key . ' value = ' . $value . '<br>';
-        }
-//        $content = SimpleicalBlock::update_rest_attrs($instance, $old_sibid = null);
+        $prev_sibid = $params['prev_sibid'] ?? NULL;
+        $content = SimpleicalBlock::update_rest_attrs($params, $prev_sibid );
         $data = $this->prepare_item_for_response( ['content' => $content, 'params' => $params], $request );
-        
         //return a response or error based on some conditional
         if (isset($data)) {
             return new WP_REST_Response($data, 200);
