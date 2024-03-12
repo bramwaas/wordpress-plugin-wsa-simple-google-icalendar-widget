@@ -357,13 +357,13 @@ class SimpleicalBlock
      */
     static function update_rest_attrs($instance, $old_sibid = null) {
     
-    $instances = get_option(SIB_ATTR);
+    $instances = get_option(self::SIB_ATTR);
     if (!empty($instance['sibid'])) {
         if (!empty($old_sibid) && isset($instances[$old_sibid]) && ($instance['sibid'] != $old_sibid)) {
             unset($instances[$old_sibid]);
         }
         $instances[$instance['sibid']] =  array_diff_assoc($instance, self::$default_block_attributes);
-        if (update_option( SIB_ATTR, $instances, true)) return $instance['sibid'];
+        if (update_option( self::SIB_ATTR, $instances, true)) return $instance['sibid'];
     }
     return false;    
     }
