@@ -355,12 +355,13 @@ class SimpleicalBlock
      *            Previous save sibid to remeove if sibid is changed.
      * @return succes new value sibid key else false           
      */
-    static function update_rest_attrs($instance, $prev_sibid = null) {
+    static function update_rest_attrs($instance) {
     
-    $instances = get_option(self::SIB_ATTR);
+    $instances = (get_option(self::SIB_ATTR)) ?? [];
+    
     if (!empty($instance['sibid'])) {
-        if (!empty($prev_sibid) && isset($instances[$prev_sibid]) && ($instance['sibid'] != $prev_sibid)) {
-            unset($instances[$prev_sibid]);
+        if (!empty($instance['prev_sibid']) && isset($instances[$instance['prev_sibid']]) && ($instance['sibid'] != $instance['prev_sibid'])) {
+            unset($instances[$instance['prev_sibid']]);
         }
         $instances[$instance['sibid']] =  array_diff_assoc($instance, self::$default_block_attributes);
         if (update_option( self::SIB_ATTR, $instances, true)) return $instance['sibid'];

@@ -204,8 +204,7 @@ class RestController extends WP_REST_Controller {
     public function set_sib_attrs( $request ) {
         //get parameters from request
         $params = $request->get_params();
-        $prev_sibid = $params['prev_sibid'] ?? NULL;
-        $content = SimpleicalBlock::update_rest_attrs($params, $prev_sibid );
+        $content = SimpleicalBlock::update_rest_attrs($params);
         $data = $this->prepare_item_for_response( ['content' => $content, 'params' => $params], $request );
         //return a response or error based on some conditional
         if (isset($data)) {

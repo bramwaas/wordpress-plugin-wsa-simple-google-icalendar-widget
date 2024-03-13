@@ -260,7 +260,8 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
                 if (!empty($this->number && is_numeric($this->number))) {
                    $instance['postid'] = (string) $this->id;
                 }
-                SimpleicalBlock::update_rest_attrs($instance, $old_instance['sibid']);
+                if (!empty($old_instance['sibid'])) $instance['prev_sibid'] = $old_instance['sibid'];
+                $instance['prev_sibid'] = SimpleicalBlock::update_rest_attrs($instance, );
                 
                 return $instance;
             }
