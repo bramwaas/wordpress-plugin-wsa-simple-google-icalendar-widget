@@ -167,12 +167,8 @@ class RestController extends WP_REST_Controller {
                 }
                 //
             }
-            if (false === $block_attributes ) { /// werkt niet
-                $widget_block = get_option('widget_block'); // [$params['sibid']];
-                $blocks = parse_blocks($widget_block);
-                if (false === ($block_attributes = self::find_block_attributes($blocks, $params['sibid'], 'simplegoogleicalenderwidget/simple-ical-block', 10))){
-                    $block_attributes = [];
-                }
+            if (false === $block_attributes ) { 
+                $block_attributes = get_option(SimpleicalBlock::SIB_ATTR)[$params['sibid']];
             }
         }
 //        $block_attributes['wptype'] = 'REST';

@@ -419,7 +419,8 @@
 							label: __('Reset ID, only necessary after duplicating block', 'simple-google-icalendar-widget'),
 							showTooltip: true,
 							variant: 'secondary',
-							onClick: function() { props.setAttributes({ sibid: 'b' + props.clientId }); },
+							onClick: function() { props.setAttributes({ prev_sibid: props.sibid, sibid: 'b' + props.clientId });
+								},
 						}
 					),
 					el(
@@ -436,17 +437,16 @@
 		save: function (props){
 			async function set_sib_attrs (attrs) {
         	const fpath = "/simple-google-icalendar-widget/v1/set-sib-attrs";
-			let response = await window.wp.apiFetch({
+			let res = await window.wp.apiFetch({
 				path: fpath,
 				method: 'POST',
 				data: attrs,
-				}
-			);
-			let saved_sibid = await response.json();
-			console.log(saved_sibid);
+			});
+			console.log(res);
+			console.log(res.content);
+			return res;
 		}
-		set_sib_attrs(props);	
-			
+        set_sib_attrs(props.attributes);
 		return null;
 		}
 	});
