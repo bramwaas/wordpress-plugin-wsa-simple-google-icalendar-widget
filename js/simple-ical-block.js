@@ -433,6 +433,22 @@
 					)
 				));
 		},
+		save: function (props){
+			async function set_sib_attrs (attrs) {
+        	const fpath = "/simple-google-icalendar-widget/v1/set-sib-attrs";
+			let response = await window.wp.apiFetch({
+				path: fpath,
+				method: 'POST',
+				data: attrs,
+				}
+			);
+			let saved_sibid = await response.json();
+			console.log(saved_sibid);
+		}
+		set_sib_attrs(props);	
+			
+		return null;
+		}
 	});
 }(window.wp.blocks,
 	window.wp.i18n,

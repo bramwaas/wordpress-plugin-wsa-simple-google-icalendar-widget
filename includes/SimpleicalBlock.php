@@ -123,6 +123,7 @@ class SimpleicalBlock
             'attributes' => [
             'wptype' => ['type' => 'string'],
             'sibid' => ['type' => 'string'],
+            'prev_sibid' => ['type' => 'string'],
             'postid' => ['type' => 'string'],
             'tzid_ui'=> ['type'=> 'string'],
             'title' => ['type' => 'string', 'default' => __('Events', 'simple-google-icalendar-widget')],

@@ -14,6 +14,7 @@
 		"postid": {"type": "string"},
 		"tzid_ui": {"type": "string"},
 		"sibid": {"type": "string"},
+		"prev_sibid": {"type": "string"},
 		"title": {"type": "string", "default": "Events"},
 		"calendar_id": {"type": "string", "default": ""},
 		"event_count": {"type": "integer", "default": 10},

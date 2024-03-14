@@ -13,6 +13,7 @@
 		"wptype": {"type": "string"},
 		"postid": {"type": "string"},
 		"sibid": {"type": "string"},
+		"prev_sibid": {"type": "string"},
 		"tzid_ui": {"type": "string"},
 		"title": {"type": "string", "default": "Events"},
 		"calendar_id": {"type": "string", "default": ""},
