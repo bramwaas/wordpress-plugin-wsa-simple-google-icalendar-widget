@@ -269,6 +269,28 @@ class RestController extends WP_REST_Controller {
     }
     
     /**
+     * Prepare the item for create or update operation
+     *
+     * @param WP_REST_Request $request Request object
+     * @return WP_Error|object $prepared_item
+     */
+    protected function prepare_item_for_database( $request ) {
+        return array();
+    }
+    
+    /**
+     * Prepare the item for the REST response
+     *
+     * @param mixed $item WordPress representation of the item.
+     * @param WP_REST_Request $request Request object.
+     * @return mixed
+     */
+    public function prepare_item_for_response( $item, $request ) {
+        return $item;
+        return array();
+    }
+    
+    /**
      * Method to get a singleton controller instance.
      *
      * @return  static

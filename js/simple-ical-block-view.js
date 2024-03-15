@@ -37,7 +37,6 @@ window.simpleIcalBlock = {...(window.simpleIcalBlock || {}), ...{
 		let paramsObj = {"wptype": "REST", "tzid_ui":ptzid_ui};
 		for (let i = 0; i < nodeList.length; i++) {
 			paramsObj.sibid = nodeList[i].getAttribute('data-sib-id');
-			paramsObj.postid = nodeList[i].getAttribute('data-sib-pid');
 			nodeList[i].setAttribute('data-sib-st', 'f1');
 			this.fetchFromRest(paramsObj, nodeList[i]);
 		}
