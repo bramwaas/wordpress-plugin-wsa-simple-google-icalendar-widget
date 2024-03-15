@@ -125,56 +125,11 @@ class RestController extends WP_REST_Controller {
     {
         // get parameters from request
         $params = $request->get_params();
-        $blocks = [];
-        if (empty($params['sibid']))
-            return new WP_Error('404', __('Empty sibid. Not possible to get block content', 'simple-google-icalendar-widget'));
-        if ('W' == strtoupper(substr($params['sibid'], 0, 1))) {
-            if (! empty($params['postid']) &&is_numeric($params['postid'])) {
-                $block_attributes = get_option('widget_simple_ical_widget')[$params['postid']];
-            } else {
-                $block_attributes = get_option(SimpleicalBlock::SIB_ATTR)[$params['sibid']];
-            }
-        } else {
-            if (! empty($params['postid'])) {
-                $post = get_post((int) $params['postid']);
-                if (! empty($post)) {
-                    $content_post = get_post($post)->post_content;
-                    $blocks = parse_blocks($content_post);
-                }
-            }
-            if (empty($blocks) || false === ($block_attributes = self::find_block_attributes($blocks, $params['sibid'], 'simplegoogleicalenderwidget/simple-ical-block', 10))) {
-                $posttypes = array_diff(get_post_types(), [
-                    'post',
-                    'page',
-                    'attachment',
-                    'revision',
-                    'nav_menu_item',
-                    'custom_css',
-                    'customize_changeset',
-                    'oembed_cache',
-                    'user_request'
-                ]);
-                $post_ids = get_posts(array(
-                    'post_type' => $posttypes,
-                    'numberposts' => - 1,
-                    'fields' => 'ids'
-                ));
-                foreach ($post_ids as $postid) {
-                    $content_post = get_post($postid)->post_content;
-                    $blocks = parse_blocks($content_post);
-                    if (false !== ($block_attributes = self::find_block_attributes($blocks, $params['sibid'], 'simplegoogleicalenderwidget/simple-ical-block', 10)))
-                        break;
-                }
-                //
-            }
-            if (false === $block_attributes ) { 
-                $block_attributes = get_option(SimpleicalBlock::SIB_ATTR)[$params['sibid']];
-            }
-        }
-//        $block_attributes['wptype'] = 'REST';
-            $block_attributes = array_merge($block_attributes, $params);
-            $content = SimpleicalBlock::render_block($block_attributes, []);
-            $data = $this->prepare_item_for_response([
+        if (empty($params['sibid'])) return new WP_Error('404', __('Empty sibid. Not possible to get block content', 'simple-google-icalendar-widget'));
+        $block_attributes = get_option(SimpleicalBlock::SIB_ATTR)[$params['sibid']];
+        $block_attributes = array_merge($block_attributes, $params);
+        $content = SimpleicalBlock::render_block($block_attributes, []);
+        $data = $this->prepare_item_for_response([
                 'content' => $content,
                 'params' => $params
             ], $request);
@@ -186,14 +141,13 @@ class RestController extends WP_REST_Controller {
                 'params' => $params
             ], $request);
             return new WP_REST_Response($data, 404);
-//            return new WP_Error('404', __('Not possible to get block content', 'simple-google-icalendar-widget'));
         }
     }
     /**
      * Set attributes in option.
      *
-     * @param WP_REST_Request $request Full data about the request.
-     * @return WP_Error|WP_REST_Response
+     * @param WP_REST_Request $request attributes to save with $params['sibid'] as key.
+     * @return WP_Error|WP_REST_Response (when a change is made response.content = $params['sibid'] else false or 'FALSE')
      * $since 2.3.0
      * example .../wp-json/simple-google-icalendar-widget/v1/set-sib-attrs?sibid=b123&test=xyz&prev_sibid=w234
      */
@@ -314,29 +268,6 @@ class RestController extends WP_REST_Controller {
         return current_user_can( 'edit_something' );
     }
     
-    
-    /**
-     * Prepare the item for create or update operation
-     *
-     * @param WP_REST_Request $request Request object
-     * @return WP_Error|object $prepared_item
-     */
-    protected function prepare_item_for_database( $request ) {
-        return array();
-    }
-    
-    /**
-     * Prepare the item for the REST response
-     *
-     * @param mixed $item WordPress representation of the item.
-     * @param WP_REST_Request $request Request object.
-     * @return mixed
-     */
-    public function prepare_item_for_response( $item, $request ) {
-        return $item;
-        return array();
-    }
-    
     /**
      * Method to get a singleton controller instance.
      *
@@ -360,7 +291,7 @@ class RestController extends WP_REST_Controller {
      * @param string $bid needle 1 attr['sibid']
      * @param string $bname  needle 2 name of block
      * $params int $depth depth of  recursion.
-     * @return  array $attributes of false
+     * @return  array $attributes or false
      *
      * @since       2.3.0
      *
@@ -382,6 +313,5 @@ class RestController extends WP_REST_Controller {
         }
         return false;
     }
-    
 
 }

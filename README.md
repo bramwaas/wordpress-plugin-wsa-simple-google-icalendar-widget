@@ -121,9 +121,10 @@ There are no events found within the selection. Test e.g. with an appointment fo
 Check if you can download the ics file you have designated in the widget with a browser. At least if it is a text file with the first line "BEGIN:VCALENDAR" and further lines "BEGIN:VEVENT" and lines "END:VEVENT". If you cannot resolve it, you can of course report an error / question in our
 [community support forum](https://wordpress.org/support/plugin/simple-google-icalendar-widget)
 
-= I only see the title of the calendar, and the text 'Processing' even after waiting more the a minute =
+= I only see the title of the calendar, and the text 'Processing' even after waiting more the a minute, or a message &#61 Code: undefined &#61;	Msg: HTTP error, status &#61; 500  =
 
-Probably you have chosen the setting "Use Client timezone settings, with REST" in "Use client timezone settings". With this setting active, at first the widget will be presented as a placeholder with only the title and the text processing. In the HTML of this placeholder are also some ID\'s as parameters for the javascript REST call to fetch the content after the page is loaded. This fetch is not executed (correct).
+Probably you have chosen the setting "Use Client timezone settings, with REST" in "Use client timezone settings". With this setting active, at first the widget will be presented as a placeholder with only the title and the text processing. In the HTML of this placeholder are also some ID\'s as parameters for the javascript REST call to fetch the content after the page is loaded. This fetch is not executed (correct).   
+To work correct Javascript must be enabled in a browser with version newer than 2016 but not in Internet Explorer.  
 This is probably caused because the javascript view file with the fetch command is not loaded e.g. in the editor of Elementor or an other pagebuilder that tries to show a preview of the widget but does not load the necessary Javascript. This is a known issue, you could work around it by first set "Use WordPress timezone sttings, no REST" until you are satisfied with all the other settings and then set "Use Client timezone ...".
 The REST call might also have failed by other reasons, then another try would probably solve the issue, but I have never seen that in testing. 
 If you cannot resolve it, you can of course report an error / question in our [community support forum](https://wordpress.org/support/plugin/simple-google-icalendar-widget)    
@@ -410,7 +411,7 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 2017&thinsp;&ndash;&thinsp;2023 &copy; [Bram Waasdorp](http://www.waasdorpsoekhan.nl).
 
 == Upgrade Notice ==
-* from 2024 (v2.3.0) requires php 7.4.
+* from 2024 (v2.3.0) requires php 7.4. "Use Client timezone settings, with REST" in "Use client timezone settings" works only correct with Javascript enabled in a browser with version newer than 2016 but not in Internet Explorer (fetch and Promise are used).         
 * from 2023 (v2.1.1) deprecation php older than 7.4. I don't test in older php versions than 7.4 older versions might still work, but in future I may use new functions of php 8.
 * in v2.1.1 Start with summary is replaced with a select. After upgrade you may have to choose the correct option again. 
 * since v1.2.0 Wordpress version 5.3.0 is required because of the use of wp_date() 
