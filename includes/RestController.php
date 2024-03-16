@@ -264,8 +264,7 @@ class RestController extends WP_REST_Controller {
      */
     public function set_sib_attrs_permissions_check( $request ) {
         //return true; <--use to make readable by all
-        return true;
-        return current_user_can( 'edit_something' );
+        return current_user_can( 'edit_others_posts' );
     }
     
     /**

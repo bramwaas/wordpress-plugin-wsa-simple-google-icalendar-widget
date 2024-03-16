@@ -363,6 +363,7 @@ class SimpleicalBlock
         if (!empty($instance['prev_sibid']) && isset($instances[$instance['prev_sibid']]) && ($instance['sibid'] != $instance['prev_sibid'])) {
             unset($instances[$instance['prev_sibid']]);
         }
+        $instance['saved']= date('YmdHis');
         $instances[$instance['sibid']] =  array_diff_assoc($instance, self::$default_block_attributes);
         if (update_option( self::SIB_ATTR, $instances, true)) return $instance['sibid'];
     }

@@ -40,6 +40,7 @@
 	);
 	var Button = components.Button;
 	var TextControl = components.TextControl;
+	var TextareaControl = components.TextareaControl;
 	var ToggleControl = components.ToggleControl;
 	var SelectControl = components.SelectControl;
 	var useEffect = element.useEffect;
@@ -416,11 +417,20 @@
 						Button,
 						{
 							text: __('Reset ID.', 'simple-google-icalendar-widget'),
-							label: __('Reset ID, only necessary after duplicating block', 'simple-google-icalendar-widget'),
+							label: __('Reset ID, only necessary after duplicating block, be sure to click Update button after changing id', 'simple-google-icalendar-widget'),
 							showTooltip: true,
 							variant: 'secondary',
 							onClick: function() { props.setAttributes({ sibid: 'b' + props.clientId });
 								},
+						}
+					),
+					el(
+						TextareaControl,
+						{
+							label: __('Sibid. Id for use in this plugin e.g. REST call', 'simple-google-icalendar-widget'),
+							value: props.attributes.sibid,
+							disabled: true,
+							rows: 2,
 						}
 					),
 					el(

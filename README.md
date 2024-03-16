@@ -125,8 +125,9 @@ Check if you can download the ics file you have designated in the widget with a 
 
 Probably you have chosen the setting "Use Client timezone settings, with REST" in "Use client timezone settings". With this setting active, at first the widget will be presented as a placeholder with only the title and the text processing. In the HTML of this placeholder are also some ID\'s as parameters for the javascript REST call to fetch the content after the page is loaded. This fetch is not executed (correct).   
 To work correct Javascript must be enabled in a browser with version newer than 2016 but not in Internet Explorer.  
-This is probably caused because the javascript view file with the fetch command is not loaded e.g. in the editor of Elementor or an other pagebuilder that tries to show a preview of the widget but does not load the necessary Javascript. This is a known issue, you could work around it by first set "Use WordPress timezone sttings, no REST" until you are satisfied with all the other settings and then set "Use Client timezone ...".
-The REST call might also have failed by other reasons, then another try would probably solve the issue, but I have never seen that in testing. 
+This is probably caused because the javascript view file with the fetch command is not loaded e.g. in the editor of Elementor or an other pagebuilder that tries to show a preview of the widget but does not load the necessary Javascript. This is a known issue, you could work around it by first set "Use WordPress timezone settings, no REST" until you are satisfied with all the other settings and then set "Use Client timezone ...".
+If you change the Sibid without clicking the Update button, the new Sibid may already be saved in the plugin options for the REST call, but not in the block attributes. If you still click Update, the problem will be resolved.   
+The REST call might also have failed by other reasons, then another try would probably solve the issue, but I have never seen that in testing.  
 If you cannot resolve it, you can of course report an error / question in our [community support forum](https://wordpress.org/support/plugin/simple-google-icalendar-widget)    
 
 = Can I use an event calendar that only uses days, not times, like a holiday calendar? =
