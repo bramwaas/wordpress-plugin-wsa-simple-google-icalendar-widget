@@ -20,14 +20,14 @@
  * 20240215 Adjustment of attributes provided when calling server side render: period limits modulo 4 so as not to enter Rest Server mode;
  *   wptype 'ssr'.
  */
-(function(blocks, i18n, element, blockEditor, components, serverSideRender) {
-	var el = element.createElement;
-	var __ = i18n.__;
-	var useBlockProps = blockEditor.useBlockProps;
-	var InspectorControls = blockEditor.InspectorControls;
-	var InspectorAdvancedControls = blockEditor.InspectorAdvancedControls;
-	var ServerSideRender = serverSideRender;
-	var iconEl = el('svg', { width: 24, height: 24, viewBox: "0 0 128 128" },
+(function(blocks, i18n, element, blockEditor, components, serverSideRender,	apiFetch, data ) {
+	const el = element.createElement;
+	const __ = i18n.__;
+	const useBlockProps = blockEditor.useBlockProps;
+	const InspectorControls = blockEditor.InspectorControls;
+	const InspectorAdvancedControls = blockEditor.InspectorAdvancedControls;
+	const ServerSideRender = serverSideRender;
+	const iconEl = el('svg', { width: 24, height: 24, viewBox: "0 0 128 128" },
 		el('rect', { fill: "#ecf6fe", stroke: "#ecf6fe", width: "128", height: "128", x: "0", y: "0" }),
 		el('path', { fill: "#ffffff", stroke: "#3f48cc", d: "M 12,28 h 99 v 86 H 12 Z", }),
 		el('path', { fill: "#3f48cc", stroke: "#3f48cc", d: "M 44.466259,70.168415 q 2.864017,0 4.918637,-1.681054 2.085752,-1.681053 2.085752,-4.825245 0,-2.397057 -1.649923,-4.109241 -1.649923,-1.743315 -4.451678,-1.743315 -1.898968,0 -3.144192,0.529221 -1.214094,0.52922 -1.930098,1.400877 -0.716005,0.871658 -1.369748,2.241405 -0.622612,1.369747 -1.151832,2.583841 -0.311307,0.653743 -1.120703,1.02731 -0.809396,0.373567 -1.867836,0.373567 -1.245225,0 -2.303666,-0.996179 -1.02731,-1.027311 -1.02731,-2.708364 0,-1.618792 0.965049,-3.393237 0.996179,-1.805576 2.864016,-3.424368 1.898968,-1.618792 4.700723,-2.583841 2.801756,-0.996179 6.257254,-0.996179 3.01967,0 5.510119,0.840526 2.490449,0.809396 4.327156,2.365927 1.836706,1.556531 2.770624,3.611151 0.933919,2.054621 0.933919,4.420548 0,3.113061 -1.369747,5.354466 -1.338617,2.210273 -3.860197,4.327155 2.428188,1.307486 4.078111,2.988539 1.681053,1.681054 2.52158,3.735674 0.840527,2.02349 0.840527,4.389417 0,2.832886 -1.151833,5.478988 -1.120702,2.646103 -3.330976,4.731854 -2.210274,2.054621 -5.261074,3.237584 -3.01967,1.151833 -6.693082,1.151833 -3.735674,0 -6.693083,-1.338617 -2.957408,-1.338616 -4.887506,-3.330976 -1.898968,-2.02349 -2.895148,-4.171502 -0.965049,-2.148013 -0.965049,-3.54889 0,-1.805576 1.151833,-2.895147 1.182963,-1.120703 2.926278,-1.120703 0.871657,0 1.681053,0.529221 0.809396,0.49809 1.058441,1.214094 1.618792,4.327155 3.455498,6.444037 1.867837,2.085752 5.229944,2.085752 1.930098,0 3.704543,-0.933919 1.805576,-0.965049 2.957409,-2.832886 1.182963,-1.867837 1.182963,-4.327156 0,-3.642282 -1.992359,-5.696902 -1.99236,-2.085751 -5.54125,-2.085751 -0.622612,0 -1.930098,0.124522 -1.307486,0.124522 -1.681053,0.124522 -1.712184,0 -2.646103,-0.840526 -0.933918,-0.871657 -0.933918,-2.397058 0,-1.494269 1.120702,-2.397057 1.120702,-0.933918 3.330976,-0.933918 z" }),
@@ -38,13 +38,29 @@
 		el('circle', { fill: "#ecf6fe", stroke: "#000000", cx: "86", cy: "35", r: "3" }),
 		el('path', { fill: "#000000", stroke: "#000000", d: "M38,21 V35 M86,21 V35", })
 	);
-	var Button = components.Button;
-	var TextControl = components.TextControl;
-	var TextareaControl = components.TextareaControl;
-	var ToggleControl = components.ToggleControl;
-	var SelectControl = components.SelectControl;
-	var useEffect = element.useEffect;
-	var ptzid_ui;
+	const Button = components.Button;
+	const TextControl = components.TextControl;
+	const TextareaControl = components.TextareaControl;
+	const ToggleControl = components.ToggleControl;
+	const SelectControl = components.SelectControl;
+	const useEffect = element.useEffect;
+	let ptzid_ui;
+//	let wasSavingPost = false,  wasAutosavingPost = false,  wasPreviewingPost = false;
+//	let isSavingPost, isAutosavingPost, isPreviewingPost;
+
+	const fset_sib_attrs = function(attrs) {
+		const fpath = "/simple-google-icalendar-widget/v1/set-sib-attrs";
+		apiFetch({
+			path: fpath,
+			method: 'POST',
+			data: attrs,
+		}).then((res) => {
+			console.log(res);
+		}).catch((error) => {
+			console.log(error);
+		});
+	}
+
 
 	blocks.registerBlockType('simplegoogleicalenderwidget/simple-ical-block', {
 		icon: iconEl,
@@ -98,19 +114,42 @@
 		},
 
 		edit: function(props) {
-				if ((typeof props.attributes.sibid !== 'string') && (typeof props.attributes.blockid == 'string')) {
-					props.setAttributes({ sibid: props.attributes.blockid });
+
+//			data.subscribe(function() {
+//				isSavingPost = data.select('core/editor').isSavingPost();
+//				isAutosavingPost = data.select('core/editor').isAutosavingPost();
+//				isPreviewingPost = data.select('core/editor').isPreviewingPost();
+//				// trigger on save completion, except for autosaves that are not a post preview.
+//				if (
+//					(wasSavingPost && !isSavingPost && !wasAutosavingPost) ||
+//					(wasAutosavingPost && wasPreviewingPost && !isPreviewingPost)
+//				) {
+			useEffect(function() {
+				fset_sib_attrs(props.attributes);
+				if (props.attributes.sibid !== props.attributes.prev_sibid) { // maybe too fast when asynchrone apiFetch fails
+					props.attributes.prev_sibid = props.attributes.sibid;
 				}
-				else if (typeof props.attributes.sibid !== 'string') { props.setAttributes({ sibid: 'b' + props.clientId }); };
-				props.setAttributes({ postid: '' + props.context['postId'] });
-				if ('' < props.attributes.rest_utzui) {
-					ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
-					props.setAttributes({ wptype: 'rest_ph' })
-					}
-				else {
-					ptzid_ui = '';
-					props.setAttributes({ wptype: 'block' })
-					};
+			}, [props]);
+//				}
+//				// Save current state for next inspection.
+//				wasSavingPost = isSavingPost;
+//				wasAutosavingPost = isAutosavingPost;
+//				wasPreviewingPost = isPreviewingPost;
+//			}) // end subscribe
+
+			if ((typeof props.attributes.sibid !== 'string') && (typeof props.attributes.blockid == 'string')) {
+				props.setAttributes({ sibid: props.attributes.blockid });
+			}
+			else if (typeof props.attributes.sibid !== 'string') { props.setAttributes({ sibid: 'b' + props.clientId }); };
+			props.setAttributes({ postid: '' + props.context['postId'] });
+			if ('' < props.attributes.rest_utzui) {
+				ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
+				props.setAttributes({ wptype: 'rest_ph' })
+			}
+			else {
+				ptzid_ui = '';
+				props.setAttributes({ wptype: 'block' })
+			};
 			useEffect(function() {
 				if (props.attributes.clear_cache_now) {
 					let x = setTimeout(stopCC, 1000);
@@ -445,22 +484,6 @@
 				));
 		},
 		save: function (props){
-			function set_sib_attrs (attrs) {
-        	const fpath = "/simple-google-icalendar-widget/v1/set-sib-attrs";
-			window.wp.apiFetch({
-				path: fpath,
-				method: 'POST',
-				data: attrs,
-			}).then ((res) => {
-				console.log(res);
-			}).catch((error) => {
-			console.log(error);
-			});
-		}
-        set_sib_attrs(props.attributes);
-		if (props.attributes.sibid !== props.attributes.prev_sibid) { // maybe too fast when asynchrone apiFetch fails
-		   props.attributes.prev_sibid = props.attributes.sibid; 
-		}
 		return null;
 		}
 	});
@@ -469,6 +492,8 @@
 	window.wp.element,
 	window.wp.blockEditor,
 	window.wp.components,
-	window.wp.serverSideRender
+	window.wp.serverSideRender,
+	window.wp.apiFetch,
+	window.wp.data
 )
 );
