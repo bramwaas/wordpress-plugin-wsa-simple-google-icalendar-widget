@@ -134,6 +134,11 @@ If you cannot resolve it, you can of course report an error / question in our [c
 
  Yes you can, since v1.2.0, I have tested with [https://p24-calendars.icloud.com/holiday/NL_nl.ics](https://p24-calendars.icloud.com/holiday/NL_nl.ics) .
 
+= This block has encountered an error and cannot be previewed =
+
+Probably you have (re)opened a page where the block is edited but your password cookie is expired.   
+Log in in Wordpress again and open the page again. The block will be available.   
+
 = How do I set different colours and text size for the dates, the summary, and the details? =
 
 There is no setting for the color or font of parts in this plugin.
