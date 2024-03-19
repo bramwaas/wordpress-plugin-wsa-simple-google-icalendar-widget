@@ -49,6 +49,7 @@
 	const useSelect = data.useSelect;
 
 	let ptzid_ui;
+	let vprev_sibid;
 	/**
 	 * Returns `true` if the post is done saving, `false` otherwise.
 	 * from https://thewpvoyage.com/how-to-detect-when-a-post-is-done-saving-in-wordpress-gutenberg/
@@ -65,16 +66,15 @@
 		});
 
 		useEffect(() => {
-			if ((isSavingPost || isAutosavingPost) && !isPostSavingInProgress.current) {
+			if (isSavingPost && (! isAutosavingPost) && (!isPostSavingInProgress.current)) {
 				setIsPostSaved(false);
 				isPostSavingInProgress.current = true;
-					console.log('...is saving... sv:' + isSavingPost + ' As:' + isAutosavingPost )
+//					console.log('...is saving... sv:' + isSavingPost + ' As:' + isAutosavingPost )
 			}
 			if (!(isSavingPost || isAutosavingPost) && isPostSavingInProgress.current) {
-				// Code to run after post is done saving.
 				setIsPostSaved(true);
 				isPostSavingInProgress.current = false;
-					console.log('...done saving... sv:' + isSavingPost + ' As:' + isAutosavingPost )
+//					console.log('...done saving... sv:' + isSavingPost + ' As:' + isAutosavingPost )
 			}
 		}, [isSavingPost, isAutosavingPost]);
 
@@ -90,7 +90,7 @@
 			method: 'POST',
 			data: attrs,
 		}).then((res) => {
-			console.log(res);
+//			console.log(res);
 		}).catch((error) => {
 			console.log(error);
 		});
@@ -150,15 +150,11 @@
 
 		edit: function(props) {
 			const isAfterSave = useAfterSave();
-
 			useEffect(() => {
-				if (isAfterSave) {
-					fset_sib_attrs(props.attributes);
-					if (props.attributes.sibid !== props.attributes.prev_sibid) { // maybe too fast when asynchrone apiFetch fails
-						props.attributes.prev_sibid = props.attributes.sibid;
-					}
-				}
-			}, [isAfterSave]);
+			if (typeof vprev_sibid !== 'string') { // maybe too fast when asynchrone apiFetch failed, but necessary when sibid is last change.
+				vprev_sibid = props.attributes.sibid;
+			}
+			}, []);
 
 			if ((typeof props.attributes.sibid !== 'string') && (typeof props.attributes.blockid == 'string')) {
 				props.setAttributes({ sibid: props.attributes.blockid });
@@ -179,6 +175,17 @@
 					function stopCC() { props.setAttributes({ clear_cache_now: false }); }
 				}
 			}, [props.attributes.clear_cache_now]);
+			useEffect(() => {
+				if (isAfterSave) {
+					props.attributes.prev_sibid = vprev_sibid;
+					console.log('bfr prev_sibid:' + props.attributes.prev_sibid + ' sibid:' + props.attributes.sibid + 'v:' + vprev_sibid);
+					fset_sib_attrs(props.attributes);
+					if (props.attributes.sibid !== vprev_sibid) { // maybe too fast when asynchrone apiFetch fails, but necessary when sibid is not last change.
+						vprev_sibid = props.attributes.sibid;
+					}
+					console.log('aft prev_sibid:' + props.attributes.prev_sibid + ' sibid:' + props.attributes.sibid + 'v:' + vprev_sibid);
+				}
+			}, [isAfterSave]);
 			return el(
 				'div',
 				useBlockProps({
