@@ -44,10 +44,45 @@
 	const ToggleControl = components.ToggleControl;
 	const SelectControl = components.SelectControl;
 	const useEffect = element.useEffect;
-	let ptzid_ui;
-//	let wasSavingPost = false,  wasAutosavingPost = false,  wasPreviewingPost = false;
-//	let isSavingPost, isAutosavingPost, isPreviewingPost;
+	const useRef = element.useRef;
+	const useState = element.useState;
+	const useSelect = data.useSelect;
 
+	let ptzid_ui;
+	/**
+	 * Returns `true` if the post is done saving, `false` otherwise.
+	 * from https://thewpvoyage.com/how-to-detect-when-a-post-is-done-saving-in-wordpress-gutenberg/
+	 * @returns {Boolean}
+	 */
+	const useAfterSave = () => {
+		const [isPostSaved, setIsPostSaved] = useState(false);
+		const isPostSavingInProgress = useRef(false);
+		const { isSavingPost, isAutosavingPost } = useSelect((__select) => {
+			return {
+				isSavingPost: __select('core/editor').isSavingPost(),
+				isAutosavingPost: __select('core/editor').isAutosavingPost(),
+			}
+		});
+
+		useEffect(() => {
+			if ((isSavingPost || isAutosavingPost) && !isPostSavingInProgress.current) {
+				setIsPostSaved(false);
+				isPostSavingInProgress.current = true;
+					console.log('...is saving... sv:' + isSavingPost + ' As:' + isAutosavingPost )
+			}
+			if (!(isSavingPost || isAutosavingPost) && isPostSavingInProgress.current) {
+				// Code to run after post is done saving.
+				setIsPostSaved(true);
+				isPostSavingInProgress.current = false;
+					console.log('...done saving... sv:' + isSavingPost + ' As:' + isAutosavingPost )
+			}
+		}, [isSavingPost, isAutosavingPost]);
+
+		return isPostSaved;
+	};
+	/**
+	 * Copies attributes in Option via asynchrone REST call 
+	*/
 	const fset_sib_attrs = function(attrs) {
 		const fpath = "/simple-google-icalendar-widget/v1/set-sib-attrs";
 		apiFetch({
@@ -114,28 +149,16 @@
 		},
 
 		edit: function(props) {
+			const isAfterSave = useAfterSave();
 
-//			data.subscribe(function() {
-//				isSavingPost = data.select('core/editor').isSavingPost();
-//				isAutosavingPost = data.select('core/editor').isAutosavingPost();
-//				isPreviewingPost = data.select('core/editor').isPreviewingPost();
-//				// trigger on save completion, except for autosaves that are not a post preview.
-//				if (
-//					(wasSavingPost && !isSavingPost && !wasAutosavingPost) ||
-//					(wasAutosavingPost && wasPreviewingPost && !isPreviewingPost)
-//				) {
-			useEffect(function() {
-				fset_sib_attrs(props.attributes);
-				if (props.attributes.sibid !== props.attributes.prev_sibid) { // maybe too fast when asynchrone apiFetch fails
-					props.attributes.prev_sibid = props.attributes.sibid;
+			useEffect(() => {
+				if (isAfterSave) {
+					fset_sib_attrs(props.attributes);
+					if (props.attributes.sibid !== props.attributes.prev_sibid) { // maybe too fast when asynchrone apiFetch fails
+						props.attributes.prev_sibid = props.attributes.sibid;
+					}
 				}
-			}, [props]);
-//				}
-//				// Save current state for next inspection.
-//				wasSavingPost = isSavingPost;
-//				wasAutosavingPost = isAutosavingPost;
-//				wasPreviewingPost = isPreviewingPost;
-//			}) // end subscribe
+			}, [isAfterSave]);
 
 			if ((typeof props.attributes.sibid !== 'string') && (typeof props.attributes.blockid == 'string')) {
 				props.setAttributes({ sibid: props.attributes.blockid });
