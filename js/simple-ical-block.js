@@ -66,15 +66,16 @@
 		});
 
 		useEffect(() => {
+					console.log('...UE saving... sv:' + isSavingPost + ' As:' + isAutosavingPost );
 			if (isSavingPost && (! isAutosavingPost) && (!isPostSavingInProgress.current)) {
 				setIsPostSaved(false);
 				isPostSavingInProgress.current = true;
-//					console.log('...is saving... sv:' + isSavingPost + ' As:' + isAutosavingPost )
+//					console.log('...is saving... sv:' + isSavingPost + ' As:' + isAutosavingPost );
 			}
-			if (!(isSavingPost || isAutosavingPost) && isPostSavingInProgress.current) {
+			if ((!isSavingPost) && isPostSavingInProgress.current) {
 				setIsPostSaved(true);
 				isPostSavingInProgress.current = false;
-//					console.log('...done saving... sv:' + isSavingPost + ' As:' + isAutosavingPost )
+					console.log('...done saving... sv:' + isSavingPost + ' As:' + isAutosavingPost );
 			}
 		}, [isSavingPost, isAutosavingPost]);
 
@@ -153,6 +154,7 @@
 			useEffect(() => {
 			if (typeof vprev_sibid !== 'string') { // maybe too fast when asynchrone apiFetch failed, but necessary when sibid is last change.
 				vprev_sibid = props.attributes.sibid;
+					console.log('Set vprev_sibid:' + vprev_sibid);
 			}
 			}, []);
 
