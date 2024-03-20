@@ -58,10 +58,19 @@
 	const useAfterSave = () => {
 		const [isPostSaved, setIsPostSaved] = useState(false);
 		const isPostSavingInProgress = useRef(false);
+		let viSP = false, viAP = false; 
 		const { isSavingPost, isAutosavingPost } = useSelect((__select) => {
+			if (__select('core/editor')) {
+			viSP = __select('core/editor').isSavingPost();
+			viAP = __select('core/editor').isAutosavingPost();
+			}
+			if (__select( 'core/edit-widgets' )){
+				viSP = __select( 'core/edit-widgets' ).isSavingWidgetAreas();
+				viAP = false;
+			}
 			return {
-				isSavingPost: __select('core/editor').isSavingPost(),
-				isAutosavingPost: __select('core/editor').isAutosavingPost(),
+				isSavingPost: viSP,
+				isAutosavingPost: viAP,
 			}
 		});
 
@@ -180,7 +189,7 @@
 			useEffect(() => {
 				if (isAfterSave) {
 					props.attributes.prev_sibid = vprev_sibid;
-					console.log('bfr prev_sibid:' + props.attributes.prev_sibid + ' sibid:' + props.attributes.sibid + 'v:' + vprev_sibid);
+					console.log('bfr prev_sibid:' + props.attributes.prev_sibid + ' sibid:' + props.attributes.sibid + ' V:' + vprev_sibid);
 					fset_sib_attrs(props.attributes);
 					if (props.attributes.sibid !== vprev_sibid) { // maybe too fast when asynchrone apiFetch fails, but necessary when sibid is not last change.
 						vprev_sibid = props.attributes.sibid;
