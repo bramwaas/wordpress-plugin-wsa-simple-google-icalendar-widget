@@ -203,7 +203,7 @@ class SimpleicalBlock
                 echo $block_attributes['before_title'] . wp_kses($block_attributes['title'], 'post') . $block_attributes['after_title']  . '<p>';
                 _e('Processing', 'simple-google-icalendar-widget');
                 echo '</p>' . $block_attributes['after_widget'];
-//                echo '<button onclick="window.simpleIcalBlock.getBlockByIds()" >' . __('Refresh', 'simple-google-icalendar-widget') . '</button></div>';
+                self::update_rest_attrs($block_attributes );
                 break;
             case 'block':
             case 'ssr':
@@ -347,26 +347,36 @@ class SimpleicalBlock
     }
 
     /**
-     * Save attributes in widget option for use in REST call 
+     * Save attributes in widget option for use in REST call (only when changed on other then excluded keys)
      *
      * @param array $instance
-     *             attributes/instance to save $instance['sibid'] is used as (new) key when $w_number is empty.
+     *            attributes/instance to save $instance['sibid'] is used as (new) key when $w_number is empty.
      * @param string $prev_sibid
      *            Previous save sibid to remeove if sibid is changed.
-     * @return succes new value sibid key else false           
+     * @return succes new value sibid key else false
      */
-    static function update_rest_attrs($instance) {
-    
-    $instances = (get_option(self::SIB_ATTR)) ?? [];
-    
-    if (!empty($instance['sibid'])) {
-        if (!empty($instance['prev_sibid']) && isset($instances[$instance['prev_sibid']]) && ($instance['sibid'] != $instance['prev_sibid'])) {
-            unset($instances[$instance['prev_sibid']]);
+    static function update_rest_attrs($instance)
+    {
+        $exclude = [
+            'saved' => null,
+            '__internalWidgetId' => null
+        ];
+        $instances = (get_option(self::SIB_ATTR)) ?? [];
+
+        if (! empty($instance['sibid'])) {
+            if (! empty($instance['prev_sibid']) && isset($instances[$instance['prev_sibid']]) && ($instance['sibid'] != $instance['prev_sibid'])) {
+                unset($instances[$instance['prev_sibid']]);
+            }
+            $new_instance = array_diff_assoc($instance, self::$default_block_attributes);
+            if ($instances[$instance['sibid']] + $exclude == $new_instance + $exclude)
+                return true;
+            else {
+                $instance['saved'] = date('YmdHis');
+                $instances[$instance['sibid']] = $new_instance;
+                if (update_option(self::SIB_ATTR, $instances, true))
+                    return $instance['sibid'];
+            }
         }
-        $instance['saved']= date('YmdHis');
-        $instances[$instance['sibid']] =  array_diff_assoc($instance, self::$default_block_attributes);
-        if (update_option( self::SIB_ATTR, $instances, true)) return $instance['sibid'];
-    }
-    return false;    
+        return false;
     }
 } // end class SimpleicalBlock

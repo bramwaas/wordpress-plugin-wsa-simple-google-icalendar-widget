@@ -489,15 +489,20 @@
 						{
 							text: __('Reset ID.', 'simple-google-icalendar-widget'),
 							label: __('Reset ID, only necessary after duplicating block, be sure to click Update button after changing id', 'simple-google-icalendar-widget') +
-							       '<br>' + __('REST attributes with old ID as key will also removed and saved with new ID', 'simple-google-icalendar-widget'),
+								'<br>' + __('REST attributes with old ID as key will also removed and saved with new ID', 'simple-google-icalendar-widget'),
 							showTooltip: true,
 							variant: 'secondary',
 							onClick: function() {
 								console.log('Bbfrc prev_sibid:' + props.attributes.prev_sibid + ' sibid:' + props.attributes.sibid);
-								pattrs = {...props.attributes,
-					                          prev_sibid: props.attributes.sibid ,
-					                          sibid: 'b' + props.clientId };
-								props.setAttributes({ sibid: pattrs.sibid });
+								pattrs = {
+									...props.attributes,
+									prev_sibid: props.attributes.sibid,
+									sibid: 'b' + props.clientId
+								};
+								props.setAttributes({
+									prev_sibid: props.attributes.sibid,
+									sibid: pattrs.sibid
+								});
 								console.log('Aftc props prev_sibid:' + props.attributes.prev_sibid + ' sibid:' + props.attributes.sibid);
 								console.log('Aftc Vattr prev_sibid:' + pattrs.prev_sibid + ' sibid:' + pattrs.sibid);
 								fset_sib_attrs(pattrs);
