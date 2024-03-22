@@ -159,7 +159,6 @@ class SimpleicalBlock
         ));
     }
 
-
     /**
      * Render the content of the block
      *
@@ -175,14 +174,20 @@ class SimpleicalBlock
      */
     static function render_block($block_attributes, $content = null, $block = null)
     {
-        $block_attributes = array_merge(self::$default_block_attributes,
-            ['title' => __('Events', 'simple-google-icalendar-widget'),
-             'tzid_ui' => wp_timezone_string()],
-            $block_attributes  );
+        $block_attributes = array_merge(self::$default_block_attributes, [
+            'title' => __('Events', 'simple-google-icalendar-widget'),
+            'tzid_ui' => wp_timezone_string()
+        ], $block_attributes);
         $block_attributes['anchorId'] = sanitize_html_class($block_attributes['anchorId'], $block_attributes['sibid']);
-        if (empty($block_attributes['tzid_ui'])){$block_attributes['tzid_ui'] = wp_timezone_string();};
-        if (empty($block_attributes['sibid']) && !empty($block_attributes['blockid'])){$block_attributes['sibid'] = $block_attributes['blockid'];};
-        
+        if (empty($block_attributes['tzid_ui'])) {
+            $block_attributes['tzid_ui'] = wp_timezone_string();
+        }
+        ;
+        if (empty($block_attributes['sibid']) && ! empty($block_attributes['blockid'])) {
+            $block_attributes['sibid'] = $block_attributes['blockid'];
+        }
+        ;
+
         $output = '';
         ob_start();
         switch ($block_attributes['wptype']) {
@@ -192,25 +197,27 @@ class SimpleicalBlock
                 break;
             case 'rest_ph':
                 // Placeholder starting point for REST processing display of block or widget.
-                if (false === stripos(' data-sib-t="true" ', $block_attributes['before_title']) ) {
-                        $l = explode ('>', $block_attributes['before_title'],2);
-                        $block_attributes['before_title'] = implode(' data-sib-t="true" >', $l);
+                if (false === stripos(' data-sib-t="true" ', $block_attributes['before_title'])) {
+                    $l = explode('>', $block_attributes['before_title'], 2);
+                    $block_attributes['before_title'] = implode(' data-sib-t="true" >', $l);
                 }
-                $wrapperattr = (is_wp_version_compatible( '5.6' ) ) ? get_block_wrapper_attributes(): '';
-                echo sprintf($block_attributes['before_widget'], ($block_attributes['anchorId'] . '" data-sib-id="' . $block_attributes['sibid'] 
-                    . '" data-sib-st="0-start' . ((empty($block_attributes['title'])) ?'" data-sib-notitle="true':'')
-                    ), $wrapperattr);
-                echo $block_attributes['before_title'] . wp_kses($block_attributes['title'], 'post') . $block_attributes['after_title']  . '<p>';
+                $wrapperattr = (is_wp_version_compatible('5.6')) ? get_block_wrapper_attributes() : '';
+                echo sprintf($block_attributes['before_widget'], ($block_attributes['anchorId'] . '" data-sib-id="' . $block_attributes['sibid'] . '" data-sib-st="0-start' . ((empty($block_attributes['title'])) ? '" data-sib-notitle="true' : '')), $wrapperattr);
+                echo $block_attributes['before_title'] . wp_kses($block_attributes['title'], 'post') . $block_attributes['after_title'] . '<p>';
                 _e('Processing', 'simple-google-icalendar-widget');
                 echo '</p>' . $block_attributes['after_widget'];
-                self::update_rest_attrs($block_attributes );
+                try {
+                    unset($block_attributes['before_widget'], $block_attributes['before_title'], $block_attributes['after_title'], $block_attributes['after_widget']);
+                    self::update_rest_attrs($block_attributes);
+                } catch (\Exception $e) {
+                    echo '<p>Caught exception: ', $e->getMessage(), "</p>\n";
+                }
                 break;
             case 'block':
             case 'ssr':
                 // Block rendered serverside, or in admin via serversiderenderer
-                $wrapperattr = (is_wp_version_compatible( '5.6' ) ) ? get_block_wrapper_attributes(): '';
-                echo sprintf($block_attributes['before_widget'], ($block_attributes['anchorId'] . '" data-sib-id="' . $block_attributes['sibid'] 
-                    ), $wrapperattr);
+                $wrapperattr = (is_wp_version_compatible('5.6')) ? get_block_wrapper_attributes() : '';
+                echo sprintf($block_attributes['before_widget'], ($block_attributes['anchorId'] . '" data-sib-id="' . $block_attributes['sibid']), $wrapperattr);
                 if (! empty($block_attributes['title'])) {
                     echo $block_attributes['before_title'] . wp_kses($block_attributes['title'], 'post') . $block_attributes['after_title'];
                 }
@@ -357,19 +364,22 @@ class SimpleicalBlock
      */
     static function update_rest_attrs($instance)
     {
+        if (empty($instance)) return false;
         $exclude = [
             'saved' => null,
             '__internalWidgetId' => null
         ];
-        $instances = (get_option(self::SIB_ATTR)) ?? [];
+        $instances = (get_option(self::SIB_ATTR));
+        if (! is_array($instances)) $instances = [];
 
         if (! empty($instance['sibid'])) {
             if (! empty($instance['prev_sibid']) && isset($instances[$instance['prev_sibid']]) && ($instance['sibid'] != $instance['prev_sibid'])) {
                 unset($instances[$instance['prev_sibid']]);
             }
             $new_instance = array_diff_assoc($instance, self::$default_block_attributes);
-            if ($instances[$instance['sibid']] + $exclude == $new_instance + $exclude)
+            if (!empty($instances[$instance['sibid']]) && ($instances[$instance['sibid']] + $exclude == $new_instance + $exclude)){
                 return true;
+            }
             else {
                 $instance['saved'] = date('YmdHis');
                 $instances[$instance['sibid']] = $new_instance;
