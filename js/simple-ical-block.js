@@ -20,7 +20,7 @@
  * 20240215 Adjustment of attributes provided when calling server side render: period limits modulo 4 so as not to enter Rest Server mode;
  *   wptype 'ssr'.
  */
-(function(blocks, i18n, element, blockEditor, components, serverSideRender,	apiFetch, data ) {
+(function(blocks, i18n, element, blockEditor, components, serverSideRender) {
 	const el = element.createElement;
 	const __ = i18n.__;
 	const useBlockProps = blockEditor.useBlockProps;
@@ -44,70 +44,8 @@
 	const ToggleControl = components.ToggleControl;
 	const SelectControl = components.SelectControl;
 	const useEffect = element.useEffect;
-//	const useRef = element.useRef;
-//	const useState = element.useState;
-//	const useSelect = data.useSelect;
 
-	let ptzid_ui, pattrs;
-//	/**
-//	 * Returns `true` if the post is done saving, `false` otherwise.
-//	 * from https://thewpvoyage.com/how-to-detect-when-a-post-is-done-saving-in-wordpress-gutenberg/
-//	 * but the store ('core/editor' or 'core/edit-widgets') seems to be dependent of the place where is stored, on a page or widget
-//	 * area in footer and maybe even more. Therefore for now I dont use it yet, but save the attributes during the first step of teh rest call with
-//	 * wptype: 'rest_ph' then I am more sure the attributes used to create the placeholder and those to create the REST content are the same.
-//	 * @returns {Boolean}
-//	 */
-//	const useAfterSave = () => {
-//		const [isPostSaved, setIsPostSaved] = useState(false);
-//		const isPostSavingInProgress = useRef(false);
-//		let viSP = false, viAP = false; 
-//		const { isSavingPost, isAutosavingPost } = useSelect((__select) => {
-//			if (__select('core/editor')) {
-//			viSP = __select('core/editor').isSavingPost();
-//			viAP = __select('core/editor').isAutosavingPost();
-//			}
-//			if (__select( 'core/edit-widgets' )){
-//				viSP = __select( 'core/edit-widgets' ).isSavingWidgetAreas();
-//				viAP = false;
-//			}
-//			return {
-//				isSavingPost: viSP,
-//				isAutosavingPost: viAP,
-//			}
-//		});
-//
-//		useEffect(() => {
-//					console.log('...UE saving... sv:' + isSavingPost + ' As:' + isAutosavingPost );
-//			if (isSavingPost && (! isAutosavingPost) && (!isPostSavingInProgress.current)) {
-//				setIsPostSaved(false);
-//				isPostSavingInProgress.current = true;
-//					console.log('...is saving... sv:' + isSavingPost + ' As:' + isAutosavingPost );
-//			}
-//			if ((!isSavingPost) && isPostSavingInProgress.current) {
-//				setIsPostSaved(true);
-//				isPostSavingInProgress.current = false;
-//					console.log('...done saving... sv:' + isSavingPost + ' As:' + isAutosavingPost );
-//			}
-//		}, [isSavingPost, isAutosavingPost]);
-//
-//		return isPostSaved;
-//	};
-	/**
-	 * Copies attributes in Option via asynchrone REST call 
-	*/
-	const fset_sib_attrs = function(attrs) {
-		const fpath = "/simple-google-icalendar-widget/v1/set-sib-attrs";
-		apiFetch({
-			path: fpath,
-			method: 'POST',
-			data: attrs,
-		}).then((res) => {
-			console.log(res);
-		}).catch((error) => {
-			console.log(error);
-		});
-	}
-
+	let ptzid_ui;
 
 	blocks.registerBlockType('simplegoogleicalenderwidget/simple-ical-block', {
 		icon: iconEl,
@@ -146,8 +84,8 @@
 							suffix_lg_class: instance.raw.suffix_lg_class,
 							suffix_lgi_class: instance.raw.suffix_lgi_class,
 							suffix_lgia_class: instance.raw.suffix_lgia_class,
-                            period_limits: instance.raw.period_limits,
-                     		rest_utzui: instance.raw.rest_utzui,
+							period_limits: instance.raw.period_limits,
+							rest_utzui: instance.raw.rest_utzui,
 							allowhtml: instance.raw.allowhtml,
 							after_events: instance.raw.after_events,
 							no_events: instance.raw.no_events,
@@ -161,8 +99,6 @@
 		},
 
 		edit: function(props) {
-//			const isAfterSave = useAfterSave();
-
 			if ((typeof props.attributes.sibid !== 'string') && (typeof props.attributes.blockid == 'string')) {
 				props.setAttributes({ sibid: props.attributes.blockid });
 			}
@@ -182,12 +118,6 @@
 					function stopCC() { props.setAttributes({ clear_cache_now: false }); }
 				}
 			}, [props.attributes.clear_cache_now]);
-//			useEffect(() => {
-//				if (isAfterSave) {
-//					fset_sib_attrs(props.attributes);
-//					console.log('aft prev_sibid:' + props.attributes.prev_sibid + ' sibid:' + props.attributes.sibid);
-//				}
-//			}, [isAfterSave]);
 			return el(
 				'div',
 				useBlockProps({
@@ -195,9 +125,11 @@
 				}),
 				el(ServerSideRender, {
 					block: 'simplegoogleicalenderwidget/simple-ical-block',
-					attributes: {...props.attributes,
-					 "wptype": "ssr",
-					 "tzid_ui": ptzid_ui  },
+					attributes: {
+						...props.attributes,
+						"wptype": "ssr",
+						"tzid_ui": ptzid_ui
+					},
 					httpMethod: 'POST'
 				}
 				),
@@ -389,7 +321,7 @@
 								else {
 									ptzid_ui = '';
 									props.setAttributes({ wptype: 'block' })
-								} 
+								}
 							},
 							options: [
 								{ value: '', label: __('Use WordPress timezone settings, no REST', 'simple-google-icalendar-widget') },
@@ -488,34 +420,10 @@
 						Button,
 						{
 							text: __('Reset ID.', 'simple-google-icalendar-widget'),
-							label: __('Reset ID, only necessary after duplicating block, be sure to click Update button after changing id', 'simple-google-icalendar-widget') +
-								'<br>' + __('REST attributes with old ID as key will also removed and saved with new ID', 'simple-google-icalendar-widget'),
+							label: __('Reset ID, only necessary after duplicating block', 'simple-google-icalendar-widget'),
 							showTooltip: true,
 							variant: 'secondary',
-							onClick: function() {
-								console.log('Bbfrc prev_sibid:' + props.attributes.prev_sibid + ' sibid:' + props.attributes.sibid);
-								pattrs = {
-									...props.attributes,
-									prev_sibid: props.attributes.sibid,
-									sibid: 'b' + props.clientId
-								};
-								props.setAttributes({
-									prev_sibid: props.attributes.sibid,
-									sibid: pattrs.sibid
-								});
-								console.log('Aftc props prev_sibid:' + props.attributes.prev_sibid + ' sibid:' + props.attributes.sibid);
-								console.log('Aftc Vattr prev_sibid:' + pattrs.prev_sibid + ' sibid:' + pattrs.sibid);
-								fset_sib_attrs(pattrs);
-							}
-						}
-					),
-					el(
-						TextareaControl,
-						{
-							label: __('Sibid. Id for use in this plugin e.g. REST call', 'simple-google-icalendar-widget'),
-							value: props.attributes.sibid,
-							disabled: true,
-							rows: 2,
+							onClick: function() { props.setAttributes({ sibid: 'b' + props.clientId }); },
 						}
 					),
 					el(
@@ -529,18 +437,12 @@
 					)
 				));
 		}
-//		,
-//		save: function (props){
-//		return null;
-//		}
 	});
 }(window.wp.blocks,
 	window.wp.i18n,
 	window.wp.element,
 	window.wp.blockEditor,
 	window.wp.components,
-	window.wp.serverSideRender,
-	window.wp.apiFetch,
-	window.wp.data
+	window.wp.serverSideRender
 )
 );
