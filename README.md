@@ -424,8 +424,9 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 
 == Changelog ==
 * 2.3.0 Tie moving display events window created by Now and 'Number of days after today' to the display time instead of the data-retrieve/cache time. Make it possible to let the window start at 0H00 and end at 23H59 local time of the startdate and enddate of the window in addition to the current solution where both ends are at the time of the day the data is displayed/retrieved. Add <span class="dsc"> to description output to make it easier to refer to in css. Remove HTML for block title when title is empty. Add unescape \\ to \ and improve \, to ,   \; to ;  chars that should be escaped following the text specification. Extra save attributes in widget option to increase the chance the REST call finds them in that option.      
-Tested with WP 5.3 (only widget) 5.9, 6.4 (block and widget in legacy block and in Elementor) 6.5 RC1  
+Tested with WP 5.3 (only widget) 5.9, 6.4 (block and widget in legacy block and in Elementor) 6.5      
 * 2.2.1 20240123 after an isue of black88mx6 in support forum: don't display description line when excerpt-length = 0
+* 20240324 teste with 6.5 RC 3     
 * 2.2.0 after an issue of gonzob (@gonzob) in WP support forum: 'Bug with repeating events' improved handling of EXDATE so that also the first event of a recurrent set can be excluded.  
 Basic parse Recurrence-ID (only one Recurrence-ID event to replace one occurrence of the recurrent set) to support changes in individual recurrent events in Google Calendar. Remove _ chars from UID.  
 Changed textdomain from simple_ical to simple-google-icalendar-widget to make translations work by following the WP standard.  
