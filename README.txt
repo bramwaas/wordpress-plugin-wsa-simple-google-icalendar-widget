@@ -121,9 +121,23 @@ There are no events found within the selection. Test e.g. with an appointment fo
 Check if you can download the ics file you have designated in the widget with a browser. At least if it is a text file with the first line "BEGIN:VCALENDAR" and further lines "BEGIN:VEVENT" and lines "END:VEVENT". If you cannot resolve it, you can of course report an error / question in our
 [community support forum](https://wordpress.org/support/plugin/simple-google-icalendar-widget)
 
+= I only see the title of the calendar, and the text 'Processing' even after waiting more the a minute, or a message &#61 Code: undefined &#61;	Msg: HTTP error, status &#61; 500  =
+
+Probably you have chosen the setting "Use Client timezone settings, with REST" in "Use client timezone settings". With this setting active, at first the widget will be presented as a placeholder with only the title and the text processing. In the HTML of this placeholder are also some ID\'s as parameters for the javascript REST call to fetch the content after the page is loaded. This fetch is not executed (correct).   
+To work correct Javascript must be enabled in a browser with version newer than 2016 but not in Internet Explorer.  
+This is probably caused because the javascript view file with the fetch command is not loaded e.g. in the editor of Elementor or an other pagebuilder that tries to show a preview of the widget but does not load the necessary Javascript. This is a known issue, you could work around it by first set "Use WordPress timezone settings, no REST" until you are satisfied with all the other settings and then set "Use Client timezone ...".
+If you change the Sibid without clicking the Update button, the new Sibid may already be saved in the plugin options for the REST call, but not in the block attributes. If you still click Update, the problem will be resolved.   
+The REST call might also have failed by other reasons, then another try would probably solve the issue, but I have never seen that in testing.  
+If you cannot resolve it, you can of course report an error / question in our [community support forum](https://wordpress.org/support/plugin/simple-google-icalendar-widget)    
+
 = Can I use an event calendar that only uses days, not times, like a holiday calendar? =
 
  Yes you can, since v1.2.0, I have tested with [https://p24-calendars.icloud.com/holiday/NL_nl.ics](https://p24-calendars.icloud.com/holiday/NL_nl.ics) .
+
+= This block has encountered an error and cannot be previewed =
+
+Probably you have (re)opened a page where the block is edited but your password cookie is expired.   
+Log in in Wordpress again and open the page again. The block will be available.   
 
 = How do I set different colours and text size for the dates, the summary, and the details? =
 
@@ -173,7 +187,9 @@ We'd love your help! Here's a few things you can do:
 
 * Gets calendar events via iCal url or google calendar ID
 * Merge more calendars into one block
-* Displays selected number of events, or events in a selected period from now as listgroup-items
+* Displays maximum the selected number of events as listgroup-items     
+* Displays only or events in a selected period with a length of the setting "Number of days after today with events" from now limited by the time of the day or the beginning of the day at the start and the and of the at the end.
+* Displays events in timezone of WordPress setting, or in Clients timezone with javascript REST call fetched from the clients browser.
 * Displays event start-date and summary; toggle details, description, start-, end-time, location. 
 * Displays most common repeating events 
 * Frequency Yearly, Monthly, Weekly, Dayly (not parsed Hourly, Minutely ...), INTERVAL (default 1), WKST (default MO)
@@ -181,7 +197,173 @@ We'd love your help! Here's a few things you can do:
 * By day month, monthday or setpos (BYDAY, BYMONTH, BYMONTHDAY, BYSETPOS) no other by...   
   (not parsed: BYWEEKNO, BYYEARDAY, BYHOUR, BYMINUTE, RDATE)
 * Exclude events on EXDATE from recurrence set (after evaluating BYSETPOS)
-* Respects Timezone and Day Light Saving time. Build and tested with Iana timezones as used in php, Google, and Apple now also tested with Microsoft timezones and unknown timezones. For unknown timezone-names using the default timezone of Wordpress (probably the local timezone).  
+* Respects Timezone and Day Light Saving time. Build and tested with Iana timezones as used in php, Google, and Apple now also tested with Microsoft timezones and unknown timezones. For unknown timezone-names using the default timezone of Wordpress (probably the local timezone). 
+
+=== Settings for this block/widget ===
+
+*Title*
+
+Title of this instance of the widget   
+With empty title no html is displayed, if you want the html with empty content use <> or another invalid tag that will be filtered away as title
+
+*Calendar ID(s), or iCal URL*
+
+The Google calendar ID, or the URL of te iCal file to display, or #example, or comma separated list of ID's.   
+You can use #example to get example events   
+
+Or a comma separated list of ID's; optional you can add a html-class separated by a semicolon to some or all ID's to distinguish the descent in the lay-out of the event.
+
+*Number of events displayed*
+
+The maximum number of events to display.   
+
+*Number of days after today with events displayed*
+
+Last date to display events in number of days after today.  
+(See also Period limits)
+
+*Select lay-out*
+
+-Startdate line on a higher level in the list; 
+-Start with summary before first date line; 
+-Old style, summary after first date line, remove duplicate date lines.
+
+*Date format first line*
+
+Start date format first (date) line. Default: l jS \of F,   
+l = day of the week (Monday); j = day of the month (25) F = name of month (december)   
+y or Y = Year (24 or 2024);   
+make empty if you don't want to show this date. 
+Although this is intended for date all date and time fields contain date and time so you can als use time formats in date fields and date formats in time field.    
+You can also use other text or simple html tags to embellish or emphasize it
+escape characters with special meaning with a slash(\) e.g.:<\b>\F\r\o\m l jS \of F.</\b>
+see also https://www.php.net/manual/en/datetime.format.php .
+
+*End date format first line*
+
+End date format first (date) line. Default: empty, no display.
+End date will only be shown as date part is different from start date and format not empty.
+
+*Time format start time after summary*
+
+Start time format summary line. Default: G:i ,    
+G or g = 24 or 12 hour format of an hour without leading zeros    
+i = Minutes with leading zeros    
+a or A = Lowercase or Uppercase Ante meridiem and Post meridiem make empty if you don't want to show this field.    
+Linebreak before this field will be removed when summary is before first date line, if desired you can get it back by starting the format with &lt;\b\r&gt;        
+This field will only be shown when date part of enddate is equal to start date and format not empty.   
+
+*Time format end time after summary*
+
+End time format summary line. Default: empty , no display.
+
+*Time format start time*
+
+Time format start time. Default: G:i,    
+see "Time format start time after summary"   
+This field will only be shown when date part of enddate is equal to start date and format not empty.
+
+*Time format end time*
+
+Time format separator and end time. Default: - G:i,    
+see "Time format start time after summary"    
+This field will only be shown when date part of enddate is equal to start date and format not empty.    
+
+====Advanced settings====     
+
+*Change block name*   
+
+Change technical block name.   
+Not implemented.  
+
+*Calendar cache expiration time in minutes*
+
+Minimal time in minutes between reads from calendar source.   
+Necessary to prevent blocking due to too many calls to the calendar app.  
+Also helpfull to prevent slowness due to unnecessary processing while calendar events don't change so much.
+
+*Excerpt length*
+
+Max length of the description in characters.
+If there is a space or end-of-line character within 10 characters of this end, break there.
+Note, not all characters have the same width, so the number of lines is not completely fixed by this. So you need additional CSS for that.
+Warning: If you allow html in the description, necessary end tags may disappear here.
+Default: empty, all characters will be displayed
+
+*Tag for summary*
+
+Tag for summary. Choose a tag from the list. Default: a (link)
+When using bootstrap or other collapse css and java-script the description is collapsed and wil be opened bij clicking on the summary link.
+Link is not included with the other tags.
+If not using bootstrap h4, div or strong may be a better choice then a.
+
+
+*Period limits*
+
+Determination of start and end time of periode where events are displayed ("the moving time window").  
+"Time of day", or "Whole day"
+
+With "Time of day" as limit at both ends:
+The "Number of days after today" is the number of 24-hour periods after the current time. It is a window that moves as the day progresses.
+So, if today is Monday at 9am and you have a 3-day window, then events that start before 9am on Thursday will be shown, but an event that starts at 1pm will not.
+As the day progresses, any of today's events that are completed before the current time will drop off the top of the list, and events that fall within the window will appear at the bottom.
+
+"Whole Day" as limit moves the Start of the window to the beginning of the day (0:00 AM) in "local time" and/or moves the End to the beginning of the next day. The window now moves with jumps of a day (24 hours).
+
+*Use client timezone settings*
+
+Default all processing happens on server "local time" is measured in timezone of WordPress installation.
+With "Use Client Timezone..." the timezone of client browser is fetched first with a REST call and processing happens with this timezone setting.
+At first a placeholder with title and some Id's to use later is created and displayed, after pageload the timezone of client browser is fetched with javascript to process the output and get it with a REST call, then this output is placed over the placeholder. To be sure that there is place for the necessary attributes with ID's an extra span tag is added in the widget output.
+
+*Suffix group class*
+
+Suffix to add after css-class around the event (list-group),
+start with space to keep the original class and add another class.
+
+*Suffix event start class*
+
+Suffix to add after the css-class around the event start line (list-group-item),
+start with space to keep the original class and add another class.
+E.g.: py-0 with leading space; standard bootstrap 4 class to set padding top and bottom to 0; ml-1 to set margin left to 0.25 rem
+
+*Suffix event details class*
+
+Suffix to add after the css-class around the event details link (ical_details),
+start with space to keep the original class and add another class.
+
+*Checkbox Allow safe html in description and summary*
+
+Check checkbox to allow the use of some safe html in description and summary,
+otherwise it will only be displayed as text.
+
+*Closing HTML after available events*
+
+Closing (safe) HTML after events list, when events are available.
+This text with simple HTML will be displayed after the events list.
+Use &amp;lt; or &amp;gt; if you want to output < or > otherwise they may be removed as unknown and therefore unsafe tags.
+E.g. &lt;hr class="module-ft" &gt;.
+
+*Closing HTML when no events*
+
+Closing (safe) HTML output when no events are available.
+This text with simple HTML will be displayed instead of the events list.
+Use &amp;lt; or &amp;gt;  if you want to output < or > otherwise they may be removed as unknown and therefore unsafe tags.
+E.g. &lt;p class="warning" &gt;&amp;lt; No events found. &amp;gt;&lt;\p&gt;&lt;hr class="module-ft" &gt;.
+
+*Button Reset ID*
+
+Press button Reset ID to copy the sibid from the clientid in the editor after duplicating the block, to make sibid unique again.   
+In the legacy widget the bin2hex(random_bytes(7)) function is used to create a new sibid. Because this is not visible, the save button works only when also another field is changed.   
+Since the transient cache id is derived from the block id, this also clears the data cache once.
+
+*HTML anchor*
+
+HTML anchor for this block.
+Type one or two words - no spaces - to create a unique web address for this block, called an "anchor". Then you can link directly to this section on your page.
+You can also use this ID to make parts of your extra css specific for this block.    
+In the legacy widget (without the setting "Use Client Timezone...") it depends on the theme whether the HTML in which this ID should appear is available.   
+   
 
 === Recurrent events, Timezone,  Daylight Saving Time ===
 
@@ -235,20 +417,22 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 2017&thinsp;&ndash;&thinsp;2023 &copy; [Bram Waasdorp](http://www.waasdorpsoekhan.nl).
 
 == Upgrade Notice ==
-
+* from 2024 (v2.3.0) requires php 7.4. "Use Client timezone settings, with REST" in "Use client timezone settings" works only correct with Javascript enabled in a browser with version newer than 2016 but not in Internet Explorer (fetch and Promise are used).         
 * from 2023 (v2.1.1) deprecation php older than 7.4. I don't test in older php versions than 7.4 older versions might still work, but in future I may use new functions of php 8.
 * in v2.1.1 Start with summary is replaced with a select. After upgrade you may have to choose the correct option again. 
 * since v1.2.0 Wordpress version 5.3.0 is required because of the use of wp_date() 
 
 == Changelog ==
+* 2.3.0 Tie moving display events window created by Now and 'Number of days after today' to the display time instead of the data-retrieve/cache time. Make it possible to let the window start at 0H00 and end at 23H59 local time of the startdate and enddate of the window in addition to the current solution where both ends are at the time of the day the data is displayed/retrieved. Add <span class="dsc"> to description output to make it easier to refer to in css. Remove HTML for block title when title is empty. Add unescape \\ to \ and improve \, to ,   \; to ;  chars that should be escaped following the text specification. Extra save attributes in widget option to increase the chance the REST call finds them in that option.      
+Tested with WP 5.3 (only widget) 5.9, 6.4 (block and widget in legacy block and in Elementor) 6.5 RC 4      
 * 2.2.1 20240123 after an isue of black88mx6 in support forum: don't display description line when excerpt-length = 0
-* 2.2.0 after an issue of gonzob (@gonzob) in WP support forum: 'Bug with repeating events
-' improved handling of EXDATE so that also the first event of a recurrent set can be excluded.  
+* 20240324 teste with 6.5 RC 3     
+* 2.2.0 after an issue of gonzob (@gonzob) in WP support forum: 'Bug with repeating events' improved handling of EXDATE so that also the first event of a recurrent set can be excluded.  
 Basic parse Recurrence-ID (only one Recurrence-ID event to replace one occurrence of the recurrent set) to support changes in individual recurrent events in Google Calendar. Remove _ chars from UID.  
 Changed textdomain from simple_ical to simple-google-icalendar-widget to make translations work by following the WP standard.  
 Add help text's in block settings panel.
-* 2.1.5 20230824 after an issue of johansam (@johansam) in wp support forum: 'Warning: Undefined array key
-' reviewed and improved initialising of options for legacy widget.
+Tested with WordPress 6.4.  
+* 2.1.5 20230824 after an issue of johansam (@johansam) in wp support forum: 'Warning: Undefined array key' reviewed and improved initialising of options for legacy widget.
 * 2.1.4 20230725 tested with WordPress 6.3-RC1 running Twenty Twenty-Two theme.    
 20230626 added quotes to the options of the Layout SelectControl in simple-ical-block.js conform / Block Editor Handbook / Reference Guides / Component Reference / SelectControl to emphasize that the return value is a string;   
 To make transform smoother: Add parseInt to all integers in transform and added missing transformations in block.js     
