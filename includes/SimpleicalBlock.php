@@ -381,7 +381,7 @@ class SimpleicalBlock
                 return true;
             }
             else {
-                $instance['saved'] = date('YmdHis');
+                $new_instance['saved'] = date('YmdHis');
                 $instances[$instance['sibid']] = $new_instance;
                 if (update_option(self::SIB_ATTR, $instances, true))
                     return $instance['sibid'];
