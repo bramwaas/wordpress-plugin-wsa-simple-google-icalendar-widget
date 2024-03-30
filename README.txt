@@ -5,7 +5,7 @@ Tags: Event Calendar, Google Calendar, iCal, Events, Block, Calendar, iCalendar,
 Requires at least: 5.3.0
 Tested up to: 6.4
 Requires PHP: 5.3.0
-Stable tag: trunk
+Stable tag: 2.2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
  
