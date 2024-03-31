@@ -30,6 +30,7 @@
  * improvement of working with client timezone: add client timezone as an extra parameter to wp_date because date_default_timezone_set has no effect
  * block default version 3 version 2; add <span class="dsc"> to description output to make it easier to refer to in css
  * title with more wptypes, no display of empty title, title output secured with wp_kses (to display empty title line use <>.
+ * 2.3.1 spelling error in render block block/ssr 
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
