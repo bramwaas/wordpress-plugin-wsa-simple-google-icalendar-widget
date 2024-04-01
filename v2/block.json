@@ -1,6 +1,6 @@
 {
     "$schema": "https://json.schemastore.org/block.json",
-    "apiVersion": 3,
+    "apiVersion": 2,
     "title": "Simple ical Block",
     "name": "simplegoogleicalenderwidget/simple-ical-block",
     "category": "widgets",
@@ -12,9 +12,9 @@
 	"attributes": {
 		"wptype": {"type": "string"},
 		"postid": {"type": "string"},
-		"tzid_ui": {"type": "string"},
 		"sibid": {"type": "string"},
 		"prev_sibid": {"type": "string"},
+		"tzid_ui": {"type": "string"},
 		"title": {"type": "string", "default": "Events"},
 		"calendar_id": {"type": "string", "default": ""},
 		"event_count": {"type": "integer", "default": 10},
@@ -52,5 +52,5 @@
     "supports": {
         "align": true
     },
-	"editorScript": "file:./js/simple-ical-block.js"
+	"editorScript": "file:../js/simple-ical-block.js"
   }

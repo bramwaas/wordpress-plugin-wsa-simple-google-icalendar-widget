@@ -1,11 +1,11 @@
 === Simple Google Calendar Outlook Events Block Widget ===
 Plugin name: Simple Google Calendar Outlook Events Block Widget
 Contributors: bramwaas
-Tags: Event Calendar, Google Calendar, iCal, Events, Block, Calendar, iCalendar, Outlook, iCloud
+Tags: Google Calendar, iCal, Events, Block, Calendar
 Requires at least: 5.3.0
-Tested up to: 6.4
+Tested up to: 6.5
 Requires PHP: 5.3.0
-Stable tag: trunk
+Stable tag: 2.3.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
  
@@ -121,9 +121,23 @@ There are no events found within the selection. Test e.g. with an appointment fo
 Check if you can download the ics file you have designated in the widget with a browser. At least if it is a text file with the first line "BEGIN:VCALENDAR" and further lines "BEGIN:VEVENT" and lines "END:VEVENT". If you cannot resolve it, you can of course report an error / question in our
 [community support forum](https://wordpress.org/support/plugin/simple-google-icalendar-widget)
 
+= I only see the title of the calendar, and the text 'Processing' even after waiting more the a minute, or a message &#61 Code: undefined &#61;	Msg: HTTP error, status &#61; 500  =
+
+Probably you have chosen the setting "Use Client timezone settings, with REST" in "Use client timezone settings". With this setting active, at first the widget will be presented as a placeholder with only the title and the text processing. In the HTML of this placeholder are also some ID\'s as parameters for the javascript REST call to fetch the content after the page is loaded. This fetch is not executed (correct).   
+To work correct Javascript must be enabled in a browser with version newer than 2016 but not in Internet Explorer.  
+This is probably caused because the javascript view file with the fetch command is not loaded e.g. in the editor of Elementor or an other pagebuilder that tries to show a preview of the widget but does not load the necessary Javascript. This is a known issue, you could work around it by first set "Use WordPress timezone settings, no REST" until you are satisfied with all the other settings and then set "Use Client timezone ...".
+If you change the Sibid without clicking the Update button, the new Sibid may already be saved in the plugin options for the REST call, but not in the block attributes. If you still click Update, the problem will be resolved.   
+The REST call might also have failed by other reasons, then another try would probably solve the issue, but I have never seen that in testing.  
+If you cannot resolve it, you can of course report an error / question in our [community support forum](https://wordpress.org/support/plugin/simple-google-icalendar-widget)    
+
 = Can I use an event calendar that only uses days, not times, like a holiday calendar? =
 
  Yes you can, since v1.2.0, I have tested with [https://p24-calendars.icloud.com/holiday/NL_nl.ics](https://p24-calendars.icloud.com/holiday/NL_nl.ics) .
+
+= This block has encountered an error and cannot be previewed =
+
+Probably you have (re)opened a page where the block is edited but your password cookie is expired.   
+Log in in Wordpress again and open the page again. The block will be available.   
 
 = How do I set different colours and text size for the dates, the summary, and the details? =
 
@@ -173,7 +187,9 @@ We'd love your help! Here's a few things you can do:
 
 * Gets calendar events via iCal url or google calendar ID
 * Merge more calendars into one block
-* Displays selected number of events, or events in a selected period from now as listgroup-items
+* Displays maximum the selected number of events as listgroup-items     
+* Displays only or events in a selected period with a length of the setting "Number of days after today with events" from now limited by the time of the day or the beginning of the day at the start and the and of the at the end.
+* Displays events in timezone of WordPress setting, or in Clients timezone with javascript REST call fetched from the clients browser.
 * Displays event start-date and summary; toggle details, description, start-, end-time, location. 
 * Displays most common repeating events 
 * Frequency Yearly, Monthly, Weekly, Dayly (not parsed Hourly, Minutely ...), INTERVAL (default 1), WKST (default MO)
@@ -181,50 +197,7 @@ We'd love your help! Here's a few things you can do:
 * By day month, monthday or setpos (BYDAY, BYMONTH, BYMONTHDAY, BYSETPOS) no other by...   
   (not parsed: BYWEEKNO, BYYEARDAY, BYHOUR, BYMINUTE, RDATE)
 * Exclude events on EXDATE from recurrence set (after evaluating BYSETPOS)
-* Respects Timezone and Day Light Saving time. Build and tested with Iana timezones as used in php, Google, and Apple now also tested with Microsoft timezones and unknown timezones. For unknown timezone-names using the default timezone of Wordpress (probably the local timezone).  
-
-=== Recurrent events, Timezone,  Daylight Saving Time ===
-
-Most users don't worry about time zones. The timezonesettings for the Wordpress installation, the calendar application and the events are all the same local time.   
-In that case this widget displays all the recurrent events with the same local times. The widget uses the properties of the starttime and duration (in seconds) of the first event to calculate the repeated events. Only when a calculated time is removed during the transition from ST (standard time, wintertime) to DST (daylight saving time, summertime) by turning the clock forward one hour, both the times of the event (in case the starttime is in the transition period) or only the endtime (in case only the endtime is in the transition period)  of the event are pushed forward with that same amount.    
-But because the transition period is usually very early in the morning, few events will be affected by it.   
-If a calculated day does not exist (i.e. February 30), the event will not be displayed. (Formally this should also happen to the time in the transition from ST to DST)   
-
-For users in countries that span more time zones, or users with international events the calendar applications can add a timezone to the event times. So users in other timezones will see the event in the local time in there timezone (as set in timezone settings of Wordpress) corresponding with the time.    
-The widget uses the starttime, the timezone of the starttime and the duration in seconds of the starting event as starting point for the calculation of repeating events. So if the events startime timezone does'not use daylight savings time and and timezone of the widget (i.e. the WP timezone setting) does. During DST the events are placed an hour later than during ST. (more precisely shift with the local time shift). Similar the events will be shift earlier when the timezone of the starttime has DST and the timezone of the widget not.   
-
-Of course the same effect is achieved when you schedule the events in UTC time despite using local time DST in your standard calendar.     
-In these cases, a special effect can be seen of using the same times twice in the transition from DST to ST. If an event lasts less than an hour. If the event starts in the last hour of DST then it ends in the first hour of ST in between the local clocks are turned back one hour. According to the local clock, the end time is therefore before the start time. And the widget shows it like this too. The same also applies to Google and Outlook calendar.   
-Theoretically this could als happen with recurrent events in the same timezone with DST. In my test I have seen this with Google calendar but not with the widget. PHP and therefore the widget uses the second occurence if the result of the calculation is a time that is twice available (at least in the version of PHP I use), but using the first occurence like Google does is just as good.    
-
-Test results and comparison with Google and Outlook calendar have been uploaded as DayLightSavingTime test.xlsx.
-  
-=== From the ical specifications ===
-
-~~~
-see http://www.ietf.org/rfc/rfc5545.txt for specification of te ical format.
-or https://icalendar.org/iCalendar-RFC-5545/
-(see 3.3.10. [Page 38] Recurrence Rule in specification
-  .____________._________.________._________.________.
-  |            |DAILY    |WEEKLY  |MONTHLY  |YEARLY  |
-  |____________|_________|________|_________|________|   
-  |BYMONTH     |Limit    |Limit   |Limit    |Expand  |
-  |____________|_________|________|_________|________|
-  |BYMONTHDAY  |Limit    |N/A     |Expand   |Expand  |
-  |____________|_________|________|_________|________|
-  |BYDAY       |Limit    |Expand  |Note 1   |Note 2  |
-  |____________|_________|________|_________|________|
-  |BYSETPOS    |Limit    |Limit   |Limit    |Limit   |
-  |____________|_________|________|_________|________|
- 
-    Note 1:  Limit if BYMONTHDAY is present; 
-             otherwise, special expand for MONTHLY.
-
-    Note 2:  Limit if BYYEARDAY or BYMONTHDAY is present; otherwise,
-             special expand for WEEKLY if BYWEEKNO present; otherwise,
-             special expand for MONTHLY if BYMONTH present; otherwise,
-             special expand for YEARLY.
-~~~
+* Respects Timezone and Day Light Saving time. Build and tested with Iana timezones as used in php, Google, and Apple now also tested with Microsoft timezones and unknown timezones. For unknown timezone-names using the default timezone of Wordpress (probably the local timezone). 
 
 (This widget is a Fork of version 0.7 of that simple google calendar widget by NBoehr
 https://nl.wordpress.org/plugins/simple-google-calendar-widget/)
@@ -235,20 +208,22 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 2017&thinsp;&ndash;&thinsp;2023 &copy; [Bram Waasdorp](http://www.waasdorpsoekhan.nl).
 
 == Upgrade Notice ==
-
+* from 2024 (v2.3.0) requires php 7.4. "Use Client timezone settings, with REST" in "Use client timezone settings" works only correct with Javascript enabled in a browser with version newer than 2016 but not in Internet Explorer (fetch and Promise are used).         
 * from 2023 (v2.1.1) deprecation php older than 7.4. I don't test in older php versions than 7.4 older versions might still work, but in future I may use new functions of php 8.
 * in v2.1.1 Start with summary is replaced with a select. After upgrade you may have to choose the correct option again. 
 * since v1.2.0 Wordpress version 5.3.0 is required because of the use of wp_date() 
 
 == Changelog ==
+* 2.3.0 Tie moving display events window created by Now and 'Number of days after today' to the display time instead of the data-retrieve/cache time. Make it possible to let the window start at 0H00 and end at 23H59 local time of the startdate and enddate of the window in addition to the current solution where both ends are at the time of the day the data is displayed/retrieved. Add <span class="dsc"> to description output to make it easier to refer to in css. Remove HTML for block title when title is empty. Add unescape \\ to \ and improve \, to ,   \; to ;  chars that should be escaped following the text specification. Extra save attributes in widget option to increase the chance the REST call finds them in that option.      
+Tested with WP 5.3 (only widget) 5.9, 6.4 (block and widget in legacy block and in Elementor) 6.5 RC 4      
 * 2.2.1 20240123 after an isue of black88mx6 in support forum: don't display description line when excerpt-length = 0
-* 2.2.0 after an issue of gonzob (@gonzob) in WP support forum: 'Bug with repeating events
-' improved handling of EXDATE so that also the first event of a recurrent set can be excluded.  
+* 20240324 teste with 6.5 RC 3     
+* 2.2.0 after an issue of gonzob (@gonzob) in WP support forum: 'Bug with repeating events' improved handling of EXDATE so that also the first event of a recurrent set can be excluded.  
 Basic parse Recurrence-ID (only one Recurrence-ID event to replace one occurrence of the recurrent set) to support changes in individual recurrent events in Google Calendar. Remove _ chars from UID.  
 Changed textdomain from simple_ical to simple-google-icalendar-widget to make translations work by following the WP standard.  
 Add help text's in block settings panel.
-* 2.1.5 20230824 after an issue of johansam (@johansam) in wp support forum: 'Warning: Undefined array key
-' reviewed and improved initialising of options for legacy widget.
+Tested with WordPress 6.4.  
+* 2.1.5 20230824 after an issue of johansam (@johansam) in wp support forum: 'Warning: Undefined array key' reviewed and improved initialising of options for legacy widget.
 * 2.1.4 20230725 tested with WordPress 6.3-RC1 running Twenty Twenty-Two theme.    
 20230626 added quotes to the options of the Layout SelectControl in simple-ical-block.js conform / Block Editor Handbook / Reference Guides / Component Reference / SelectControl to emphasize that the return value is a string;   
 To make transform smoother: Add parseInt to all integers in transform and added missing transformations in block.js     

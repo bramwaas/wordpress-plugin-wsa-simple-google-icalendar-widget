@@ -4,11 +4,11 @@
  Description: Widget that displays events from a public google calendar or iCal file
  Plugin URI: https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  Author: Bram Waasdorp
- Version: 2.2.1
+ Version: 2.3.1
  License: GPL3
- Tested up to: 6.4
+ Tested up to: 6.5
  Requires at least: 5.3
- Requires PHP:  5.3.0 tested with 8.2
+ Requires PHP:  7.4 tested with 8
  Text Domain:  simple-google-icalendar-widget
  Domain Path:  /languages
  *   bw 20201122 v1.2.0 find solution for DTSTART and DTEND without time by explicit using isDate and only displaying times when isDate === false.;
@@ -38,12 +38,13 @@
  *   bw 20230823 v2.1.5 added defaults from SimpleicalBlock block_attributes for all used keys in instance to prevent Undefined array key warnings/errors.
  *   bw 20240106 v2.2.0 Changed the text domain to simple-google-icalendar-widget to make translations work by following the WP standard
  *   bw 20240123 v2.2.1 after an isue of black88mx6 in support forum: don't display description line when excerpt-length = 0
-
+ *   bw 20240125 v2.3.0 v2 dir for older versions eg block.json version 2 for WP6.3 - Extra save instance/attributes in option 'simple_ical_block_attrs', like in standaard
+ *      wp-widget in array with sibid as index so that the attributes are available for REST call.
  */
 /*
  Simple Google Calendar Outlook Events Widget
  Copyright (C) Bram Waasdorp 2017 - 2024
- 2024-01-06
+ 2024-03-30
  Forked from Simple Google Calendar Widget v 0.7 by Nico Boehr
  
  This program is free software: you can redistribute it and/or modify
@@ -63,6 +64,8 @@ use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\IcsParser;
 use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalBlock;
 use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalWidgetAdmin;
 
+
+
 if (!class_exists('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\IcsParser')) {
     require_once( 'includes/IcsParser.php' );
     class_alias('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\IcsParser', 'IcsParser');
@@ -72,22 +75,48 @@ if (!class_exists('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\Simplei
     require_once( 'includes/SimpleicalBlock.php' );
     class_alias('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalBlock', 'SimpleicalBlock');
 }
+if (!class_exists('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\RestController')) {
+     require_once( 'includes/RestController.php' );
+     class_alias('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\RestController', 'RestController');
+}
 if (!class_exists('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalWidgetAdmin')) {
     require_once('includes/SimpleicalWidgetAdmin.php');
     class_alias('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalWidgetAdmin', 'SimpleicalWidgetAdmin');
 }
-if ( is_wp_version_compatible( '5.9' ) )   { // block widget
+if ( is_wp_version_compatible( '6.3' ) )   { // block  v3
     // Static class method call with name of the class
     add_action( 'init', array ('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalBlock', 'init_block') );
+//    add_action( 'rest_api_init', array ('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\RestController', 'init_and_register_routes') );
     
-} // end function_exists( 'register_block_type' )
+} // end wp-version > 6.3 block v3
+else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
+//    add_action( 'init', array ('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalBlock', 'init_block') );
+    add_action( 'init', array ('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalBlock', 'init_block_v2') );
+    
+} // end wp-version > 5.9 block v2
 
-{ //old widget
+{ // old widget always
+    add_action('rest_api_init', array(
+        'WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\RestController',
+        'init_and_register_routes'
+    ));
+    add_action( 'wp_enqueue_scripts', 'enqueue_view_script');
+    /**
+     * enqueue scripts for use in client REST view
+     * for v 6.3 up args array strategy = defer, else in_footer = that array is casted to boolean true. 
+     */
+    function enqueue_view_script()
+    {
+        wp_enqueue_script('simplegoogleicalenderwidget-simple-ical-block-view-script', plugins_url('/js/simple-ical-block-view.js', __FILE__), [], '2.3.0-' . filemtime(plugin_dir_path(__FILE__) . 'js/simple-ical-block-view.js'), 
+            ['strategy' => 'defer' ]);
+        wp_add_inline_script('simplegoogleicalenderwidget-simple-ical-block-view-script', '(window.simpleIcalBlock=window.simpleIcalBlock || {}).restRoot = "' . get_rest_url() . '"', 'before');
+    }
+    
     
     if ( !class_exists( 'Simple_iCal_Widget' ) ) {
         class Simple_iCal_Widget extends WP_Widget
         {
-            /*
+           /*
              * contruct the old widget
              *
              */
@@ -105,42 +134,56 @@ if ( is_wp_version_compatible( '5.9' ) )   { // block widget
                     )
                     );
             }
-            
+
             /**
              * Front-end display of widget.
              *
              * @see WP_Widget::widget()
              *
-             * @param array $args     Widget arguments.
-             * @param array $instance Saved values from database.
+             * @param array $args
+             *            Widget arguments.
+             * @param array $instance
+             *            Saved values from database.
              */
             public function widget($args, $instance)
             {
+                  
+                foreach ($args as $k => $arg){
+                    if (empty($instance[$k]) && !empty($arg) && ' ' < trim($arg)){
+                        $instance[$k] = $arg;
+                    } 
+                }
+                $instance = array_merge(SimpleicalBlock::$default_block_attributes,
+                    ['title' => __('Events', 'simple-google-icalendar-widget'),
+                     'tzid_ui' => wp_timezone_string(),
+                     'wptype' => 'widget'],
+                    $instance  );
                 
-                $instance = wp_parse_args((array) $instance,
-                    (array ('title' => __('Events', 'simple-google-icalendar-widget')) + SimpleicalBlock::$default_block_attributes));
-                
-                
-                // title widget
-                $title = apply_filters('widget_title', $instance['title']);
-                echo sprintf($args['before_widget'], $instance['blockid'], 'Simple_iCal_Widget ') ;
-                if(isset($instance['title'])) {
-                    echo $args['before_title'], $title, $args['after_title'];
+                if (! empty($instance['rest_utzui']) &&  is_numeric($instance['rest_utzui'])) {
+                    $instance['wptype'] = 'rest_ph';
                 }
                 // lay-out block:
-                $instance['wptype'] = 'widget';
                 $instance['clear_cache_now'] = false;
                 
-                
-                
-                SimpleicalBlock::display_block($instance);
-                
-                // end lay-out block
-                // after widget
-                echo $args['after_widget'];
-                
-                
-                
+                echo sprintf($args['before_widget'],
+                    ('w-' . $instance['sibid'] . '" data-sib-id="' . $instance['sibid'] ),
+                    $args['classname']) ;
+                $instances = get_option('widget_simple_ical_widget');
+                if ('rest_ph' == $instance['wptype'] ) {
+                    $instance['before_widget'] = '<span id="%1$s" %2$s>';
+                    $instance['after_widget'] = '</span>';
+                    echo SimpleicalBlock::render_block($instance);
+                }
+                else {
+                    if (! empty($instance['title'])) {
+                           $title = apply_filters('widget_title', $instance['title']);
+                           echo $args['before_title'], $title, $args['after_title'];
+                       }
+                       
+                    SimpleicalBlock::display_block($instance);
+                   }
+                   // end lay-out block
+                   echo $args['after_widget'];
             }
             /**
              * Sanitize widget form values as they are saved.
@@ -154,18 +197,17 @@ if ( is_wp_version_compatible( '5.9' ) )   { // block widget
              */
             public function update($new_instance, $old_instance)
             {
-                $instance = $old_instance;
                 $instance['title'] = strip_tags($new_instance['title']);
                 
                 $instance['calendar_id'] = htmlspecialchars($new_instance['calendar_id']);
                 
-                if(is_numeric($new_instance['cache_time']) && $new_instance['cache_time'] > 1) {
+                if(is_numeric($new_instance['cache_time']) && 1 < $new_instance['cache_time']) {
                     $instance['cache_time'] = $new_instance['cache_time'];
                 } else {
                     $instance['cache_time'] = 60;
                 }
                 
-                if(is_numeric($new_instance['event_period']) && $new_instance['event_period'] > 1) {
+                if(is_numeric($new_instance['event_period']) && 1 < $new_instance['event_period']) {
                     $instance['event_period'] = $new_instance['event_period'];
                 } else {
                     $instance['event_period'] = 366;
@@ -178,7 +220,7 @@ if ( is_wp_version_compatible( '5.9' ) )   { // block widget
                 }
                 
                 $instance['event_count'] = $new_instance['event_count'];
-                if(is_numeric($new_instance['event_count']) && $new_instance['event_count'] > 0) {
+                if(is_numeric($new_instance['event_count']) && 0 < $new_instance['event_count']) {
                     $instance['event_count'] = $new_instance['event_count'];
                 } else {
                     $instance['event_count'] = 5;
@@ -190,10 +232,16 @@ if ( is_wp_version_compatible( '5.9' ) )   { // block widget
                 $instance['dateformat_tsend'] = ($new_instance['dateformat_tsend']);
                 $instance['dateformat_tstart'] = ($new_instance['dateformat_tstart']);
                 $instance['dateformat_tend'] = ($new_instance['dateformat_tend']);
-                if(is_numeric($new_instance['excerptlength']) && $new_instance['excerptlength'] >= 0) {
+                if(is_numeric($new_instance['excerptlength']) && 0 <= $new_instance['excerptlength']) {
                     $instance['excerptlength'] = intval($new_instance['excerptlength']);
                 } else {
                     $instance['excerptlength'] = '';
+                }
+                if(!empty($new_instance['period_limits']) &&  is_numeric($new_instance['period_limits'])) {
+                    $instance['period_limits'] = strip_tags($new_instance['period_limits']);
+                }
+                if(!empty($new_instance['rest_utzui']) &&  is_numeric($new_instance['rest_utzui'])) {
+                    $instance['rest_utzui'] = strip_tags($new_instance['rest_utzui']);
                 }
                 $instance['tag_sum'] = strip_tags($new_instance['tag_sum']);
                 $instance['suffix_lg_class'] = strip_tags($new_instance['suffix_lg_class']);
@@ -202,7 +250,17 @@ if ( is_wp_version_compatible( '5.9' ) )   { // block widget
                 $instance['after_events'] = ($new_instance['after_events']);
                 $instance['no_events'] = ($new_instance['no_events']);
                 $instance['allowhtml'] = !empty($new_instance['allowhtml']);
-                $instance['blockid'] = strip_tags($new_instance['blockid']);
+                if (!empty($new_instance['blockid']) && empty($new_instance['sibid'])) {
+                    $new_instance['sibid'] = $new_instance['blockid'];
+                }
+                $instance['anchorId'] = strip_tags($new_instance['anchorId']);
+                $instance['sibid'] = strip_tags($new_instance['sibid']);
+                
+                if (!empty($this->number && is_numeric($this->number))) {
+                   $instance['postid'] = (string) $this->id;
+                }
+                if (!empty($old_instance['sibid'])) $instance['prev_sibid'] = $old_instance['sibid'];
+                if (SimpleicalBlock::update_rest_attrs($instance )) $instance['prev_sibid'] = $instance['sibid'];
                 
                 return $instance;
             }
@@ -216,14 +274,21 @@ if ( is_wp_version_compatible( '5.9' ) )   { // block widget
             public function form($instance)
             {
                 
-                $default = wp_parse_args((array) array(
+                $default = wp_parse_args( [
                     'wptype' => 'widget',
-                    'blockid' => 'W' . uniqid(),
-                ),
-                    (array ('title' => __('Events', 'simple-google-icalendar-widget')) + SimpleicalBlock::$default_block_attributes));
+                    'title' => __('Events', 'simple-google-icalendar-widget'),
+                ],
+                    SimpleicalBlock::$default_block_attributes);
                 
+                if (empty($instance['sibid'])) {
+                    if  (!empty($instance['blockid'])) {
+                        $instance['sibid'] = $instance['blockid'];
+                        unset($instance['blockid']);
+                    }
+                    else $instance['sibid'] = 'W' . bin2hex(random_bytes(7));
+                }
                 $instance = wp_parse_args((array) $instance, $default);
-                $nwblockid = 'w' . uniqid();
+                $nwsibid = 'w' .  bin2hex(random_bytes(7));
                 
                 ?>
         <p>
@@ -284,6 +349,21 @@ if ( is_wp_version_compatible( '5.9' ) )   { // block widget
           <input class="widefat" id="<?php echo $this->get_field_id('excerptlength'); ?>" name="<?php echo $this->get_field_name('excerptlength'); ?>" type="text" value="<?php echo esc_attr($instance['excerptlength']); ?>" />
         </p>
         <p>
+          <label for="<?php echo $this->get_field_id('period_limits'); ?>"><?php _e('Period limits:', 'simple-google-icalendar-widget'); ?></label> 
+          <select class="widefat" id="<?php echo $this->get_field_id('period_limits'); ?>" name="<?php echo $this->get_field_name('period_limits'); ?>" >
+            <option value="1"<?php echo ('1'==esc_attr($instance['period_limits']))?'selected':''; ?>><?php _e('Start Whole  day, End Whole  day', 'simple-google-icalendar-widget'); ?></option>
+  			<option value="2"<?php echo ('2'==esc_attr($instance['period_limits']))?'selected':''; ?>><?php _e('Start Time of day, End Whole  day', 'simple-google-icalendar-widget'); ?></option>
+  			<option value="3"<?php echo ('3'==esc_attr($instance['period_limits']))?'selected':''; ?>><?php _e('Start Time of day, End Time of day'); ?></option>
+  			<option value="4"<?php echo ('4'==esc_attr($instance['period_limits']))?'selected':''; ?>><?php _e('Start Whole  day, End Time of day', 'simple-google-icalendar-widget'); ?></option>
+  		 </select>	
+        <p>
+        <p>
+          <label for="<?php echo $this->get_field_id('rest_utzui'); ?>"><?php _e('Use client timezone settings:', 'simple-google-icalendar-widget'); ?></label> 
+          <select class="widefat" id="<?php echo $this->get_field_id('rest_utzui'); ?>" name="<?php echo $this->get_field_name('rest_utzui'); ?>" >
+  			<option value=""<?php echo (''==esc_attr($instance['rest_utzui']))?'selected':''; ?>><?php _e('Use WordPress timezone settings, no REST'); ?></option>
+            <option value="1"<?php echo ('1'==esc_attr($instance['rest_utzui']))?'selected':''; ?>><?php _e('Use Client timezone settings, with REST', 'simple-google-icalendar-widget'); ?></option>
+  		 </select>	
+        <p>
           <label for="<?php echo $this->get_field_id('tag_sum'); ?>"><?php _e('Tag for summary:', 'simple-google-icalendar-widget'); ?></label> 
           <select class="widefat" id="<?php echo $this->get_field_id('tag_sum'); ?>" name="<?php echo $this->get_field_name('tag_sum'); ?>" >
             <option value="a"<?php echo ('a'==esc_attr($instance['tag_sum']))?'selected':''; ?>><?php _e('a (link)', 'simple-google-icalendar-widget'); ?></option>
@@ -322,12 +402,17 @@ if ( is_wp_version_compatible( '5.9' ) )   { // block widget
           <label for="<?php echo $this->get_field_id('no_events'); ?>"><?php _e('Closing HTML when no events:', 'simple-google-icalendar-widget'); ?></label> 
           <input class="widefat" id="<?php echo $this->get_field_id('no_events'); ?>" name="<?php echo $this->get_field_name('no_events'); ?>" type="text" value="<?php echo esc_attr($instance['no_events']); ?>" />
         </p>
-         <p>
-          <button class="button" id="<?php echo $this->get_field_id('reset_id'); ?>" name="<?php echo $this->get_field_name('reset_id'); ?>" onclick="document.getElementById('<?php echo $this->get_field_id('blockid'); ?>').value = '<?php echo $nwblockid; ?>'" type="button" ><?php _e('Reset ID.', 'simple-google-icalendar-widget')  ?></button>
-          <label for="<?php echo $this->get_field_id('reset_id'); ?>"><?php _e('Reset ID, only necessary to clear cache or after duplicating block.', 'simple-google-icalendar-widget'); ?></label> 
+        <p>
+          <label for="<?php echo $this->get_field_id('anchorId'); ?>"><?php _e('HTML anchor:', 'simple-google-icalendar-widget'); ?></label> 
+          <input class="widefat" id="<?php echo $this->get_field_id('anchorId'); ?>" name="<?php echo $this->get_field_name('anchorId'); ?>" type="text" value="<?php echo esc_attr($instance['anchorId']); ?>" />
         </p>
         <p>
-          <input class="widefat" id="<?php echo $this->get_field_id('blockid'); ?>" name="<?php echo $this->get_field_name('blockid'); ?>" type="hidden" value="<?php echo esc_attr($instance['blockid']); ?>" />
+          <label for="<?php echo $this->get_field_id('sibid'); ?>"><?php _e('Sib ID:', 'simple-google-icalendar-widget'); ?></label> 
+          <input class="widefat" id="<?php echo $this->get_field_id('sibid'); ?>" name="<?php echo $this->get_field_name('sibid'); ?>" type="text" value="<?php echo esc_attr($instance['sibid']); ?>" readonly />
+        </p>
+         <p>
+          <button class="button" id="<?php echo $this->get_field_id('reset_id'); ?>" name="<?php echo $this->get_field_name('reset_id'); ?>" onclick="document.getElementById('<?php echo $this->get_field_id('sibid'); ?>').value = '<?php echo $nwsibid; ?>'" ><?php _e('Reset ID.', 'simple-google-icalendar-widget')  ?></button>
+          <label for="<?php echo $this->get_field_id('reset_id'); ?>"><?php _e('Reset ID, only necessary to clear cache or after duplicating block. You may have to change another field to save the new values to the DB', 'simple-google-icalendar-widget'); ?></label> 
         </p>
         <p>
             <?php echo '<a href="' . admin_url('admin.php?page=simple_ical_info') . '" target="_blank">' ; 
