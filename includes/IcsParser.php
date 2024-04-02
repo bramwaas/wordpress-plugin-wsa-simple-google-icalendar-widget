@@ -45,7 +45,7 @@
  * 2.3.0 limit events after caching. process the different types of period endpoints (Time of day, Whole day). 
  *   get_option('timezone_string') changed in wp_timezone_string().  Modulo 4 for period_limits (default 1 Whole day, whole day; 2 Time of day, Wd; 3 Td, Td; 0 Wd, Td)
  *   Add unescape \\ to \ and improve \, to ,   \; to ;  chars that should be escaped following the text specification.
- * 2.4.0 exclude DTEND from event that is evend ends before (<) DTEND in stead of at (<=) DTEND.       
+ * 2.4.0 exclude DTEND from event that is evend ends before (<) DTEND in stead of at (<=) DTEND.  \\TODO     
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
