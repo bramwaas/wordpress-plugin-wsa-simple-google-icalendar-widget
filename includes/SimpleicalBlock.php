@@ -233,7 +233,7 @@ class SimpleicalBlock
     }
 
     /**
-     * Front-end display of block or widget.
+     * Front-end display of module, block or widget.
      *
      * @see
      *
