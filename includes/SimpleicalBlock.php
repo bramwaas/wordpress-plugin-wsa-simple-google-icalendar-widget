@@ -57,7 +57,7 @@ class SimpleicalBlock
     ];
 
     /**
-     * deafault value for block_attributes (or instance)
+     * default value for block_attributes (or instance)
      *
      * @var array
      */
