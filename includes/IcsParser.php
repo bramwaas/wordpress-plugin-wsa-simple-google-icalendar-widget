@@ -45,7 +45,7 @@
  * 2.3.0 limit events after caching. process the different types of period endpoints (Time of day, Whole day). 
  *   get_option('timezone_string') changed in wp_timezone_string().  Modulo 4 for period_limits (default 1 Whole day, whole day; 2 Time of day, Wd; 3 Td, Td; 0 Wd, Td)
  *   Add unescape \\ to \ and improve \, to ,   \; to ;  chars that should be escaped following the text specification.
- * 2.4.0 exclude DTEND from event that is evend ends before (<) DTEND in stead of at (<=) DTEND.  by subtracting 1 second from end time.    
+ * 2.4.0 exclude DTEND from event that is evend ends before (<) DTEND in stead of at (<=) DTEND.    
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
@@ -353,7 +353,7 @@ END:VCALENDAR';
                 if (!empty($e->recurid)){
                     $this->replaceevents[] = array($e->uid, $e->recurid );
                 }
-                if ($this->p_start <= $e->end && $this->p_end > $e->start && (empty($e->exdate) || ! in_array($e->start, $e->exdate))) {
+                if ($this->p_start < $e->end && $this->p_end > $e->start && (empty($e->exdate) || ! in_array($e->start, $e->exdate))) {
                     $this->events[] = $e;
                 }
                 // Recurring event?
@@ -679,7 +679,7 @@ END:VCALENDAR';
         $newEvents = array();
         $i=0;
         foreach ($data_events as $e) {
-            if (($p_start) <= $e->end
+            if (($p_start) < $e->end
                 && $p_end > $e->start 
                 ) {
                     $i++;
@@ -872,7 +872,7 @@ END:VCALENDAR';
                         break;
                     case "DTEND":
                         $eventObj->endisdate = $isdate;
-                        $eventObj->end = $this->parseIcsDateTime($value, $tzid) - 1;
+                        $eventObj->end = $this->parseIcsDateTime($value, $tzid);
                         break;
                     case "DURATION":
                         $eventObj->duration = $value;
@@ -930,9 +930,9 @@ END:VCALENDAR';
                 else {
                     $edtstart->add(new \DateInterval($eventObj->duration));
                 }
-                $eventObj->end = $edtstart->getTimestamp() - 1;
+                $eventObj->end = $edtstart->getTimestamp();
             } else {
-                $eventObj->end = ($eventObj->startisdate) ? $eventObj->start + 86399 : $eventObj->start;
+                $eventObj->end = ($eventObj->startisdate) ? $eventObj->start + 86400 : $eventObj->start;
             }
             $eventObj->endisdate = $eventObj->startisdate;
         }
