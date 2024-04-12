@@ -188,7 +188,7 @@ We'd love your help! Here's a few things you can do:
 * Gets calendar events via iCal url or google calendar ID
 * Merge more calendars into one block
 * Displays maximum the selected number of events as listgroup-items     
-* Displays only or events in a selected period with a length of the setting "Number of days after today with events" from now limited by the time of the day or the beginning of the day at the start and the and of the at the end.
+* Displays only events in a selected period with a length of the setting "Number of days after today with events" from now limited by the time of the day or the beginning of the day at the start and the and of the at the end.
 * Displays events in timezone of WordPress setting, or in Clients timezone with javascript REST call fetched from the clients browser.
 * Displays event start-date and summary; toggle details, description, start-, end-time, location. 
 * Displays most common repeating events 
