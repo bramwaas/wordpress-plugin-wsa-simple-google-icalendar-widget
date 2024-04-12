@@ -45,7 +45,8 @@
  * 2.3.0 limit events after caching. process the different types of period endpoints (Time of day, Whole day). 
  *   get_option('timezone_string') changed in wp_timezone_string().  Modulo 4 for period_limits (default 1 Whole day, whole day; 2 Time of day, Wd; 3 Td, Td; 0 Wd, Td)
  *   Add unescape \\ to \ and improve \, to ,   \; to ;  chars that should be escaped following the text specification.
- * 2.4.0 exclude DTEND from event that is evend ends before (<) DTEND in stead of at (<=) DTEND. removed modulo 4   
+ * 2.4.0 exclude DTEND from event that is evend ends before (<) DTEND in stead of at (<=) DTEND. removed modulo 4
+ *  Checks if time zone ID with Etc/GMT 'replaced by'Etc/GMT+' is a Iana timezone then return this timezone.   
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
@@ -973,6 +974,11 @@ END:VCALENDAR';
         if (! empty($instance['tzid_ui']))
             try {
                 $instance['tz_ui'] = new \DateTimeZone($instance['tzid_ui']);
+            } catch (\Exception $exc) {}
+        if (empty($instance['tz_ui']) && (! empty($instance['tzid_ui'])))
+            try {
+                    $instance['tzid_ui'] = str_replace('Etc/GMT ','Etc/GMT+',$instance['tzid_ui']);
+                    $instance['tz_ui'] = new \DateTimeZone($instance['tzid_ui']);
             } catch (\Exception $exc) {}
         if (empty($instance['tz_ui']))
             try {
