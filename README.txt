@@ -5,7 +5,7 @@ Tags: Google Calendar, iCal, Events, Block, Calendar
 Requires at least: 5.3.0
 Tested up to: 6.5
 Requires PHP: 5.3.0
-Stable tag: 2.3.1
+Stable tag: 2.4.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
  
@@ -188,7 +188,7 @@ We'd love your help! Here's a few things you can do:
 * Gets calendar events via iCal url or google calendar ID
 * Merge more calendars into one block
 * Displays maximum the selected number of events as listgroup-items     
-* Displays only or events in a selected period with a length of the setting "Number of days after today with events" from now limited by the time of the day or the beginning of the day at the start and the and of the at the end.
+* Displays only events in a selected period with a length of the setting "Number of days after today with events" from now limited by the time of the day or the beginning of the day at the start and the and of the at the end.
 * Displays events in timezone of WordPress setting, or in Clients timezone with javascript REST call fetched from the clients browser.
 * Displays event start-date and summary; toggle details, description, start-, end-time, location. 
 * Displays most common repeating events 
@@ -214,7 +214,9 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 * since v1.2.0 Wordpress version 5.3.0 is required because of the use of wp_date() 
 
 == Changelog ==
-* 2.3.0 Tie moving display events window created by Now and 'Number of days after today' to the display time instead of the data-retrieve/cache time. Make it possible to let the window start at 0H00 and end at 23H59 local time of the startdate and enddate of the window in addition to the current solution where both ends are at the time of the day the data is displayed/retrieved. Add <span class="dsc"> to description output to make it easier to refer to in css. Remove HTML for block title when title is empty. Add unescape \\ to \ and improve \, to ,   \; to ;  chars that should be escaped following the text specification. Extra save attributes in widget option to increase the chance the REST call finds them in that option.      
+* 2.4.0 exclude DTEND from event that is evend ends before (<) DTEND in stead of at (<=) DTEND. removed modulo 4    
+ Checks if time zone ID with Etc/GMT 'replaced by'Etc/GMT+' is a Iana timezone then return this timezone.    
+* 2.3.1 Tie moving display events window created by Now and 'Number of days after today' to the display time instead of the data-retrieve/cache time. Make it possible to let the window start at 0H00 and end at 23H59 local time of the startdate and enddate of the window in addition to the current solution where both ends are at the time of the day the data is displayed/retrieved. Add <span class="dsc"> to description output to make it easier to refer to in css. Remove HTML for block title when title is empty. Add unescape \\ to \ and improve \, to ,   \; to ;  chars that should be escaped following the text specification. Extra save attributes in widget option to increase the chance the REST call finds them in that option.      
 Tested with WP 5.3 (only widget) 5.9, 6.4 (block and widget in legacy block and in Elementor) 6.5 RC 4      
 * 2.2.1 20240123 after an isue of black88mx6 in support forum: don't display description line when excerpt-length = 0
 * 20240324 teste with 6.5 RC 3     

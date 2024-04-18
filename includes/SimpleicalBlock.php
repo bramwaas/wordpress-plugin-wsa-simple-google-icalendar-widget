@@ -31,6 +31,7 @@
  * block default version 3 version 2; add <span class="dsc"> to description output to make it easier to refer to in css
  * title with more wptypes, no display of empty title, title output secured with wp_kses (to display empty title line use <>.
  * 2.3.1 spelling error in render block block/ssr 
+ * 2.4.0 str_replace('Etc/GMT ','Etc/GMT+' for some UTC-... timezonesettings.
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
@@ -57,7 +58,7 @@ class SimpleicalBlock
     ];
 
     /**
-     * deafault value for block_attributes (or instance)
+     * default value for block_attributes (or instance)
      *
      * @var array
      */
@@ -233,7 +234,7 @@ class SimpleicalBlock
     }
 
     /**
-     * Front-end display of block or widget.
+     * Front-end display of module, block or widget.
      *
      * @see
      *
@@ -245,6 +246,13 @@ class SimpleicalBlock
         $sn = 0;
         try {
             $attributes['tz_ui'] = new \DateTimeZone($attributes['tzid_ui']);
+        } catch (\Exception $exc) {}
+        if (empty($attributes['tz_ui']))
+            try {
+                
+                $attributes['tzid_ui'] = str_replace('Etc/GMT ','Etc/GMT+',$attributes['tzid_ui']);
+                echo '<!-- Timezone ApE tzid_ui:' . $attributes['tzid_ui'] . ' -->' .PHP_EOL;
+                $attributes['tz_ui'] = new \DateTimeZone($attributes['tzid_ui']);
         } catch (\Exception $exc) {}
         if (empty($attributes['tz_ui']))
             try {

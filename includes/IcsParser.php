@@ -44,7 +44,9 @@
  *   Parse Recurrence-ID to support changes in individual recurrent events in Google Calendar. Remove _ chars from UID. 
  * 2.3.0 limit events after caching. process the different types of period endpoints (Time of day, Whole day). 
  *   get_option('timezone_string') changed in wp_timezone_string().  Modulo 4 for period_limits (default 1 Whole day, whole day; 2 Time of day, Wd; 3 Td, Td; 0 Wd, Td)
- *   Add unescape \\ to \ and improve \, to ,   \; to ;  chars that should be escaped following the text specification.    
+ *   Add unescape \\ to \ and improve \, to ,   \; to ;  chars that should be escaped following the text specification.
+ * 2.4.0 exclude DTEND from event that is evend ends before (<) DTEND in stead of at (<=) DTEND. removed modulo 4
+ *  Checks if time zone ID with Etc/GMT 'replaced by'Etc/GMT+' is a Iana timezone then return this timezone.   
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
@@ -351,8 +353,9 @@ END:VCALENDAR';
                 $e->cal_ord = $cal_ord;
                 if (!empty($e->recurid)){
                     $this->replaceevents[] = array($e->uid, $e->recurid );
+
                 }
-                if ($this->p_start <= $e->end && $this->p_end > $e->start && (empty($e->exdate) || ! in_array($e->start, $e->exdate))) {
+                if ($this->p_start < $e->end && $this->p_end > $e->start && (empty($e->exdate) || ! in_array($e->start, $e->exdate))) {
                     $this->events[] = $e;
                 }
                 // Recurring event?
@@ -678,7 +681,7 @@ END:VCALENDAR';
         $newEvents = array();
         $i=0;
         foreach ($data_events as $e) {
-            if (($p_start) <= $e->end
+            if (($p_start) < $e->end
                 && $p_end > $e->start 
                 ) {
                     $i++;
@@ -973,6 +976,11 @@ END:VCALENDAR';
             try {
                 $instance['tz_ui'] = new \DateTimeZone($instance['tzid_ui']);
             } catch (\Exception $exc) {}
+        if (empty($instance['tz_ui']) && (! empty($instance['tzid_ui'])))
+            try {
+                    $instance['tzid_ui'] = str_replace('Etc/GMT ','Etc/GMT+',$instance['tzid_ui']);
+                    $instance['tz_ui'] = new \DateTimeZone($instance['tzid_ui']);
+            } catch (\Exception $exc) {}
         if (empty($instance['tz_ui']))
             try {
                 $instance['tzid_ui'] = wp_timezone_string();
@@ -988,11 +996,11 @@ END:VCALENDAR';
         $p_start = $pdt_start->modify("today")->getTimestamp();
         $ep = (empty($instance['event_period']) || 1 > $instance['event_period']) ? 1: $instance['event_period'] + 1;
         $p_end = $pdt_start->modify("+$ep day")->getTimestamp();
-        $pl = $instance['period_limits'] % 4;
+        $pl = intval($instance['period_limits']);
         if (in_array($pl, [2,3])){
                     $p_start = $now;
         }
-        if (in_array($pl, [0,3])){
+        if (in_array($pl, [3,4])){
             $ep = $ep - 1;
             $pdt_start->setTimestamp($now);
             $p_end = $pdt_start->modify("+$ep day")->getTimestamp();
