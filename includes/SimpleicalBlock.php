@@ -249,9 +249,7 @@ class SimpleicalBlock
         } catch (\Exception $exc) {}
         if (empty($attributes['tz_ui']))
             try {
-                
                 $attributes['tzid_ui'] = str_replace('Etc/GMT ','Etc/GMT+',$attributes['tzid_ui']);
-                echo '<!-- Timezone ApE tzid_ui:' . $attributes['tzid_ui'] . ' -->' .PHP_EOL;
                 $attributes['tz_ui'] = new \DateTimeZone($attributes['tzid_ui']);
         } catch (\Exception $exc) {}
         if (empty($attributes['tz_ui']))
