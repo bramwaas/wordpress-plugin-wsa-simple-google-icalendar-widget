@@ -40,11 +40,13 @@
  *   bw 20240123 v2.2.1 after an isue of black88mx6 in support forum: don't display description line when excerpt-length = 0
  *   bw 20240125 v2.3.0 v2 dir for older versions eg block.json version 2 for WP6.3 - Extra save instance/attributes in option 'simple_ical_block_attrs', like in standaard
  *      wp-widget in array with sibid as index so that the attributes are available for REST call.
+ *   bw 20240509 v2.4.1 added defaults to all used keys of $args to solve
+ *      issue 'PHP warnings' of johansam on support forum. Undefined array key “classname” in .../simple-google-icalendar-widget.php on line 170    
  */
 /*
  Simple Google Calendar Outlook Events Widget
  Copyright (C) Bram Waasdorp 2017 - 2024
- 2024-03-30
+ 2024-05-09
  Forked from Simple Google Calendar Widget v 0.7 by Nico Boehr
  
  This program is free software: you can redistribute it and/or modify
@@ -147,7 +149,12 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
              */
             public function widget($args, $instance)
             {
-                  
+                $args = array_merge(['before_widget' => '',
+                    'before_title' => '',
+                    'after_title' => '',
+                    'after_widget' => '',
+                    'classname' => 'Simple_iCal_Widget' ],
+                    $args);  
                 foreach ($args as $k => $arg){
                     if (empty($instance[$k]) && !empty($arg) && ' ' < trim($arg)){
                         $instance[$k] = $arg;
@@ -160,7 +167,7 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
                     $instance  );
                 
                 if (! empty($instance['rest_utzui']) &&  is_numeric($instance['rest_utzui'])) {
-                    $instance['wptype'] = 'rest_ph';
+                    $instance['wptype'] = 'rest_ph_w';
                 }
                 // lay-out block:
                 $instance['clear_cache_now'] = false;
@@ -169,7 +176,7 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
                     ('w-' . $instance['sibid'] . '" data-sib-id="' . $instance['sibid'] ),
                     $args['classname']) ;
                 $instances = get_option('widget_simple_ical_widget');
-                if ('rest_ph' == $instance['wptype'] ) {
+                if ('rest_ph_w' == $instance['wptype'] ) {
                     $instance['before_widget'] = '<span id="%1$s" %2$s>';
                     $instance['after_widget'] = '</span>';
                     echo SimpleicalBlock::render_block($instance);

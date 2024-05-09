@@ -214,6 +214,7 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 * since v1.2.0 Wordpress version 5.3.0 is required because of the use of wp_date() 
 
 == Changelog ==
+* 2.4.1 added defaults to all used keys of $args to solve issue 'PHP warnings' of johansam on support forum. Undefined array key “classname” in .../simple-google-icalendar-widget.php on line 170
 * 2.4.0 exclude DTEND from event that is evend ends before (<) DTEND in stead of at (<=) DTEND. removed modulo 4    
  Checks if time zone ID with Etc/GMT 'replaced by'Etc/GMT+' is a Iana timezone then return this timezone.    
 * 2.3.1 Tie moving display events window created by Now and 'Number of days after today' to the display time instead of the data-retrieve/cache time. Make it possible to let the window start at 0H00 and end at 23H59 local time of the startdate and enddate of the window in addition to the current solution where both ends are at the time of the day the data is displayed/retrieved. Add <span class="dsc"> to description output to make it easier to refer to in css. Remove HTML for block title when title is empty. Add unescape \\ to \ and improve \, to ,   \; to ;  chars that should be escaped following the text specification. Extra save attributes in widget option to increase the chance the REST call finds them in that option.      

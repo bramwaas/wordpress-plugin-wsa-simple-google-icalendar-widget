@@ -32,6 +32,7 @@
  * title with more wptypes, no display of empty title, title output secured with wp_kses (to display empty title line use <>.
  * 2.3.1 spelling error in render block block/ssr 
  * 2.4.0 str_replace('Etc/GMT ','Etc/GMT+' for some UTC-... timezonesettings.
+ * 2.4.1 resolved with wptype 'rest_ph_w' warning on wrapper_attributes when wptype 'rest_ph' and started from widget   
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
@@ -198,12 +199,13 @@ class SimpleicalBlock
                 self::display_block($block_attributes);
                 break;
             case 'rest_ph':
+            case 'rest_ph_w':    
                 // Placeholder starting point for REST processing display of block or widget.
                 if (false === stripos(' data-sib-t="true" ', $block_attributes['before_title'])) {
                     $l = explode('>', $block_attributes['before_title'], 2);
                     $block_attributes['before_title'] = implode(' data-sib-t="true" >', $l);
                 }
-                $wrapperattr = (is_wp_version_compatible('5.6')) ? get_block_wrapper_attributes() : '';
+                $wrapperattr = ('rest_ph' == $block_attributes['wptype'] && is_wp_version_compatible('5.6')) ? get_block_wrapper_attributes() : '';
                 echo sprintf($block_attributes['before_widget'], ($block_attributes['anchorId'] . '" data-sib-id="' . $block_attributes['sibid'] . '" data-sib-st="0-start' . ((empty($block_attributes['title'])) ? '" data-sib-notitle="true' : '')), $wrapperattr);
                 echo $block_attributes['before_title'] . wp_kses($block_attributes['title'], 'post') . $block_attributes['after_title'] . '<p>';
                 _e('Processing', 'simple-google-icalendar-widget');

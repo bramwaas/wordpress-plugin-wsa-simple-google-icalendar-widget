@@ -4,7 +4,9 @@
  * @copyright Copyright (C) 2024 - 2024 Bram Waasdorp. All rights reserved.
  * @license GNU General Public License version 3 or later
  *
- * 2.3.0 
+ * 2.4.1 
+ * 2.4.1 adressed Notice: register_rest_route was called <strong>incorrectly</strong>. Namespace must not start or end with a slash.
+ *  and added 'permission_callback' => '__return_true', for public routes.
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
@@ -34,8 +36,9 @@ class RestController extends WP_REST_Controller {
     /**
      * Constructor.
      *
-     * initial values ​​for $namespace string, $rest_base string defined in extended class WP_REST_Controller
-     *    their is also a variable $schema array defined to cache results of the schema.
+     * initial values for $namespace string, $rest_base string defined in extended class WP_REST_Controller
+     *    their is also a variable $schema array defined to cache results of the schema. 
+     *    2.4.1 removed end slash
      *
      * @return  void  ($this RestController object)
      *
@@ -43,7 +46,7 @@ class RestController extends WP_REST_Controller {
      */
     public function __construct()
     {
-        $this->namespace = 'simple-google-icalendar-widget/';
+        $this->namespace = 'simple-google-icalendar-widget';
     }
     
     /**
@@ -73,7 +76,7 @@ class RestController extends WP_REST_Controller {
             array(
                 'methods'             => 'GET, POST',
                 'callback'            => array( $this, 'get_content_by_ids' ),
-                'permission_callback' => array( $this,'get_block_content_permissions_check'),
+                'permission_callback' => '__return_true',
                 'args'                => array(
                    'sibid' => array(
                        'default' => '',
@@ -87,10 +90,12 @@ class RestController extends WP_REST_Controller {
                 ),
             ),     
             'schema' => array ($this, 'get_content_by_ids_schema'),
+            'permission_callback' => '__return_true'
         ) );
         register_rest_route( $this->namespace, '/v1/content-by-ids/schema', array(
             'methods'  => WP_REST_Server::READABLE,
             'callback' => array( $this, 'get_content_by_ids_schema' ),
+            'permission_callback' => '__return_true'
         ) );
 //        
         register_rest_route( $this->namespace, '/v1/set-sib-attrs', array(
@@ -100,17 +105,23 @@ class RestController extends WP_REST_Controller {
                 'permission_callback' => array( $this,'set_sib_attrs_permissions_check'),
                 'args'                => array(
                     'sibid' => [],
-                    'prev_sib'   => [],  
-                ),
+                    'prev_sib'   => []
+                )
             ),
-            'schema' => array ($this, 'set_sib_attrs_schema'),
-        ) );
-        register_rest_route( $this->namespace, '/v1/set-sib-attrs/schema', array(
-            'methods'  => WP_REST_Server::READABLE,
+            'schema' => array(
+                $this,
+                'set_sib_attrs_schema'
+            ),
+            'permission_callback' => '__return_true'
+        ));
+        register_rest_route($this->namespace, '/v1/set-sib-attrs/schema', array(
+            'methods' => WP_REST_Server::READABLE,
             'callback' => array(
                 $this,
                 'set_sib_attrs_schema'
-            )
+            ),
+            'permission_callback' => '__return_true' 
+            
         ));
     }
 
@@ -179,7 +190,7 @@ class RestController extends WP_REST_Controller {
      * 
      */
     public function get_content_by_ids_schema() {
-        if ( $this->get_content_by_ids_schema ) {
+        if ( !empty($this->get_content_by_ids_schema) ) {
             // Since WordPress 5.3, the schema can be cached in the $schema property.
             return $this->get_content_by_ids_schema;
         }
