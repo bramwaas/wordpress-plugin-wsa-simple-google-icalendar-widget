@@ -32,7 +32,8 @@
  * title with more wptypes, no display of empty title, title output secured with wp_kses (to display empty title line use <>.
  * 2.3.1 spelling error in render block block/ssr 
  * 2.4.0 str_replace('Etc/GMT ','Etc/GMT+' for some UTC-... timezonesettings.
- * 2.4.1 resolved with wptype 'rest_ph_w' warning on wrapper_attributes when wptype 'rest_ph' and started from widget   
+ * 2.4.1 resolved with wptype 'rest_ph_w' warning on wrapper_attributes when wptype 'rest_ph' and started from widget 
+ * 2.4.3 replace render_callback in server side register_block_type by render in block.json (v3 plus ( is_wp_version_compatible( '6.3' ) ))  
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
@@ -99,19 +100,14 @@ class SimpleicalBlock
     ];
 
     /**
-     * Block init register block with help of block.json
+     * Block init register block with help of block.json v3 plus
      *
      * @param
      *            .
      */
     static function init_block()
     {
-        register_block_type(dirname(__DIR__) . '/block.json', array(
-            'render_callback' => array(
-                'WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalBlock',
-                'render_block'
-            )
-        ));
+        register_block_type(dirname(__DIR__) . '/block.json', array( ));
     }
 
     /**
