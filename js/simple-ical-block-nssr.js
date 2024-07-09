@@ -416,10 +416,9 @@
 					el(
 				     'div',
 				     {
-						 "id":"F1",
-						 "data-sib-id":"b7fe1c02a-f264-4f25-9e22-ed095d709c9e",
+						 "id":props.attributes.anchorId,
+						 "data-sib-id":props.attributes.sibid,
 						 "data-sib-st":"0-start",
-						 "class":"wp-block-simplegoogleicalenderwidget-simple-ical-block",
 					 },
 					 el(
 						 'h3',
@@ -427,8 +426,12 @@
 							 "class":"widget-title", 
 						     "data-sib-t":"true",
 						 },
-     					__('Uitvoer editor', 'simple-google-icalendar-widget')
-					 )
+						 props.attributes.title
+						 ),
+					 el('p',
+					    {},
+   						__('Processing', 'simple-google-icalendar-widget')
+   						)
 					));
 		},
 		save: function (props) {
@@ -439,10 +442,9 @@
 				}),
 				el('div',
 				     {
-						 "id":"F1",
-						 "data-sib-id":"b7fe1c02a-f264-4f25-9e22-ed095d709c9e",
+						 "id":props.attributes.anchorId,
+						 "data-sib-id":props.attributes.sibid,
 						 "data-sib-st":"0-start",
-						 "class":"wp-block-simplegoogleicalenderwidget-simple-ical-block",
 					 },
 					 el(
 						 'h3',
@@ -450,8 +452,12 @@
 							 "class":"widget-title", 
 						     "data-sib-t":"true",
 						 },
-     					__('Uitvoer frontend', 'simple-google-icalendar-widget')
-					 )
+						 props.attributes.title
+						 ),
+					 el('p',
+					    {},
+   						__('Processing', 'simple-google-icalendar-widget')
+   						)
 					 )
     		));
 		}
