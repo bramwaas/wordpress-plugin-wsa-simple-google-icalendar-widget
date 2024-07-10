@@ -8,7 +8,7 @@
  * 20240709 Copied from simple-ical-block.js removed references to server side rendering
  *   wptype 'ssr'.
  */
-(function(blocks, i18n, element, blockEditor, components) {
+(function(blocks, i18n, element, blockEditor, components, apiFetch) {
 	const el = element.createElement;
 	const __ = i18n.__;
 	const useBlockProps = blockEditor.useBlockProps;
@@ -33,6 +33,21 @@
 	const useEffect = element.useEffect;
 
 	let ptzid_ui;
+	/**
+	 * Copies attributes in Option via asynchrone REST call 
+	*/
+	const fset_sib_attrs = function(attrs) {
+		const fpath = "/simple-google-icalendar-widget/v1/set-sib-attrs";
+		apiFetch({
+			path: fpath,
+			method: 'POST',
+			data: attrs,
+		}).then((res) => {
+			console.log(res);
+		}).catch((error) => {
+			console.log(error);
+		});
+	}
 
 	blocks.registerBlockType('simplegoogleicalenderwidget/simple-ical-block-nssr', {
 		icon: iconEl,
@@ -103,6 +118,7 @@
 				if (props.attributes.clear_cache_now) {
 					let x = setTimeout(stopCC, 1000);
 					function stopCC() { props.setAttributes({ clear_cache_now: false }); }
+					fset_sib_attrs(props.attributes);
 				}
 			}, [props.attributes.clear_cache_now]);
 			return el(
@@ -466,6 +482,7 @@
 	window.wp.i18n,
 	window.wp.element,
 	window.wp.blockEditor,
-	window.wp.components
+	window.wp.components,
+	window.wp.apiFetch
 )
 );
