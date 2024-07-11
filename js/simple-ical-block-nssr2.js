@@ -48,6 +48,51 @@
 			console.log(error);
 		});
 	}
+	/**
+	 * get content by id like in view-script
+	 * simple-google-icalendar-widget/v1/content-by-ids
+	 */
+	const fetchFromRest = function(dobj, ni) {
+		const fpath = "/simple-google-icalendar-widget/v1/content-by-ids";
+		apiFetch({
+			path: fpath,
+			method: 'POST',
+			data: dobj,
+		}).then((res) => {
+			console.log(res);
+			ni.setAttribute('data-sib-st', 'completed');
+			if (ni.getAttribute('data-sib-notitle')) titl = ''; else titl = ni.querySelector( '[data-sib-t="true"]' ).outerHTML;
+			ni.innerHTML = titl + res.content;
+		}).catch((error) => {
+			console.log(error);
+			ni.setAttribute('data-sib-st', 'Error :' + error.code + ':' + error.message);
+			ni.innerHTML = '<p>= Code: ' + error.code + '<br>= Msg: ' + error.message + '</p>';
+		});
+	}
+
+	const getBlockByIds = function() {
+		const nodeList = document.querySelectorAll('[data-sib-st]');
+		console.log(nodeList);
+		const ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
+		let paramsObj = {"wptype": "REST", "tzid_ui":ptzid_ui};
+		for (let i = 0; i < nodeList.length; i++) {
+			paramsObj.sibid = nodeList[i].getAttribute('data-sib-id');
+			console.log(paramsObj);
+			nodeList[i].setAttribute('data-sib-st', 'f1');
+			fetchFromRest(paramsObj, nodeList[i]);
+		}
+	}
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
 
 	blocks.registerBlockType('simplegoogleicalenderwidget/simple-ical-block-nssr', {
 		icon: iconEl,
@@ -119,6 +164,8 @@
 					let x = setTimeout(stopCC, 1000);
 					function stopCC() { props.setAttributes({ clear_cache_now: false }); }
 					fset_sib_attrs(props.attributes);
+/*					fetchFromRest(props.attributes); */
+					getBlockByIds();
 				}
 			}, [props.attributes.clear_cache_now]);
 			return el(
