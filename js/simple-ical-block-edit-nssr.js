@@ -10,7 +10,7 @@ let titl;
 window.simpleIcalBlock = {...(window.simpleIcalBlock || {}), ...{
 	fetchFromRest: function(dobj, ni) {
 		const fpath = "/simple-google-icalendar-widget/v1/content-by-ids";
-		apiFetch({
+		window.wp.apiFetch({
 			path: fpath,
 			method: 'POST',
 			data: dobj,

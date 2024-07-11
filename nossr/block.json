@@ -52,5 +52,5 @@
     "supports": {
         "align": true
     },
-	"editorScript": ["file:../js/simple-ical-block-nssr.js", "simple-ical-block-edit-nssr.js"]
+	"editorScript": ["file:../js/simple-ical-block-nssr.js", "file:../js/simple-ical-block-edit-nssr.js"]
   }
