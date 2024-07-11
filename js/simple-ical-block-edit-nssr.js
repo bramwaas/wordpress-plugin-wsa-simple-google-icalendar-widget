@@ -27,6 +27,14 @@ window.simpleIcalBlock = {...(window.simpleIcalBlock || {}), ...{
 	}
 	,
 	getBlockByIds: function() {
+		/* first select document of iFrame
+		example:
+		  var x = document.querySelector('iframe[id="myframe"]');
+  var y = (x.contentWindow || x.contentDocument);
+  if (y.document)y = y.document;
+  y.body.style.backgroundColor = "red";
+*/
+		
 		const nodeList = document.querySelectorAll('[data-sib-st]');
 			console.log(nodeList);
 		const ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
