@@ -2,7 +2,7 @@
  * simple-ical-block-edit.js
  * copy of view simple-ical-block 
  * replaced fetch() by apiFetch therefore no need to define restRoot
- * extra choice of timezone 
+ * added search in iFrame,  selection on sibid, and choice of Timezone
  * v2.4.3
 **/
 let titl;
@@ -26,39 +26,35 @@ window.simpleIcalBlock = {...(window.simpleIcalBlock || {}), ...{
 		});
 	}
 	,
-	getBlockByIds: function() {
-		/* first select document of iFrame
-		example:
-		  var x = document.querySelector('iframe[id="myframe"]');
-  var y = (x.contentWindow || x.contentDocument);
-  if (y.document)y = y.document;
-  y.body.style.backgroundColor = "red";
-*/
-
-/* find iframe */
-const nf = document.querySelectorAll('iframe');
-		for (let j = 0; j < nf.length; j++) {
-			const cwf = (nf[j].contentWindow  || nf[j].contentDocument );
-			if (cwf.document)cwf = cwf.document;
-			console.log(cwf.querySelectorAll('[data-sib-st]'));
-  
-}
-/* end find iframe */
-
-		
-		const nodeList = document.querySelectorAll('[data-sib-st]');
+	processNodelist: function (nodeList){
 			console.log(nodeList);
-		const ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
+			const ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
 			console.log(ptzid_ui);
-		let paramsObj = {"wptype": "REST", "tzid_ui":ptzid_ui};
-		for (let i = 0; i < nodeList.length; i++) {
-			paramsObj.sibid = nodeList[i].getAttribute('data-sib-id');
-			nodeList[i].setAttribute('data-sib-st', 'f1');
-			this.fetchFromRest(paramsObj, nodeList[i]);
+  			let paramsObj = {"wptype": "REST", "tzid_ui":ptzid_ui};
+			for (let i = 0; i < nodeList.length; i++) {
+				paramsObj.sibid = nodeList[i].getAttribute('data-sib-id');
+				nodeList[i].setAttribute('data-sib-st', 'f1');
+				this.fetchFromRest(paramsObj, nodeList[i]);
+			}
+		
+	}
+	,
+	getBlockByIds: function(sibid) {
+		const nf = document.querySelectorAll('iframe');
+        console.log(nf);
+		let cwf, nodeList = document.querySelectorAll('[data-sib-st][data-sib-id='+ sibid + ']');
+			console.log(nodeList);
+        this.processNodelist(nodeList);
+		for (let j = 0; j < nf.length; j++) {
+			cwf = (nf[j].contentWindow  || nf[j].contentDocument );
+			if (cwf.document)cwf = cwf.document;
+			nodeList =cwf.querySelectorAll('[data-sib-st][data-sib-id='+ sibid + ']');
+			console.log(nodeList);
+	        this.processNodelist(nodeList);
 		}
 	}
 }
 }	
 
-window.simpleIcalBlock.getBlockByIds();
+/* window.simpleIcalBlock.getBlockByIds(); */
 

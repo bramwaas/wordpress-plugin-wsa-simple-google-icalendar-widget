@@ -119,7 +119,7 @@
 					let x = setTimeout(stopCC, 1000);
 					function stopCC() { props.setAttributes({ clear_cache_now: false }); }
 					fset_sib_attrs(props.attributes);
-					window.simpleIcalBlock.getBlockByIds();
+					window.simpleIcalBlock.getBlockByIds(props.attributes.sibid);
 				}
 			}, [props.attributes.clear_cache_now]);
 			return el(
