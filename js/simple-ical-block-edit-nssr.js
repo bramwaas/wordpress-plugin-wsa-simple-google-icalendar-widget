@@ -34,6 +34,17 @@ window.simpleIcalBlock = {...(window.simpleIcalBlock || {}), ...{
   if (y.document)y = y.document;
   y.body.style.backgroundColor = "red";
 */
+
+/* find iframe */
+const nf = document.querySelectorAll('iframe');
+		for (let j = 0; j < nf.length; j++) {
+			const cwf = (nf[j].contentWindow  || nf[j].contentDocument );
+			if (cwf.document)cwf = cwf.document;
+			console.log(cwf.querySelectorAll('[data-sib-st]'));
+  
+}
+/* end find iframe */
+
 		
 		const nodeList = document.querySelectorAll('[data-sib-st]');
 			console.log(nodeList);
