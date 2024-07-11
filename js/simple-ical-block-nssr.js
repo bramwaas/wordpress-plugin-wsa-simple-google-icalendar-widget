@@ -119,6 +119,7 @@
 					let x = setTimeout(stopCC, 1000);
 					function stopCC() { props.setAttributes({ clear_cache_now: false }); }
 					fset_sib_attrs(props.attributes);
+					window.simpleIcalBlock.getBlockByIds();
 				}
 			}, [props.attributes.clear_cache_now]);
 			return el(
@@ -432,7 +433,7 @@
 					el(
 				     'div',
 				     {
-						 "id":props.attributes.anchorId,
+		 				"id":(props.attributes.anchorId ? props.attributes.anchorId : props.attributes.sibid),
 						 "data-sib-id":props.attributes.sibid,
 						 "data-sib-st":"0-start",
 					 },
@@ -448,7 +449,8 @@
 					    {},
    						__('Processing', 'simple-google-icalendar-widget')
    						)
-					));
+					)
+					);
 		},
 		save: function (props) {
     return (el(
@@ -458,7 +460,7 @@
 				}),
 				el('div',
 				     {
-						 "id":props.attributes.anchorId,
+						 "id":(props.attributes.anchorId ? props.attributes.anchorId : props.attributes.sibid),
 						 "data-sib-id":props.attributes.sibid,
 						 "data-sib-st":"0-start",
 					 },

@@ -28,7 +28,9 @@ window.simpleIcalBlock = {...(window.simpleIcalBlock || {}), ...{
 	,
 	getBlockByIds: function() {
 		const nodeList = document.querySelectorAll('[data-sib-st]');
+			console.log(nodeList);
 		const ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
+			console.log(ptzid_ui);
 		let paramsObj = {"wptype": "REST", "tzid_ui":ptzid_ui};
 		for (let i = 0; i < nodeList.length; i++) {
 			paramsObj.sibid = nodeList[i].getAttribute('data-sib-id');
