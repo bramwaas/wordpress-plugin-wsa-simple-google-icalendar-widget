@@ -22,8 +22,4 @@ if (!class_exists('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\Simplei
     class_alias('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalBlock', 'SimpleicalBlock');
 }
 ?>
-<div <?php echo get_block_wrapper_attributes(); ?>>
-    <?php echo esc_html( $attributes['wptype'] ); ?>
-    <p> test renderssv3.php </p>
-</div>
 <?php echo SimpleicalBlock::render_block($attributes);
