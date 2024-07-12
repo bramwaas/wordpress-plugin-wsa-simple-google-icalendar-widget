@@ -52,5 +52,5 @@
     "supports": {
         "align": true
     },
-	"editorScript": ["file:../js/simple-ical-fetch.js", "file:../js/simple-ical-block-nssr.js"]
+	"editorScript": ["file:../js/simple-ical-block-fetch.js", "file:../js/simple-ical-block-nssr.js"]
   }
