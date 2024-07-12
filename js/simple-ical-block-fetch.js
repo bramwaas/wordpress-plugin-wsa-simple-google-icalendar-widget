@@ -59,7 +59,7 @@ window.simpleIcalBlock = {...(window.simpleIcalBlock || {}), ...{
 	/**
 	 * Copies attributes in Option via asynchrone REST call 
 	*/
-	setSibAttrs = function(attrs) {
+	setSibAttrs: function(attrs) {
 		const fpath = "/simple-google-icalendar-widget/v1/set-sib-attrs";
 		apiFetch({
 			path: fpath,
