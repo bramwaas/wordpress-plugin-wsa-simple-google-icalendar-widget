@@ -61,7 +61,7 @@ window.simpleIcalBlock = {...(window.simpleIcalBlock || {}), ...{
 	*/
 	setSibAttrs: function(attrs) {
 		const fpath = "/simple-google-icalendar-widget/v1/set-sib-attrs";
-		apiFetch({
+		window.wp.apiFetch({
 			path: fpath,
 			method: 'POST',
 			data: attrs,
@@ -74,6 +74,4 @@ window.simpleIcalBlock = {...(window.simpleIcalBlock || {}), ...{
 
 }
 }	
-
-/* window.simpleIcalBlock.getBlockByIds(); */
 
