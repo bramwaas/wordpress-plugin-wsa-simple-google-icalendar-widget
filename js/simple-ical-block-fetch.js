@@ -1,6 +1,7 @@
 /**
- * simple-ical-block-edit.js
- * copy of view simple-ical-block 
+ * simple-ical-block-fetch.js
+ * set attributes in option, gets rendered output with fetch from server.
+ * started as copy of view simple-ical-block 
  * replaced fetch() by apiFetch therefore no need to define restRoot
  * added search in iFrame,  selection on sibid, and choice of Timezone
  * v2.4.3
@@ -10,6 +11,7 @@ let titl;
 window.simpleIcalBlock = {...(window.simpleIcalBlock || {}), ...{
 	fetchFromRest: function(dobj, ni) {
 		const fpath = "/simple-google-icalendar-widget/v1/content-by-ids";
+		let titl;
 		window.wp.apiFetch({
 			path: fpath,
 			method: 'POST',
@@ -53,6 +55,23 @@ window.simpleIcalBlock = {...(window.simpleIcalBlock || {}), ...{
 	        this.processNodelist(nodeList);
 		}
 	}
+	,
+	/**
+	 * Copies attributes in Option via asynchrone REST call 
+	*/
+	setSibAttrs = function(attrs) {
+		const fpath = "/simple-google-icalendar-widget/v1/set-sib-attrs";
+		apiFetch({
+			path: fpath,
+			method: 'POST',
+			data: attrs,
+		}).then((res) => {
+			console.log(res);
+		}).catch((error) => {
+			console.log(error);
+		});
+	}
+
 }
 }	
 

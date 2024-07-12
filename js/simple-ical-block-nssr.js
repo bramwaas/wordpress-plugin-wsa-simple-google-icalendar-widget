@@ -8,7 +8,7 @@
  * 20240709 Copied from simple-ical-block.js removed references to server side rendering
  *   wptype 'ssr'.
  */
-(function(blocks, i18n, element, blockEditor, components, apiFetch) {
+(function(blocks, i18n, element, blockEditor, components) {
 	const el = element.createElement;
 	const __ = i18n.__;
 	const useBlockProps = blockEditor.useBlockProps;
@@ -31,23 +31,6 @@
 	const ToggleControl = components.ToggleControl;
 	const SelectControl = components.SelectControl;
 	const useEffect = element.useEffect;
-
-	let ptzid_ui, titl;
-	/**
-	 * Copies attributes in Option via asynchrone REST call 
-	*/
-	const fset_sib_attrs = function(attrs) {
-		const fpath = "/simple-google-icalendar-widget/v1/set-sib-attrs";
-		apiFetch({
-			path: fpath,
-			method: 'POST',
-			data: attrs,
-		}).then((res) => {
-			console.log(res);
-		}).catch((error) => {
-			console.log(error);
-		});
-	}
 
 	blocks.registerBlockType('simplegoogleicalenderwidget/simple-ical-block-nssr', {
 		icon: iconEl,
@@ -107,18 +90,18 @@
 			else if (typeof props.attributes.sibid !== 'string') { props.setAttributes({ sibid: 'b' + props.clientId }); };
 			props.setAttributes({ postid: '' + props.context['postId'] });
 			if ('' < props.attributes.rest_utzui) {
-				ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
+				let ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
 				props.setAttributes({ wptype: 'rest_ph' })
 			}
 			else {
-				ptzid_ui = '';
+				let ptzid_ui = '';
 				props.setAttributes({ wptype: 'block' })
 			};
 			useEffect(function() {
 				if (props.attributes.clear_cache_now) {
 					let x = setTimeout(stopCC, 1000);
 					function stopCC() { props.setAttributes({ clear_cache_now: false }); }
-					fset_sib_attrs(props.attributes);
+					window.simpleIcalBlock.setSibAttrs(props.attributes);
 					window.simpleIcalBlock.getBlockByIds(props.attributes.sibid);
 				}
 			}, [props.attributes.clear_cache_now]);
@@ -484,7 +467,6 @@
 	window.wp.i18n,
 	window.wp.element,
 	window.wp.blockEditor,
-	window.wp.components,
-	window.wp.apiFetch
+	window.wp.components
 )
 );
