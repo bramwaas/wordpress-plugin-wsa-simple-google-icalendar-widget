@@ -971,6 +971,21 @@ END:VCALENDAR';
      */
     static function getData($instance)
     {
+<<<<<<< HEAD
+        $transientId = 'SimpleicalBlock'  . $instance['sibid']   ;
+        if (! empty($instance['tzid_ui']))
+            try {
+                $instance['tz_ui'] = new \DateTimeZone($instance['tzid_ui']);
+            } catch (\Exception $exc) {}
+        if (empty($instance['tz_ui']))
+            try {
+                $instance['tzid_ui'] = wp_timezone_string();
+                $instance['tz_ui'] = new \DateTimeZone($instance['tzid_ui']);
+            } catch (\Exception $exc) {}
+        if (empty($instance['tz_ui'])) {
+            $instance['tzid_ui'] = 'UTC';
+            $instance['tz_ui'] = new \DateTimeZone('UTC');
+=======
         $transientId = 'SimpleicalBlock'  . $instance['sibid']   ;
         if (! empty($instance['tzid_ui']))
             try {
@@ -989,6 +1004,7 @@ END:VCALENDAR';
         if (empty($instance['tz_ui'])) {
             $instance['tzid_ui'] = 'UTC';
             $instance['tz_ui'] = new \DateTimeZone('UTC');
+>>>>>>> develop-block
         } 
         $now = time();
         $pdt_start = new \DateTime('@' . $now);
@@ -996,6 +1012,16 @@ END:VCALENDAR';
         $p_start = $pdt_start->modify("today")->getTimestamp();
         $ep = (empty($instance['event_period']) || 1 > $instance['event_period']) ? 1: $instance['event_period'] + 1;
         $p_end = $pdt_start->modify("+$ep day")->getTimestamp();
+<<<<<<< HEAD
+        $pl = $instance['period_limits'] % 4;
+        if (in_array($pl, [2,3])){
+                    $p_start = $now;
+        }
+        if (in_array($pl, [0,3])){
+            $ep = $ep - 1;
+            $pdt_start->setTimestamp($now);
+            $p_end = $pdt_start->modify("+$ep day")->getTimestamp();
+=======
         $pl = intval($instance['period_limits']);
         if (in_array($pl, [2,3])){
                     $p_start = $now;
@@ -1004,6 +1030,7 @@ END:VCALENDAR';
             $ep = $ep - 1;
             $pdt_start->setTimestamp($now);
             $p_end = $pdt_start->modify("+$ep day")->getTimestamp();
+>>>>>>> develop-block
         }
         if ($instance['clear_cache_now']) delete_transient($transientId);
         if(false === ($data = get_transient($transientId))) {
