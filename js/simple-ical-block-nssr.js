@@ -5,8 +5,8 @@
  * and use attributes and editable fields
  * attributes as Inspectorcontrols (settings)
  * v2.4.3
- * 20240709 Copied from simple-ical-block.js removed references to server side rendering
- *   wptype 'ssr'.
+ * 20240709 Copied from simple-ical-block.js removed references to server side rendering (replacing wptype 'ssr'). 
+ *   All initializations also inside useEffect and setAttibute only when necessary to prevent looping in Synced Pattern
  */
 (function(blocks, i18n, element, blockEditor, components) {
 	const el = element.createElement;
@@ -407,6 +407,7 @@
 						 "data-sib-id":props.attributes.sibid,
 						 "data-sib-utzui":props.attributes.rest_utzui,
 						 "data-sib-st":"0-start",
+ 						 "data-sib-notitle": ( props.attributes.title ? "" : "true"),
 						 "data-sib-title": props.attributes.title,
 					 },
 					 el(
@@ -436,7 +437,7 @@
 						 "data-sib-id":props.attributes.sibid,
 						 "data-sib-utzui":props.attributes.rest_utzui,
 						 "data-sib-st":"0-start",
-						 "data-sib-title": props.attributes.title,
+ 						 "data-sib-notitle": ( props.attributes.title ? "" : "true"),
 					 },
 					 el(
 						 'h3',

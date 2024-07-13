@@ -34,7 +34,7 @@
  * 2.4.0 str_replace('Etc/GMT ','Etc/GMT+' for some UTC-... timezonesettings.
  * 2.4.1 resolved with wptype 'rest_ph_w' warning on wrapper_attributes when wptype 'rest_ph' and started from widget 
  * 2.4.3 replace render_callback in server side register_block_type by render in block.json (v3 plus ( is_wp_version_compatible( '6.3' ) )) 
- *       add 						 "data-sib-utzui":props.attributes.rest_utzui to rest placeholder tag
+ *       add  "data-sib-utzui":props.attributes.rest_utzui to rest placeholder tag
  
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
