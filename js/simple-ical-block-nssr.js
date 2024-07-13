@@ -84,25 +84,20 @@
 		},
 
 		edit: function(props) {
+			useEffect(function() {
 			if ((typeof props.attributes.sibid !== 'string') && (typeof props.attributes.blockid == 'string')) {
 				props.setAttributes({ sibid: props.attributes.blockid });
 			}
-			else if (typeof props.attributes.sibid !== 'string') { props.setAttributes({ sibid: 'b' + props.clientId }); };
-			props.setAttributes({ postid: '' + props.context['postId'] });
-			if ('' < props.attributes.rest_utzui) {
-				let ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
-				props.setAttributes({ wptype: 'rest_ph' })
-			}
-			else {
-				let ptzid_ui = '';
-				props.setAttributes({ wptype: 'block' })
-			};
+			else {if (typeof props.attributes.sibid !== 'string') {
+				 props.setAttributes({ sibid: 'b' + props.clientId }); }
+				  else {
+					window.simpleIcalBlockF.setSibAttrs(props.attributes);
+				  }}
+			}, [props.attributes]);
 			useEffect(function() {
 				if (props.attributes.clear_cache_now) {
 					let x = setTimeout(stopCC, 1000);
 					function stopCC() { props.setAttributes({ clear_cache_now: false }); }
-					window.simpleIcalBlock.setSibAttrs(props.attributes);
-					window.simpleIcalBlock.getBlockByIds(props.attributes.sibid);
 				}
 			}, [props.attributes.clear_cache_now]);
 			return el(
@@ -291,14 +286,6 @@
 							),
 							onChange: function(value) {
 								props.setAttributes({ rest_utzui: value });
-								if ('' < value) {
-									ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
-									props.setAttributes({ wptype: 'rest_ph' })
-								}
-								else {
-									ptzid_ui = '';
-									props.setAttributes({ wptype: 'block' })
-								}
 							},
 							options: [
 								{ value: '', label: __('Use WordPress timezone settings', 'simple-google-icalendar-widget') },
