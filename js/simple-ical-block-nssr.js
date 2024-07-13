@@ -405,7 +405,9 @@
 				     {
 		 				"id":(props.attributes.anchorId ? props.attributes.anchorId : props.attributes.sibid),
 						 "data-sib-id":props.attributes.sibid,
+						 "data-sib-utzui":props.attributes.rest_utzui,
 						 "data-sib-st":"0-start",
+						 "data-sib-title": props.attributes.title,
 					 },
 					 el(
 						 'h3',
@@ -430,9 +432,11 @@
 				}),
 				el('div',
 				     {
-						 "id":(props.attributes.anchorId ? props.attributes.anchorId : props.attributes.sibid),
+		 				"id":(props.attributes.anchorId ? props.attributes.anchorId : props.attributes.sibid),
 						 "data-sib-id":props.attributes.sibid,
+						 "data-sib-utzui":props.attributes.rest_utzui,
 						 "data-sib-st":"0-start",
+						 "data-sib-title": props.attributes.title,
 					 },
 					 el(
 						 'h3',

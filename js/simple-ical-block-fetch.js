@@ -18,7 +18,7 @@ window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 		}).then((res) => {
 			console.log(res);
 			ni.setAttribute('data-sib-st', 'completed');
-			if (ni.getAttribute('data-sib-notitle')) titl = ''; else titl = ni.querySelector( '[data-sib-t="true"]' ).outerHTML;
+			if (ni.getAttribute('data-sib-title')) titl = '<h3 class="widget-title" data-sib-t="true">' + ni.getAttribute('data-sib-title') + '</h3>'; else titl = '';
 			ni.innerHTML = titl + res.content;
 		}).catch((error) => {
 			console.log(error);
@@ -27,32 +27,32 @@ window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 		});
 	}
 	,
-	processNodelist: function (nodeList, attrs){
+	processNodelist: function (nodeList){
 			console.log(nodeList);
 			const ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
 			console.log(ptzid_ui);
   			let paramsObj = {"wptype": "REST"};
-  			if (attrs.rest_utzui) {paramsObj.tzid_ui = ptzid_ui; }
 			for (let i = 0; i < nodeList.length; i++) {
 				paramsObj.sibid = nodeList[i].getAttribute('data-sib-id');
+    			if (nodeList[i].getAttribute('data-sib-utzui')) {paramsObj.tzid_ui = ptzid_ui; }
 				nodeList[i].setAttribute('data-sib-st', 'f1');
 				this.fetchFromRest(paramsObj, nodeList[i]);
 			}
 		
 	}
 	,
-	getBlockByIds: function(attrs) {
+	getBlockByIds: function(sibid) {
 		const nf = document.querySelectorAll('iframe');
         console.log(nf);
-		let cwf, nodeList = document.querySelectorAll('[data-sib-st][data-sib-id='+ attrs.sibid + ']');
+		let cwf, nodeList = document.querySelectorAll('[data-sib-st][data-sib-id='+ sibid + ']');
 			console.log(nodeList);
-        this.processNodelist(nodeList, attrs);
+        this.processNodelist(nodeList);
 		for (let j = 0; j < nf.length; j++) {
 			cwf = (nf[j].contentWindow  || nf[j].contentDocument );
 			if (cwf.document)cwf = cwf.document;
-			nodeList =cwf.querySelectorAll('[data-sib-st][data-sib-id='+ attrs.sibid + ']');
+			nodeList =cwf.querySelectorAll('[data-sib-st][data-sib-id='+ sibid + ']');
 			console.log(nodeList);
-	        this.processNodelist(nodeList, attrs);
+	        this.processNodelist(nodeList);
 		}
 	}
 	,
@@ -67,7 +67,7 @@ window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 			data: attrs,
 		}).then((res) => {
 			console.log(res);
-			this.getBlockByIds(res.params)
+			this.getBlockByIds(res.params.sibid)
 		}).catch((error) => {
 			console.log(error);
 		});
