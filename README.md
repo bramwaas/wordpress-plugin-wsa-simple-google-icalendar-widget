@@ -137,7 +137,14 @@ If you cannot resolve it, you can of course report an error / question in our [c
 = This block has encountered an error and cannot be previewed =
 
 Probably you have (re)opened a page where the block is edited but your password cookie is expired.   
-Log in in Wordpress again and open the page again. The block will be available.   
+Log in in Wordpress again and open the page again. The block will be available. 
+
+= After an update 6.6 of Wordpress a page with this block in a synced pattern on it freezes in the editor. =   
+
+Maybe the block is long time ago placed on several pages as a synced pattern or reusable block and everything worked fine until Wordpress 6.5   
+It is possible that the id of the block is not initialized, the editor tries to initialize the id but this is not prossible in a synced pattern.
+Before 6.6 the update failed and the processing went ahead, from 6.6 the update fails and tries again (in an endless loop).     
+Solution: Update and save the block in the editor of the pattern to which the block belongs.       
 
 = How do I set different colours and text size for the dates, the summary, and the details? =
 
@@ -215,7 +222,7 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 * error in WP 6.6-RC2 this block (with serverside rendering) breaks editor when placed on a page via a synced pattern. Issue reported as WordPress Trac #61592
 
 == Changelog ==
-* 2.4.3 replaced render_callback in server side register_block_type by render in block.json (v3 plus ( is_wp_version_compatible( '6.3' ) ))
+* 2.4.3 replaced render_callback in server side register_block_type by render in block.json (v3 plus ( is_wp_version_compatible( '6.3' ) ))  simplifying initialization edit js to reduce change of looping when used in synced pattern and reviewing initializing in block.json.
 * 2.4.2 replaced null by 'admin.php' to solve issue 'Deprecation warnings in PHP 8.3' of Knut Sparhell (@knutsp) on support forum. Moved older entries of changelog to changelog.txt.
 * 2.4.1 added defaults to all used keys of $args to solve issue 'PHP warnings' of johansam on support forum. Undefined array key “classname” in .../simple-google-icalendar-widget.php on line 170
 * 2.4.0 exclude DTEND from event that is evend ends before (<) DTEND in stead of at (<=) DTEND. removed modulo 4    
