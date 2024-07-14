@@ -6,7 +6,7 @@
  * attributes as Inspectorcontrols (settings)
  * v2.4.3
  * 20240709 Copied from simple-ical-block.js removed references to server side rendering (replacing wptype 'ssr'). 
- *   All initializations also inside useEffect and setAttibute only when necessary to prevent looping in Synced Pattern
+ * 2.4.3 initializations also inside useEffect and setAttibute only for sibid only when necessary to reduce change of looping in Synced Pattern 
  */
 (function(blocks, i18n, element, blockEditor, components) {
 	const el = element.createElement;
@@ -89,9 +89,10 @@
 			}
 			else {if (typeof props.attributes.sibid !== 'string') {
 				 props.setAttributes({ sibid: 'b' + props.clientId }); }
-				  else {
-					window.simpleIcalBlockF.setSibAttrs(props.attributes);
-				  }}
+				 }
+			if (typeof props.attributes.sibid == 'string') {
+				window.simpleIcalBlockF.setSibAttrs(props.attributes);
+				  }
 			}, [props.attributes]);
 			useEffect(function() {
 				if (props.attributes.clear_cache_now) {

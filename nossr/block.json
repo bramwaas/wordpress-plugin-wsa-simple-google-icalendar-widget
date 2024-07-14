@@ -10,9 +10,8 @@
     "version": "2.4.3",
     "textdomain": "simple-google-icalendar-widget",
 	"attributes": {
-		"wptype": {"type": "string"},
-		"postid": {"type": "string"},
-		"tzid_ui": {"type": "string"},
+		"wptype": {"type": "string", "default": "REST"},
+		"tzid_ui": {"type": "string", "default": ""},
 		"sibid": {"type": "string"},
 		"prev_sibid": {"type": "string"},
 		"title": {"type": "string", "default": "Events"},
@@ -37,7 +36,7 @@
 		"no_events": {"type": "string", "default": ""},
 		"clear_cache_now": {"type": "boolean", "default": false},
 		"period_limits": {"type": "string", "enum": ["1", "2", "3", "4"], "default": "1"},
-		"rest_utzui": {"type": "string", "enum": ["", "1", "2"], "default": ""},
+		"rest_utzui": {"type": "string", "enum": ["", "1", "2"], "default": "1"},
 		"anchorId": {"type": "string", "default": ""},
 		"blockid": {"type": "string"}
 		},

@@ -19,7 +19,7 @@
  *   wrong part of blockname "simplegoogleicalenderwidget" cannot be changed because it is safed in the page and changing and changing invalidates the block.
  * 20240215 Adjustment of attributes provided when calling server side render: period limits modulo 4 so as not to enter Rest Server mode;
  *   wptype 'ssr'.
- * 2.4.3 initializations also inside useEffect and setAttibute only when necessary to prevent looping in Synced Pattern 
+ * 2.4.3 initializations also inside useEffect and setAttibute only for sibid only when necessary to reduce change of looping in Synced Pattern 
  *   extra option Wordpress timezone with rest   
  */
 (function(blocks, i18n, element, blockEditor, components, serverSideRender) {
@@ -42,7 +42,6 @@
 	);
 	const Button = components.Button;
 	const TextControl = components.TextControl;
-	const TextareaControl = components.TextareaControl;
 	const ToggleControl = components.ToggleControl;
 	const SelectControl = components.SelectControl;
 	const useEffect = element.useEffect;
@@ -110,11 +109,9 @@
  				};
 			if ('' < props.attributes.rest_utzui) {
 				ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
-				if (typeof props.attributes.wptype !== 'string' || props.attributes.wptype !== 'rest_ph') {props.setAttributes({ wptype: 'rest_ph' })};
 			}
 			else {
 				ptzid_ui = '';
-				if (typeof props.attributes.wptype !== 'string' || props.attributes.wptype !== 'block') {props.setAttributes({ wptype: 'block' })};
 			};
 			}, [props.attributes]);
 			useEffect(function() {

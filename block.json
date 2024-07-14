@@ -10,9 +10,8 @@
     "version": "2.4.3",
     "textdomain": "simple-google-icalendar-widget",
 	"attributes": {
-		"wptype": {"type": "string"},
-		"postid": {"type": "string"},
-		"tzid_ui": {"type": "string"},
+		"wptype": {"type": "string", "default": "block"},
+		"tzid_ui": {"type": "string", "default": ""},
 		"sibid": {"type": "string"},
 		"prev_sibid": {"type": "string"},
 		"title": {"type": "string", "default": "Events"},
