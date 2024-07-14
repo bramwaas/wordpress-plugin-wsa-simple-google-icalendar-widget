@@ -20,6 +20,7 @@
  * 20240215 Adjustment of attributes provided when calling server side render: period limits modulo 4 so as not to enter Rest Server mode;
  *   wptype 'ssr'.
  * 2.4.3 initializations also inside useEffect and setAttibute only when necessary to prevent looping in Synced Pattern 
+ *   extra option Wordpress timezone with rest   
  */
 (function(blocks, i18n, element, blockEditor, components, serverSideRender) {
 	const el = element.createElement;
@@ -103,8 +104,10 @@
 			useEffect(function() {
 			if ((typeof props.attributes.sibid !== 'string') && (typeof props.attributes.blockid == 'string')) {
 				props.setAttributes({ sibid: props.attributes.blockid });
-			}
-			else if (typeof props.attributes.sibid !== 'string') { props.setAttributes({ sibid: 'b' + props.clientId }); };
+ 			}
+			else if (typeof props.attributes.sibid !== 'string') { 
+				props.setAttributes({ sibid: 'b' + props.clientId }); 
+ 				};
 			if ('' < props.attributes.rest_utzui) {
 				ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
 				if (typeof props.attributes.wptype !== 'string' || props.attributes.wptype !== 'rest_ph') {props.setAttributes({ wptype: 'rest_ph' })};
@@ -316,18 +319,19 @@
 							),
 							onChange: function(value) {
 								props.setAttributes({ rest_utzui: value });
+								ptzid_ui = '';
 								if ('' < value) {
-									ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
+									if ('2' != value) {ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone};
 									props.setAttributes({ wptype: 'rest_ph' })
 								}
 								else {
-									ptzid_ui = '';
 									props.setAttributes({ wptype: 'block' })
 								}
 							},
 							options: [
 								{ value: '', label: __('Use WordPress timezone settings, no REST', 'simple-google-icalendar-widget') },
 								{ value: '1', label: __('Use Client timezone settings, with REST', 'simple-google-icalendar-widget') },
+								{ value: '2', label: __('Use WordPress timezone settings, with REST', 'simple-google-icalendar-widget') },
 							]
 						}
 					),
