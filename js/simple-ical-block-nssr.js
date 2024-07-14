@@ -27,7 +27,6 @@
 	);
 	const Button = components.Button;
 	const TextControl = components.TextControl;
-	const TextareaControl = components.TextareaControl;
 	const ToggleControl = components.ToggleControl;
 	const SelectControl = components.SelectControl;
 	const useEffect = element.useEffect;
@@ -288,7 +287,7 @@
 								props.setAttributes({ rest_utzui: value });
 							},
 							options: [
-								{ value: '', label: __('Use WordPress timezone settings', 'simple-google-icalendar-widget') },
+								{ value: '2', label: __('Use WordPress timezone settings', 'simple-google-icalendar-widget') },
 								{ value: '1', label: __('Use Client timezone settings', 'simple-google-icalendar-widget') },
 							]
 						}

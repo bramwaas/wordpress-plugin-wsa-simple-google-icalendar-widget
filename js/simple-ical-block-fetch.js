@@ -34,7 +34,7 @@ window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
   			let paramsObj = {"wptype": "REST"};
 			for (let i = 0; i < nodeList.length; i++) {
 				paramsObj.sibid = nodeList[i].getAttribute('data-sib-id');
-    			if (nodeList[i].getAttribute('data-sib-utzui')) {paramsObj.tzid_ui = ptzid_ui; }
+    			paramsObj.tzid_ui = (typeof nodeList[i].getAttribute('data-sib-utzui') == 'string' && nodeList[i].getAttribute('data-sib-utzui') == '2') ? '' : ptzid_ui; 
 				nodeList[i].setAttribute('data-sib-st', 'f1');
 				this.fetchFromRest(paramsObj, nodeList[i]);
 			}

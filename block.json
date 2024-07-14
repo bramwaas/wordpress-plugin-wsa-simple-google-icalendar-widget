@@ -7,7 +7,7 @@
     "description": "Block that displays events from a public calendar or iCal file.",
     "keywords": [ "calendar", "ical", "event", "events", "google", "outlook", "iCalendar", "holidays", "ics" ],
     "icon": "calendar-alt",
-    "version": "2.3.0",
+    "version": "2.4.3",
     "textdomain": "simple-google-icalendar-widget",
 	"attributes": {
 		"wptype": {"type": "string"},
