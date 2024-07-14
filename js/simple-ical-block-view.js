@@ -32,8 +32,7 @@ window.simpleIcalBlock = {...(window.simpleIcalBlock || {}), ...{
 		})
 	}
 	,
-	getBlockByIds: function() {
-		const nodeList = document.querySelectorAll('[data-sib-st]');
+	processNodelist: function (nodeList){
 		const ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
 		let paramsObj = {"wptype": "REST"};
 		for (let i = 0; i < nodeList.length; i++) {
@@ -42,6 +41,19 @@ window.simpleIcalBlock = {...(window.simpleIcalBlock || {}), ...{
 			nodeList[i].setAttribute('data-sib-st', 'f1');
 			this.fetchFromRest(paramsObj, nodeList[i]);
 		}
+	}
+	,
+	getBlockByIds: function() {
+		const nf = document.querySelectorAll('iframe');
+		let cwf, nodeList = document.querySelectorAll('[data-sib-st]');
+        this.processNodelist(nodeList);
+		for (let j = 0; j < nf.length; j++) {
+			cwf = (nf[j].contentWindow  || nf[j].contentDocument );
+			if (cwf.document)cwf = cwf.document;
+			nodeList =cwf.querySelectorAll('[data-sib-st]');
+	        this.processNodelist(nodeList);
+		}
+        
 	}
 }
 }
