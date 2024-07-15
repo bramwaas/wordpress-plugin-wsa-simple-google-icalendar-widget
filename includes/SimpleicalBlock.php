@@ -110,7 +110,6 @@ class SimpleicalBlock
     static function init_block()
     {
         register_block_type(dirname(__DIR__) . '/block.json', array( )); 
-        register_block_type(dirname(__DIR__) . '/nossr/block.json', array( ));
     }
 
     /**
