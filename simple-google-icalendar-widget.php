@@ -6,7 +6,7 @@
  Author: Bram Waasdorp
  Version: 2.4.3
  License: GPL3
- Tested up to: 6.5
+ Tested up to: 6.6
  Requires at least: 5.3
  Requires PHP:  7.4 tested with 8
  Text Domain:  simple-google-icalendar-widget
