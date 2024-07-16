@@ -3,9 +3,9 @@ Plugin name: Simple Google Calendar Outlook Events Block Widget
 Contributors: bramwaas
 Tags: Google Calendar, iCal, Events, Block, Calendar
 Requires at least: 5.3.0
-Tested up to: 6.5
+Tested up to: 6.6
 Requires PHP: 5.3.0
-Stable tag: 2.4.1
+Stable tag: 2.4.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
  
@@ -137,7 +137,14 @@ If you cannot resolve it, you can of course report an error / question in our [c
 = This block has encountered an error and cannot be previewed =
 
 Probably you have (re)opened a page where the block is edited but your password cookie is expired.   
-Log in in Wordpress again and open the page again. The block will be available.   
+Log in in Wordpress again and open the page again. The block will be available. 
+
+= After an update 6.6 of Wordpress a page with this block in a synced pattern on it freezes in the editor. =   
+
+Maybe the block is long time ago placed on several pages as a synced pattern or reusable block and everything worked fine until Wordpress 6.5   
+It is possible that the id of the block is not initialized, the editor tries to initialize the id but this is not prossible in a synced pattern.
+Before 6.6 the update failed and the processing went ahead, from 6.6 the update fails and tries again (in an endless loop).     
+Solution: Update and save the block in the editor of the pattern to which the block belongs.       
 
 = How do I set different colours and text size for the dates, the summary, and the details? =
 
@@ -212,88 +219,12 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 * from 2023 (v2.1.1) deprecation php older than 7.4. I don't test in older php versions than 7.4 older versions might still work, but in future I may use new functions of php 8.
 * in v2.1.1 Start with summary is replaced with a select. After upgrade you may have to choose the correct option again. 
 * since v1.2.0 Wordpress version 5.3.0 is required because of the use of wp_date() 
+* error in WP 6.6-RC2 this block (with serverside rendering) breaks editor when placed on a page via a synced pattern. Issue reported as WordPress Trac #61592
 
 == Changelog ==
+* 2.4.3 replaced render_callback in server side register_block_type by render in block.json (v3 plus ( is_wp_version_compatible( '6.3' ) ))  simplifying initialization edit js to reduce change of looping when used in synced pattern and reviewing initializing in block.json.
+* 2.4.2 replaced null by 'admin.php' to solve issue 'Deprecation warnings in PHP 8.3' of Knut Sparhell (@knutsp) on support forum. Moved older entries of changelog to changelog.txt.
 * 2.4.1 added defaults to all used keys of $args to solve issue 'PHP warnings' of johansam on support forum. Undefined array key “classname” in .../simple-google-icalendar-widget.php on line 170
 * 2.4.0 exclude DTEND from event that is evend ends before (<) DTEND in stead of at (<=) DTEND. removed modulo 4    
  Checks if time zone ID with Etc/GMT 'replaced by'Etc/GMT+' is a Iana timezone then return this timezone.    
-* 2.3.1 Tie moving display events window created by Now and 'Number of days after today' to the display time instead of the data-retrieve/cache time. Make it possible to let the window start at 0H00 and end at 23H59 local time of the startdate and enddate of the window in addition to the current solution where both ends are at the time of the day the data is displayed/retrieved. Add <span class="dsc"> to description output to make it easier to refer to in css. Remove HTML for block title when title is empty. Add unescape \\ to \ and improve \, to ,   \; to ;  chars that should be escaped following the text specification. Extra save attributes in widget option to increase the chance the REST call finds them in that option.      
-Tested with WP 5.3 (only widget) 5.9, 6.4 (block and widget in legacy block and in Elementor) 6.5 RC 4      
-* 2.2.1 20240123 after an isue of black88mx6 in support forum: don't display description line when excerpt-length = 0
-* 20240324 teste with 6.5 RC 3     
-* 2.2.0 after an issue of gonzob (@gonzob) in WP support forum: 'Bug with repeating events' improved handling of EXDATE so that also the first event of a recurrent set can be excluded.  
-Basic parse Recurrence-ID (only one Recurrence-ID event to replace one occurrence of the recurrent set) to support changes in individual recurrent events in Google Calendar. Remove _ chars from UID.  
-Changed textdomain from simple_ical to simple-google-icalendar-widget to make translations work by following the WP standard.  
-Add help text's in block settings panel.
-Tested with WordPress 6.4.  
-* 2.1.5 20230824 after an issue of johansam (@johansam) in wp support forum: 'Warning: Undefined array key' reviewed and improved initialising of options for legacy widget.
-* 2.1.4 20230725 tested with WordPress 6.3-RC1 running Twenty Twenty-Two theme.    
-20230626 added quotes to the options of the Layout SelectControl in simple-ical-block.js conform / Block Editor Handbook / Reference Guides / Component Reference / SelectControl to emphasize that the return value is a string;   
-To make transform smoother: Add parseInt to all integers in transform and added missing transformations in block.js     
-Solved a number of typos in dateformat_... in update function in widget.php that prevented saving some options/settings.
-* 2.1.3 After a feature request of achimmm (in github on Joomla module) added optional placeholder HTML output when no upcoming events are avalable. Also added optional output after the events list (when upcoming events are available).   
-added parseInt on line 147(148) of simple-ical-block.js to keep layout in block-editor
-* 2.1.2 fix classes from calendar id and improve hierarchical layout     
-* 2.1.1 In response to a support issue of (@marijnvr). New lay-out for block with first date line on a higer level li. 'Start with summary' toggle-setting changed in 'layout' select-setting with options 'Startdate higher level', 'Start with summary', 'Old style'.   
-After some testing with Elementor:     
-Synchronize widget lay-out with block layout by largely using the same code. 
-In widget use ID based on timestamp in blockid setting. To be sure that ID in frontend is the same as in admin form. (this was not always so with the ID based on instance-id of widget). Added reset ID in settings to change the ID once and in the same time clear the transient cache which is named after the blockid. Removed clear cache now setting in widget because ResetId is more reliable.   
-* 2.1.0 Support more calendars in one module/block. Support DURATION of event. Move processing 'allowhtml' complete out Parser to template/block. 
-  Use properties in IcsParser to limit copying of input params in several functions.
-  Solved issue: Warning: date() expects at most 2 parameters, 3 given in ...IcsParser.php on line 549 caused by wp_date() / date() replacement in v2.0.4.     
-  Support BYSETPOS in response to a github issue on the WP block of peppergrayxyz. Support WKST.   
-* 2.0.4 Improvements IcsParser made as a result of porting to Joomla
-* notably solve issue not recognizing http as a valid protocol in array('http', 'https', 'webcal') because index = 0 so added 1 as starting index
-* make timezone-string a property of the object filled with the time-zone setting of the CMS (get_option('timezone_string')).
-* replace wp_date() by date() because translation of weekday- and month-names is not needed here.
-* 2.0.3 Added initial values for new attributes in transform.
-* 2.0.2 For block: Added enddate (only when different from startdate) and endtime for first line and summary line, boolean start with summary, selectlist for summary tag,
-*       HTML anchor and improved security by using wp_kess on formatted datetimes. Removed editor style.  
-*       For all: Improved handling of enddate for recurrent events with DATEs (no times) and selection recurrent events also when enddate is after now (was already so with single events)     
-* 2.0.1 Added transform from widget to block. Removed support for anchor because it doesn't work and gives error if you don't save more then attributes. added example.
-* 2.0.0 Created a native Gutenberg Block Simple ical Block next to the old the widget when using WP 5.9 or higher with the same backend code and almost the same frontend.
-* 1.5.1 After more testing and solving some issues with recurring events and daylight saving time removed the old correction for DST and the temporary checkbox to turn this correction off. Now there is only a correction when time is changed because the calculated time does not exists during transition from ST to DST. In that case in the next recursion the hour and minutes are set back to their beginvalue. Renamed and namespaced classes. Improved Zerodate to UTC-timezone processing. Restructured the IcsParse class a bit.
-   20220516 tested up to 6.0 (RC2)
-* 1.5.0 in response to a github issue of fhennies added a checkbox to allow safe html in the output. Added wp_kses() function to run for description, digest and location, to echo only html considered safe for wordpress posts, thus preserving some security against XSS.
-Extra options for parser in array $instance and added temporary new option notprocessdst to don't process differences in DST between start of series events and the current event. (in response to a WP support topic of @wurzelserver)
-   7-4-2022 tested with wordpress 5.9.1
-* 1.4.1 in response to a support topic of edwindekuiper (@edwindekuiper) fixed timezone error: If timezone appointment is empty or incorrect 
-        timezone fall back was to new \DateTimeZone(get_option('timezone_string')) but with UTC+... UTC-... timezonesetting this string is empty
-        so I use now wp_timezone() and if even that fails fall back to new \DateTimeZone('UTC').
-* 1.4.0 added parameter excerptlength to limit the length in characters of the description in respons to a comment of justmigrating (@justmigrating).
-        Fixed a trim error that occurred in a previous version, revising the entire trimming so that both \r\n and \n end of lines are handled properly
-        12-7-2021 tested with 5.8-RC2 and set tested up to to 5.8
-* 1.3.1 tested with Outlook and found that different timezones were a problem, solved by using a conversion tabel between Microsoft timezones and Iana timezones and using local (Wordpress configuration) timezone when timezone is unknown.
-Also found that colon ended description and summary. Found a solution for that so now you can use a colon in a description or a summary.
-Tested with iCloud Apple Calendar, timezones seem to be Iana. Issue with url starting with webcal protocol in stead of http or https, work around is substituting webcal with https:, but solved by change in url check and stricter validation Google Id.
-* 1.3.0 made time formats of appointment/event times configurable in response to a comment of carolynclarkdfw (@carolynclarkdfw) on the plugin page. Tested with wordpress 5.7
-* 1.2.2 added a checkbox to clear cache before expiration in response to a comment of TrojanObelix. 
-* 1.2.1 handle not available DTEND => !isset($e->end) in response to a comment of lillyberger (@lillyberger) on the plugin page, by defaulting $e->end to DTSTART value.
-        tested with https://p24-calendars.icloud.com/holiday/NL_nl.ics
-* 1.2.0 adjustment not to display time on events that have DTSTART in DATE format instead of DATETIME format after a comment of TrojanObelix.
-		found that date_i18n($format, $timestamp) formats according to the locale, but not the timezone so times and sometimes also dates 
-		went wrong, but the newer function wp_date() does, so date_i18n() replaced bij wp_date() (that means wp 5.3.0 is now required).
-		adjusted use of ID's for the events also to work when lineseperator is \n  in stead of \r\n after seeing example by of TrojanObelix.
-		Tested with WP 5.5.3.		
-* 1.1.0 parse EXDATE to exclude events from repeat
-* 1.0.3 trim only "\n\r\0" and first space but keep last space in Description Summary and Location lines.
-        adjustments to correct timezone that is ignored in new datetime when the $time parameter is a UNIX timestamp (e.g. @946684800) 
-* 1.0.2 Adjustments for multiline Description, summary or location. Tested with wp 5.2.1.
-* 1.0.1 PHP 7.2 deprecated create_function changed in anonymous function in widget_init. Tested with wp 5.0.3
-* 1.0.0 first version in WP plugin directory, directory and start php renamed after slug simple-google-icalendar-widget
-* 0.7.0 BYDAY with DAILY frequency tested. Test code deleted. Present as RC to wordpress.
-* 0.6.0 BYDAY and BYMONTHDAY work with complete sorting and unifying in MONTH frequency
-        adding class suffixes from setting.
-* 0.5.0 BYDAY complete first try with sort tested with wordpress 4.8.3 php 7
-* 0.3.5 discard non existent days like 31th november first try with byday
-		works als with complete url to ical .ics file.
-		renamed plugin to simple-google-i-calendar-widget and 
-		renamed references gcal to ical		
-* 0.3.3 simple repeating events (only full periods) works* 0.7.0 BYDAY with DAILY frequency tested. Test code deleted. Present as RC to wordpress.
-* 0.2.0 starting work on repeating events 
-* 0.1.0 Added support for start and end time with timezone
-		Changed lay-out of output of teh widget so that is more in line with bootstrap 4 and with the iframe-widget of google
-		a lot of small changes eg: better support for events in a timezone and events that last a whole day. Replace escaped chars for summary,
-		description and location. Refinements in output HTML.
-		renamed starting .php file to simple-google-calendar-widget.php
-* 0.0 imported V0.7 of NBoehr
+* more in changelog.txt.

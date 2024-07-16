@@ -1,34 +1,19 @@
 /**
- * simple-ical-block.js
+ * simple-ical-block-nssr.js
  *
  * Move styles to stylesheets - both edit and front-end.
  * and use attributes and editable fields
  * attributes as Inspectorcontrols (settings)
- * v2.3.0
- * 20230625 added quotes to the options of the Layout SelectControl,
- *  add parseInt to all integers in transform, added conversion dateformat_lgend and _tsend and anchorid = sibid
- * 20230420 added parseInt on line 147(now 148) to keep layout in block-editor
- * 20230418 Added after_events and no_events HTML output after available events, or istead of unavailable events.
- * 20230401 use select 'layout' in stead of 'start with summary' to create more lay-out options.
- * 20220622  added enddate/times for startdate and starttime added Id as anchor.
- * 20220517  try to find a unique sibid from  clientId (only once) 
- *   excerptlength initialised with '' so cannot be integer, all parseInt(value) followed bij || 0,1,or 2  because result must comply type validation of REST endpoint and '' or NaN don't. (rest_invalid_type)
- *   preponed 'b' to sibid, because html id must not start with number.
- *   wp.components.ServerSideRender deprecated replaced by serverSideRender and dependency wp-server-side-render; clear_cache_now false after 1 second, to prevent excessive calling of calendar
- * 20240106 Added help to (some) settings. Changed the text domain to simple-google-icalendar-widget to make translations work by following the WP standard
- *   wrong part of blockname "simplegoogleicalenderwidget" cannot be changed because it is safed in the page and changing and changing invalidates the block.
- * 20240215 Adjustment of attributes provided when calling server side render: period limits modulo 4 so as not to enter Rest Server mode;
+ * v2.4.3
+ * 20240709 Copied from simple-ical-block.js removed references to server side rendering
  *   wptype 'ssr'.
- * 2.4.3 initializations also inside useEffect and setAttibute only for sibid only when necessary to reduce change of looping in Synced Pattern 
- *   extra option Wordpress timezone with rest   
  */
-(function(blocks, i18n, element, blockEditor, components, serverSideRender) {
+(function(blocks, i18n, element, blockEditor, components, apiFetch) {
 	const el = element.createElement;
 	const __ = i18n.__;
 	const useBlockProps = blockEditor.useBlockProps;
 	const InspectorControls = blockEditor.InspectorControls;
 	const InspectorAdvancedControls = blockEditor.InspectorAdvancedControls;
-	const ServerSideRender = serverSideRender;
 	const iconEl = el('svg', { width: 24, height: 24, viewBox: "0 0 128 128" },
 		el('rect', { fill: "#ecf6fe", stroke: "#ecf6fe", width: "128", height: "128", x: "0", y: "0" }),
 		el('path', { fill: "#ffffff", stroke: "#3f48cc", d: "M 12,28 h 99 v 86 H 12 Z", }),
@@ -42,13 +27,74 @@
 	);
 	const Button = components.Button;
 	const TextControl = components.TextControl;
+	const TextareaControl = components.TextareaControl;
 	const ToggleControl = components.ToggleControl;
 	const SelectControl = components.SelectControl;
 	const useEffect = element.useEffect;
 
-	let ptzid_ui;
+	let ptzid_ui, titl;
+	/**
+	 * Copies attributes in Option via asynchrone REST call 
+	*/
+	const fset_sib_attrs = function(attrs) {
+		const fpath = "/simple-google-icalendar-widget/v1/set-sib-attrs";
+		apiFetch({
+			path: fpath,
+			method: 'POST',
+			data: attrs,
+		}).then((res) => {
+			console.log(res);
+		}).catch((error) => {
+			console.log(error);
+		});
+	}
+	/**
+	 * get content by id like in view-script
+	 * simple-google-icalendar-widget/v1/content-by-ids
+	 */
+	const fetchFromRest = function(dobj, ni) {
+		const fpath = "/simple-google-icalendar-widget/v1/content-by-ids";
+		apiFetch({
+			path: fpath,
+			method: 'POST',
+			data: dobj,
+		}).then((res) => {
+			console.log(res);
+			ni.setAttribute('data-sib-st', 'completed');
+			if (ni.getAttribute('data-sib-notitle')) titl = ''; else titl = ni.querySelector( '[data-sib-t="true"]' ).outerHTML;
+			ni.innerHTML = titl + res.content;
+		}).catch((error) => {
+			console.log(error);
+			ni.setAttribute('data-sib-st', 'Error :' + error.code + ':' + error.message);
+			ni.innerHTML = '<p>= Code: ' + error.code + '<br>= Msg: ' + error.message + '</p>';
+		});
+	}
 
-	blocks.registerBlockType('simplegoogleicalenderwidget/simple-ical-block', {
+	const getBlockByIds = function() {
+		const nodeList = document.querySelectorAll('[data-sib-st]');
+		console.log(nodeList);
+		const ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
+		let paramsObj = {"wptype": "REST", "tzid_ui":ptzid_ui};
+		for (let i = 0; i < nodeList.length; i++) {
+			paramsObj.sibid = nodeList[i].getAttribute('data-sib-id');
+			console.log(paramsObj);
+			nodeList[i].setAttribute('data-sib-st', 'f1');
+			fetchFromRest(paramsObj, nodeList[i]);
+		}
+	}
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+
+	blocks.registerBlockType('simplegoogleicalenderwidget/simple-ical-block-nssr', {
 		icon: iconEl,
 
 		transforms: {
@@ -100,24 +146,26 @@
 		},
 
 		edit: function(props) {
-			useEffect(function() {
 			if ((typeof props.attributes.sibid !== 'string') && (typeof props.attributes.blockid == 'string')) {
 				props.setAttributes({ sibid: props.attributes.blockid });
- 			}
-			else if (typeof props.attributes.sibid !== 'string') { 
-				props.setAttributes({ sibid: 'b' + props.clientId }); 
- 				};
+			}
+			else if (typeof props.attributes.sibid !== 'string') { props.setAttributes({ sibid: 'b' + props.clientId }); };
+			props.setAttributes({ postid: '' + props.context['postId'] });
 			if ('' < props.attributes.rest_utzui) {
 				ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
+				props.setAttributes({ wptype: 'rest_ph' })
 			}
 			else {
 				ptzid_ui = '';
+				props.setAttributes({ wptype: 'block' })
 			};
-			}, [props.attributes]);
 			useEffect(function() {
 				if (props.attributes.clear_cache_now) {
 					let x = setTimeout(stopCC, 1000);
 					function stopCC() { props.setAttributes({ clear_cache_now: false }); }
+					fset_sib_attrs(props.attributes);
+/*					fetchFromRest(props.attributes); */
+					getBlockByIds();
 				}
 			}, [props.attributes.clear_cache_now]);
 			return el(
@@ -125,16 +173,6 @@
 				useBlockProps({
 					key: 'simple_ical',
 				}),
-				el(ServerSideRender, {
-					block: 'simplegoogleicalenderwidget/simple-ical-block',
-					attributes: {
-						...props.attributes,
-						"wptype": "ssr",
-						"tzid_ui": ptzid_ui
-					},
-					httpMethod: 'POST'
-				}
-				),
 				el(InspectorControls,
 					{ key: 'setting' },
 					el('div',
@@ -316,19 +354,18 @@
 							),
 							onChange: function(value) {
 								props.setAttributes({ rest_utzui: value });
-								ptzid_ui = '';
 								if ('' < value) {
-									if ('2' != value) {ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone};
+									ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
 									props.setAttributes({ wptype: 'rest_ph' })
 								}
 								else {
+									ptzid_ui = '';
 									props.setAttributes({ wptype: 'block' })
 								}
 							},
 							options: [
-								{ value: '', label: __('Use WordPress timezone settings, no REST', 'simple-google-icalendar-widget') },
-								{ value: '1', label: __('Use Client timezone settings, with REST', 'simple-google-icalendar-widget') },
-								{ value: '2', label: __('Use WordPress timezone settings, with REST', 'simple-google-icalendar-widget') },
+								{ value: '', label: __('Use WordPress timezone settings', 'simple-google-icalendar-widget') },
+								{ value: '1', label: __('Use Client timezone settings', 'simple-google-icalendar-widget') },
 							]
 						}
 					),
@@ -438,7 +475,54 @@
 							onChange: function(value) { props.setAttributes({ anchorId: value }); },
 						}
 					)
-				));
+				),
+					el(
+				     'div',
+				     {
+						 "id":props.attributes.anchorId,
+						 "data-sib-id":props.attributes.sibid,
+						 "data-sib-st":"0-start",
+					 },
+					 el(
+						 'h3',
+						 {
+							 "class":"widget-title", 
+						     "data-sib-t":"true",
+						 },
+						 props.attributes.title
+						 ),
+					 el('p',
+					    {},
+   						__('Processing', 'simple-google-icalendar-widget')
+   						)
+					));
+		},
+		save: function (props) {
+    return (el(
+				'div',
+				useBlockProps.save({
+					key: 'simple_ical',
+				}),
+				el('div',
+				     {
+						 "id":props.attributes.anchorId,
+						 "data-sib-id":props.attributes.sibid,
+						 "data-sib-st":"0-start",
+					 },
+					 el(
+						 'h3',
+						 {
+							 "class":"widget-title", 
+						     "data-sib-t":"true",
+						 },
+						 props.attributes.title
+						 ),
+					 el('p',
+					    {},
+   						__('Processing', 'simple-google-icalendar-widget')
+   						)
+					 )
+    		));
 		}
 	});
 }(window.wp.blocks,
@@ -446,6 +530,6 @@
 	window.wp.element,
 	window.wp.blockEditor,
 	window.wp.components,
-	window.wp.serverSideRender
+	window.wp.apiFetch
 )
 );

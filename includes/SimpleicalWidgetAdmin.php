@@ -14,7 +14,8 @@
  * 2.1.0 option for comma seperated list of IDs
  * 2.1.3 block footer after events and placeholder when no events.
  * 2.2.0 fix spell-error in namespace, and use new correct text domain
- * 2.3.0 anchors (id) at several places in document 
+ * 2.3.0 anchors (id) at several places in document
+ * 2.4.2 replaced null by 'admin.php' to solve issue 'Deprecation warnings in PHP 8.3'   
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
@@ -31,7 +32,7 @@ class SimpleicalWidgetAdmin {
         
         //ther is no main menu item for simple_ical
         //this submenu is HIDDEN, however, we need to add it to create a page in the admin area
-        add_submenu_page(null, //parent slug
+        add_submenu_page('admin.php', //parent slug (or the file name of a standard WordPress admin page).
             __('Info', 'simple-google-icalendar-widget'), //page title
             __('Info', 'simple-google-icalendar-widget'), //menu title
             'read', //capability read because it 's only info

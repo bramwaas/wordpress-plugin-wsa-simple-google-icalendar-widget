@@ -1,16 +1,16 @@
 {
     "$schema": "https://json.schemastore.org/block.json",
     "apiVersion": 3,
-    "title": "Simple ical Block",
-    "name": "simplegoogleicalenderwidget/simple-ical-block",
+    "title": "Simple ical Block no SSR",
+    "name": "simplegoogleicalenderwidget/simple-ical-block-nssr",
     "category": "widgets",
-    "description": "Block that displays events from a public calendar or iCal file.",
+    "description": "Block that displays events from a public calendar or iCal file without server side rendering.",
     "keywords": [ "calendar", "ical", "event", "events", "google", "outlook", "iCalendar", "holidays", "ics" ],
     "icon": "calendar-alt",
     "version": "2.4.3",
     "textdomain": "simple-google-icalendar-widget",
 	"attributes": {
-		"wptype": {"type": "string", "default": "block"},
+		"wptype": {"type": "string", "default": "REST"},
 		"tzid_ui": {"type": "string", "default": ""},
 		"sibid": {"type": "string"},
 		"prev_sibid": {"type": "string"},
@@ -36,11 +36,10 @@
 		"no_events": {"type": "string", "default": ""},
 		"clear_cache_now": {"type": "boolean", "default": false},
 		"period_limits": {"type": "string", "enum": ["1", "2", "3", "4"], "default": "1"},
-		"rest_utzui": {"type": "string", "enum": ["", "1", "2"], "default": ""},
+		"rest_utzui": {"type": "string", "enum": ["", "1", "2"], "default": "1"},
 		"anchorId": {"type": "string", "default": ""},
 		"blockid": {"type": "string"}
 		},
-	"render": "file:./includes/renderssv3.php",	
 	"usesContext": [ "postId", "postType" ],	
     "example": {"attributes": {
         "title": "Example events.",
@@ -52,5 +51,5 @@
     "supports": {
         "align": true
     },
-	"editorScript": "file:./js/simple-ical-block.js"
+	"editorScript": ["file:../js/simple-ical-block-fetch.js", "file:../js/simple-ical-block-nssr.js"]
   }
