@@ -20,7 +20,8 @@
  * 20240215 Adjustment of attributes provided when calling server side render: period limits modulo 4 so as not to enter Rest Server mode;
  *   wptype 'ssr'.
  * 2.4.3 initializations also inside useEffect and setAttibute only for sibid only when necessary to reduce change of looping in Synced Pattern 
- *   extra option Wordpress timezone with rest   
+ *   extra option Wordpress timezone with rest
+ * 2.4.4-a initialization sibid also with direct assign in case setAttribute does not work (e.g. in Synced pattern 6.6)   
  */
 (function(blocks, i18n, element, blockEditor, components, serverSideRender) {
 	const el = element.createElement;
@@ -101,19 +102,25 @@
 
 		edit: function(props) {
 			useEffect(function() {
-			if ((typeof props.attributes.sibid !== 'string') && (typeof props.attributes.blockid == 'string')) {
-				props.setAttributes({ sibid: props.attributes.blockid });
- 			}
-			else if (typeof props.attributes.sibid !== 'string') { 
-				props.setAttributes({ sibid: 'b' + props.clientId }); 
+			if (typeof props.attributes.sibid !== 'string') {
+				if (typeof props.attributes.blockid == 'string') {
+					props.attributes.sibid = props.attributes.blockid;
+					props.setAttributes({ sibid: props.attributes.blockid });
+ 				}
+				else { 
+					props.attributes.sibid = 'b' + props.clientId;
+					props.setAttributes({ sibid: 'b' + props.clientId }); 
  				};
-			if ('' < props.attributes.rest_utzui) {
-				ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
-			}
-			else {
-				ptzid_ui = '';
-			};
-			}, [props.attributes]);
+ 			};	
+			}, []);
+			useEffect(function() {
+				if ('' < props.attributes.rest_utzui) {
+					ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
+				}
+				else {
+					ptzid_ui = '';
+				};
+			}, [props.attributes.rest_utzui]);
 			useEffect(function() {
 				if (props.attributes.clear_cache_now) {
 					let x = setTimeout(stopCC, 1000);
