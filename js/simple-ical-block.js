@@ -445,7 +445,63 @@
 							onChange: function(value) { props.setAttributes({ anchorId: value }); },
 						}
 					)
-				));
+				)
+/*	rest placeholder for editor			
+				,
+					el(
+				     'div',
+				     {
+		 				"id":(props.attributes.anchorId ? props.attributes.anchorId : props.attributes.sibid),
+						 "data-sib-id":props.attributes.sibid,
+						 "data-sib-utzui":props.attributes.rest_utzui,
+						 "data-sib-st":"0-start",
+ 						 "data-sib-notitle": ( props.attributes.title ? "" : "true"),
+						 "data-sib-title": props.attributes.title,
+					 },
+					 el(
+						 'h3',
+						 {
+							 "class":"widget-title", 
+						     "data-sib-t":"true",
+						 },
+						 props.attributes.title
+						 ),
+					 el('p',
+					    {},
+   						__('Processing', 'simple-google-icalendar-widget')
+   						)
+					)
+*/				
+				);
+		},
+		save: function (props) {
+    return (el(
+				'div',
+				useBlockProps.save({
+					key: 'simple_ical',
+				}),
+				el('div',
+				     {
+		 				"id":(props.attributes.anchorId ? props.attributes.anchorId : props.attributes.sibid),
+						 "data-sib-id":props.attributes.sibid,
+						 "data-sib-utzui":props.attributes.rest_utzui,
+						 "data-sib-st":"0-start",
+ 						 "data-sib-notitle": ( props.attributes.title ? "" : "true"),
+					 },
+					 el(
+						 'h3',
+						 {
+							 "class":"widget-title", 
+						     "data-sib-t":"true",
+						 },
+						 props.attributes.title
+						 ),
+					 el('p',
+					    {},
+   						__('Processing', 'simple-google-icalendar-widget')
+   						)
+					 )
+    		));
 		}
 	});
 }(window.wp.blocks,

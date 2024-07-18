@@ -144,7 +144,13 @@ Log in in Wordpress again and open the page again. The block will be available.
 Maybe the block is long time ago placed on several pages as a synced pattern or reusable block and everything worked fine until Wordpress 6.5   
 It is possible that the id of the block is not initialized, the editor tries to initialize the id but this is not prossible in a synced pattern.
 Before 6.6 the update failed and the processing went ahead, from 6.6 the update fails and tries again (in an endless loop).     
-Solution: Update and save the block in the editor of the pattern to which the block belongs.       
+Solution: Update and save the block in the editor of the pattern to which the block belongs. 
+
+= This block contains unexpected or invalid content. =
+After an update of the plugin in stead of the block content the message "This block contains unexpected or invalid content." is dispalyed and a button "Attempt Block Recovery".  
+Probably this is caused by a difference in the Saved output and the output that would be saved if the block was saved now. This will be the case if the code in the save has changed due to the plugin update. 
+Pushing the button "Attempt Block Recovery" will save the output in the new format and thereby solve the issue.
+      
 
 = How do I set different colours and text size for the dates, the summary, and the details? =
 
