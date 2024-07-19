@@ -16,7 +16,6 @@ window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 			method: 'POST',
 			data: dobj,
 		}).then((res) => {
-			console.log(res);
 			ni.setAttribute('data-sib-st', 'completed');
 			if (ni.getAttribute('data-sib-title')) titl = '<h3 class="widget-title" data-sib-t="true">' + ni.getAttribute('data-sib-title') + '</h3>'; else titl = '';
 			ni.innerHTML = titl + res.content;
@@ -28,13 +27,11 @@ window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 	}
 	,
 	processNodelist: function (nodeList){
-			console.log(nodeList);
 			const ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
-			console.log(ptzid_ui);
   			let paramsObj = {"wptype": "REST"};
 			for (let i = 0; i < nodeList.length; i++) {
 				paramsObj.sibid = nodeList[i].getAttribute('data-sib-id');
-    			paramsObj.tzid_ui = (typeof nodeList[i].getAttribute('data-sib-utzui') == 'string' && nodeList[i].getAttribute('data-sib-utzui') == '2') ? '' : ptzid_ui; 
+    			paramsObj.tzid_ui = (typeof nodeList[i].getAttribute('data-sib-utzui') == 'string' && nodeList[i].getAttribute('data-sib-utzui') == '1') ?  ptzid_ui : ''; 
 				nodeList[i].setAttribute('data-sib-st', 'f1');
 				this.fetchFromRest(paramsObj, nodeList[i]);
 			}
@@ -43,15 +40,12 @@ window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 	,
 	getBlockByIds: function(sibid) {
 		const nf = document.querySelectorAll('iframe');
-        console.log(nf);
 		let cwf, nodeList = document.querySelectorAll('[data-sib-st][data-sib-id='+ sibid + ']');
-			console.log(nodeList);
         this.processNodelist(nodeList);
 		for (let j = 0; j < nf.length; j++) {
 			cwf = (nf[j].contentWindow  || nf[j].contentDocument );
 			if (cwf.document)cwf = cwf.document;
 			nodeList =cwf.querySelectorAll('[data-sib-st][data-sib-id='+ sibid + ']');
-			console.log(nodeList);
 	        this.processNodelist(nodeList);
 		}
 	}
@@ -66,7 +60,6 @@ window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 			method: 'POST',
 			data: attrs,
 		}).then((res) => {
-			console.log(res);
 			this.getBlockByIds(res.params.sibid)
 		}).catch((error) => {
 			console.log(error);

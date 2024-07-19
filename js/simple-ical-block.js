@@ -114,13 +114,10 @@
  			};	
 			}, []);
 			useEffect(function() {
-				if ('' < props.attributes.rest_utzui) {
-					ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
-				}
-				else {
-					ptzid_ui = '';
-				};
-			}, [props.attributes.rest_utzui]);
+				if (typeof props.attributes.sibid == 'string') {
+					window.simpleIcalBlockF.setSibAttrs(props.attributes);
+				  }
+			}, [props.attributes]);
 			useEffect(function() {
 				if (props.attributes.clear_cache_now) {
 					let x = setTimeout(stopCC, 1000);
@@ -132,16 +129,6 @@
 				useBlockProps({
 					key: 'simple_ical',
 				}),
-				el(ServerSideRender, {
-					block: 'simplegoogleicalenderwidget/simple-ical-block',
-					attributes: {
-						...props.attributes,
-						"wptype": "ssr",
-						"tzid_ui": ptzid_ui
-					},
-					httpMethod: 'POST'
-				}
-				),
 				el(InspectorControls,
 					{ key: 'setting' },
 					el('div',
@@ -323,9 +310,7 @@
 							),
 							onChange: function(value) {
 								props.setAttributes({ rest_utzui: value });
-								ptzid_ui = '';
 								if ('' < value) {
-									if ('2' != value) {ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone};
 									props.setAttributes({ wptype: 'rest_ph' })
 								}
 								else {
@@ -446,7 +431,7 @@
 						}
 					)
 				)
-/*	rest placeholder for editor			
+/*	rest placeholder for render in editor with setSibbAttrs 	*/		
 				,
 					el(
 				     'div',
@@ -471,7 +456,7 @@
    						__('Processing', 'simple-google-icalendar-widget')
    						)
 					)
-*/				
+			
 				);
 		},
 		save: function (props) {
