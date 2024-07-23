@@ -231,7 +231,7 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 
 == Changelog ==
 * 2.4.4-a initialization sibid also with direct assign in case setAttribute does not work (e.g. in Synced pattern 6.6)
- replace ServerSideRender in editor by custom Rest call and place_holder html in Javascript Edit and Save.   
+ replace ServerSideRender in editor by custom Rest call and place_holder html in Javascript Edit and Save. Add deprecation for older Save methods.       
 * 2.4.3 replaced render_callback in server side register_block_type by render in block.json (v3 plus ( is_wp_version_compatible( '6.3' ) ))  simplifying initialization edit js to reduce change of looping when used in synced pattern and reviewing initializing in block.json.
 * 2.4.2 replaced null by 'admin.php' to solve issue 'Deprecation warnings in PHP 8.3' of Knut Sparhell (@knutsp) on support forum. Moved older entries of changelog to changelog.txt.
 * 2.4.1 added defaults to all used keys of $args to solve issue 'PHP warnings' of johansam on support forum. Undefined array key “classname” in .../simple-google-icalendar-widget.php on line 170
