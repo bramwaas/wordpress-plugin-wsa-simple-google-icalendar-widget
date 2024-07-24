@@ -21,15 +21,15 @@
  *   wptype 'ssr'.
  * 2.4.3 initializations also inside useEffect and setAttibute only for sibid only when necessary to reduce change of looping in Synced Pattern 
  *   extra option Wordpress timezone with rest
- * 2.4.4-a initialization sibid also with direct assign in case setAttribute does not work (e.g. in Synced pattern 6.6)   
+ * 2.4.4-a initialization sibid also with direct assign in case setAttribute does not work (e.g. in Synced pattern 6.6) 
+ *   removed references to ServerSideRender added deprecated 243  
  */
-(function(blocks, i18n, element, blockEditor, components, serverSideRender) {
+(function(blocks, i18n, element, blockEditor, components) {
 	const el = element.createElement;
 	const __ = i18n.__;
 	const useBlockProps = blockEditor.useBlockProps;
 	const InspectorControls = blockEditor.InspectorControls;
 	const InspectorAdvancedControls = blockEditor.InspectorAdvancedControls;
-	const ServerSideRender = serverSideRender;
 	const iconEl = el('svg', { width: 24, height: 24, viewBox: "0 0 128 128" },
 		el('rect', { fill: "#ecf6fe", stroke: "#ecf6fe", width: "128", height: "128", x: "0", y: "0" }),
 		el('path', { fill: "#ffffff", stroke: "#3f48cc", d: "M 12,28 h 99 v 86 H 12 Z", }),
@@ -46,8 +46,6 @@
 	const ToggleControl = components.ToggleControl;
 	const SelectControl = components.SelectControl;
 	const useEffect = element.useEffect;
-
-	let ptzid_ui;
 
 	blocks.registerBlockType('simplegoogleicalenderwidget/simple-ical-block', {
 		icon: iconEl,
@@ -487,13 +485,18 @@
    						)
 					 )
     		));
+		},
+		deprecated: [
+		{ /* dep243 */
+			save: ( ) => { 
+				return( null
+					)}
 		}
+		]
 	});
 }(window.wp.blocks,
 	window.wp.i18n,
 	window.wp.element,
 	window.wp.blockEditor,
-	window.wp.components,
-	window.wp.serverSideRender
-)
+	window.wp.components)
 );
