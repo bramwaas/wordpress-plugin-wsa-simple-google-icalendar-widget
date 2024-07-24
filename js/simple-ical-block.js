@@ -46,7 +46,24 @@
 	const ToggleControl = components.ToggleControl;
 	const SelectControl = components.SelectControl;
 	const useEffect = element.useEffect;
-
+	const tagOpsh = [	{ value: 'h1', label: __('h1 (header)', 'simple-google-icalendar-widget') },
+						{ value: 'h2', label: __('h2 (sub header)', 'simple-google-icalendar-widget') },
+						{ value: 'h3', label: __('h3 (sub header)', 'simple-google-icalendar-widget') },
+						{ value: 'h4', label: __('h4 (sub header)', 'simple-google-icalendar-widget') },
+						{ value: 'h5', label: __('h5 (sub header)', 'simple-google-icalendar-widget') },
+						{ value: 'h6', label: __('h6 (sub header)', 'simple-google-icalendar-widget') },
+							];
+	const tagOps = [	{ value: 'a', label: __('a (link)', 'simple-google-icalendar-widget') },
+						{ value: 'b', label: __('b (attention, bold)', 'simple-google-icalendar-widget') },
+						{ value: 'div', label: __('div', 'simple-google-icalendar-widget') },
+						{ value: 'h4', label: __('h4 (sub header)', 'simple-google-icalendar-widget') },
+						{ value: 'h5', label: __('h5 (sub header)', 'simple-google-icalendar-widget') },
+						{ value: 'h6', label: __('h6 (sub header)', 'simple-google-icalendar-widget') },
+						{ value: 'i', label: __('i (idiomatic, italic)', 'simple-google-icalendar-widget') },
+						{ value: 'span', label: __('span', 'simple-google-icalendar-widget') },
+						{ value: 'strong', label: __('strong', 'simple-google-icalendar-widget') },
+						{ value: 'u', label: __('u (unarticulated, underline )', 'simple-google-icalendar-widget') }
+							];
 	blocks.registerBlockType('simplegoogleicalenderwidget/simple-ical-block', {
 		icon: iconEl,
 
@@ -325,6 +342,23 @@
 					el(
 						SelectControl,
 						{
+							label: __('Tag for title:', 'simple-google-icalendar-widget'),
+							value: props.attributes.tag_title,
+							help: el(
+								'a',
+								{
+									href: 'admin.php?page=simple_ical_info#tag-sum',
+									target: '_blank',
+								},
+								__('More info', 'simple-google-icalendar-widget')
+							),
+							onChange: function(value) { props.setAttributes({ tag_title: value }); },
+							options: tagOpsh
+						}
+						),
+					el(
+						SelectControl,
+						{
 							label: __('Tag for summary:', 'simple-google-icalendar-widget'),
 							value: props.attributes.tag_sum,
 							help: el(
@@ -336,18 +370,7 @@
 								__('More info', 'simple-google-icalendar-widget')
 							),
 							onChange: function(value) { props.setAttributes({ tag_sum: value }); },
-							options: [
-								{ value: 'a', label: __('a (link)', 'simple-google-icalendar-widget') },
-								{ value: 'b', label: __('b (attention, bold)', 'simple-google-icalendar-widget') },
-								{ value: 'div', label: __('div', 'simple-google-icalendar-widget') },
-								{ value: 'h4', label: __('h4 (sub header)', 'simple-google-icalendar-widget') },
-								{ value: 'h5', label: __('h5 (sub header)', 'simple-google-icalendar-widget') },
-								{ value: 'h6', label: __('h6 (sub header)', 'simple-google-icalendar-widget') },
-								{ value: 'i', label: __('i (idiomatic, italic)', 'simple-google-icalendar-widget') },
-								{ value: 'span', label: __('span', 'simple-google-icalendar-widget') },
-								{ value: 'strong', label: __('strong', 'simple-google-icalendar-widget') },
-								{ value: 'u', label: __('u (unarticulated, underline )', 'simple-google-icalendar-widget') }
-							]
+							options: tagOps
 						}
 					),
 					el(
@@ -441,7 +464,7 @@
  						 "data-sib-notitle": ( props.attributes.title ? "" : "true"),
 					 },
 					 el(
-						 'h3',
+						 props.attributes.tag_title,
 						 {
 							 "class":"widget-title", 
 						     "data-sib-t":"true",
@@ -471,7 +494,7 @@
  						 "data-sib-notitle": ( props.attributes.title ? "" : "true"),
 					 },
 					 el(
-						 'h3',
+						 props.attributes.tag_title,
 						 {
 							 "class":"widget-title", 
 						     "data-sib-t":"true",
