@@ -17,7 +17,14 @@ window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 			data: dobj,
 		}).then((res) => {
 			ni.setAttribute('data-sib-st', 'completed');
-			if (ni.getAttribute('data-sib-title')) titl = '<h3 class="widget-title" data-sib-t="true">' + ni.getAttribute('data-sib-title') + '</h3>'; else titl = '';
+			if (ni.getAttribute('data-sib-notitle')) {titl = '';
+			} else { if (ni.querySelector( '[data-sib-t="true"]' )) {
+			   	titl =  ni.querySelector( '[data-sib-t="true"]' ).outerHTML;
+			} else { if (res.params.title ) {
+				titl = '<h3 class="widget-title" data-sib-t="true">' + res.params.title + '</h3>';
+			} else { 
+			titl = '';
+			}}}
 			ni.innerHTML = titl + res.content;
 		}).catch((error) => {
 			console.log(error);

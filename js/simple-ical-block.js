@@ -439,7 +439,6 @@
 						 "data-sib-utzui":props.attributes.rest_utzui,
 						 "data-sib-st":"0-start",
  						 "data-sib-notitle": ( props.attributes.title ? "" : "true"),
-						 "data-sib-title": props.attributes.title,
 					 },
 					 el(
 						 'h3',
