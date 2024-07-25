@@ -4,10 +4,11 @@
  * @copyright Copyright (C) 2024 - 2024 Bram Waasdorp. All rights reserved.
  * @license GNU General Public License version 3 or later
  *
- * 2.4.3 
+ * 2.4.4 
  * 2.4.1 adressed Notice: register_rest_route was called <strong>incorrectly</strong>. Namespace must not start or end with a slash.
  *  and added 'permission_callback' => '__return_true', for public routes.
- * 2.4.4 add title to returned params 'get_content_by_ids'
+ * 2.4.4 add all (non default) attributes to returned params 'get_content_by_ids';
+ *  add attribute tag_title (default h3); remove calendar_id from returned params.
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
@@ -146,6 +147,7 @@ class RestController extends WP_REST_Controller {
         } else {
         $block_attributes = array_merge($block_attributes, $params);
         $content = SimpleicalBlock::render_block($block_attributes, []);
+        unset($block_attributes['calendar_id']);
         }
         $data = $this->prepare_item_for_response([
                 'content' => $content,

@@ -21,9 +21,19 @@ window.simpleIcalBlock = {...(window.simpleIcalBlock || {}), ...{
 			}
 			return response.json();
 		}).then((res) => {
-			ni.setAttribute('data-sib-st', 'completed');
-			if (ni.getAttribute('data-sib-notitle')) titl = ''; else titl = ni.querySelector( '[data-sib-t="true"]' ).outerHTML;
+			if (res.params.title) {
+				if (ni.querySelector('[data-sib-t="true"]')) {
+					ni.querySelector('[data-sib-t="true"]').innerHTML = res.params.title;
+					titl = ni.querySelector('[data-sib-t="true"]').outerHTML;
+				} else {
+					if (!res.params.tag_title) {res.params.tag_title = 'h3';}
+					titl = '<' + res.params.tag_title + ' class="widget-title" data-sib-t="true">' + res.params.title + '</' + res.params.tag_title + '>';
+				}
+			} else {
+				titl = '';
+			}
 			ni.innerHTML = titl + res.content;
+			ni.setAttribute('data-sib-st', 'completed');
 		}
 		).catch((error) => {
 			console.log(error);

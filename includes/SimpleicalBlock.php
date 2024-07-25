@@ -77,6 +77,7 @@ class SimpleicalBlock
         'layout' => 3,
         'dateformat_lg' => 'l jS \of F',
         'dateformat_lgend' => '',
+        'tag_title' => 'h3',
         'tag_sum' => 'a',
         'dateformat_tsum' => 'G:i ',
         'dateformat_tsend' => '',
@@ -204,7 +205,7 @@ class SimpleicalBlock
                     $block_attributes['before_title'] = implode(' data-sib-t="true" >', $l);
                 }
                 $wrapperattr = ('rest_ph' == $block_attributes['wptype'] && is_wp_version_compatible('5.6')) ? get_block_wrapper_attributes() : '';
-                echo sprintf($block_attributes['before_widget'], ($block_attributes['anchorId'] . '" data-sib-id="' . $block_attributes['sibid'] . '" data-sib-utzui="' . $block_attributes['rest_utzui'] . '" data-sib-st="0-start' . ((empty($block_attributes['title'])) ? '" data-sib-notitle="true' : '')), $wrapperattr);
+                echo sprintf($block_attributes['before_widget'], ($block_attributes['anchorId'] . '" data-sib-id="' . $block_attributes['sibid'] . '" data-sib-utzui="' . $block_attributes['rest_utzui'] . '" data-sib-st="0-start' ), $wrapperattr);
                 echo $block_attributes['before_title'] . wp_kses($block_attributes['title'], 'post') . $block_attributes['after_title'] . '<p>';
                 _e('Processing', 'simple-google-icalendar-widget');
                 echo '</p>' . $block_attributes['after_widget'];

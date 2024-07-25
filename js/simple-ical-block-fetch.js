@@ -16,16 +16,23 @@ window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 			method: 'POST',
 			data: dobj,
 		}).then((res) => {
-			ni.setAttribute('data-sib-st', 'completed');
-			if (ni.getAttribute('data-sib-notitle')) {titl = '';
-			} else { if (ni.querySelector( '[data-sib-t="true"]' )) {
-			   	titl =  ni.querySelector( '[data-sib-t="true"]' ).outerHTML;
-			} else { if (res.params.title ) {
-				titl = '<h3 class="widget-title" data-sib-t="true">' + res.params.title + '</h3>';
-			} else { 
-			titl = '';
-			}}}
+console.log(res);
+			if (res.params.title) {
+/* not in editor, only in frontend view				
+				if (ni.querySelector('[data-sib-t="true"]')) {
+					ni.querySelector('[data-sib-t="true"]').innerHTML = res.params.title;
+					titl = ni.querySelector('[data-sib-t="true"]').outerHTML;
+				} else 
+end not in editor				*/
+				{
+					if (!res.params.tag_title) {res.params.tag_title = 'h3';}
+					titl = '<' + res.params.tag_title + ' class="widget-title" data-sib-t="true">' + res.params.title + '</' + res.params.tag_title + '>';
+				}
+			} else {
+				titl = '';
+			}
 			ni.innerHTML = titl + res.content;
+			ni.setAttribute('data-sib-st', 'completed');
 		}).catch((error) => {
 			console.log(error);
 			ni.setAttribute('data-sib-st', 'Error :' + error.code + ':' + error.message);

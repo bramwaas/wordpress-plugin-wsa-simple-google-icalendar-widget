@@ -461,8 +461,9 @@
 						 "data-sib-id":props.attributes.sibid,
 						 "data-sib-utzui":props.attributes.rest_utzui,
 						 "data-sib-st":"0-start",
- 						 "data-sib-notitle": ( props.attributes.title ? "" : "true"),
-					 },
+					 }
+					 /*
+					 ,
 					 el(
 						 props.attributes.tag_title,
 						 {
@@ -470,7 +471,9 @@
 						     "data-sib-t":"true",
 						 },
 						 props.attributes.title
-						 ),
+						 )
+						 */
+						 ,
 					 el('p',
 					    {},
    						__('Processing', 'simple-google-icalendar-widget')
@@ -491,7 +494,6 @@
 						 "data-sib-id":props.attributes.sibid,
 						 "data-sib-utzui":props.attributes.rest_utzui,
 						 "data-sib-st":"0-start",
- 						 "data-sib-notitle": ( props.attributes.title ? "" : "true"),
 					 },
 					 el(
 						 props.attributes.tag_title,
