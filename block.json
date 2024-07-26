@@ -21,7 +21,7 @@
 		"dateformat_lg": {"type": "string", "default": "l jS \\of F"},
 		"dateformat_lgend": {"type": "string", "default": ""},
 		"tag_sum": {"type": "string", "enum": ["a", "b", "div", "h1", "h2", "h3", "h4", "h5", "h6", "i", "span", "strong", "u"], "default": "a"},
-		"tag_title": {"type": "string", "enum": ["h1", "h2", "h3", "h4", "h5", "h6"], "default": "h3"},
+		"tag_title": {"type": "string", "enum": ["a", "b", "div", "h1", "h2", "h3", "h4", "h5", "h6", "i", "span", "strong", "u"], "default": "h3"},
 		"dateformat_tsum": {"type": "string", "default": "G:i "},
 		"dateformat_tsend": {"type": "string", "default": ""},
 		"dateformat_tstart": {"type": "string", "default": "G:i"},

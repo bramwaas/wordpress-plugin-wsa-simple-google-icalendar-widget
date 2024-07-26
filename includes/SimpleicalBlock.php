@@ -34,7 +34,7 @@
  * 2.4.0 str_replace('Etc/GMT ','Etc/GMT+' for some UTC-... timezonesettings.
  * 2.4.1 resolved with wptype 'rest_ph_w' warning on wrapper_attributes when wptype 'rest_ph' and started from widget 
  * 2.4.3 replace render_callback in server side register_block_type by render in block.json (v3 plus ( is_wp_version_compatible( '6.3' ) )) 
- *       add  "data-sib-utzui":props.attributes.rest_utzui to rest placeholder tag
+ *       add  "data-sib-utzui":props.attributes.rest_utzui to rest placeholder tag; use tag_title when not placeholder for widget
  
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
@@ -52,6 +52,9 @@ class SimpleicalBlock
         'a',
         'b',
         'div',
+        'h1',
+        'h2',
+        'h3',
         'h4',
         'h5',
         'h6',
@@ -136,6 +139,7 @@ class SimpleicalBlock
             'cache_time' => ['type' => 'integer', 'default' => 60],
             'dateformat_lg' => ['type' => 'string', 'default' => 'l jS \of F'],
             'dateformat_lgend' => ['type' => 'string', 'default' => ''],
+            'tag_title' => ['type' => 'string', 'enum' => self::$allowed_tags_sum, 'default' => 'h3'],
             'tag_sum' => ['type' => 'string', 'enum' => self::$allowed_tags_sum, 'default' => 'a'],
             'dateformat_tsum' => ['type' => 'string', 'default' => 'G:i '],
             'dateformat_tsend' => ['type' => 'string', 'default' => ''],
@@ -189,6 +193,10 @@ class SimpleicalBlock
             $block_attributes['sibid'] = $block_attributes['blockid'];
         }
         ;
+        if ('rest_ph_w' != $block_attributes['wptype'] && (!empty($block_attributes['tag_title']))) {
+            $block_attributes['before_title'] = str_replace("h3",$block_attributes['tag_title'],$block_attributes['before_title']);
+            $block_attributes['after_title'] = str_replace("h3",$block_attributes['tag_title'],$block_attributes['after_title']);
+        } 
 
         $output = '';
         ob_start();
@@ -206,7 +214,8 @@ class SimpleicalBlock
                 }
                 $wrapperattr = ('rest_ph' == $block_attributes['wptype'] && is_wp_version_compatible('5.6')) ? get_block_wrapper_attributes() : '';
                 echo sprintf($block_attributes['before_widget'], ($block_attributes['anchorId'] . '" data-sib-id="' . $block_attributes['sibid'] . '" data-sib-utzui="' . $block_attributes['rest_utzui'] . '" data-sib-st="0-start' ), $wrapperattr);
-                echo $block_attributes['before_title'] . wp_kses($block_attributes['title'], 'post') . $block_attributes['after_title'] . '<p>';
+                echo $block_attributes['before_title'] . wp_kses($block_attributes['title'], 'post') . $block_attributes['after_title'];
+                echo '<p>';
                 _e('Processing', 'simple-google-icalendar-widget');
                 echo '</p>' . $block_attributes['after_widget'];
                 try {
