@@ -194,9 +194,16 @@ class SimpleicalBlock
         }
         ;
         if ('rest_ph_w' != $block_attributes['wptype'] && (!empty($block_attributes['tag_title']))) {
-            $block_attributes['before_title'] = str_replace("h3",$block_attributes['tag_title'],$block_attributes['before_title']);
-            $block_attributes['after_title'] = str_replace("h3",$block_attributes['tag_title'],$block_attributes['after_title']);
-        } 
+            $titlenode = '<' . $block_attributes['tag_title'] .' class="widget-title block-title" data-sib-t="true">'
+                . wp_kses($block_attributes['title'], 'post')
+                . '</' . $block_attributes['tag_title'] . '>';
+        } else {
+            if (false === stripos(' data-sib-t="true" ', $block_attributes['before_title'])) {
+                $l = explode('>', $block_attributes['before_title'], 2);
+                $block_attributes['before_title'] = implode(' data-sib-t="true" >', $l);
+            }
+            $titlenode = $block_attributes['before_title'] . wp_kses($block_attributes['title'], 'post') . $block_attributes['after_title'];
+        }
 
         $output = '';
         ob_start();
@@ -208,13 +215,9 @@ class SimpleicalBlock
             case 'rest_ph':
             case 'rest_ph_w':    
                 // Placeholder starting point for REST processing display of block or widget.
-                if (false === stripos(' data-sib-t="true" ', $block_attributes['before_title'])) {
-                    $l = explode('>', $block_attributes['before_title'], 2);
-                    $block_attributes['before_title'] = implode(' data-sib-t="true" >', $l);
-                }
                 $wrapperattr = ('rest_ph' == $block_attributes['wptype'] && is_wp_version_compatible('5.6')) ? get_block_wrapper_attributes() : '';
                 echo sprintf($block_attributes['before_widget'], ($block_attributes['anchorId'] . '" data-sib-id="' . $block_attributes['sibid'] . '" data-sib-utzui="' . $block_attributes['rest_utzui'] . '" data-sib-st="0-start' ), $wrapperattr);
-                echo $block_attributes['before_title'] . wp_kses($block_attributes['title'], 'post') . $block_attributes['after_title'];
+                echo $titlenode;
                 echo '<p>';
                 _e('Processing', 'simple-google-icalendar-widget');
                 echo '</p>' . $block_attributes['after_widget'];
@@ -231,7 +234,7 @@ class SimpleicalBlock
                 $wrapperattr = (is_wp_version_compatible('5.6')) ? get_block_wrapper_attributes() : '';
                 echo sprintf($block_attributes['before_widget'], ($block_attributes['anchorId'] . '" data-sib-id="' . $block_attributes['sibid']), $wrapperattr);
                 if (! empty($block_attributes['title'])) {
-                    echo $block_attributes['before_title'] . wp_kses($block_attributes['title'], 'post') . $block_attributes['after_title'];
+                    echo $titlenode;
                 }
                 self::display_block($block_attributes);
                 echo $block_attributes['after_widget'];
