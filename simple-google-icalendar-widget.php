@@ -40,13 +40,13 @@
  *   bw 20240123 v2.2.1 after an isue of black88mx6 in support forum: don't display description line when excerpt-length = 0
  *   bw 20240125 v2.3.0 v2 dir for older versions eg block.json version 2 for WP6.3 - Extra save instance/attributes in option 'simple_ical_block_attrs', like in standaard
  *      wp-widget in array with sibid as index so that the attributes are available for REST call.
- *   bw 20240509 v2.4.1 added defaults to all used keys of $args to solve
- *      issue 'PHP warnings' of johansam on support forum. Undefined array key “classname” in .../simple-google-icalendar-widget.php on line 170    
+ *   bw 20240509 v2.4.1 added defaults to all used keys of $args to solve issue 'PHP warnings' of johansam on support forum. Undefined array key “classname” in .../simple-google-icalendar-widget.php on line 170
+ *   b4 20240727 v2.4.4 simplified defaulting args and improved code around that for the widget output    
  */
 /*
  Simple Google Calendar Outlook Events Widget
  Copyright (C) Bram Waasdorp 2017 - 2024
- 2024-05-09
+ 2024-07-27
  Forked from Simple Google Calendar Widget v 0.7 by Nico Boehr
  
  This program is free software: you can redistribute it and/or modify
@@ -148,8 +148,8 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
             public function widget($args, $instance)
             {
                 $args = array_merge(['before_widget' => '',
-                    'before_title' => '',
-                    'after_title' => '',
+                    'before_title' => SimpleicalBlock::$default_block_attributes['before_title'],
+                    'after_title' => SimpleicalBlock::$default_block_attributes['after_title'],
                     'after_widget' => '',
                     'classname' => 'Simple_iCal_Widget' ],
                     $args);  
@@ -163,7 +163,10 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
                      'tzid_ui' => wp_timezone_string(),
                      'wptype' => 'widget'],
                     $instance  );
-                
+echo '<!-- args:', PHP_EOL;
+print_r($args);
+echo PHP_EOL, '-->', PHP_EOL;
+
                 if (! empty($instance['rest_utzui']) &&  is_numeric($instance['rest_utzui'])) {
                     $instance['wptype'] = 'rest_ph_w';
                 }
