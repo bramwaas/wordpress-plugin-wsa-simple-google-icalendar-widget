@@ -147,9 +147,9 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
              */
             public function widget($args, $instance)
             {
-                $args = array_merge(['before_widget' => '',
-                    'before_title' => SimpleicalBlock::$default_block_attributes['before_title'],
-                    'after_title' => SimpleicalBlock::$default_block_attributes['after_title'],
+                    $args = array_merge(['before_widget' => '',
+                        'before_title' => '<h3 class="widget-title block-title">',
+                        'after_title' => '<h3 class="widget-title block-title">',
                     'after_widget' => '',
                     'classname' => 'Simple_iCal_Widget' ],
                     $args);  

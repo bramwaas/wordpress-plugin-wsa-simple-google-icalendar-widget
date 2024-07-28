@@ -99,9 +99,7 @@ class SimpleicalBlock
         'className' => '',
         'anchorId' => '',
         'before_widget' => '<div id="%1$s" %2$s>',
-        'after_widget'  => '</div>',
-        'before_title'  => '<h3 class="widget-title block-title">',
-        'after_title'   => '</h3>'
+        'after_widget'  => '</div>'
         
     ];
 
@@ -193,13 +191,10 @@ class SimpleicalBlock
             $block_attributes['sibid'] = $block_attributes['blockid'];
         }
         ;
-        if ('rest_ph_w' != $block_attributes['wptype'] && (!empty($block_attributes['tag_title']))) {
-            $titlenode = '<' . $block_attributes['tag_title'] .' class="widget-title block-title" data-sib-t="true">'
+        if  (!empty($block_attributes['tag_title']))  $block_attributes['tag_title'] = 'h3';
+        $titlenode = '<' . $block_attributes['tag_title'] .' class="widget-title block-title" data-sib-t="true">'
                 . wp_kses($block_attributes['title'], 'post')
                 . '</' . $block_attributes['tag_title'] . '>';
-        } else {
-            $titlenode = $block_attributes['before_title'] . wp_kses($block_attributes['title'], 'post') . $block_attributes['after_title'];
-        }
 
         $output = '';
         ob_start();
@@ -217,7 +212,7 @@ class SimpleicalBlock
                 _e('Processing', 'simple-google-icalendar-widget');
                 echo '</p>' . $block_attributes['after_widget'];
                 try {
-                    unset($block_attributes['before_widget'], $block_attributes['before_title'], $block_attributes['after_title'], $block_attributes['after_widget']);
+                    unset($block_attributes['before_widget'], $block_attributes['after_widget']);
                     self::update_rest_attrs($block_attributes);
                 } catch (\Exception $e) {
                     echo '<p>Caught exception: ', $e->getMessage(), "</p>\n";
