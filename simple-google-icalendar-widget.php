@@ -165,7 +165,9 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
                     $instance  );
 echo '<!-- args:', PHP_EOL;
 print_r($args);
+print_r($instance);
 echo PHP_EOL, '-->', PHP_EOL;
+                if (empty($instance['anchorId'])) $instance['anchorId'] =  $instance['sibid'];
 
                 if (! empty($instance['rest_utzui']) &&  is_numeric($instance['rest_utzui'])) {
                     $instance['wptype'] = 'rest_ph_w';
@@ -174,24 +176,30 @@ echo PHP_EOL, '-->', PHP_EOL;
                 $instance['clear_cache_now'] = false;
                 
                 echo sprintf($args['before_widget'],
-                    ('w-' . $instance['sibid'] . '" data-sib-id="' . $instance['sibid'] ),
+                    ('w-' . $instance['anchorId'] ),
                     $args['classname']) ;
-                $instances = get_option('widget_simple_ical_widget');
-                if ('rest_ph_w' == $instance['wptype'] ) {
-                    $instance['before_widget'] = '<span id="%1$s" %2$s>';
-                    $instance['after_widget'] = '</span>';
-                    echo SimpleicalBlock::render_block($instance);
+                echo '<span id="' . $instance['anchorId'] . '" data-sib-id="'
+                        . $instance['sibid'] . '" data-sib-utzui="' . $instance['rest_utzui'] 
+                        . (('rest_ph_w' == $instance['wptype']) ? '" data-sib-st="0-start" >' : '">');
+                $args['after_widget'] = '</span>' . $args['after_widget'];
+                
+                if (! empty($instance['title'])) {
+                        if (false === stripos(' data-sib-t="true" ', $args['before_title'])) {
+                            $l = explode('>', $args['before_title'], 2);
+                            $args['before_title'] = implode(' data-sib-t="true" >', $l);
+                        }
+                        $title = apply_filters('widget_title', $instance['title']);
+                        echo $args['before_title'], $title, $args['after_title'];
                 }
-                else {
-                    if (! empty($instance['title'])) {
-                           $title = apply_filters('widget_title', $instance['title']);
-                           echo $args['before_title'], $title, $args['after_title'];
-                       }
-                       
+                if ('rest_ph_w' == $instance['wptype'] ) {
+                    echo '<p>';
+                    _e('Processing', 'simple-google-icalendar-widget');
+                    echo '</p>';
+                } else {
                     SimpleicalBlock::display_block($instance);
-                   }
+                }
                    // end lay-out block
-                   echo $args['after_widget'];
+                echo $args['after_widget'];
             }
             /**
              * Sanitize widget form values as they are saved.

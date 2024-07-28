@@ -198,10 +198,6 @@ class SimpleicalBlock
                 . wp_kses($block_attributes['title'], 'post')
                 . '</' . $block_attributes['tag_title'] . '>';
         } else {
-            if (false === stripos(' data-sib-t="true" ', $block_attributes['before_title'])) {
-                $l = explode('>', $block_attributes['before_title'], 2);
-                $block_attributes['before_title'] = implode(' data-sib-t="true" >', $l);
-            }
             $titlenode = $block_attributes['before_title'] . wp_kses($block_attributes['title'], 'post') . $block_attributes['after_title'];
         }
 
@@ -213,8 +209,7 @@ class SimpleicalBlock
                 self::display_block($block_attributes);
                 break;
             case 'rest_ph':
-            case 'rest_ph_w':    
-                // Placeholder starting point for REST processing display of block or widget.
+                // Placeholder starting point for REST processing display of block.
                 $wrapperattr = ('rest_ph' == $block_attributes['wptype'] && is_wp_version_compatible('5.6')) ? get_block_wrapper_attributes() : '';
                 echo sprintf($block_attributes['before_widget'], ($block_attributes['anchorId'] . '" data-sib-id="' . $block_attributes['sibid'] . '" data-sib-utzui="' . $block_attributes['rest_utzui'] . '" data-sib-st="0-start' ), $wrapperattr);
                 echo $titlenode;
