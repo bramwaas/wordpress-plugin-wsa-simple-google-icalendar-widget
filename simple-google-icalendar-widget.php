@@ -153,20 +153,11 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
                     'after_widget' => '',
                     'classname' => 'Simple_iCal_Widget' ],
                     $args);  
-                foreach ($args as $k => $arg){
-                    if (empty($instance[$k]) && !empty($arg) && ' ' < trim($arg)){
-                        $instance[$k] = $arg;
-                    } 
-                }
                 $instance = array_merge(SimpleicalBlock::$default_block_attributes,
                     ['title' => __('Events', 'simple-google-icalendar-widget'),
                      'tzid_ui' => wp_timezone_string(),
                      'wptype' => 'widget'],
                     $instance  );
-echo '<!-- args:', PHP_EOL;
-print_r($args);
-print_r($instance);
-echo PHP_EOL, '-->', PHP_EOL;
                 if (empty($instance['anchorId'])) $instance['anchorId'] =  $instance['sibid'];
 
                 if (! empty($instance['rest_utzui']) &&  is_numeric($instance['rest_utzui'])) {
