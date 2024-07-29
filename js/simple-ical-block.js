@@ -509,14 +509,7 @@
    						)
 					 )
     		));
-		},
-		deprecated: [
-		{ /* dep243 */
-			save: ( ) => { 
-				return( null
-					)}
 		}
-		]
 	});
 }(window.wp.blocks,
 	window.wp.i18n,
