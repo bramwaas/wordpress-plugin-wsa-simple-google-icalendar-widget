@@ -143,7 +143,24 @@
 				'div',
 				useBlockProps({
 					key: 'simple_ical',
-				}),
+				})
+/*	rest placeholder for render in editor with setSibbAttrs 	*/		
+				,
+					el(
+				     'div',
+				     {
+		 				"id":(props.attributes.anchorId ? props.attributes.anchorId : props.attributes.sibid),
+						 "data-sib-id":props.attributes.sibid,
+						 "data-sib-utzui":props.attributes.rest_utzui,
+						 "data-sib-st":"0-start",
+					 }
+					 ,
+					 el('p',
+					    {},
+   						__('Processing', 'simple-google-icalendar-widget')
+   						)
+					)
+				,
 				el(InspectorControls,
 					{ key: 'setting' },
 					el('div',
@@ -452,34 +469,6 @@
 						}
 					)
 				)
-/*	rest placeholder for render in editor with setSibbAttrs 	*/		
-				,
-					el(
-				     'div',
-				     {
-		 				"id":(props.attributes.anchorId ? props.attributes.anchorId : props.attributes.sibid),
-						 "data-sib-id":props.attributes.sibid,
-						 "data-sib-utzui":props.attributes.rest_utzui,
-						 "data-sib-st":"0-start",
-					 }
-					 /*
-					 ,
-					 el(
-						 props.attributes.tag_title,
-						 {
-							 "class":"widget-title", 
-						     "data-sib-t":"true",
-						 },
-						 props.attributes.title
-						 )
-						 */
-						 ,
-					 el('p',
-					    {},
-   						__('Processing', 'simple-google-icalendar-widget')
-   						)
-					)
-			
 				);
 		},
 		save: function (props) {
@@ -487,13 +476,12 @@
 				'div',
 				useBlockProps.save({
 					key: 'simple_ical',
-				}),
-				el('div',
-				     {
 		 				"id":(props.attributes.anchorId ? props.attributes.anchorId : props.attributes.sibid),
 						 "data-sib-id":props.attributes.sibid,
 						 "data-sib-utzui":props.attributes.rest_utzui,
 						 "data-sib-st":"0-start",
+				}),
+				     {
 					 },
 					 el(
 						 props.attributes.tag_title,
@@ -507,7 +495,6 @@
 					    {},
    						__('Processing', 'simple-google-icalendar-widget')
    						)
-					 )
     		));
 		}
 	});
