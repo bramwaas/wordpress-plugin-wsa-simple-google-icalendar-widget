@@ -496,7 +496,47 @@
    						__('Processing', 'simple-google-icalendar-widget')
    						)
     		));
+		},
+		deprecated: [
+		{ /* dep243 */
+		
+	"attributes": {
+		"wptype": {"type": "string", "default": "block"},
+		"sibid": {"type": "string"},
+		"title": {"type": "string", "default": "Events"},
+		"calendar_id": {"type": "string", "default": ""},
+		"event_count": {"type": "integer", "default": 10},
+		"event_period": {"type": "integer", "default": 92},
+		"layout": {"type": "integer", "default": 3},
+		"cache_time": {"type": "integer", "default": 60},
+		"dateformat_lg": {"type": "string", "default": "l jS \\of F"},
+		"dateformat_lgend": {"type": "string", "default": ""},
+		"tag_sum": {"type": "string", "enum": ["a", "b", "div", "h1", "h2", "h3", "h4", "h5", "h6", "i", "span", "strong", "u"], "default": "a"},
+		"tag_title": {"type": "string", "enum": ["a", "b", "div", "h1", "h2", "h3", "h4", "h5", "h6", "i", "span", "strong", "u"], "default": "h3"},
+		"dateformat_tsum": {"type": "string", "default": "G:i "},
+		"dateformat_tsend": {"type": "string", "default": ""},
+		"dateformat_tstart": {"type": "string", "default": "G:i"},
+		"dateformat_tend": {"type": "string", "default": " - G:i "},
+		"excerptlength": {"type": "string","default": ""},
+		"suffix_lg_class": {"type": "string", "default": ""},
+		"suffix_lgi_class": {"type": "string", "default": " py-0"},
+		"suffix_lgia_class": {"type": "string", "default": ""},
+		"allowhtml": {"type": "boolean", "default": false},
+		"after_events": {"type": "string", "default": ""},
+		"no_events": {"type": "string", "default": ""},
+		"clear_cache_now": {"type": "boolean", "default": false},
+		"period_limits": {"type": "string", "enum": ["1", "2", "3", "4"], "default": "1"},
+		"rest_utzui": {"type": "string", "enum": ["", "1", "2"], "default": ""},
+		"anchorId": {"type": "string", "default": ""},
+		"blockid": {"type": "string"}
+		},
+			save: (props) => { 
+				return( null
+					)}
 		}
+		]
+
+
 	});
 }(window.wp.blocks,
 	window.wp.i18n,
