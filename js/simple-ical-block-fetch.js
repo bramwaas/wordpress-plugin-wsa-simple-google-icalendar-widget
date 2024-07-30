@@ -5,7 +5,7 @@
  * replaced fetch() by apiFetch therefore no need to define restRoot
  * added search in iFrame,  selection on sibid, and choice of Timezone
  * object simpleIcalBlock differentiated by adding F
- * v2.4.3
+ * v2.4.4
 **/
 window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 	fetchFromRest: function(dobj, ni) {
@@ -16,7 +16,6 @@ window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 			method: 'POST',
 			data: dobj,
 		}).then((res) => {
-console.log(res);
 			if (res.params.title) {
 /* not in editor, only in frontend view				
 				if (ni.querySelector('[data-sib-t="true"]')) {

@@ -23,7 +23,7 @@ These are great, but as soon as you want to make a few adjustments to the stylin
 == Plugin Features ==
 
 * Calendar block or widget to display appointments/events of a public Google calendar or other iCal file.
-* Block gives live preview in the editor and is not constrained to widget area. Old widget will be displayed in legacy widget block only in widget area.
+* Block gives live preview in the editor and is not constrained to widget area. Old widget will be displayed in legacy widget block only in widget area. Old widget works also with Elementor (with some limitations e.g. preview in backend editor is not always available).
 * Small footprint, uses only Google ID of the calendar, or ICS link for Outlook, or Url of iCal file, to get event information via iCal
 * Merge more calendars into one block
 * Manage events in Google Calendar, or other iCalendar source.
@@ -58,7 +58,7 @@ If your theme has a widget area you can also enter the block as a widget in a wi
  Appearance / Widgets / (+ sign)Toggle block inserter / WIDGETS. Just drag it into your sidebar.    
 * Alternative : Select 'Simple Google Calendar Outlook Events Widget' or select the Legacy widget and choose 'Simple Google Calendar Outlook Events Widget'     
   and drag it into the sidebar.
-* Fill out all the necessary configuration fields.
+* Fill out all the necessary configuration fields, at least a Calendar ID.
  In Calendar ID enter the calendar ID displayed by Google Calendar, or complete url of a  Google calendar or other iCal file.
  You can find Google calendar ID by going to Calendar Settings / Calendars, clicking on the appropriate calendar, scrolling all the way down to find the Calendar ID at the bottom under the Integrate Calendar section. There's your calendar id.
 * You're done!
