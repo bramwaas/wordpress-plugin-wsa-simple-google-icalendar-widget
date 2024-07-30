@@ -149,7 +149,7 @@ Solution: Update and save the block in the editor of the pattern to which the bl
 = This block contains unexpected or invalid content. =   
 
 After an update of the plugin in stead of the block content the message "This block contains unexpected or invalid content." is displayed and a button "Attempt Block Recovery".  
-Probably this is caused by a difference in the Saved output and the output that would be saved if the block was saved now. This will be the case if the code in the save has changed due to the plugin update (or downgrade).This should be resolved automatically by the deprecation code, but this is not possible if a block is placed on a page as part of a synchronized pattern, if you roll back to an older version, or if the deprecation code does not work correctly.   
+Probably this is caused by a difference in the Saved output and the output that would be saved if the block was saved now. This will be the case if the code in the save has changed due to the plugin update (or downgrade).This should be resolved automatically by the deprecation code, but this may not be possible if you roll back to an older version, or if the deprecation code does not work correctly.   
 * Pushing the button "Attempt Block Recovery" will save the output in the new format and thereby solve the issue.   
 * When it comes to a synced pattern you have to "Attempt Block Recovery" in the original pattern via Edit original or "Appearance/Patterns".   
       
