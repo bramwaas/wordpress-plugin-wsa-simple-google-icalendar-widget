@@ -27,7 +27,7 @@ window.simpleIcalBlock = {...(window.simpleIcalBlock || {}), ...{
 					titl = ni.querySelector('[data-sib-t="true"]').outerHTML;
 				} else {
 					if (!res.params.tag_title) {res.params.tag_title = 'h3';}
-					titl = '<' + res.params.tag_title + ' class="widget-title" data-sib-t="true">' + res.params.title + '</' + res.params.tag_title + '>';
+					titl = '<' + res.params.tag_title + ' class="widget-title block-title" data-sib-t="true">' + res.params.title + '</' + res.params.tag_title + '>';
 				}
 			} else {
 				titl = '';

@@ -25,7 +25,7 @@ window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 end not in editor				*/
 				{
 					if (!res.params.tag_title) {res.params.tag_title = 'h3';}
-					titl = '<' + res.params.tag_title + ' class="widget-title" data-sib-t="true">' + res.params.title + '</' + res.params.tag_title + '>';
+					titl = '<' + res.params.tag_title + ' class="widget-title block-title" data-sib-t="true">' + res.params.title + '</' + res.params.tag_title + '>';
 				}
 			} else {
 				titl = '';
