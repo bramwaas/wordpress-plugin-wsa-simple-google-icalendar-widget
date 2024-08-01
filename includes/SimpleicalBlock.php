@@ -205,7 +205,7 @@ class SimpleicalBlock
                 break;
             case 'rest_ph':
                 // Placeholder starting point for REST processing display of block.
-                $wrapperattr = ('rest_ph' == $block_attributes['wptype'] && is_wp_version_compatible('5.6')) ? get_block_wrapper_attributes() : '';
+                $wrapperattr = (is_wp_version_compatible('5.6')) ? get_block_wrapper_attributes() : '';
                 echo sprintf($block_attributes['before_widget'], ($block_attributes['anchorId'] . '" data-sib-id="' . $block_attributes['sibid'] . '" data-sib-utzui="' . $block_attributes['rest_utzui'] . '" data-sib-st="0-start' ), $wrapperattr);
                 echo $titlenode;
                 echo '<p>';
