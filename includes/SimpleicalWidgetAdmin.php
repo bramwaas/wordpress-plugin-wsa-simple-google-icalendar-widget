@@ -135,8 +135,6 @@ class SimpleicalWidgetAdmin {
         _e('<br>With "Use WordPress timezone settings, with REST" timezone of WordPress installation is used.', 'simple-google-icalendar-widget');
         _e('<br>At first a placeholder with title and some Id\'s to use later is created and displayed.<br>After pageload the output is fetched with a REST call, then this output is placed over the placeholder.</p>', 'simple-google-icalendar-widget');
         
-        
-        
         _e('<p><strong>Suffix group class</strong></p>', 'simple-google-icalendar-widget');
         _e('<p>Suffix to add after css-class around the event (list-group),<br>start with space to keep the original class and add another class.</p>', 'simple-google-icalendar-widget');
         
