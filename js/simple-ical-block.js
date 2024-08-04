@@ -21,7 +21,7 @@
  *   wptype 'ssr'.
  * 2.4.3 initializations also inside useEffect and setAttibute only for sibid only when necessary to reduce change of looping in Synced Pattern 
  *   extra option Wordpress timezone with rest
- * 2.4.4-a initialization sibid also with direct assign in case setAttribute does not work (e.g. in Synced pattern 6.6) 
+ * 2.4.4 initialization sibid also with direct assign in case setAttribute does not work (e.g. in Synced pattern 6.6) 
  *   removed references to ServerSideRender added deprecated 243  
  */
 (function(blocks, i18n, element, blockEditor, components) {
@@ -46,24 +46,27 @@
 	const ToggleControl = components.ToggleControl;
 	const SelectControl = components.SelectControl;
 	const useEffect = element.useEffect;
-	const tagOpsh = [	{ value: 'h1', label: __('h1 (header)', 'simple-google-icalendar-widget') },
-						{ value: 'h2', label: __('h2 (sub header)', 'simple-google-icalendar-widget') },
-						{ value: 'h3', label: __('h3 (sub header)', 'simple-google-icalendar-widget') },
-						{ value: 'h4', label: __('h4 (sub header)', 'simple-google-icalendar-widget') },
-						{ value: 'h5', label: __('h5 (sub header)', 'simple-google-icalendar-widget') },
-						{ value: 'h6', label: __('h6 (sub header)', 'simple-google-icalendar-widget') },
-							];
-	const tagOps = [	{ value: 'a', label: __('a (link)', 'simple-google-icalendar-widget') },
-						{ value: 'b', label: __('b (attention, bold)', 'simple-google-icalendar-widget') },
-						{ value: 'div', label: __('div', 'simple-google-icalendar-widget') },
-						{ value: 'h4', label: __('h4 (sub header)', 'simple-google-icalendar-widget') },
-						{ value: 'h5', label: __('h5 (sub header)', 'simple-google-icalendar-widget') },
-						{ value: 'h6', label: __('h6 (sub header)', 'simple-google-icalendar-widget') },
-						{ value: 'i', label: __('i (idiomatic, italic)', 'simple-google-icalendar-widget') },
-						{ value: 'span', label: __('span', 'simple-google-icalendar-widget') },
-						{ value: 'strong', label: __('strong', 'simple-google-icalendar-widget') },
-						{ value: 'u', label: __('u (unarticulated, underline )', 'simple-google-icalendar-widget') }
-							];
+	const tagOpsh = [{ value: 'div', label: __('div', 'simple-google-icalendar-widget') },
+	{ value: 'h1', label: __('h1 (header)', 'simple-google-icalendar-widget') },
+	{ value: 'h2', label: __('h2 (sub header)', 'simple-google-icalendar-widget') },
+	{ value: 'h3', label: __('h3 (sub header)', 'simple-google-icalendar-widget') },
+	{ value: 'h4', label: __('h4 (sub header)', 'simple-google-icalendar-widget') },
+	{ value: 'h5', label: __('h5 (sub header)', 'simple-google-icalendar-widget') },
+	{ value: 'h6', label: __('h6 (sub header)', 'simple-google-icalendar-widget') },
+	{ value: 'span', label: __('span', 'simple-google-icalendar-widget') },
+	];
+	const tagOps = [{ value: 'a', label: __('a (link)', 'simple-google-icalendar-widget') },
+	{ value: 'b', label: __('b (attention, bold)', 'simple-google-icalendar-widget') },
+	{ value: 'div', label: __('div', 'simple-google-icalendar-widget') },
+	{ value: 'h4', label: __('h4 (sub header)', 'simple-google-icalendar-widget') },
+	{ value: 'h5', label: __('h5 (sub header)', 'simple-google-icalendar-widget') },
+	{ value: 'h6', label: __('h6 (sub header)', 'simple-google-icalendar-widget') },
+	{ value: 'i', label: __('i (idiomatic, italic)', 'simple-google-icalendar-widget') },
+	{ value: 'span', label: __('span', 'simple-google-icalendar-widget') },
+	{ value: 'strong', label: __('strong', 'simple-google-icalendar-widget') },
+	{ value: 'u', label: __('u (unarticulated, underline )', 'simple-google-icalendar-widget') }
+	];
+	
 	blocks.registerBlockType('simplegoogleicalenderwidget/simple-ical-block', {
 		icon: iconEl,
 
@@ -364,7 +367,7 @@
 							help: el(
 								'a',
 								{
-									href: 'admin.php?page=simple_ical_info#tag-sum',
+									href: 'admin.php?page=simple_ical_info#tag-title',
 									target: '_blank',
 								},
 								__('More info', 'simple-google-icalendar-widget')

@@ -183,6 +183,7 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
                         echo $args['before_title'], $title, $args['after_title'];
                 }
                 if ('rest_ph_w' == $instance['wptype'] ) {
+                    SimpleicalBlock::update_rest_attrs($instance );
                     echo '<p>';
                     _e('Processing', 'simple-google-icalendar-widget');
                     echo '</p>';

@@ -15,7 +15,8 @@
  * 2.1.3 block footer after events and placeholder when no events.
  * 2.2.0 fix spell-error in namespace, and use new correct text domain
  * 2.3.0 anchors (id) at several places in document
- * 2.4.2 replaced null by 'admin.php' to solve issue 'Deprecation warnings in PHP 8.3'   
+ * 2.4.2 replaced null by 'admin.php' to solve issue 'Deprecation warnings in PHP 8.3'  
+ * 2.4.4 added tag_title and extra option for timzone settings 
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
@@ -109,6 +110,11 @@ class SimpleicalWidgetAdmin {
         _e('<p><strong>Excerpt length</strong></p>', 'simple-google-icalendar-widget');
         _e('<p>Max length of the description in characters.<br>If there is a space or end-of-line character within 10 characters of this end, break there.<br>Note, not all characters have the same width, so the number of lines is not completely fixed by this. So you need additional CSS for that.<br><b>Warning:</b> If you allow html in the description, necessary end tags may disappear here.<br> Default: empty, all characters will be displayed</p>', 'simple-google-icalendar-widget');
         
+        echo('<span id="tag-title"></span>');
+        _e('<p><strong>Tag for title</strong></p>', 'simple-google-icalendar-widget');
+        _e('<p>Tag for title. Choose a tag from the list that matches your theme and location of the block on the page. Default: h3 (sub header)</p>', 'simple-google-icalendar-widget');
+        _e('<p>Only available in block.</p>', 'simple-google-icalendar-widget');
+        
         echo('<span id="tag-sum"></span>');
         _e('<p><strong>Tag for summary</strong></p>', 'simple-google-icalendar-widget');
         _e('<p>Tag for summary. Choose a tag from the list. Default: a (link)<br>When using bootstrap or other collapse css and java-script the description is collapsed and wil be opened bij clicking on the summary link.<br>Link is not included with the other tags.<br>If not using bootstrap h4, div or strong may be a better choice then a..</p>', 'simple-google-icalendar-widget');
@@ -123,9 +129,12 @@ class SimpleicalWidgetAdmin {
 
         echo('<span id="rest_utzui"></span>');
         _e('<p><strong>Use client timezone settings</strong></p>', 'simple-google-icalendar-widget');
-        _e('<p>Default all processing happens on server "local time" is measured in timezone of WordPress installation.', 'simple-google-icalendar-widget');
-        _e('<br>With "Use Client Timezone" the timezone of client browser is fetched first with a REST call and processing happens with this timezone setting.', 'simple-google-icalendar-widget');
-        _e('<br>At first a placeholder with title and some Id\'s to use later is created and displayed, after pageload the timezone of client browser is fetched with javascript to process the output and get it with a REST call, then this output is placed over the placeholder.</p>', 'simple-google-icalendar-widget');
+        _e('<p>Default "Use WordPress timezone settings, no REST" all processing happens on server,<br>javascript is not needed in client browser. "local time" is measured in timezone of WordPress installation.', 'simple-google-icalendar-widget');
+        _e('<br>With "Use Client timezone settings, with REST" the timezone of client browser is used and processing happens with this timezone setting.', 'simple-google-icalendar-widget');
+        _e('<br>At first a placeholder with title and some Id\'s to use later is created and displayed.<br>After pageload the timezone of client browser is fetched with javascript to process the output and get it with a REST call,<br>then this output is placed over the placeholder.', 'simple-google-icalendar-widget');
+        _e('<br>With "Use WordPress timezone settings, with REST" timezone of WordPress installation is used.', 'simple-google-icalendar-widget');
+        _e('<br>At first a placeholder with title and some Id\'s to use later is created and displayed.<br>After pageload the output is fetched with a REST call, then this output is placed over the placeholder.</p>', 'simple-google-icalendar-widget');
+        
         
         
         _e('<p><strong>Suffix group class</strong></p>', 'simple-google-icalendar-widget');
