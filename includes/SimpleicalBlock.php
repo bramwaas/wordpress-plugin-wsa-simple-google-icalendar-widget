@@ -102,6 +102,20 @@ class SimpleicalBlock
         'after_widget'  => '</div>'
         
     ];
+    /**
+     * block_attributes excluded from test if changed
+     *
+     * @var array
+     */
+    
+    static  $exclude_test_attrs = [
+        'saved' => null,
+        '__internalWidgetId' => null,
+        '_locale' => null,
+        'tzid_ui' => null,
+        'wptype' => null
+    ];
+    
 
     /**
      * Block init register block with help of block.json v3 plus
@@ -375,10 +389,6 @@ class SimpleicalBlock
     static function update_rest_attrs($instance)
     {
         if (empty($instance)) return false;
-        $exclude = [
-            'saved' => null,
-            '__internalWidgetId' => null
-        ];
         $instances = (get_option(self::SIB_ATTR));
         if (! is_array($instances)) $instances = [];
 
@@ -387,7 +397,7 @@ class SimpleicalBlock
                 unset($instances[$instance['prev_sibid']]);
             }
             $new_instance = array_diff_assoc($instance, self::$default_block_attributes);
-            if (!empty($instances[$instance['sibid']]) && ($instances[$instance['sibid']] + $exclude == $new_instance + $exclude)){
+            if (!empty($instances[$instance['sibid']]) && (array_merge($instances[$instance['sibid']], self::$exclude_test_attrs) == array_merge($new_instance , self::$exclude_test_attrs))){
                 return true;
             }
             else {
@@ -395,6 +405,34 @@ class SimpleicalBlock
                 $instances[$instance['sibid']] = $new_instance;
                 if (update_option(self::SIB_ATTR, $instances, true))
                     return $instance['sibid'];
+            }
+        }
+        return false;
+    }
+    /**
+     * Test save attributes from widget option for use in REST call (only when changed on other then excluded keys)
+     *
+     * @param array $instance (must include $instance['sibid'])
+     *            attributes/instance to save $instance['sibid'] is used as (new) key.
+     * @return succes new value == $insatnce (except for some standard values).
+     */
+    static function test_rest_attrs($instance)
+    {
+        if (empty($instance['sibid'])) return false;
+        $instances = (get_option(self::SIB_ATTR));
+        if (! is_array($instances)) return false;
+        
+        if (empty($instances[$instance['sibid']])) return false;
+        
+         {
+             $new_instance = array_diff_assoc(array_merge($instance , self::$exclude_test_attrs), self::$default_block_attributes);
+             $old_instance = array_diff_assoc(array_merge($instances[$instance['sibid']] , self::$exclude_test_attrs), self::$default_block_attributes);
+            if (($old_instance == $new_instance)){
+                return true;
+            }
+            else {
+                $diff = ["missing"=> array_diff_assoc($new_instance, $old_instance),"extra"=> array_diff_assoc($old_instance, $new_instance)];
+                    return $diff;
             }
         }
         return false;

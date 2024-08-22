@@ -2,8 +2,9 @@
  * simple-ical-block-view.js
  * view simple-ical-block output with extra client parameter tzid_ui using REST 
  * restRoot for endpoint passed via inlinescript and this script in enqueue_block_assets
- *  * v2.4.30
+ *  * v2.4.3 0
  * 2.4.3 add search in iFrame and choice of used timezone via data-sib-utzui
+ * 2.4.4 title from params
 **/
 const endpoint = window.simpleIcalBlock.restRoot + "simple-google-icalendar-widget/v1/content-by-ids";
 let titl;
@@ -21,7 +22,7 @@ window.simpleIcalBlock = {...(window.simpleIcalBlock || {}), ...{
 			}
 			return response.json();
 		}).then((res) => {
-			if (res.params.title) {
+			if (res.params && res.params.title) {
 				if (ni.querySelector('[data-sib-t="true"]')) {
 					ni.querySelector('[data-sib-t="true"]').innerHTML = res.params.title;
 					titl = ni.querySelector('[data-sib-t="true"]').outerHTML;

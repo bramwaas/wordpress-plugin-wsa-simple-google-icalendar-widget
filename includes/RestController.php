@@ -9,6 +9,7 @@
  *  and added 'permission_callback' => '__return_true', for public routes.
  * 2.4.4 add all (non default) attributes to returned params 'get_content_by_ids';
  *  add attribute tag_title (default h3); remove calendar_id from returned params.
+ *  when saved attributes are not found and calendar_id is present in params use params as attributes 
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
@@ -125,10 +126,36 @@ class RestController extends WP_REST_Controller {
             'permission_callback' => '__return_true' 
             
         ));
+        //
+        register_rest_route( $this->namespace, '/v1/test-sib-attrs', array(
+            array(
+                'methods'             => 'GET, POST',
+                'callback'            => array( $this, 'test_sib_attrs' ),
+                'permission_callback' => array( $this,'set_sib_attrs_permissions_check'),
+                'args'                => array(
+                    'sibid' => [],
+                    'calendar_id'   => []
+                )
+            ),
+            'schema' => array(
+                $this,
+                'test_sib_attrs_schema'
+            ),
+            'permission_callback' => '__return_true'
+        ));
+        register_rest_route($this->namespace, '/v1/set-sib-attrs/schema', array(
+            'methods' => WP_REST_Server::READABLE,
+            'callback' => array(
+                $this,
+                'test_sib_attrs_schema'
+            ),
+            'permission_callback' => '__return_true'
+            
+        ));
     }
 
     /**
-     * Get block content wth sibid, postid, and client timezone from request
+     * Get block content with sibid or complete set of attributes including calendar_id,  and client timezone from request
      *
      * @param WP_REST_Request $request
      *            Full data about the request.
@@ -140,10 +167,10 @@ class RestController extends WP_REST_Controller {
         $params = $request->get_params();
         if (empty($params['sibid'])) {return new WP_Error('404', __('Empty sibid. Not possible to get block content', 'simple-google-icalendar-widget'));}
         else {$baa = get_option(SimpleicalBlock::SIB_ATTR);
-            $block_attributes = isset($baa[$params['sibid']]) ? $baa[$params['sibid']] : null;}
-        if (empty($block_attributes)) {
-            $content = '<p>' . __('Settings not found in option', 'simple-google-icalendar-widget') . '<br>' .
-            __('Not possible to get block content', 'simple-google-icalendar-widget') . '</p>';
+            $block_attributes = isset($baa[$params['sibid']]) ? $baa[$params['sibid']] : [];}
+        if (empty($block_attributes) && empty($params['calendar_id'])) {
+                $content = '<p>' . __('Settings not found in saved option', 'simple-google-icalendar-widget') . '<br>' .
+                __('Not possible to get block content', 'simple-google-icalendar-widget') . '</p>';
         } else {
         $block_attributes = array_merge($block_attributes, $params);
         $content = SimpleicalBlock::render_block($block_attributes, []);
@@ -175,6 +202,30 @@ class RestController extends WP_REST_Controller {
         //get parameters from request
         $params = $request->get_params();
         $content = SimpleicalBlock::update_rest_attrs($params);
+        $data = $this->prepare_item_for_response( ['content' => $content, 'params' => $params], $request );
+        //return a response or error based on some conditional
+        if (isset($data)) {
+            return new WP_REST_Response($data, 200);
+        } else {
+            $data = $this->prepare_item_for_response([
+                'content' => 'FALSE',
+                'params' => $params
+            ], $request);
+            return new WP_REST_Response($data, 404);
+        }
+    }
+    /**
+     * Get attributes from option.
+     *
+     * @param WP_REST_Request $request attributes to save with $params['sibid'] as key.
+     * @return WP_Error|WP_REST_Response (when a change is made response.content = $params['sibid'] else false or 'FALSE')
+     * $since 2.3.0
+     * example .../wp-json/simple-google-icalendar-widget/v1/set-sib-attrs?sibid=b123&test=xyz&prev_sibid=w234
+     */
+    public function test_sib_attrs( $request ) {
+        //get parameters from request
+        $params = $request->get_params();
+        $content = SimpleicalBlock::test_rest_attrs($params);
         $data = $this->prepare_item_for_response( ['content' => $content, 'params' => $params], $request );
         //return a response or error based on some conditional
         if (isset($data)) {

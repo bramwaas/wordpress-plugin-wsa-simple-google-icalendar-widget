@@ -22,7 +22,7 @@
  * 2.4.3 initializations also inside useEffect and setAttibute only for sibid only when necessary to reduce change of looping in Synced Pattern 
  *   extra option Wordpress timezone with rest
  * 2.4.4 initialization sibid also with direct assign in case setAttribute does not work (e.g. in Synced pattern 6.6) 
- *   removed references to ServerSideRender added deprecated 243  
+ *   removed references to ServerSideRender added deprecated 243; decoupled render and save changed attributes. 
  */
 (function(blocks, i18n, element, blockEditor, components) {
 	const el = element.createElement;
@@ -133,6 +133,7 @@
 			}, []);
 			useEffect(function() {
 				if (typeof props.attributes.sibid == 'string') {
+					window.simpleIcalBlockF.getBlockByIds(props.attributes);
 					window.simpleIcalBlockF.setSibAttrs(props.attributes);
 				  }
 			}, [props.attributes]);
