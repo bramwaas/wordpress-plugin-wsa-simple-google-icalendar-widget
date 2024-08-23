@@ -100,15 +100,16 @@ end not in editor				*/
 		if (typeof attrs.sibid != 'string' || '' == attrs.sibid) return;
 		const lcBizzySavingAttrs = Date.now();
 		let test = null;
-		for (let i = 1; i <= 10; i++) {	
+		for (let i = 100; i > 0; i--) {	
 			if (0 == this.bizzySavingAttrs){
 				this.bizzySavingAttrs = lcBizzySavingAttrs;
 				this.bizzySibid = attrs.sibid;
+				i = 10;
 			}
 			if ( lcBizzySavingAttrs == this.bizzySavingAttrs &&	attrs.sibid == this.bizzySibid) {			
 				console.log('ssA lSA:' + lcBizzySavingAttrs + ' sibid:' + attrs.sibid + ' now:' + Date.now()); 
 				$test = await this.setSibAttrs1(attrs);
-				console.log('ssA after test bSA:'  + lcBizzySavingAttrs + ' sibid:' + attrs.sibid + ' nu:' + Date.now());
+				console.log('ssA after test bSA:'  + lcBizzySavingAttrs + ' sibid:' + attrs.sibid + ' nu:' + Date.now()  + ' no:' + i);
 				console.log($test);			
 			    if (true === $test.content) {
 					this.bizzySavingAttrs = 0;
@@ -119,7 +120,7 @@ end not in editor				*/
 			else {
 				await this.sleep(227);	
 				console.log('ssA bizzy   bSA:' + this.bizzySavingAttrs + ' sibid:' + this.bizzySibid + ' now:' + Date.now());
-				console.log('ssA waiting lSA:' + lcBizzySavingAttrs + ' sibid:' + attrs.sibid);
+				console.log('ssA waiting lSA:' + lcBizzySavingAttrs + ' sibid:' + attrs.sibid + ' no:' + i);
 		}
 		} 	
 
