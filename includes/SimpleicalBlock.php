@@ -35,6 +35,7 @@
  * 2.4.1 resolved with wptype 'rest_ph_w' warning on wrapper_attributes when wptype 'rest_ph' and started from widget 
  * 2.4.3 replace render_callback in server side register_block_type by render in block.json (v3 plus ( is_wp_version_compatible( '6.3' ) )) 
  *       add  "data-sib-utzui":props.attributes.rest_utzui to rest placeholder tag; use tag_title when not placeholder for widget
+ * 2.4.4 improve compare equallity in update_rest_attrs by removing attributes that are added during save process or depend on saving environment.        
  
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
@@ -103,7 +104,7 @@ class SimpleicalBlock
         
     ];
     /**
-     * block_attributes excluded from test if changed
+     * block_attributes excluded from test if changed, because they (most of them) are changed during the save process.
      *
      * @var array
      */
@@ -378,13 +379,14 @@ class SimpleicalBlock
     }
 
     /**
+     * Compare attributes with those in widget option and changed
      * Save attributes in widget option for use in REST call (only when changed on other then excluded keys)
      *
      * @param array $instance
      *            attributes/instance to save $instance['sibid'] is used as (new) key when $w_number is empty.
      * @param string $prev_sibid
      *            Previous save sibid to remeove if sibid is changed.
-     * @return succes new value sibid key else false
+     * @return when not changed true, succes new value sibid key, else false
      */
     static function update_rest_attrs($instance)
     {
@@ -405,34 +407,6 @@ class SimpleicalBlock
                 $instances[$instance['sibid']] = $new_instance;
                 if (update_option(self::SIB_ATTR, $instances, true))
                     return $instance['sibid'];
-            }
-        }
-        return false;
-    }
-    /**
-     * Test save attributes from widget option for use in REST call (only when changed on other then excluded keys)
-     *
-     * @param array $instance (must include $instance['sibid'])
-     *            attributes/instance to save $instance['sibid'] is used as (new) key.
-     * @return succes new value == $insatnce (except for some standard values).
-     */
-    static function test_rest_attrs($instance)
-    {
-        if (empty($instance['sibid'])) return false;
-        $instances = (get_option(self::SIB_ATTR));
-        if (! is_array($instances)) return false;
-        
-        if (empty($instances[$instance['sibid']])) return false;
-        
-         {
-             $new_instance = array_diff_assoc(array_merge($instance , self::$exclude_test_attrs), self::$default_block_attributes);
-             $old_instance = array_diff_assoc(array_merge($instances[$instance['sibid']] , self::$exclude_test_attrs), self::$default_block_attributes);
-            if (($old_instance == $new_instance)){
-                return true;
-            }
-            else {
-                $diff = ["missing"=> array_diff_assoc($new_instance, $old_instance),"extra"=> array_diff_assoc($old_instance, $new_instance)];
-                    return $diff;
             }
         }
         return false;

@@ -126,32 +126,6 @@ class RestController extends WP_REST_Controller {
             'permission_callback' => '__return_true' 
             
         ));
-        //
-        register_rest_route( $this->namespace, '/v1/test-sib-attrs', array(
-            array(
-                'methods'             => 'GET, POST',
-                'callback'            => array( $this, 'test_sib_attrs' ),
-                'permission_callback' => array( $this,'set_sib_attrs_permissions_check'),
-                'args'                => array(
-                    'sibid' => [],
-                    'calendar_id'   => []
-                )
-            ),
-            'schema' => array(
-                $this,
-                'test_sib_attrs_schema'
-            ),
-            'permission_callback' => '__return_true'
-        ));
-        register_rest_route($this->namespace, '/v1/set-sib-attrs/schema', array(
-            'methods' => WP_REST_Server::READABLE,
-            'callback' => array(
-                $this,
-                'test_sib_attrs_schema'
-            ),
-            'permission_callback' => '__return_true'
-            
-        ));
     }
 
     /**
@@ -202,30 +176,6 @@ class RestController extends WP_REST_Controller {
         //get parameters from request
         $params = $request->get_params();
         $content = SimpleicalBlock::update_rest_attrs($params);
-        $data = $this->prepare_item_for_response( ['content' => $content, 'params' => $params], $request );
-        //return a response or error based on some conditional
-        if (isset($data)) {
-            return new WP_REST_Response($data, 200);
-        } else {
-            $data = $this->prepare_item_for_response([
-                'content' => 'FALSE',
-                'params' => $params
-            ], $request);
-            return new WP_REST_Response($data, 404);
-        }
-    }
-    /**
-     * Get attributes from option.
-     *
-     * @param WP_REST_Request $request attributes to save with $params['sibid'] as key.
-     * @return WP_Error|WP_REST_Response (when a change is made response.content = $params['sibid'] else false or 'FALSE')
-     * $since 2.3.0
-     * example .../wp-json/simple-google-icalendar-widget/v1/set-sib-attrs?sibid=b123&test=xyz&prev_sibid=w234
-     */
-    public function test_sib_attrs( $request ) {
-        //get parameters from request
-        $params = $request->get_params();
-        $content = SimpleicalBlock::test_rest_attrs($params);
         $data = $this->prepare_item_for_response( ['content' => $content, 'params' => $params], $request );
         //return a response or error based on some conditional
         if (isset($data)) {

@@ -108,10 +108,10 @@ end not in editor				*/
 			}
 			if ( lcBizzySavingAttrs == this.bizzySavingAttrs &&	attrs.sibid == this.bizzySibid) {			
 				console.log('ssA lSA:' + lcBizzySavingAttrs + ' sibid:' + attrs.sibid + ' now:' + Date.now()); 
-				$test = await this.setSibAttrs1(attrs);
+				test = await this.setSibAttrs1(attrs);
 				console.log('ssA after test bSA:'  + lcBizzySavingAttrs + ' sibid:' + attrs.sibid + ' nu:' + Date.now()  + ' no:' + i);
-				console.log($test);			
-			    if (true === $test.content) {
+				console.log(test);			
+			    if (true === test.content) {
 					this.bizzySavingAttrs = 0;
 					break;
 				}
@@ -121,8 +121,12 @@ end not in editor				*/
 				await this.sleep(227);	
 				console.log('ssA bizzy   bSA:' + this.bizzySavingAttrs + ' sibid:' + this.bizzySibid + ' now:' + Date.now());
 				console.log('ssA waiting lSA:' + lcBizzySavingAttrs + ' sibid:' + attrs.sibid + ' no:' + i);
+			}
+		} 
+		if (this.bizzySavingAttrs == lcBizzySavingAttrs) {
+							this.bizzySavingAttrs = 0;
 		}
-		} 	
+	
 
 	}
 
