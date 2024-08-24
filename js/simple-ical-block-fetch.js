@@ -66,61 +66,41 @@ end not in editor				*/
 	}
 	,
 	/**
-	 * Copies attributes in Option via asynchrone REST call 
+	 * encapsulate setTimeout in a thenable function to use it in await
 	*/
-	setSibAttrs1: function(attrs) {
-		const fpath = "/simple-google-icalendar-widget/v1/set-sib-attrs";
-	return	window.wp.apiFetch({
-			path: fpath,
-			method: 'POST',
-			data: attrs,
-		});
-	}
-	,
-	/**
-	 * tests attributes from Option via asynchrone REST call 
-	*/
-	testSibAttrs: function(attrs) {
-		const fpath = "/simple-google-icalendar-widget/v1/test-sib-attrs";
-	return	window.wp.apiFetch({
-			path: fpath,
-			method: 'POST',
-			data: attrs,
-		});
-	}
-	,
 	sleep :function (ms) {return new Promise(resolve => setTimeout(resolve, ms));
     }
 	,
 	/**
-	 * Copies attributes in Option via asynchrone REST call and test if succeeded max 10 times 
+	 * Copies attributes in Option via asynchrone REST call and test if succeeded max 5 times 
 	 * only if no other process is  already is doing this (in the same window) else wait.
 	 */
 	setSibAttrs: async function(attrs) {
 		if (typeof attrs.sibid != 'string' || '' == attrs.sibid) return;
+		const fpath = "/simple-google-icalendar-widget/v1/set-sib-attrs";
 		const lcBizzySavingAttrs = Date.now();
-		let test = null;
+		let res = null;
 		for (let i = 100; i > 0; i--) {	
 			if (0 == this.bizzySavingAttrs){
 				this.bizzySavingAttrs = lcBizzySavingAttrs;
 				this.bizzySibid = attrs.sibid;
-				i = 10;
+				i = 5;
 			}
 			if ( lcBizzySavingAttrs == this.bizzySavingAttrs &&	attrs.sibid == this.bizzySibid) {			
 				console.log('ssA lSA:' + lcBizzySavingAttrs + ' sibid:' + attrs.sibid + ' now:' + Date.now()); 
-				test = await this.setSibAttrs1(attrs);
+				res = await window.wp.apiFetch({path: fpath, method: 'POST', data: attrs, });
+
 				console.log('ssA after test bSA:'  + lcBizzySavingAttrs + ' sibid:' + attrs.sibid + ' nu:' + Date.now()  + ' no:' + i);
-				console.log(test);			
-			    if (true === test.content) {
+				console.log(res);			
+			    if (true === res.content) {
 					this.bizzySavingAttrs = 0;
 					break;
 				}
-				await this.sleep(37);	
+				await this.sleep(50);	
 			}
 			else {
-				await this.sleep(227);	
-				console.log('ssA bizzy   bSA:' + this.bizzySavingAttrs + ' sibid:' + this.bizzySibid + ' now:' + Date.now());
-				console.log('ssA waiting lSA:' + lcBizzySavingAttrs + ' sibid:' + attrs.sibid + ' no:' + i);
+				await this.sleep(250);	
+				console.log('ssA waiting lSA:' + lcBizzySavingAttrs + ' bSA:' + this.bizzySavingAttrs +' sibid:' + attrs.sibid + ' no:' + i);
 			}
 		} 
 		if (this.bizzySavingAttrs == lcBizzySavingAttrs) {

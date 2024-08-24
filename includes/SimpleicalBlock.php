@@ -101,14 +101,13 @@ class SimpleicalBlock
         'anchorId' => '',
         'before_widget' => '<div id="%1$s" %2$s>',
         'after_widget'  => '</div>'
-        
     ];
+
     /**
      * block_attributes excluded from test if changed, because they (most of them) are changed during the save process.
      *
      * @var array
      */
-    
     static  $exclude_test_attrs = [
         'saved' => null,
         '__internalWidgetId' => null,
@@ -116,7 +115,6 @@ class SimpleicalBlock
         'tzid_ui' => null,
         'wptype' => null
     ];
-    
 
     /**
      * Block init register block with help of block.json v3 plus
@@ -128,7 +126,6 @@ class SimpleicalBlock
     {
         register_block_type(dirname(__DIR__) . '/block.json', array( )); 
     }
-
     /**
      * Block init register block with help of block.json
      *
@@ -411,6 +408,7 @@ class SimpleicalBlock
         }
         return false;
     }
+
     /**
      * Close html tags in html string
      * @params string $html String with HTML to repair
