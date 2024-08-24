@@ -19,16 +19,8 @@ window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 			data: dobj,
 		}).then((res) => {
 			if (res.params && res.params.title) {
-/* not in editor, only in frontend view				
-				if (ni.querySelector('[data-sib-t="true"]')) {
-					ni.querySelector('[data-sib-t="true"]').innerHTML = res.params.title;
-					titl = ni.querySelector('[data-sib-t="true"]').outerHTML;
-				} else 
-end not in editor				*/
-				{
 					if (!res.params.tag_title) {res.params.tag_title = 'h3';}
 					titl = '<' + res.params.tag_title + ' class="widget-title block-title" data-sib-t="true">' + res.params.title + '</' + res.params.tag_title + '>';
-				}
 			} else {
 				titl = '';
 			}
@@ -87,11 +79,7 @@ end not in editor				*/
 				i = 5;
 			}
 			if ( lcBizzySavingAttrs == this.bizzySavingAttrs &&	attrs.sibid == this.bizzySibid) {			
-				console.log('ssA lSA:' + lcBizzySavingAttrs + ' sibid:' + attrs.sibid + ' now:' + Date.now()); 
 				res = await window.wp.apiFetch({path: fpath, method: 'POST', data: attrs, });
-
-				console.log('ssA after test bSA:'  + lcBizzySavingAttrs + ' sibid:' + attrs.sibid + ' nu:' + Date.now()  + ' no:' + i);
-				console.log(res);			
 			    if (true === res.content) {
 					this.bizzySavingAttrs = 0;
 					break;
@@ -100,14 +88,11 @@ end not in editor				*/
 			}
 			else {
 				await this.sleep(250);	
-				console.log('ssA waiting lSA:' + lcBizzySavingAttrs + ' bSA:' + this.bizzySavingAttrs +' sibid:' + attrs.sibid + ' no:' + i);
 			}
 		} 
 		if (this.bizzySavingAttrs == lcBizzySavingAttrs) {
 							this.bizzySavingAttrs = 0;
 		}
-	
-
 	}
 
 }
