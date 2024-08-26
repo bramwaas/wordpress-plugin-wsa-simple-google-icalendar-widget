@@ -113,7 +113,6 @@ class SimpleicalBlock
         '__internalWidgetId' => null,
         '_locale' => null,
         'tzid_ui' => null,
-        'wptype' => null
     ];
 
     /**
@@ -395,8 +394,8 @@ class SimpleicalBlock
             if (! empty($instance['prev_sibid']) && isset($instances[$instance['prev_sibid']]) && ($instance['sibid'] != $instance['prev_sibid'])) {
                 unset($instances[$instance['prev_sibid']]);
             }
-            $new_instance = array_diff_assoc($instance, self::$default_block_attributes);
-            if (!empty($instances[$instance['sibid']]) && (array_merge($instances[$instance['sibid']], self::$exclude_test_attrs) == array_merge($new_instance , self::$exclude_test_attrs))){
+            $new_instance = array_diff_assoc(array_merge($instance, self::$exclude_test_attrs), self::$default_block_attributes, self::$exclude_test_attrs);
+            if (!empty($instances[$instance['sibid']]) && array_diff_assoc(array_merge($instances[$instance['sibid']], self::$exclude_test_attrs), self::$exclude_test_attrs) == $new_instance){
                 return true;
             }
             else {

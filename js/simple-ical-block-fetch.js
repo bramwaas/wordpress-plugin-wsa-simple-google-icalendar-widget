@@ -32,14 +32,13 @@ window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 		});
 	}
 	,
-	processNodelist: function (nodeList, paramsObj){
+	processNodelist: function (nodeList, dobj){
 			const ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  			paramsObj.wptype = "REST";
 			for (let i = 0; i < nodeList.length; i++) {
-				paramsObj.sibid = nodeList[i].getAttribute('data-sib-id');
-    			paramsObj.tzid_ui = (typeof nodeList[i].getAttribute('data-sib-utzui') == 'string' && nodeList[i].getAttribute('data-sib-utzui') == '1') ?  ptzid_ui : ''; 
+				dobj.sibid = nodeList[i].getAttribute('data-sib-id');
+    			dobj.tzid_ui = (typeof nodeList[i].getAttribute('data-sib-utzui') == 'string' && nodeList[i].getAttribute('data-sib-utzui') == '1') ?  ptzid_ui : ''; 
 				nodeList[i].setAttribute('data-sib-st', 'f1');
-				this.fetchFromRest(paramsObj, nodeList[i]);
+				this.fetchFromRest(dobj, nodeList[i]);
 			}
 		
 	}
@@ -48,12 +47,13 @@ window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 		const nf = document.querySelectorAll('iframe');
 		let sibid = attrs.sibid;
 		let cwf, nodeList = document.querySelectorAll('[data-sib-st][data-sib-id='+ sibid + ']');
-        this.processNodelist(nodeList, attrs);
+		let dobj = {...attrs, 'wptype' : "REST"};
+        this.processNodelist(nodeList, dobj);
 		for (let j = 0; j < nf.length; j++) {
 			cwf = (nf[j].contentWindow  || nf[j].contentDocument );
 			if (cwf.document)cwf = cwf.document;
 			nodeList =cwf.querySelectorAll('[data-sib-st][data-sib-id='+ sibid + ']');
-	        this.processNodelist(nodeList, attrs);
+	        this.processNodelist(nodeList, dobj);
 		}
 	}
 	,

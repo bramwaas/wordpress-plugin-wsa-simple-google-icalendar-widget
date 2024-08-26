@@ -345,13 +345,9 @@
 								__('More info', 'simple-google-icalendar-widget')
 							),
 							onChange: function(value) {
-								props.setAttributes({ rest_utzui: value });
-								if ('' < value) {
-									props.setAttributes({ wptype: 'rest_ph' })
-								}
-								else {
-									props.setAttributes({ wptype: 'block' })
-								}
+								props.setAttributes({ rest_utzui: value,
+													wptype: (('0' < value) ? 'rest_ph' : 'block')   
+								});
 							},
 							options: [
 								{ value: '', label: __('Use WordPress timezone settings, no REST', 'simple-google-icalendar-widget') },
