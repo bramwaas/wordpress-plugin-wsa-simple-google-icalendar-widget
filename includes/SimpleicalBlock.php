@@ -202,7 +202,7 @@ class SimpleicalBlock
             $block_attributes['sibid'] = $block_attributes['blockid'];
         }
         ;
-        if  (!empty($block_attributes['tag_title']))  $block_attributes['tag_title'] = 'h3';
+        if  (empty($block_attributes['tag_title']))  $block_attributes['tag_title'] = 'h3';
         $titlenode = '<' . $block_attributes['tag_title'] .' class="widget-title block-title" data-sib-t="true">'
                 . wp_kses($block_attributes['title'], 'post')
                 . '</' . $block_attributes['tag_title'] . '>';

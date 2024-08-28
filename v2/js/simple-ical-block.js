@@ -46,6 +46,15 @@
 	const ToggleControl = components.ToggleControl;
 	const SelectControl = components.SelectControl;
 	const useEffect = element.useEffect;
+	const tagOpsh = [{ value: 'div', label: __('div', 'simple-google-icalendar-widget') },
+	{ value: 'h1', label: __('h1 (header)', 'simple-google-icalendar-widget') },
+	{ value: 'h2', label: __('h2 (sub header)', 'simple-google-icalendar-widget') },
+	{ value: 'h3', label: __('h3 (sub header)', 'simple-google-icalendar-widget') },
+	{ value: 'h4', label: __('h4 (sub header)', 'simple-google-icalendar-widget') },
+	{ value: 'h5', label: __('h5 (sub header)', 'simple-google-icalendar-widget') },
+	{ value: 'h6', label: __('h6 (sub header)', 'simple-google-icalendar-widget') },
+	{ value: 'span', label: __('span', 'simple-google-icalendar-widget') },
+	];
 
 	let ptzid_ui;
 
@@ -329,6 +338,23 @@
 								{ value: '1', label: __('Use Client timezone settings, with REST', 'simple-google-icalendar-widget') },
 								{ value: '2', label: __('Use WordPress timezone settings, with REST', 'simple-google-icalendar-widget') },
 							]
+						}
+					),
+					el(
+						SelectControl,
+						{
+							label: __('Tag for title:', 'simple-google-icalendar-widget'),
+							value: props.attributes.tag_title,
+							help: el(
+								'a',
+								{
+									href: 'admin.php?page=simple_ical_info#tag-title',
+									target: '_blank',
+								},
+								__('More info', 'simple-google-icalendar-widget')
+							),
+							onChange: function(value) { props.setAttributes({ tag_title: value }); },
+							options: tagOpsh
 						}
 					),
 					el(
