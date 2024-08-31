@@ -4,8 +4,8 @@ Contributors: bramwaas
 Tags: Google Calendar, iCal, Events, Block, Calendar
 Requires at least: 5.3.0
 Tested up to: 6.6
-Requires PHP: 5.3.0
-Stable tag: 2.4.2
+Requires PHP: 7.4
+Stable tag: 2.4.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
  
@@ -23,7 +23,7 @@ These are great, but as soon as you want to make a few adjustments to the stylin
 == Plugin Features ==
 
 * Calendar block or widget to display appointments/events of a public Google calendar or other iCal file.
-* Block gives live preview in the editor and is not constrained to widget area. Old widget will be displayed in legacy widget block only in widget area.
+* Block gives live preview in the editor and is not constrained to widget area. Old widget will be displayed in legacy widget block only in widget area. Old widget works also with Elementor (with some limitations e.g. preview in backend editor is not always available).
 * Small footprint, uses only Google ID of the calendar, or ICS link for Outlook, or Url of iCal file, to get event information via iCal
 * Merge more calendars into one block
 * Manage events in Google Calendar, or other iCalendar source.
@@ -58,7 +58,7 @@ If your theme has a widget area you can also enter the block as a widget in a wi
  Appearance / Widgets / (+ sign)Toggle block inserter / WIDGETS. Just drag it into your sidebar.    
 * Alternative : Select 'Simple Google Calendar Outlook Events Widget' or select the Legacy widget and choose 'Simple Google Calendar Outlook Events Widget'     
   and drag it into the sidebar.
-* Fill out all the necessary configuration fields.
+* Fill out all the necessary configuration fields, at least a Calendar ID.
  In Calendar ID enter the calendar ID displayed by Google Calendar, or complete url of a  Google calendar or other iCal file.
  You can find Google calendar ID by going to Calendar Settings / Calendars, clicking on the appropriate calendar, scrolling all the way down to find the Calendar ID at the bottom under the Integrate Calendar section. There's your calendar id.
 * You're done!
@@ -144,7 +144,15 @@ Log in in Wordpress again and open the page again. The block will be available.
 Maybe the block is long time ago placed on several pages as a synced pattern or reusable block and everything worked fine until Wordpress 6.5   
 It is possible that the id of the block is not initialized, the editor tries to initialize the id but this is not prossible in a synced pattern.
 Before 6.6 the update failed and the processing went ahead, from 6.6 the update fails and tries again (in an endless loop).     
-Solution: Update and save the block in the editor of the pattern to which the block belongs.       
+Solution: Update and save the block in the editor of the pattern to which the block belongs. 
+
+= This block contains unexpected or invalid content. =   
+
+After an update of the plugin in stead of the block content the message "This block contains unexpected or invalid content." is displayed and a button "Attempt Block Recovery".  
+Probably this is caused by a difference in the Saved output and the output that would be saved if the block was saved now. This will be the case if the code in the save has changed due to the plugin update (or downgrade).This should be resolved automatically by the deprecation code, but this may not be possible if a block is placed on a page as part of a synchronized pattern, if you roll back to an older version, or if the deprecation code does not work correctly.   
+* Pushing the button "Attempt Block Recovery" will save the output in the new format and thereby solve the issue.   
+* When it comes to a synced pattern you have to "Attempt Block Recovery" in the original pattern via Edit original or "Appearance/Patterns".   
+      
 
 = How do I set different colours and text size for the dates, the summary, and the details? =
 
@@ -219,9 +227,13 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 * from 2023 (v2.1.1) deprecation php older than 7.4. I don't test in older php versions than 7.4 older versions might still work, but in future I may use new functions of php 8.
 * in v2.1.1 Start with summary is replaced with a select. After upgrade you may have to choose the correct option again. 
 * since v1.2.0 Wordpress version 5.3.0 is required because of the use of wp_date() 
-* error in WP 6.6-RC2 this block (with serverside rendering) breaks editor when placed on a page via a synced pattern. Issue reported as WordPress Trac #61592
+* error in WP 6.6 this block (with serverside rendering) breaks editor when placed on a page via a synced pattern. Issue reported as WordPress Trac #61592
 
 == Changelog ==
+* 2.4.4 Initialization sibid also with direct assign in case setAttribute does not work (e.g. in Synced pattern 6.6)
+ replace ServerSideRender in block editor by custom Rest call (only for WP 6.3 +) and place_holder html in Javascript Edit and Save.   
+ Tested with Elementor v3.23.3   
+ Remove most unused attributes from block.json. Add deprecation for older Save methods.    
 * 2.4.3 replaced render_callback in server side register_block_type by render in block.json (v3 plus ( is_wp_version_compatible( '6.3' ) ))  simplifying initialization edit js to reduce change of looping when used in synced pattern and reviewing initializing in block.json.
 * 2.4.2 replaced null by 'admin.php' to solve issue 'Deprecation warnings in PHP 8.3' of Knut Sparhell (@knutsp) on support forum. Moved older entries of changelog to changelog.txt.
 * 2.4.1 added defaults to all used keys of $args to solve issue 'PHP warnings' of johansam on support forum. Undefined array key “classname” in .../simple-google-icalendar-widget.php on line 170

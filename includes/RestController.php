@@ -4,9 +4,12 @@
  * @copyright Copyright (C) 2024 - 2024 Bram Waasdorp. All rights reserved.
  * @license GNU General Public License version 3 or later
  *
- * 2.4.3 
+ * 2.4.4 
  * 2.4.1 adressed Notice: register_rest_route was called <strong>incorrectly</strong>. Namespace must not start or end with a slash.
  *  and added 'permission_callback' => '__return_true', for public routes.
+ * 2.4.4 add all (non default) attributes to returned params 'get_content_by_ids';
+ *  add attribute tag_title (default h3); remove calendar_id from returned params.
+ *  when saved attributes are not found and calendar_id is present in params use params as attributes 
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
@@ -126,7 +129,7 @@ class RestController extends WP_REST_Controller {
     }
 
     /**
-     * Get block content wth sibid, postid, and client timezone from request
+     * Get block content with sibid or complete set of attributes including calendar_id,  and client timezone from request
      *
      * @param WP_REST_Request $request
      *            Full data about the request.
@@ -138,17 +141,18 @@ class RestController extends WP_REST_Controller {
         $params = $request->get_params();
         if (empty($params['sibid'])) {return new WP_Error('404', __('Empty sibid. Not possible to get block content', 'simple-google-icalendar-widget'));}
         else {$baa = get_option(SimpleicalBlock::SIB_ATTR);
-            $block_attributes = isset($baa[$params['sibid']]) ? $baa[$params['sibid']] : null;}
-        if (empty($block_attributes)) {
-            $content = '<p>' . __('Settings not found in option', 'simple-google-icalendar-widget') . '<br>' .
-            __('Not possible to get block content', 'simple-google-icalendar-widget') . '</p>';
+            $block_attributes = isset($baa[$params['sibid']]) ? $baa[$params['sibid']] : [];}
+        if (empty($block_attributes) && empty($params['calendar_id'])) {
+                $content = '<p>' . __('Settings not found in saved option', 'simple-google-icalendar-widget') . '<br>' .
+                __('Not possible to get block content', 'simple-google-icalendar-widget') . '</p>';
         } else {
         $block_attributes = array_merge($block_attributes, $params);
         $content = SimpleicalBlock::render_block($block_attributes, []);
+        unset($block_attributes['calendar_id']);
         }
         $data = $this->prepare_item_for_response([
                 'content' => $content,
-                'params' => $params
+                'params' => $block_attributes
             ], $request);
         if (isset($data)) {
             return new WP_REST_Response($data, 200);

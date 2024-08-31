@@ -9,7 +9,7 @@
  * @link https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * Gutenberg Block functions since v2.1.2 also used for widget.
- * Version: 2.4.3
+ * Version: 2.4.4
  * 20220427 namespaced and renamed after classname.
  * 20220430 try with static calls
  * 20220509 fairly correct front-end display. attributes back to block.json
@@ -34,7 +34,8 @@
  * 2.4.0 str_replace('Etc/GMT ','Etc/GMT+' for some UTC-... timezonesettings.
  * 2.4.1 resolved with wptype 'rest_ph_w' warning on wrapper_attributes when wptype 'rest_ph' and started from widget 
  * 2.4.3 replace render_callback in server side register_block_type by render in block.json (v3 plus ( is_wp_version_compatible( '6.3' ) )) 
- *       add  "data-sib-utzui":props.attributes.rest_utzui to rest placeholder tag
+ *       add  "data-sib-utzui":props.attributes.rest_utzui to rest placeholder tag; use tag_title when not placeholder for widget
+ * 2.4.4 improve compare equallity in update_rest_attrs by removing attributes that are added during save process or depend on saving environment.        
  
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
@@ -52,6 +53,9 @@ class SimpleicalBlock
         'a',
         'b',
         'div',
+        'h1',
+        'h2',
+        'h3',
         'h4',
         'h5',
         'h6',
@@ -77,6 +81,7 @@ class SimpleicalBlock
         'layout' => 3,
         'dateformat_lg' => 'l jS \of F',
         'dateformat_lgend' => '',
+        'tag_title' => 'h3',
         'tag_sum' => 'a',
         'dateformat_tsum' => 'G:i ',
         'dateformat_tsend' => '',
@@ -95,10 +100,19 @@ class SimpleicalBlock
         'className' => '',
         'anchorId' => '',
         'before_widget' => '<div id="%1$s" %2$s>',
-        'after_widget'  => '</div>',
-        'before_title'  => '<h3 class="widget-title block-title">',
-        'after_title'   => '</h3>'
-        
+        'after_widget'  => '</div>'
+    ];
+
+    /**
+     * block_attributes excluded from test if changed, because they (most of them) are changed during the save process.
+     *
+     * @var array
+     */
+    static  $exclude_test_attrs = [
+        'saved' => null,
+        '__internalWidgetId' => null,
+        '_locale' => null,
+        'tzid_ui' => null,
     ];
 
     /**
@@ -111,7 +125,6 @@ class SimpleicalBlock
     {
         register_block_type(dirname(__DIR__) . '/block.json', array( )); 
     }
-
     /**
      * Block init register block with help of block.json
      *
@@ -135,6 +148,7 @@ class SimpleicalBlock
             'cache_time' => ['type' => 'integer', 'default' => 60],
             'dateformat_lg' => ['type' => 'string', 'default' => 'l jS \of F'],
             'dateformat_lgend' => ['type' => 'string', 'default' => ''],
+            'tag_title' => ['type' => 'string', 'enum' => self::$allowed_tags_sum, 'default' => 'h3'],
             'tag_sum' => ['type' => 'string', 'enum' => self::$allowed_tags_sum, 'default' => 'a'],
             'dateformat_tsum' => ['type' => 'string', 'default' => 'G:i '],
             'dateformat_tsend' => ['type' => 'string', 'default' => ''],
@@ -188,6 +202,10 @@ class SimpleicalBlock
             $block_attributes['sibid'] = $block_attributes['blockid'];
         }
         ;
+        if  (empty($block_attributes['tag_title']))  $block_attributes['tag_title'] = 'h3';
+        $titlenode = '<' . $block_attributes['tag_title'] .' class="widget-title block-title" data-sib-t="true">'
+                . wp_kses($block_attributes['title'], 'post')
+                . '</' . $block_attributes['tag_title'] . '>';
 
         $output = '';
         ob_start();
@@ -197,19 +215,15 @@ class SimpleicalBlock
                 self::display_block($block_attributes);
                 break;
             case 'rest_ph':
-            case 'rest_ph_w':    
-                // Placeholder starting point for REST processing display of block or widget.
-                if (false === stripos(' data-sib-t="true" ', $block_attributes['before_title'])) {
-                    $l = explode('>', $block_attributes['before_title'], 2);
-                    $block_attributes['before_title'] = implode(' data-sib-t="true" >', $l);
-                }
-                $wrapperattr = ('rest_ph' == $block_attributes['wptype'] && is_wp_version_compatible('5.6')) ? get_block_wrapper_attributes() : '';
-                echo sprintf($block_attributes['before_widget'], ($block_attributes['anchorId'] . '" data-sib-id="' . $block_attributes['sibid'] . '" data-sib-utzui="' . $block_attributes['rest_utzui'] . '" data-sib-st="0-start' . ((empty($block_attributes['title'])) ? '" data-sib-notitle="true' : '')), $wrapperattr);
-                echo $block_attributes['before_title'] . wp_kses($block_attributes['title'], 'post') . $block_attributes['after_title'] . '<p>';
+                // Placeholder starting point for REST processing display of block.
+                $wrapperattr = (is_wp_version_compatible('5.6')) ? get_block_wrapper_attributes() : '';
+                echo sprintf($block_attributes['before_widget'], ($block_attributes['anchorId'] . '" data-sib-id="' . $block_attributes['sibid'] . '" data-sib-utzui="' . $block_attributes['rest_utzui'] . '" data-sib-st="0-start' ), $wrapperattr);
+                echo $titlenode;
+                echo '<p>';
                 _e('Processing', 'simple-google-icalendar-widget');
                 echo '</p>' . $block_attributes['after_widget'];
                 try {
-                    unset($block_attributes['before_widget'], $block_attributes['before_title'], $block_attributes['after_title'], $block_attributes['after_widget']);
+                    unset($block_attributes['before_widget'], $block_attributes['after_widget']);
                     self::update_rest_attrs($block_attributes);
                 } catch (\Exception $e) {
                     echo '<p>Caught exception: ', $e->getMessage(), "</p>\n";
@@ -221,7 +235,7 @@ class SimpleicalBlock
                 $wrapperattr = (is_wp_version_compatible('5.6')) ? get_block_wrapper_attributes() : '';
                 echo sprintf($block_attributes['before_widget'], ($block_attributes['anchorId'] . '" data-sib-id="' . $block_attributes['sibid']), $wrapperattr);
                 if (! empty($block_attributes['title'])) {
-                    echo $block_attributes['before_title'] . wp_kses($block_attributes['title'], 'post') . $block_attributes['after_title'];
+                    echo $titlenode;
                 }
                 self::display_block($block_attributes);
                 echo $block_attributes['after_widget'];
@@ -361,21 +375,18 @@ class SimpleicalBlock
     }
 
     /**
+     * Compare attributes with those in widget option and changed
      * Save attributes in widget option for use in REST call (only when changed on other then excluded keys)
      *
      * @param array $instance
      *            attributes/instance to save $instance['sibid'] is used as (new) key when $w_number is empty.
      * @param string $prev_sibid
      *            Previous save sibid to remeove if sibid is changed.
-     * @return succes new value sibid key else false
+     * @return when not changed true, succes new value sibid key, else false
      */
     static function update_rest_attrs($instance)
     {
         if (empty($instance)) return false;
-        $exclude = [
-            'saved' => null,
-            '__internalWidgetId' => null
-        ];
         $instances = (get_option(self::SIB_ATTR));
         if (! is_array($instances)) $instances = [];
 
@@ -383,8 +394,8 @@ class SimpleicalBlock
             if (! empty($instance['prev_sibid']) && isset($instances[$instance['prev_sibid']]) && ($instance['sibid'] != $instance['prev_sibid'])) {
                 unset($instances[$instance['prev_sibid']]);
             }
-            $new_instance = array_diff_assoc($instance, self::$default_block_attributes);
-            if (!empty($instances[$instance['sibid']]) && ($instances[$instance['sibid']] + $exclude == $new_instance + $exclude)){
+            $new_instance = array_diff_assoc(array_merge($instance, self::$exclude_test_attrs), self::$default_block_attributes, self::$exclude_test_attrs);
+            if (!empty($instances[$instance['sibid']]) && array_diff_assoc(array_merge($instances[$instance['sibid']], self::$exclude_test_attrs), self::$exclude_test_attrs) == $new_instance){
                 return true;
             }
             else {
@@ -396,6 +407,7 @@ class SimpleicalBlock
         }
         return false;
     }
+
     /**
      * Close html tags in html string
      * @params string $html String with HTML to repair

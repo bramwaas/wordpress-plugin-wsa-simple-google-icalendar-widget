@@ -2,9 +2,8 @@
  * simple-ical-block-view.js
  * view simple-ical-block output with extra client parameter tzid_ui using REST 
  * restRoot for endpoint passed via inlinescript and this script in enqueue_block_assets
- *  * v2.4.3 0
+ *  * v2.4.30
  * 2.4.3 add search in iFrame and choice of used timezone via data-sib-utzui
- * 2.4.4 title from params
 **/
 const endpoint = window.simpleIcalBlock.restRoot + "simple-google-icalendar-widget/v1/content-by-ids";
 let titl;
@@ -22,19 +21,9 @@ window.simpleIcalBlock = {...(window.simpleIcalBlock || {}), ...{
 			}
 			return response.json();
 		}).then((res) => {
-			if (res.params && res.params.title) {
-				if (ni.querySelector('[data-sib-t="true"]')) {
-					ni.querySelector('[data-sib-t="true"]').innerHTML = res.params.title;
-					titl = ni.querySelector('[data-sib-t="true"]').outerHTML;
-				} else {
-					if (!res.params.tag_title) {res.params.tag_title = 'h3';}
-					titl = '<' + res.params.tag_title + ' class="widget-title block-title" data-sib-t="true">' + res.params.title + '</' + res.params.tag_title + '>';
-				}
-			} else {
-				titl = '';
-			}
-			ni.innerHTML = titl + res.content;
 			ni.setAttribute('data-sib-st', 'completed');
+			if (ni.getAttribute('data-sib-notitle')) titl = ''; else titl = ni.querySelector( '[data-sib-t="true"]' ).outerHTML;
+			ni.innerHTML = titl + res.content;
 		}
 		).catch((error) => {
 			console.log(error);
@@ -48,7 +37,7 @@ window.simpleIcalBlock = {...(window.simpleIcalBlock || {}), ...{
 		let paramsObj = {"wptype": "REST"};
 		for (let i = 0; i < nodeList.length; i++) {
 			paramsObj.sibid = nodeList[i].getAttribute('data-sib-id');
-   			paramsObj.tzid_ui = (typeof nodeList[i].getAttribute('data-sib-utzui') == 'string' && nodeList[i].getAttribute('data-sib-utzui') == '1') ? ptzid_ui : ''; 
+   			paramsObj.tzid_ui = (typeof nodeList[i].getAttribute('data-sib-utzui') == 'string' && nodeList[i].getAttribute('data-sib-utzui') == '2') ? '' : ptzid_ui; 
 			nodeList[i].setAttribute('data-sib-st', 'f1');
 			this.fetchFromRest(paramsObj, nodeList[i]);
 		}

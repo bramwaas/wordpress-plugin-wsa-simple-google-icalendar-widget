@@ -20,15 +20,16 @@
  * 20240215 Adjustment of attributes provided when calling server side render: period limits modulo 4 so as not to enter Rest Server mode;
  *   wptype 'ssr'.
  * 2.4.3 initializations also inside useEffect and setAttibute only for sibid only when necessary to reduce change of looping in Synced Pattern 
- *   extra option Wordpress timezone with rest   
+ *   extra option Wordpress timezone with rest
+ * 2.4.4 initialization sibid also with direct assign in case setAttribute does not work (e.g. in Synced pattern 6.6) 
+ *   removed references to ServerSideRender added deprecated 243; decoupled render and save changed attributes. 
  */
-(function(blocks, i18n, element, blockEditor, components, serverSideRender) {
+(function(blocks, i18n, element, blockEditor, components) {
 	const el = element.createElement;
 	const __ = i18n.__;
 	const useBlockProps = blockEditor.useBlockProps;
 	const InspectorControls = blockEditor.InspectorControls;
 	const InspectorAdvancedControls = blockEditor.InspectorAdvancedControls;
-	const ServerSideRender = serverSideRender;
 	const iconEl = el('svg', { width: 24, height: 24, viewBox: "0 0 128 128" },
 		el('rect', { fill: "#ecf6fe", stroke: "#ecf6fe", width: "128", height: "128", x: "0", y: "0" }),
 		el('path', { fill: "#ffffff", stroke: "#3f48cc", d: "M 12,28 h 99 v 86 H 12 Z", }),
@@ -45,9 +46,27 @@
 	const ToggleControl = components.ToggleControl;
 	const SelectControl = components.SelectControl;
 	const useEffect = element.useEffect;
-
-	let ptzid_ui;
-
+	const tagOpsh = [{ value: 'div', label: __('div', 'simple-google-icalendar-widget') },
+	{ value: 'h1', label: __('h1 (header)', 'simple-google-icalendar-widget') },
+	{ value: 'h2', label: __('h2 (sub header)', 'simple-google-icalendar-widget') },
+	{ value: 'h3', label: __('h3 (sub header)', 'simple-google-icalendar-widget') },
+	{ value: 'h4', label: __('h4 (sub header)', 'simple-google-icalendar-widget') },
+	{ value: 'h5', label: __('h5 (sub header)', 'simple-google-icalendar-widget') },
+	{ value: 'h6', label: __('h6 (sub header)', 'simple-google-icalendar-widget') },
+	{ value: 'span', label: __('span', 'simple-google-icalendar-widget') },
+	];
+	const tagOps = [{ value: 'a', label: __('a (link)', 'simple-google-icalendar-widget') },
+	{ value: 'b', label: __('b (attention, bold)', 'simple-google-icalendar-widget') },
+	{ value: 'div', label: __('div', 'simple-google-icalendar-widget') },
+	{ value: 'h4', label: __('h4 (sub header)', 'simple-google-icalendar-widget') },
+	{ value: 'h5', label: __('h5 (sub header)', 'simple-google-icalendar-widget') },
+	{ value: 'h6', label: __('h6 (sub header)', 'simple-google-icalendar-widget') },
+	{ value: 'i', label: __('i (idiomatic, italic)', 'simple-google-icalendar-widget') },
+	{ value: 'span', label: __('span', 'simple-google-icalendar-widget') },
+	{ value: 'strong', label: __('strong', 'simple-google-icalendar-widget') },
+	{ value: 'u', label: __('u (unarticulated, underline )', 'simple-google-icalendar-widget') }
+	];
+	
 	blocks.registerBlockType('simplegoogleicalenderwidget/simple-ical-block', {
 		icon: iconEl,
 
@@ -101,18 +120,22 @@
 
 		edit: function(props) {
 			useEffect(function() {
-			if ((typeof props.attributes.sibid !== 'string') && (typeof props.attributes.blockid == 'string')) {
-				props.setAttributes({ sibid: props.attributes.blockid });
- 			}
-			else if (typeof props.attributes.sibid !== 'string') { 
-				props.setAttributes({ sibid: 'b' + props.clientId }); 
+			if (typeof props.attributes.sibid !== 'string') {
+				if (typeof props.attributes.blockid == 'string') {
+					props.attributes.sibid = props.attributes.blockid;
+					props.setAttributes({ sibid: props.attributes.blockid });
+ 				}
+				else { 
+					props.attributes.sibid = 'b' + props.clientId;
+					props.setAttributes({ sibid: 'b' + props.clientId }); 
  				};
-			if ('' < props.attributes.rest_utzui) {
-				ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone;
-			}
-			else {
-				ptzid_ui = '';
-			};
+ 			};	
+			}, []);
+			useEffect(function() {
+				if (typeof props.attributes.sibid == 'string') {
+					window.simpleIcalBlockF.getBlockByIds(props.attributes);
+					window.simpleIcalBlockF.setSibAttrs(props.attributes);
+				  }
 			}, [props.attributes]);
 			useEffect(function() {
 				if (props.attributes.clear_cache_now) {
@@ -124,17 +147,24 @@
 				'div',
 				useBlockProps({
 					key: 'simple_ical',
-				}),
-				el(ServerSideRender, {
-					block: 'simplegoogleicalenderwidget/simple-ical-block',
-					attributes: {
-						...props.attributes,
-						"wptype": "ssr",
-						"tzid_ui": ptzid_ui
-					},
-					httpMethod: 'POST'
-				}
-				),
+				})
+/*	rest placeholder for render in editor with setSibbAttrs 	*/		
+				,
+					el(
+				     'div',
+				     {
+		 				"id":(props.attributes.anchorId ? props.attributes.anchorId : props.attributes.sibid),
+						 "data-sib-id":props.attributes.sibid,
+						 "data-sib-utzui":props.attributes.rest_utzui,
+						 "data-sib-st":"0-start",
+					 }
+					 ,
+					 el('p',
+					    {},
+   						__('Processing', 'simple-google-icalendar-widget')
+   						)
+					)
+				,
 				el(InspectorControls,
 					{ key: 'setting' },
 					el('div',
@@ -315,15 +345,9 @@
 								__('More info', 'simple-google-icalendar-widget')
 							),
 							onChange: function(value) {
-								props.setAttributes({ rest_utzui: value });
-								ptzid_ui = '';
-								if ('' < value) {
-									if ('2' != value) {ptzid_ui = Intl.DateTimeFormat().resolvedOptions().timeZone};
-									props.setAttributes({ wptype: 'rest_ph' })
-								}
-								else {
-									props.setAttributes({ wptype: 'block' })
-								}
+								props.setAttributes({ rest_utzui: value,
+													wptype: (('0' < value) ? 'rest_ph' : 'block')   
+								});
 							},
 							options: [
 								{ value: '', label: __('Use WordPress timezone settings, no REST', 'simple-google-icalendar-widget') },
@@ -332,6 +356,23 @@
 							]
 						}
 					),
+					el(
+						SelectControl,
+						{
+							label: __('Tag for title:', 'simple-google-icalendar-widget'),
+							value: props.attributes.tag_title,
+							help: el(
+								'a',
+								{
+									href: 'admin.php?page=simple_ical_info#tag-title',
+									target: '_blank',
+								},
+								__('More info', 'simple-google-icalendar-widget')
+							),
+							onChange: function(value) { props.setAttributes({ tag_title: value }); },
+							options: tagOpsh
+						}
+						),
 					el(
 						SelectControl,
 						{
@@ -346,18 +387,7 @@
 								__('More info', 'simple-google-icalendar-widget')
 							),
 							onChange: function(value) { props.setAttributes({ tag_sum: value }); },
-							options: [
-								{ value: 'a', label: __('a (link)', 'simple-google-icalendar-widget') },
-								{ value: 'b', label: __('b (attention, bold)', 'simple-google-icalendar-widget') },
-								{ value: 'div', label: __('div', 'simple-google-icalendar-widget') },
-								{ value: 'h4', label: __('h4 (sub header)', 'simple-google-icalendar-widget') },
-								{ value: 'h5', label: __('h5 (sub header)', 'simple-google-icalendar-widget') },
-								{ value: 'h6', label: __('h6 (sub header)', 'simple-google-icalendar-widget') },
-								{ value: 'i', label: __('i (idiomatic, italic)', 'simple-google-icalendar-widget') },
-								{ value: 'span', label: __('span', 'simple-google-icalendar-widget') },
-								{ value: 'strong', label: __('strong', 'simple-google-icalendar-widget') },
-								{ value: 'u', label: __('u (unarticulated, underline )', 'simple-google-icalendar-widget') }
-							]
+							options: tagOps
 						}
 					),
 					el(
@@ -438,14 +468,77 @@
 							onChange: function(value) { props.setAttributes({ anchorId: value }); },
 						}
 					)
-				));
-		}
+				)
+				);
+		},
+		save: function (props) {
+    return (el(
+				'div',
+				useBlockProps.save({
+					key: 'simple_ical',
+		 				"id":(props.attributes.anchorId ? props.attributes.anchorId : props.attributes.sibid),
+						 "data-sib-id":props.attributes.sibid,
+						 "data-sib-utzui":props.attributes.rest_utzui,
+						 "data-sib-st":"0-start",
+				}),
+				     {
+					 },
+					 el(
+						 props.attributes.tag_title,
+						 {
+							 "class":"widget-title block-title", 
+						     "data-sib-t":"true",
+						 },
+						 props.attributes.title
+						 ),
+					 el('p',
+					    {},
+   						__('Processing', 'simple-google-icalendar-widget')
+   						)
+    		));
+		},
+		deprecated: [
+			{ // dep243 
+				"attributes": {
+					"wptype": { "type": "string", "default": "block" },
+					"sibid": { "type": "string" },
+					"title": { "type": "string", "default": "Events" },
+					"calendar_id": { "type": "string", "default": "" },
+					"event_count": { "type": "integer", "default": 10 },
+					"event_period": { "type": "integer", "default": 92 },
+					"layout": { "type": "integer", "default": 3 },
+					"cache_time": { "type": "integer", "default": 60 },
+					"dateformat_lg": { "type": "string", "default": "l jS \\of F" },
+					"dateformat_lgend": { "type": "string", "default": "" },
+					"tag_sum": { "type": "string", "enum": ["a", "b", "div", "h1", "h2", "h3", "h4", "h5", "h6", "i", "span", "strong", "u"], "default": "a" },
+					"tag_title": { "type": "string", "enum": ["a", "b", "div", "h1", "h2", "h3", "h4", "h5", "h6", "i", "span", "strong", "u"], "default": "h3" },
+					"dateformat_tsum": { "type": "string", "default": "G:i " },
+					"dateformat_tsend": { "type": "string", "default": "" },
+					"dateformat_tstart": { "type": "string", "default": "G:i" },
+					"dateformat_tend": { "type": "string", "default": " - G:i " },
+					"excerptlength": { "type": "string", "default": "" },
+					"suffix_lg_class": { "type": "string", "default": "" },
+					"suffix_lgi_class": { "type": "string", "default": " py-0" },
+					"suffix_lgia_class": { "type": "string", "default": "" },
+					"allowhtml": { "type": "boolean", "default": false },
+					"after_events": { "type": "string", "default": "" },
+					"no_events": { "type": "string", "default": "" },
+					"clear_cache_now": { "type": "boolean", "default": false },
+					"period_limits": { "type": "string", "enum": ["1", "2", "3", "4"], "default": "1" },
+					"rest_utzui": { "type": "string", "enum": ["", "1", "2"], "default": "" },
+					"anchorId": { "type": "string", "default": "" },
+					"blockid": { "type": "string" }
+				},
+				save: (props) => {
+					return (null
+					)
+				}
+			}
+		]
 	});
 }(window.wp.blocks,
 	window.wp.i18n,
 	window.wp.element,
 	window.wp.blockEditor,
-	window.wp.components,
-	window.wp.serverSideRender
-)
+	window.wp.components)
 );
