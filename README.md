@@ -1,14 +1,15 @@
 === Simple Google Calendar Outlook Events Block Widget ===
-Plugin name: Simple Google Calendar Outlook Events Block Widget
-Contributors: bramwaas
-Tags: Google Calendar, iCal, Events, Block, Calendar
-Requires at least: 5.3.0
-Tested up to: 6.6
-Requires PHP: 7.4
-Stable tag: 2.4.4
-License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
- 
+
+Plugin name: Simple Google Calendar Outlook Events Block Widget   
+Contributors: bramwaas   
+Tags: Google Calendar, iCal, Events, Block, Calendar   
+Requires at least: 5.3.0   
+Tested up to: 6.6   
+Requires PHP: 7.4   
+Stable tag: 2.4.4   
+License: GPLv2 or later   
+License URI: http://www.gnu.org/licenses/gpl-2.0.html   
+    
 Block widget that displays events from a public google calendar or iCal file.
  
 == Description ==
