@@ -4,8 +4,8 @@ Contributors: bramwaas
 Tags: Google Calendar, iCal, Events, Block, Calendar
 Requires at least: 5.3.0
 Tested up to: 6.6
-Requires PHP: 5.3.0
-Stable tag: 2.4.3
+Requires PHP: 7.4
+Stable tag: 2.4.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
  
@@ -230,9 +230,10 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 * error in WP 6.6 this block (with serverside rendering) breaks editor when placed on a page via a synced pattern. Issue reported as WordPress Trac #61592
 
 == Changelog ==
-* 2.4.4-a initialization sibid also with direct assign in case setAttribute does not work (e.g. in Synced pattern 6.6)
- replace ServerSideRender in editor by custom Rest call and place_holder html in Javascript Edit and Save. Add deprecation for older Save methods.
- tested with Elementor v3.23.3           
+* 2.4.4 Initialization sibid also with direct assign in case setAttribute does not work (e.g. in Synced pattern 6.6)
+ replace ServerSideRender in block editor by custom Rest call (only for WP 6.3 +) and place_holder html in Javascript Edit and Save.   
+ Tested with Elementor v3.23.3   
+ Remove most unused attributes from block.json. Add deprecation for older Save methods.    
 * 2.4.3 replaced render_callback in server side register_block_type by render in block.json (v3 plus ( is_wp_version_compatible( '6.3' ) ))  simplifying initialization edit js to reduce change of looping when used in synced pattern and reviewing initializing in block.json.
 * 2.4.2 replaced null by 'admin.php' to solve issue 'Deprecation warnings in PHP 8.3' of Knut Sparhell (@knutsp) on support forum. Moved older entries of changelog to changelog.txt.
 * 2.4.1 added defaults to all used keys of $args to solve issue 'PHP warnings' of johansam on support forum. Undefined array key “classname” in .../simple-google-icalendar-widget.php on line 170
