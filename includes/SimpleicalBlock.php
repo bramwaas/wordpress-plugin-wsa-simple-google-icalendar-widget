@@ -313,6 +313,16 @@ class SimpleicalBlock
                         "</h6><h6>"
                     ), '', $evdate . wp_kses(wp_date($dflgend, $e->end - 1, $attributes['tz_ui']), 'post'));
                 }
+//echo PHP_EOL . '<!-- Categories: ' . PHP_EOL;
+//print_r ($e);
+//echo PHP_EOL . ' -->' . PHP_EOL; 
+                if (!empty($e->categories)) {
+                    echo '<div class="categories">';
+                    foreach ($e->categories as $cat){
+                        echo '<span style="padding: 2px; border: 1px solid; margin: 4px; font-size: small;">' . $cat . '&nbsp;</span>';
+                    }
+                    echo '</div>';
+                }
                 $evdtsum = (($e->startisdate === false) ? wp_kses(wp_date($dftsum, $e->start, $attributes['tz_ui']) . wp_date($dftsend, $e->end, $attributes['tz_ui']), 'post') : '');
                 if ($layout < 2 && $curdate != $evdate) {
                     if ($curdate != '') {

@@ -902,6 +902,9 @@ END:VCALENDAR';
                         $eventObj->recuridisdate = $isdate;
                         $eventObj->recurid = $this->parseIcsDateTime($value, $tzid);
                         break;
+                    case "CATEGORIES":
+                        $eventObj->categories = $value;
+                        break;
                 }
             }else { // count($list) <= 1
                 if (strlen($l) > 1) {
@@ -916,6 +919,9 @@ END:VCALENDAR';
                         case "LOCATION":
                             $eventObj->location .= $desc;
                             break;
+                        case "CATEGORIES":
+                            $eventObj->categories .= $desc;
+                            break;
                     }
                 }
             }
@@ -923,6 +929,7 @@ END:VCALENDAR';
         if (!empty($eventObj->summary)) {$eventObj->summary = self::unescText($eventObj->summary);}
         if (!empty($eventObj->description)) {$eventObj->description = self::unescText($eventObj->description);}
         if (!empty($eventObj->location)) {$eventObj->location = self::unescText($eventObj->location);}
+        if (!empty($eventObj->categories)) {$eventObj->categories = explode(',', $eventObj->categories);}
         if (!isset($eventObj->end)) {
             if (isset($eventObj->duration)) {
                 $timezone = new \DateTimeZone((isset($eventObj->tzid)&& $eventObj->tzid !== '') ? $eventObj->tzid : $this->timezone_string);
