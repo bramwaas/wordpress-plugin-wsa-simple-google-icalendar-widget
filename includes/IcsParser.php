@@ -46,7 +46,8 @@
  *   get_option('timezone_string') changed in wp_timezone_string().  Modulo 4 for period_limits (default 1 Whole day, whole day; 2 Time of day, Wd; 3 Td, Td; 0 Wd, Td)
  *   Add unescape \\ to \ and improve \, to ,   \; to ;  chars that should be escaped following the text specification.
  * 2.4.0 exclude DTEND from event that is evend ends before (<) DTEND in stead of at (<=) DTEND. removed modulo 4
- *  Checks if time zone ID with Etc/GMT 'replaced by'Etc/GMT+' is a Iana timezone then return this timezone.   
+ *  Checks if time zone ID with Etc/GMT 'replaced by'Etc/GMT+' is a Iana timezone then return this timezone. 
+ * 2.5.0 Add filter and display support for categories.
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
@@ -62,26 +63,28 @@ class IcsParser {
      */
     private static $example_events = 'BEGIN:VCALENDAR
 BEGIN:VEVENT
-DTSTART:20240127T150000
-DTEND:20240127T160000
+DTSTART:20240928T150000
+DTEND:20240928T160000
 RRULE:FREQ=WEEKLY;INTERVAL=3;BYDAY=SU,WE,SA
 UID:a-1
 DESCRIPTION:Description event every 3 weeks sunday wednesday and saturday. T
  est A-Z.\nLine 2 of description.
 LOCATION:Located at home \, or somewhere else
 SUMMARY: Every 3 weeks sunday\\wednesday \\ saturday
+CATEGORIES:cat1,Cat Two
 END:VEVENT
 BEGIN:VEVENT
-DTSTART:20240129T143000
-DTEND:20240129T153000
+DTSTART:20240929T143000
+DTEND:20240929T153000
 RRULE:FREQ=MONTHLY;COUNT=24;BYMONTHDAY=29
 UID:a-2
 DESCRIPTION:Monthly day 29
 LOCATION:
 SUMMARY:Example\; Monthly day 29
+CATEGORIES:Cat Two
 END:VEVENT
 BEGIN:VEVENT
-DTSTART;VALUE=DATE:20240127
+DTSTART;VALUE=DATE:20240928
 //DTEND;VALUE=DATE:20240128
 DURATION:P1DT23H59M60S
 RRULE:FREQ=MONTHLY;COUNT=13;BYDAY=4SA
@@ -89,6 +92,7 @@ UID:a-3
 DESCRIPTION:Example Monthly 4th weekend
 LOCATION:Loc. unknown
 SUMMARY:X Monthly 4th weekend
+CATEGORIES:cat1
 END:VEVENT
 END:VCALENDAR';
     
