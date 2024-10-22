@@ -297,6 +297,16 @@ class SimpleicalBlock
                 $itemid = $attributes['sibid'] . '_' . strval(++ $sn) . '_' . $idlist[0];
                 $evdate = wp_kses(wp_date($dflg, $e->start, $attributes['tz_ui']), 'post');
                 $cal_class = ((! empty($e->cal_class)) ? ' ' . sanitize_html_class($e->cal_class) : '');
+                $cat_class = '';
+                $cat_list = '';
+                if (!empty($e->categories)) {
+                    $cat_list = '<div class="categories">';
+                    foreach ($e->categories as $cat){
+                        $cat_list .= '<span style="padding: 2px; border: 1px solid; margin: 4px; font-size: small;">' . $cat . '&nbsp;</span>';
+                        $cat_class .= (( empty($cat)) ? '' : ' ' . sanitize_html_class($cat));
+                    }
+                    $cat_list .= '</div>';
+                }
                 if (! $attributes['allowhtml']) {
                     if (! empty($e->summary))
                         $e->summary = htmlspecialchars($e->summary);
@@ -317,20 +327,16 @@ class SimpleicalBlock
 //print_r ($e);
 //echo PHP_EOL . ' -->' . PHP_EOL; 
                 if (!empty($e->categories)) {
-                    echo '<div class="categories">';
-                    foreach ($e->categories as $cat){
-                        echo '<span style="padding: 2px; border: 1px solid; margin: 4px; font-size: small;">' . $cat . '&nbsp;</span>';
-                    }
-                    echo '</div>';
+                    echo $cat_list;
                 }
                 $evdtsum = (($e->startisdate === false) ? wp_kses(wp_date($dftsum, $e->start, $attributes['tz_ui']) . wp_date($dftsend, $e->end, $attributes['tz_ui']), 'post') : '');
                 if ($layout < 2 && $curdate != $evdate) {
                     if ($curdate != '') {
                         echo '</ul></li>';
                     }
-                    echo '<li class="list-group-item' . $sflgi . ' head">' . '<span class="ical-date">' . ucfirst($evdate) . '</span><ul class="list-group' . $attributes['suffix_lg_class'] . '">';
+                    echo '<li class="list-group-item' . $sflgi . $cat_class . ' head">' . '<span class="ical-date">' . ucfirst($evdate) . '</span><ul class="list-group' . $attributes['suffix_lg_class'] . '">';
                 }
-                echo '<li class="list-group-item' . $sflgi . $cal_class . '">';
+                echo '<li class="list-group-item' . $sflgi . $cat_class . '">';
                 if ($layout == 3 && $curdate != $evdate) {
                     echo '<span class="ical-date">' . ucfirst($evdate) . '</span>' . (('a' == $attributes['tag_sum']) ? '<br>' : '');
                 }

@@ -47,7 +47,8 @@
  *   Add unescape \\ to \ and improve \, to ,   \; to ;  chars that should be escaped following the text specification.
  * 2.4.0 exclude DTEND from event that is evend ends before (<) DTEND in stead of at (<=) DTEND. removed modulo 4
  *  Checks if time zone ID with Etc/GMT 'replaced by'Etc/GMT+' is a Iana timezone then return this timezone. 
- * 2.5.0 Add filter and display support for categories.
+ * 2.5.0 Add filter and display support for categories. Add function self::unescTextList to explode items in Categories list to array 
+ * while retaining , or ; when escaped with \ and use the same function for list of url's and input filter categorie list. 
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
@@ -982,11 +983,11 @@ END:VCALENDAR';
     {
         $a = explode('\\\\',$t);
         foreach ($a as &$l){
-            $l = str_replace(['\;', '\,', '\n', '\N'], [';', chr(17), "\n", "\n"], $l);
+            $l = str_replace(['\;', '\,', '\n', '\N'], [chr(18), chr(17), "\n", "\n"], $l);
         }
         $b = explode(',', implode('\\', $a));
         foreach ($b as &$l){
-            $l = str_replace(chr(17), ',', $l);
+            $l = str_replace([chr(17), chr(18)], [',',';'], $l);
         }
         return $b;
     }
@@ -1003,11 +1004,11 @@ END:VCALENDAR';
     {
         $a = explode('\\\\',$t);
         foreach ($a as &$l){
-            $l = str_replace(['\;', '\,', '\n', '\N'], [';',  chr(17), "\n", "\n"], $l);
+            $l = str_replace(['\;', '\,', '\n', '\N'], [chr(18), chr(17), "\n", "\n"], $l);
         }
         $b = str_getcsv(implode('\\', $a),',');
         foreach ($b as &$l){
-            $l = str_replace( chr(17), ',', $l);
+            $l = str_replace([chr(17), chr(18)], [',',';'], $l);
         }
         return $b;
     }
@@ -1077,13 +1078,13 @@ END:VCALENDAR';
      *    ['calendar_id']  id or url of the calender to fetch data
      *    ['event_count']  max number of events to return
      *    ['event_period'] max number of days after now to fetch events.
-     *
+     *    ['filter_cat'] list of categories to filter on, with type of filtering in first item
      * @return array event objects
      */
     function fetch()
     {
         $cal_ord = 0;
-        foreach (explode(',', $this->calendar_ids) as $cal)
+        foreach (self::unescTextList($this->calendar_ids) as $cal)
         {
             $calary = explode(';', $cal, 2);
             $cal_id = trim($calary[0]," \n\r\t\v\x00\x22");
