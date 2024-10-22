@@ -71,7 +71,8 @@ DESCRIPTION:Description event every 3 weeks sunday wednesday and saturday. T
  est A-Z.\nLine 2 of description.
 LOCATION:Located at home \, or somewhere else
 SUMMARY: Every 3 weeks sunday\\wednesday \\ saturday
-CATEGORIES:cat1,Cat Two
+CATEGORIES:cat1,Cat Two, Cat with \, 
+  comma and spaces
 END:VEVENT
 BEGIN:VEVENT
 DTSTART:20240929T143000
@@ -81,7 +82,8 @@ UID:a-2
 DESCRIPTION:Monthly day 29
 LOCATION:
 SUMMARY:Example\; Monthly day 29
-CATEGORIES:Cat Two
+CATEGORIES:Cat Two,Cat four comma separated with semicolon and double quote 
+  \; " \, and comma.
 END:VEVENT
 BEGIN:VEVENT
 DTSTART;VALUE=DATE:20240928
@@ -929,7 +931,7 @@ END:VCALENDAR';
         if (!empty($eventObj->summary)) {$eventObj->summary = self::unescText($eventObj->summary);}
         if (!empty($eventObj->description)) {$eventObj->description = self::unescText($eventObj->description);}
         if (!empty($eventObj->location)) {$eventObj->location = self::unescText($eventObj->location);}
-        if (!empty($eventObj->categories)) {$eventObj->categories = explode(',', $eventObj->categories);}
+        if (!empty($eventObj->categories)) {$eventObj->categories = self::unescTextList($eventObj->categories);}
         if (!isset($eventObj->end)) {
             if (isset($eventObj->duration)) {
                 $timezone = new \DateTimeZone((isset($eventObj->tzid)&& $eventObj->tzid !== '') ? $eventObj->tzid : $this->timezone_string);
@@ -966,6 +968,48 @@ END:VCALENDAR';
             $l = str_replace(['\;', '\,', '\n', '\N'], [';', ',', "\n", "\n"], $l);
         }
         return implode('\\', $a);
+    }
+    /**
+     * Split comma separated list of strings in aray, keep \ escaped comma and semicolon.
+     * Removes escape backslash from  \\ to \ and improve \, to ,   \; to ;
+     * replaces \n or \N by char 0x0A that may be coverted in <br> for html later.
+     *
+     * @param string $text text with escape slashes
+     *
+     * @return string array event objects
+     */
+    static function unescTextList($t)
+    {
+        $a = explode('\\\\',$t);
+        foreach ($a as &$l){
+            $l = str_replace(['\;', '\,', '\n', '\N'], [';', chr(17), "\n", "\n"], $l);
+        }
+        $b = explode(',', implode('\\', $a));
+        foreach ($b as &$l){
+            $l = str_replace(chr(17), ',', $l);
+        }
+        return $b;
+    }
+    /**
+     * Split comma separated double quote enclosed list of strings in aray, keep \ escaped comma.
+     * Removes escape backslash from  \\ to \ and improve \, to ,   \; to ;
+     * replaces \n or \N by char 0x0A that may be coverted in <br> for html later.
+     *
+     * @param string $text text with escape slashes
+     *
+     * @return string array event objects
+     */
+    static function unescCsvList($t)
+    {
+        $a = explode('\\\\',$t);
+        foreach ($a as &$l){
+            $l = str_replace(['\;', '\,', '\n', '\N'], [';',  chr(17), "\n", "\n"], $l);
+        }
+        $b = str_getcsv(implode('\\', $a),',');
+        foreach ($b as &$l){
+            $l = str_replace( chr(17), ',', $l);
+        }
+        return $b;
     }
     /**
      * Gets data from calender or transient cache
