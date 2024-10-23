@@ -1,55 +1,199 @@
 {
-    "$schema": "https://json.schemastore.org/block.json",
-    "apiVersion": 3,
-    "title": "Simple ical Block",
-    "name": "simplegoogleicalenderwidget/simple-ical-block",
-    "category": "widgets",
-    "description": "Block that displays events from a public calendar or iCal file.",
-    "keywords": [ "calendar", "ical", "event", "events", "google", "outlook", "iCalendar", "holidays", "ics" ],
-    "icon": "calendar-alt",
-    "version": "2.4.4",
-    "textdomain": "simple-google-icalendar-widget",
-	"attributes": {
-		"wptype": {"type": "string", "default": "block"},
-		"sibid": {"type": "string"},
-		"title": {"type": "string", "default": "Events"},
-		"calendar_id": {"type": "string", "default": ""},
-		"event_count": {"type": "integer", "default": 10},
-		"event_period": {"type": "integer", "default": 92},
-		"layout": {"type": "integer", "default": 3},
-		"cache_time": {"type": "integer", "default": 60},
-		"dateformat_lg": {"type": "string", "default": "l jS \\of F"},
-		"dateformat_lgend": {"type": "string", "default": ""},
-		"tag_sum": {"type": "string", "enum": ["a", "b", "div", "h1", "h2", "h3", "h4", "h5", "h6", "i", "span", "strong", "u"], "default": "a"},
-		"tag_title": {"type": "string", "enum": ["a", "b", "div", "h1", "h2", "h3", "h4", "h5", "h6", "i", "span", "strong", "u"], "default": "h3"},
-		"dateformat_tsum": {"type": "string", "default": "G:i "},
-		"dateformat_tsend": {"type": "string", "default": ""},
-		"dateformat_tstart": {"type": "string", "default": "G:i"},
-		"dateformat_tend": {"type": "string", "default": " - G:i "},
-		"excerptlength": {"type": "string","default": ""},
-		"suffix_lg_class": {"type": "string", "default": ""},
-		"suffix_lgi_class": {"type": "string", "default": " py-0"},
-		"suffix_lgia_class": {"type": "string", "default": ""},
-		"allowhtml": {"type": "boolean", "default": false},
-		"after_events": {"type": "string", "default": ""},
-		"no_events": {"type": "string", "default": ""},
-		"clear_cache_now": {"type": "boolean", "default": false},
-		"period_limits": {"type": "string", "enum": ["1", "2", "3", "4"], "default": "1"},
-		"rest_utzui": {"type": "string", "enum": ["", "1", "2"], "default": ""},
-		"anchorId": {"type": "string", "default": ""},
-		"blockid": {"type": "string"}
+	"$schema" : "https://json.schemastore.org/block.json",
+	"apiVersion" : 3,
+	"title" : "Simple ical Block",
+	"name" : "simplegoogleicalenderwidget/simple-ical-block",
+	"category" : "widgets",
+	"description" : "Block that displays events from a public calendar or iCal file.",
+	"keywords" : [
+		"calendar",
+		"ical",
+		"event",
+		"events",
+		"google",
+		"outlook",
+		"iCalendar",
+		"holidays",
+		"ics"
+	],
+	"icon" : "calendar-alt",
+	"version" : "2.5.0",
+	"textdomain" : "simple-google-icalendar-widget",
+	"attributes" : {
+		"wptype" : {
+			"type" : "string",
+			"default" : "block"
 		},
-	"render": "file:./includes/renderssv3.php",	
-	"usesContext": [ "postId", "postType" ],	
-    "example": {"attributes": {
-        "title": "Example events.",
-        "calendar_id": "#example",
-        "event_count": "4",
-        "event_period": "62"
-        }
-    },
-    "supports": {
-        "align": true
-    },
-	"editorScript": ["file:./js/simple-ical-block-fetch.js", "file:./js/simple-ical-block.js"]
-  }
+		"sibid" : {
+			"type" : "string"
+		},
+		"title" : {
+			"type" : "string",
+			"default" : "Events"
+		},
+		"calendar_id" : {
+			"type" : "string"
+		},
+		"event_count" : {
+			"type" : "integer",
+			"default" : 10
+		},
+		"event_period" : {
+			"type" : "integer",
+			"default" : 92
+		},
+		"layout" : {
+			"type" : "integer",
+			"default" : 3
+		},
+		"categories_filter_op" : {
+			"type" : "string",
+			"enum" : [
+				"",
+				"ANY",
+				"ALL",
+				"NOTANY",
+				"NOTALL"
+			],
+			"default" : ""
+		},
+		"categories_filter" : {
+			"type" : "string"
+		},
+		"cache_time" : {
+			"type" : "integer",
+			"default" : 60
+		},
+		"dateformat_lg" : {
+			"type" : "string",
+			"default" : "l jS \\of F"
+		},
+		"dateformat_lgend" : {
+			"type" : "string"
+		},
+		"tag_sum" : {
+			"type" : "string",
+			"enum" : [
+				"a",
+				"b",
+				"div",
+				"h1",
+				"h2",
+				"h3",
+				"h4",
+				"h5",
+				"h6",
+				"i",
+				"span",
+				"strong",
+				"u"
+			],
+			"default" : "a"
+		},
+		"tag_title" : {
+			"type" : "string",
+			"enum" : [
+				"a",
+				"b",
+				"div",
+				"h1",
+				"h2",
+				"h3",
+				"h4",
+				"h5",
+				"h6",
+				"i",
+				"span",
+				"strong",
+				"u"
+			],
+			"default" : "h3"
+		},
+		"dateformat_tsum" : {
+			"type" : "string",
+			"default" : "G:i "
+		},
+		"dateformat_tsend" : {
+			"type" : "string"
+		},
+		"dateformat_tstart" : {
+			"type" : "string",
+			"default" : "G:i"
+		},
+		"dateformat_tend" : {
+			"type" : "string",
+			"default" : " - G:i "
+		},
+		"excerptlength" : {
+			"type" : "string"
+		},
+		"suffix_lg_class" : {
+			"type" : "string"
+		},
+		"suffix_lgi_class" : {
+			"type" : "string",
+			"default" : " py-0"
+		},
+		"suffix_lgia_class" : {
+			"type" : "string"
+		},
+		"allowhtml" : {
+			"type" : "boolean",
+			"default" : false
+		},
+		"after_events" : {
+			"type" : "string"
+		},
+		"no_events" : {
+			"type" : "string"
+		},
+		"clear_cache_now" : {
+			"type" : "boolean",
+			"default" : false
+		},
+		"period_limits" : {
+			"type" : "string",
+			"enum" : [
+				"1",
+				"2",
+				"3",
+				"4"
+			],
+			"default" : "1"
+		},
+		"rest_utzui" : {
+			"type" : "string",
+			"enum" : [
+				"",
+				"1",
+				"2"
+			]
+		},
+		"anchorId" : {
+			"type" : "string"
+		},
+		"blockid" : {
+			"type" : "string"
+		}
+	},
+	"render" : "file:./includes/renderssv3.php",
+	"usesContext" : [
+		"postId",
+		"postType"
+	],
+	"example" : {
+		"attributes" : {
+			"title" : "Example events.",
+			"calendar_id" : "#example",
+			"event_count" : "4",
+			"event_period" : "62"
+		}
+	},
+	"supports" : {
+		"align" : true
+	},
+	"editorScript" : [
+		"file:./js/simple-ical-block-fetch.js",
+		"file:./js/simple-ical-block.js"
+	]
+}

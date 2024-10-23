@@ -32,6 +32,7 @@ These are great, but as soon as you want to make a few adjustments to the stylin
 * Choose date / time format in settings screen that best suits your website.
 * Displays per event DTSTART, DTEND, SUMMARY, LOCATION and DESCRIPTION. DTSTART is required other components are optional. 
 * Displays most common repeating events. Frequency Yearly, Monthly, Weekly, Dayly (not Hourly, Minutely and smaller periods)
+* Basic support for filter on Categories (Warning: MS Outlook does not share categories via iCal now. Google calendar does not support categories at all. So this will not work with these calendars.) 
 * In the screenshot below: Left the block with default settings and clicked on one summary. Right with some adjusted settings.   
 Adjusted settings for start with summary:  
 Lay-out: Start with summary.     
@@ -140,13 +141,6 @@ If you cannot resolve it, you can of course report an error / question in our [c
 Probably you have (re)opened a page where the block is edited but your password cookie is expired.   
 Log in in Wordpress again and open the page again. The block will be available. 
 
-= After an update 6.6 of Wordpress a page with this block in a synced pattern on it freezes in the editor. =   
-
-Maybe the block is long time ago placed on several pages as a synced pattern or reusable block and everything worked fine until Wordpress 6.5   
-It is possible that the id of the block is not initialized, the editor tries to initialize the id but this is not prossible in a synced pattern.
-Before 6.6 the update failed and the processing went ahead, from 6.6 the update fails and tries again (in an endless loop).     
-Solution: Update and save the block in the editor of the pattern to which the block belongs. 
-
 = This block contains unexpected or invalid content. =   
 
 After an update of the plugin in stead of the block content the message "This block contains unexpected or invalid content." is displayed and a button "Attempt Block Recovery".  
@@ -154,7 +148,6 @@ Probably this is caused by a difference in the Saved output and the output that 
 * Pushing the button "Attempt Block Recovery" will save the output in the new format and thereby solve the issue.   
 * When it comes to a synced pattern you have to "Attempt Block Recovery" in the original pattern via Edit original or "Appearance/Patterns".   
       
-
 = How do I set different colours and text size for the dates, the summary, and the details? =
 
 There is no setting for the color or font of parts in this plugin.
@@ -190,6 +183,26 @@ font-size: 16px;
 }
 /*end additional CSS for Simple-ical-Block-1 */
 ~~~
+
+= How do I filter on categories =
+
+Warning: the plugin only supports categories that are available in the iCal file. Microsoft Outlook does support categories but does not share them via the ical file.
+ 
+This is what I have in mind now for the implementation:
+
+- Retrieve the set of categories from the iCal events (when they exist) into my plugin-events as the event-set. Keep in mind that one event can contain 0 or more categories and that a category can contain a space.
+- Make one filter with a comma separated list of categories as the filter-set.
+- Make possible to choose one method to assess the intersection of both sets from a limited list of operators, ANY, ALL, NOTANY, NOTALL (maybe I find better names or symbols later)
+- ANY is true when at least one of the elements of the filter-set is contained in the event set, or in other words, the filter-set intersects the event-set, the intersection contains at least one element. This seems to me the most practical operator.
+- ALL is true when all the elements of the filter-set are contained in the event set, or in other words, the intersection contains the same number of elements as the filter-set. The event-set may contain other elements.
+- NOTANY is true when ANY is NOT true. The intersection is empty.
+- NOTALL is true when ALL is NOT true. The intersection contains less elements then the filter-set.
+- A special case are events without a categories set. As I have described it here the will only appear when the operator is NOTANY or NOTALL. I think of using a null-string ("") in the filter set to represent events without a categories set. I don’t think this is correct in set theory and it may theoretical possible to define a category as a null string. Nevertheless I think this is te most practical solution to add the events without a category positive to a filter.
+- Make a toggle (or select) option to display the set of categories on top of an event (in a SMALL HTML line)
+- Add the list of categories of an event cleaned as classes (removed spaces etc.) to the html-classes of event.
+- Categories (at least in this plugin) behave like simple tags and  have no intrinsic meaning or relation. So if you want to select all events with catergory flower, rose or tulip you have to add them all in the filterlist category flower will not automatical also select rose and tulip 
+
+- 
 
 = How do I contribute to Simple Google Calendar Outlook Events Widget? =
 
