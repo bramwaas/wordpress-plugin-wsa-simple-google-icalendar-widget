@@ -373,6 +373,14 @@
 						}
 					),
 					el(
+						TextControl,
+						{
+							label: __('Categories Filter List:', 'simple-google-icalendar-widget'),
+							value: props.attributes.categories_filter,
+							onChange: function(value) { props.setAttributes({ categories_filter: value }); },
+						}
+					),
+					el(
 						SelectControl,
 						{
 							label: __('Tag for title:', 'simple-google-icalendar-widget'),
