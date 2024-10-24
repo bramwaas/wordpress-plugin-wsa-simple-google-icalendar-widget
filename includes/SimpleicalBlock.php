@@ -303,7 +303,6 @@ class SimpleicalBlock
                     $cat_list = '<div class="categories">';
                     foreach ($e->categories as $cat){
                         if (!empty($cat)) {
-                            $cat_list .= '<small style="padding: 2px; border: 1px solid; margin: 4px;">' . $cat .'</small>';
                             $cat_class .=  ' ' . sanitize_html_class($cat);
                         }
                     }
