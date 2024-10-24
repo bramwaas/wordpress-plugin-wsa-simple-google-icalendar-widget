@@ -83,7 +83,7 @@ UID:a-2
 DESCRIPTION:Monthly day 29
 LOCATION:
 SUMMARY:Example\; Monthly day 29
-CATEGORIES:Cat Two,Cat four comma separated with semicolon and double quote 
+CATEGORIES:Cat Two,,Cat 4 with semicolon and double quote
   \; " \, and comma.
 END:VEVENT
 BEGIN:VEVENT
