@@ -57,6 +57,10 @@
 			]
 		},
 		"categories_filter" : {
+			"type" : "string",
+			"default" : "ANY,"
+		},
+		"categories_display" : {
 			"type" : "string"
 		},
 		"cache_time" : {

@@ -381,6 +381,14 @@
 						}
 					),
 					el(
+						ToggleControl,
+						{
+							label: __('Display list of categories above event', 'simple-google-icalendar-widget'),
+							checked: props.attributes.categories_display,
+							onChange: function(value) { props.setAttributes({ categories_display: ((value) ? 'true': '') }); },
+						}
+					),
+					el(
 						SelectControl,
 						{
 							label: __('Tag for title:', 'simple-google-icalendar-widget'),
