@@ -57,8 +57,7 @@
 			]
 		},
 		"categories_filter" : {
-			"type" : "string",
-			"default" : "ANY,"
+			"type" : "string"
 		},
 		"categories_display" : {
 			"type" : "string"

@@ -307,7 +307,7 @@ class SimpleicalBlock
                             $cat_class .=  ' ' . sanitize_html_class($cat);
                         }
                     }
-                    $cat_list .= '</div>';
+                    if ($categories_display) { $cat_list = '<div class="categories"><small>' . explode($e->categories, ' </small><small>' ) .'</small></div>';}
                 }
                 if (! $attributes['allowhtml']) {
                     if (! empty($e->summary))
