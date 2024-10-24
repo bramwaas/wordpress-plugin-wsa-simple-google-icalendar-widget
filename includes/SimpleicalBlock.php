@@ -300,13 +300,12 @@ class SimpleicalBlock
                 $cat_class = '';
                 $cat_list = '';
                 if (!empty($e->categories)) {
-                    $cat_list = '<div class="categories">';
                     foreach ($e->categories as $cat){
                         if (!empty($cat)) {
                             $cat_class .=  ' ' . sanitize_html_class($cat);
                         }
                     }
-                    if ($categories_display) { $cat_list = '<div class="categories"><small>' . explode($e->categories, ' </small><small>' ) .'</small></div>';}
+                    if ($categories_display) { $cat_list = '<div class="categories"><small>' . explode(' </small><small>',$e->categories ) .'</small></div>';}
                 }
                 if (! $attributes['allowhtml']) {
                     if (! empty($e->summary))
