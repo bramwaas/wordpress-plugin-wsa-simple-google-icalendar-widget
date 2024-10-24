@@ -286,6 +286,7 @@ class SimpleicalBlock
         $attributes['suffix_lg_class'] = wp_kses($attributes['suffix_lg_class'], 'post');
         $sflgi = wp_kses($attributes['suffix_lgi_class'], 'post');
         $sflgia = wp_kses($attributes['suffix_lgia_class'], 'post');
+        $categories_display = (!empty($attributes['categories_display']));
         if (! in_array($attributes['tag_sum'], self::$allowed_tags_sum))
             $attributes['tag_sum'] = 'a';
         $data = IcsParser::getData($attributes);
