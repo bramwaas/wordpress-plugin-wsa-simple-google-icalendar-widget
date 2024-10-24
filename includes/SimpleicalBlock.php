@@ -286,7 +286,12 @@ class SimpleicalBlock
         $attributes['suffix_lg_class'] = wp_kses($attributes['suffix_lg_class'], 'post');
         $sflgi = wp_kses($attributes['suffix_lgi_class'], 'post');
         $sflgia = wp_kses($attributes['suffix_lgia_class'], 'post');
-        $categories_display = (!empty($attributes['categories_display']));
+        if (empty($attributes['categories_display'])) {
+            $cat_disp = false;
+        } else {
+           $cat_disp = true;
+           $cat_sep = '</small>'.$attributes['categories_display'].'<small>';
+        }
         if (! in_array($attributes['tag_sum'], self::$allowed_tags_sum))
             $attributes['tag_sum'] = 'a';
         $data = IcsParser::getData($attributes);
@@ -306,7 +311,11 @@ class SimpleicalBlock
                             $cat_class .=  ' ' . sanitize_html_class($cat);
                         }
                     }
-                    if ($categories_display) { $cat_list = '<div class="categories"><small>' . implode(' </small><small>',$e->categories ) .'</small></div>';}
+                    if ($cat_disp) { 
+                        $cat_list = wp_kses('<div class="categories"><small>'
+                            . implode($cat_sep,str_replace("\n", '<br>', $e->categories ))
+                            . '</small></div>', 'post');
+                    }
                 }
                 if (! $attributes['allowhtml']) {
                     if (! empty($e->summary))

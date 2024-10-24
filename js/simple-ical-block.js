@@ -381,11 +381,12 @@
 						}
 					),
 					el(
-						ToggleControl,
+						TextControl,
 						{
-							label: __('Display list of categories above event', 'simple-google-icalendar-widget'),
-							checked: props.attributes.categories_display,
-							onChange: function(value) { props.setAttributes({ categories_display: ((value) ? 'true': '') }); },
+							label: __('Display categories with separator', 'simple-google-icalendar-widget'),
+							value: props.attributes.categories_display,
+							help: __('Empty no display. Else display categories above event with this separator.', 'simple-google-icalendar-widget'),
+							onChange: function(value) { props.setAttributes({ categories_display: value }); },
 						}
 					),
 					el(
