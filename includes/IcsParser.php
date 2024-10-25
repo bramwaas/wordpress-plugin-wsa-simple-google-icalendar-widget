@@ -49,6 +49,7 @@
  *  Checks if time zone ID with Etc/GMT 'replaced by'Etc/GMT+' is a Iana timezone then return this timezone. 
  * 2.5.0 Add filter and display support for categories. Add function self::unescTextList to explode items in Categories list to array 
  * while retaining , or ; when escaped with \ and use the same function for list of url's and input filter categorie list. 
+ * use temporary replace \\ by chr(20) and replace chr(20) by \ instead of explode and implode to prevent use of \\ as unescape char.
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
@@ -70,9 +71,9 @@ RRULE:FREQ=WEEKLY;INTERVAL=3;BYDAY=SU,WE,SA
 UID:a-1
 DESCRIPTION:Description event every 3 weeks sunday wednesday and saturday. T
  est A-Z.\nLine 2 of description.
-LOCATION:Located at home \, or somewhere else
-SUMMARY: Every 3 weeks sunday\\wednesday \\ saturday
-CATEGORIES:cat1,Cat Two, Cat with \, 
+LOCATION:Located at home \, or somewhere else \\\\,
+SUMMARY: Every 3 weeks sunday\\wednesday \\\\ saturday
+CATEGORIES:cat1,Cat Two\,, Cat with \, 
   comma and spaces
 END:VEVENT
 BEGIN:VEVENT
@@ -83,7 +84,7 @@ UID:a-2
 DESCRIPTION:Monthly day 29
 LOCATION:
 SUMMARY:Example\; Monthly day 29
-CATEGORIES:Cat Two,,Cat 4 with semicolon and double quote
+CATEGORIES:Cat Two\,,,Cat 4 with semicolon and double quote
   \; " \, and comma.
 END:VEVENT
 BEGIN:VEVENT
@@ -964,16 +965,14 @@ END:VCALENDAR';
      */
     static function unescText($t)
     {
-        $a = explode('\\\\',$t);
-        foreach ($a as &$l){
-            $l = str_replace(['\;', '\,', '\n', '\N'], [';', ',', "\n", "\n"], $l);
-        }
-        return implode('\\', $a);
+        $l = str_replace(['\\\\', '\,', '\;', '\n', '\N'], [chr(20), ',', ';', "\n", "\n"], $t);
+        return   str_replace(chr(20), '\\', $l);
+        ;
     }
     /**
      * Split comma separated list of strings in aray, keep \ escaped comma and semicolon.
      * Removes escape backslash from  \\ to \ and improve \, to ,   \; to ;
-     * replaces \n or \N by char 0x0A that may be coverted in <br> for html later.
+     * replaces \n or \N by char 0x0A that may be converted in <br> for html later.
      *
      * @param string $text text with escape slashes
      *
@@ -981,34 +980,10 @@ END:VCALENDAR';
      */
     static function unescTextList($t)
     {
-        $a = explode('\\\\',$t);
-        foreach ($a as &$l){
-            $l = str_replace(['\;', '\,', '\n', '\N'], [chr(18), chr(17), "\n", "\n"], $l);
-        }
-        $b = explode(',', implode('\\', $a));
+        $l = str_replace(['\\\\','\,','\;','\n','\N'], [chr(20),chr(17),';',"\n", "\n"], $t);
+        $b = explode(',', $l);
         foreach ($b as &$l){
-            $l = str_replace([chr(17), chr(18)], [',',';'], $l);
-        }
-        return $b;
-    }
-    /**
-     * Split comma separated double quote enclosed list of strings in aray, keep \ escaped comma.
-     * Removes escape backslash from  \\ to \ and improve \, to ,   \; to ;
-     * replaces \n or \N by char 0x0A that may be coverted in <br> for html later.
-     *
-     * @param string $text text with escape slashes
-     *
-     * @return string array event objects
-     */
-    static function unescCsvList($t)
-    {
-        $a = explode('\\\\',$t);
-        foreach ($a as &$l){
-            $l = str_replace(['\;', '\,', '\n', '\N'], [chr(18), chr(17), "\n", "\n"], $l);
-        }
-        $b = str_getcsv(implode('\\', $a),',');
-        foreach ($b as &$l){
-            $l = str_replace([chr(17), chr(18)], [',',';'], $l);
+            $l = str_replace([chr(20), chr(17) ], ['\\', ','], $l);
         }
         return $b;
     }
