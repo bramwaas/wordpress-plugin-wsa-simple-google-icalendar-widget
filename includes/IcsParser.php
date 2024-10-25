@@ -713,7 +713,7 @@ END:VCALENDAR';
                         $cat_filter_result = (0 == $cat_is_cnt);
                     break;
                     case "NOTALL":
-                        $cat_filter_result = ($cat_filter_ln == $cat_is_cnt);
+                        $cat_filter_result = ($cat_filter_ln != $cat_is_cnt);
                     break;
                     default:
                         $cat_filter_result = false;
