@@ -275,6 +275,13 @@ END:VCALENDAR';
      */
     protected $event_cache = 0;
     /**
+     * Timestamp of the start time fo parsing, set by parse function.
+     *
+     * @var    int
+     * @since  1.5.1
+     */
+    protected $p_start= NULL;
+    /**
      * Timestamp period enddate calculated from today and event_period
      *
      * @var   int
@@ -295,13 +302,6 @@ END:VCALENDAR';
      * @since  2.2.0
      */
     protected $replaceevents = [];
-    /**
-     * Timestamp of the start time fo parsing, set by parse function.
-     *
-     * @var    int
-     * @since  1.5.1
-     */
-    protected $p_start= NULL;
     /**
      * The timezone string from the configuration.
      *
@@ -675,22 +675,53 @@ END:VCALENDAR';
     }
     /*
      * Limit events to the first event_count events in the event - period/window.
+     * filter against categories filter.
      * Events are already sorted
      * 
      * @param  array of objects $data_events events parsed or cached.
-     * $param int timestamp $p_start start datetime of period/window with events displayed
-     * $param int timestamp $p_end (not included) end datetime of period/window with events displayed
+     * @param int timestamp $p_start start datetime of period/window with events displayed
+     * @param int timestamp $p_end (not included) end datetime of period/window with events displayed
      * @param  int $e_count limits the maximum number of events  
+     * @param stringt $cat_filter comma separated list of categories to compare (intersect) with events categories   
+     * @param string  $cat_filter_op Operator to asses result of intersection from a list or '' for no filtering.
      *
      * @return  array       remaining event objects.
      */
-    static function getFutureEvents($data_events, $p_start, $p_end, $e_count ) {
+    static function getFutureEvents($data_events, $p_start, $p_end, $e_count, $cat_filter = '', $cat_filter_op = '' ) {
         //
+// Create filter
+        if (empty($cat_filter_op)) {
+            $cat_filter_result = true;
+        } else {
+            $cat_filter_ary = (empty($cat_filter)) ? [''] : self::unescTextList($cat_filter);
+            $cat_filter_ln = count($cat_filter_ary);
+        }
+//        
         $newEvents = array();
         $i=0;
         foreach ($data_events as $e) {
+            if (! $cat_filter_result) {
+                $cat_is_cnt = count(array_intersect($cat_filter_ary,(($e->categories) ?? [''])));
+                switch ($cat_filter_op) {
+                    case "ANY":
+                        $cat_filter_result = (0 < $cat_is_cnt);
+                    break;
+                    case "ALL":
+                        $cat_filter_result = ($cat_filter_ln == $cat_is_cnt);
+                    break;
+                    case "NOTANY":
+                        $cat_filter_result = (0 == $cat_is_cnt);
+                    break;
+                    case "NOTALL":
+                        $cat_filter_result = ($cat_filter_ln == $cat_is_cnt);
+                    break;
+                    default:
+                        $cat_filter_result = false;
+                }
+            }
             if (($p_start) < $e->end
                 && $p_end > $e->start 
+                && $cat_filter_result
                 ) {
                     $i++;
                     if ($i > $e_count) {
@@ -997,6 +1028,8 @@ END:VCALENDAR';
      *    ['calendar_id'] id's or url's of the calendar(s) to fetch data
      *    ['event_count']  max number of events to return
      *    ['event_period'] max number of days after now to fetch events.
+     *    ['categories_filter'] list of categories to filter on, with type of filtering in first item
+     *    ['categories_filter_op'] filter operator, if empty no filtering on categories.
      *
      * @return array event objects
      */
@@ -1045,7 +1078,7 @@ END:VCALENDAR';
                 set_transient($transientId, $data, $instance['cache_time']*60);
             }
         }
-        return self::getFutureEvents($data, $p_start, $p_end, $instance['event_count']);
+        return self::getFutureEvents($data, $p_start, $p_end, $instance['event_count'], $instance['categories_filter'], $instance['categories_filter_op']);
     }
     /**
      * Fetches from calender using calendar_ids and event_period
@@ -1053,7 +1086,6 @@ END:VCALENDAR';
      *    ['calendar_id']  id or url of the calender to fetch data
      *    ['event_count']  max number of events to return
      *    ['event_period'] max number of days after now to fetch events.
-     *    ['filter_cat'] list of categories to filter on, with type of filtering in first item
      * @return array event objects
      */
     function fetch()
