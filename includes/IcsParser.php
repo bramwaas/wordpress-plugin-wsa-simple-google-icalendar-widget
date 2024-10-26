@@ -1078,7 +1078,10 @@ END:VCALENDAR';
                 set_transient($transientId, $data, $instance['cache_time']*60);
             }
         }
-        return self::getFutureEvents($data, $p_start, $p_end, $instance['event_count'], $instance['categories_filter'], $instance['categories_filter_op']);
+echo '<!-- 1081 ICsParser>' . PHP_EOL;
+print_r($instance);
+echo PHP_EOL .'--> . PHP_EOL';
+        return self::getFutureEvents($data, $p_start, $p_end, $instance['event_count'], (($instance['categories_filter'])??''), (($instance['categories_filter_op'])??''));
     }
     /**
      * Fetches from calender using calendar_ids and event_period
