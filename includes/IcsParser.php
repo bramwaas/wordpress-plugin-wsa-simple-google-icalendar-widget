@@ -689,22 +689,20 @@ END:VCALENDAR';
      */
     static function getFutureEvents($data_events, $p_start, $p_end, $e_count, $cat_filter = '', $cat_filter_op = '' ) {
         //
-// Create filter
-        if (empty($cat_filter_op)) {
-            $cat_filter_result = true;
-        } else {
+        if (!empty($cat_filter_op))  {
             $cat_filter_ary = (empty($cat_filter)) ? [''] : self::unescTextList($cat_filter);
             $cat_filter_ln = count($cat_filter_ary);
         }
-//        
         $newEvents = array();
         $i=0;
         foreach ($data_events as $e) {
-            if (! $cat_filter_result) {
+            if (empty($cat_filter_op)) {
+                $cat_filter_result = true; // no filter
+            }  else {
                 $cat_is_cnt = count(array_intersect($cat_filter_ary,(($e->categories) ?? [''])));
                 switch ($cat_filter_op) {
                     case "ANY":
-                        $cat_filter_result = (0 < $cat_is_cnt);
+                    $cat_filter_result = (0 < $cat_is_cnt);
                     break;
                     case "ALL":
                         $cat_filter_result = ($cat_filter_ln == $cat_is_cnt);
@@ -718,6 +716,9 @@ END:VCALENDAR';
                     default:
                         $cat_filter_result = false;
                 }
+//TODO remove after testing
+                $e->description .= "\nFilter:" . $cat_filter . ' Op:'. $cat_filter_op
+                . "\n array:" . implode( '#', $cat_filter_ary) . ' Ln:' . $cat_filter_ln;
             }
             if (($p_start) < $e->end
                 && $p_end > $e->start 
@@ -730,7 +731,6 @@ END:VCALENDAR';
                     $newEvents[] = $e;
                 }
         }
-        
         return $newEvents;
     }
     
@@ -1012,7 +1012,7 @@ END:VCALENDAR';
     static function unescTextList($t)
     {
         $l = str_replace(['\\\\','\,','\;','\n','\N'], [chr(20),chr(17),';',"\n", "\n"], $t);
-        $b = explode(',', $l);
+        $b = array_unique(explode(',', $l));
         foreach ($b as &$l){
             $l = str_replace([chr(20), chr(17) ], ['\\', ','], $l);
         }
