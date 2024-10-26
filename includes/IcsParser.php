@@ -81,11 +81,12 @@ DTSTART:20240929T143000
 DTEND:20240929T153000
 RRULE:FREQ=MONTHLY;COUNT=24;BYMONTHDAY=29
 UID:a-2
-DESCRIPTION:Monthly day 29
+DESCRIPTION:Monthly day 29\nCat 4 with semicolon and double quote
+  \; " \, and comma
 LOCATION:
 SUMMARY:Example\; Monthly day 29
-CATEGORIES:Cat Two\,,,Cat 4 with semicolon and double quote
-  \; " \, and comma.
+CATEGORIES:Cat Two\,,,Cat 4 
+  \; " \,,cat two\,
 END:VEVENT
 BEGIN:VEVENT
 DTSTART;VALUE=DATE:20240928
@@ -97,6 +98,15 @@ DESCRIPTION:Example Monthly 4th weekend
 LOCATION:Loc. unknown
 SUMMARY:X Monthly 4th weekend
 CATEGORIES:cat1
+END:VEVENT
+BEGIN:VEVENT
+DTSTART:20241015T143000
+DTEND:20241015T153000
+RRULE:FREQ=MONTHLY;COUNT=24;BYMONTHDAY=29
+UID:a-4
+DESCRIPTION:Example \\\\\, Monthly day 15, without category
+LOCATION:
+SUMMARY:Monthly day 15
 END:VEVENT
 END:VCALENDAR';
     
@@ -690,7 +700,7 @@ END:VCALENDAR';
     static function getFutureEvents($data_events, $p_start, $p_end, $e_count, $cat_filter = '', $cat_filter_op = '' ) {
         //
         if (!empty($cat_filter_op))  {
-            $cat_filter_ary = (empty($cat_filter)) ? [''] : self::unescTextList($cat_filter);
+            $cat_filter_ary = array_map("strtolower",(empty($cat_filter)) ? [''] : self::unescTextList($cat_filter));
             $cat_filter_ln = count($cat_filter_ary);
         }
         $newEvents = array();
@@ -699,7 +709,7 @@ END:VCALENDAR';
             if (empty($cat_filter_op)) {
                 $cat_filter_result = true; // no filter
             }  else {
-                $cat_is_cnt = count(array_intersect($cat_filter_ary,(($e->categories) ?? [''])));
+                $cat_is_cnt = count(array_intersect($cat_filter_ary,(array_map("strtolower",($e->categories) ?? ['']))));
                 switch ($cat_filter_op) {
                     case "ANY":
                     $cat_filter_result = (0 < $cat_is_cnt);
@@ -719,7 +729,8 @@ END:VCALENDAR';
 //TODO remove after testing
                 if (empty($e->description)) {$e->description = '';}
                 $e->description .= "\nFilter:" . $cat_filter . ' Op:'. $cat_filter_op
-                . "\n array:" . implode( '#', $cat_filter_ary) . ' Ln:' . $cat_filter_ln;
+                . "\nArray:" . implode( '#', $cat_filter_ary) . ' Ln:' . $cat_filter_ln 
+                . "\nIntersc:" . implode(',',array_intersect($cat_filter_ary,(array_map("strtolower",($e->categories) ?? ['']))));
             }
             if (($p_start) < $e->end
                 && $p_end > $e->start 
