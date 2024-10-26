@@ -717,6 +717,7 @@ END:VCALENDAR';
                         $cat_filter_result = false;
                 }
 //TODO remove after testing
+                if (empty($e->description)) {$e->description = '';}
                 $e->description .= "\nFilter:" . $cat_filter . ' Op:'. $cat_filter_op
                 . "\n array:" . implode( '#', $cat_filter_ary) . ' Ln:' . $cat_filter_ln;
             }
@@ -1078,9 +1079,10 @@ END:VCALENDAR';
                 set_transient($transientId, $data, $instance['cache_time']*60);
             }
         }
-echo '<!-- 1081 ICsParser>' . PHP_EOL;
-print_r($instance);
-echo PHP_EOL .'--> . PHP_EOL';
+//TODO remove debug statements
+//echo '<!-- 1081 ICsParser>' . PHP_EOL;
+//print_r($instance);
+//echo PHP_EOL .'--> . PHP_EOL';
         return self::getFutureEvents($data, $p_start, $p_end, $instance['event_count'], (($instance['categories_filter'])??''), (($instance['categories_filter_op'])??''));
     }
     /**
