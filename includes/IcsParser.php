@@ -1024,7 +1024,7 @@ END:VCALENDAR';
     static function unescTextList($t)
     {
         $l = str_replace(['\\\\','\,','\;','\n','\N'], [chr(20),chr(17),';',"\n", "\n"], $t);
-        $b = array_unique(explode(',', $l));
+        $b = explode(',', $l);
         foreach ($b as &$l){
             $l = str_replace([chr(20), chr(17) ], ['\\', ','], $l);
         }
