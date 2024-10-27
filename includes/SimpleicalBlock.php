@@ -306,11 +306,7 @@ class SimpleicalBlock
                 $cat_class = '';
                 $cat_list = '';
                 if (!empty($e->categories)) {
-                    foreach ($e->categories as $cat){
-                        if (!empty($cat)) {
-                            $cat_class .=  ' ' . sanitize_html_class($cat);
-                        }
-                    }
+                    $cat_class = ' ' . implode( ' ', array_map( "sanitize_html_class", $e->categories ));
                     if ($cat_disp) { 
                         $cat_list = wp_kses('<div class="categories"><small>'
                             . implode($cat_sep,str_replace("\n", '<br>', $e->categories ))
@@ -336,17 +332,20 @@ class SimpleicalBlock
 //echo PHP_EOL . '<!-- Categories: ' . PHP_EOL;
 //print_r ($e);
 //echo PHP_EOL . ' -->' . PHP_EOL; 
-                if (!empty($e->categories)) {
-                    echo $cat_list;
-                }
                 $evdtsum = (($e->startisdate === false) ? wp_kses(wp_date($dftsum, $e->start, $attributes['tz_ui']) . wp_date($dftsend, $e->end, $attributes['tz_ui']), 'post') : '');
                 if ($layout < 2 && $curdate != $evdate) {
                     if ($curdate != '') {
                         echo '</ul></li>';
                     }
                     echo '<li class="list-group-item' . $sflgi . $cat_class . ' head">' . '<span class="ical-date">' . ucfirst($evdate) . '</span><ul class="list-group' . $attributes['suffix_lg_class'] . '">';
+                    if (!empty($e->categories)) {
+                        echo $cat_list;
+                    }
                 }
                 echo '<li class="list-group-item' . $sflgi . $cat_class . '">';
+                if (!empty($e->categories)) {
+                    echo $cat_list;
+                }
                 if ($layout == 3 && $curdate != $evdate) {
                     echo '<span class="ical-date">' . ucfirst($evdate) . '</span>' . (('a' == $attributes['tag_sum']) ? '<br>' : '');
                 }
