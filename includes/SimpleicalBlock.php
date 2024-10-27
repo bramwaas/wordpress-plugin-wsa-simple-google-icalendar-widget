@@ -350,11 +350,11 @@ class SimpleicalBlock
                 if (! empty($e->summary)) {
                     echo str_replace("\n", '<br>', wp_kses($e->summary, 'post'));
                 }
-                echo '</' . $attributes['tag_sum'] . '>';
+                echo '</' . $attributes['tag_sum'] . '>'. $cat_list;
                 if ($layout == 2) {
                     echo '<span>', $evdate, $evdtsum, '</span>';
                 }
-                echo $cat_list . '<div class="ical_details' . $sflgia . (('a' == $attributes['tag_sum']) ? ' collapse' : '') . '" id="', $itemid, '">';
+                echo '<div class="ical_details' . $sflgia . (('a' == $attributes['tag_sum']) ? ' collapse' : '') . '" id="', $itemid, '">';
                 if (! empty($e->description) && trim($e->description) > '' && $excerptlength !== 0) {
                     if ($excerptlength !== '' && strlen($e->description) > $excerptlength) {
                         $e->description = substr($e->description, 0, $excerptlength + 1);
