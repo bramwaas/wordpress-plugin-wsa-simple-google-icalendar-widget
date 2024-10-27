@@ -338,18 +338,12 @@ class SimpleicalBlock
                         echo '</ul></li>';
                     }
                     echo '<li class="list-group-item' . $sflgi . $cat_class . ' head">' . '<span class="ical-date">' . ucfirst($evdate) . '</span><ul class="list-group' . $attributes['suffix_lg_class'] . '">';
-                    if (!empty($e->categories)) {
-                        echo $cat_list;
-                    }
                 }
                 echo '<li class="list-group-item' . $sflgi . $cat_class . '">';
-                if (!empty($e->categories)) {
-                    echo $cat_list;
-                }
                 if ($layout == 3 && $curdate != $evdate) {
                     echo '<span class="ical-date">' . ucfirst($evdate) . '</span>' . (('a' == $attributes['tag_sum']) ? '<br>' : '');
                 }
-                echo '<' . $attributes['tag_sum'] . ' class="ical_summary' . $sflgia . (('a' == $attributes['tag_sum']) ? '" data-toggle="collapse" data-bs-toggle="collapse" href="#' . $itemid . '" aria-expanded="false" aria-controls="' . $itemid . '">' : '">');
+                echo  '<' . $attributes['tag_sum'] . ' class="ical_summary' . $sflgia . (('a' == $attributes['tag_sum']) ? '" data-toggle="collapse" data-bs-toggle="collapse" href="#' . $itemid . '" aria-expanded="false" aria-controls="' . $itemid . '">' : '">');
                 if ($layout != 2) {
                     echo $evdtsum;
                 }
@@ -360,7 +354,7 @@ class SimpleicalBlock
                 if ($layout == 2) {
                     echo '<span>', $evdate, $evdtsum, '</span>';
                 }
-                echo '<div class="ical_details' . $sflgia . (('a' == $attributes['tag_sum']) ? ' collapse' : '') . '" id="', $itemid, '">';
+                echo $cat_list . '<div class="ical_details' . $sflgia . (('a' == $attributes['tag_sum']) ? ' collapse' : '') . '" id="', $itemid, '">';
                 if (! empty($e->description) && trim($e->description) > '' && $excerptlength !== 0) {
                     if ($excerptlength !== '' && strlen($e->description) > $excerptlength) {
                         $e->description = substr($e->description, 0, $excerptlength + 1);
