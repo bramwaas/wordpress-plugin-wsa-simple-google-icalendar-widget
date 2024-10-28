@@ -9,7 +9,7 @@
  * @copyright  Copyright (c)  2017 - 2024, Bram Waasdorp
  * @link       https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  * @license    http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * Version: 2.3.0
+ * Version: 2.5.0
  * 20220410 namespaced and renamed after classname.
  * 2.1.0 option for comma seperated list of IDs
  * 2.1.3 block footer after events and placeholder when no events.
@@ -134,6 +134,25 @@ class SimpleicalWidgetAdmin {
         _e('<br>At first a placeholder with title and some Id\'s to use later is created and displayed.<br>After pageload the timezone of client browser is fetched with javascript to process the output and get it with a REST call,<br>then this output is placed over the placeholder.', 'simple-google-icalendar-widget');
         _e('<br>With "Use WordPress timezone settings, with REST" timezone of WordPress installation is used.', 'simple-google-icalendar-widget');
         _e('<br>At first a placeholder with title and some Id\'s to use later is created and displayed.<br>After pageload the output is fetched with a REST call, then this output is placed over the placeholder.</p>', 'simple-google-icalendar-widget');
+
+        echo('<span id="categories_filter"></span>');
+        _e('<p><strong>Categories Filter Operator</strong></p>', 'simple-google-icalendar-widget');
+        _e('<p>Here you can choose how to compare the filter categories with the event categories.</p>', 'simple-google-icalendar-widget');
+        _e('<li>Default: Empty no filtering.</li>', 'simple-google-icalendar-widget');
+        _e('<li>ANY is true if at least one of the elements of the filter set is present in the event set, or in other words the filter set intersects the event set, the intersection contains at least one element. This seems to me to be the most practical operator.</li>', 'simple-google-icalendar-widget');
+        _e('<li>ALL is true if all elements of the filter set exist in the event set, or in other words, the intersection contains the same number of elements as the filter set. The event set can contain other elements.</li>', 'simple-google-icalendar-widget');
+        _e('<li>NOTANY is true if ANY is NOT true. The intersection is empty.</li>', 'simple-google-icalendar-widget');
+        _e('<li>NOTALL is true if ALL is NOT true. The intersection contains fewer elements than the filter set.</li>', 'simple-google-icalendar-widget');
+        _e('<p>A special case are events without categories. In the filter, the plugin handles this as if the category were a null string ("").</p>', 'simple-google-icalendar-widget');
+        
+        _e('<p><strong>Categories Filter List</strong></p>', 'simple-google-icalendar-widget');
+        _e('<p>List of filter categories separated by a comma (not in double quotes). If a category contains a comma, you must add a backslash (\,) to it. A null string is created as a category if nothing is entered in the list or if the list ends with a comma, or if there are two comma separators immediately next to each other.</p>', 'simple-google-icalendar-widget');
+        _e('<p>Categories (at least in this plugin) behave like simple tags and have no intrinsic meaning or relationship. So if you want to select all events with category flower, rose or tulip, you have to add them all to the filter list. With category flower, you don\'t automatically select rose and tulip too.</p>', 'simple-google-icalendar-widget');
+        
+        _e('<p><strong>Display categories with Separator</strong></p>', 'simple-google-icalendar-widget');
+        _e('<p>Default: Empty, categories are not displayed. Here you can choose to display the list of event categories after the summary and with what separator. If you leave this field empty, the list will not be displayed.</p>', 'simple-google-icalendar-widget');
+        
+        
         
         _e('<p><strong>Suffix group class</strong></p>', 'simple-google-icalendar-widget');
         _e('<p>Suffix to add after css-class around the event (list-group),<br>start with space to keep the original class and add another class.</p>', 'simple-google-icalendar-widget');

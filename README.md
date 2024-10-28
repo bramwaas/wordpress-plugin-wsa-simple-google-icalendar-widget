@@ -190,19 +190,20 @@ Warning: the plugin only supports categories that are available in the iCal file
 When the ical contains categories there are three options in the advanced section to use them.
       
 -- Categories Filter Operator:
+Here you can choose how to compare the filter categories with the event categories.  
 - empty no filtering.
-- ANY is true when at least one of the elements of the filter-set is contained in the event set, or in other words, the filter-set intersects the event-set, the intersection contains at least one element. This seems to me the most practical operator.
-- ALL is true when all the elements of the filter-set are contained in the event set, or in other words, the intersection contains the same number of elements as the filter-set. The event-set may contain other elements.
-- NOTANY is true when ANY is NOT true. The intersection is empty.
-- NOTALL is true when ALL is NOT true. The intersection contains less elements then the filter-set.
-- A special case are events without a categories set. In the filter I process those as if the category were a null-string (""). 
+- ANY is true if at least one of the elements of the filter set is present in the event set, or in other words the filter set intersects the event set, the intersection contains at least one element. This seems to me to be the most practical operator.  
+- ALL is true if all elements of the filter set exist in the event set, or in other words, the intersection contains the same number of elements as the filter set. The event set can contain other elements.  
+- NOTANY is true if ANY is NOT true. The intersection is empty.
+- NOTALL is true if ALL is NOT true. The intersection contains fewer elements than the filter set.   
+- A special case are events without categories. In the filter, the plugin handles this as if the category were a null string ("").        
      
 -- Categories Filter List:
-- List of filter categories separated by a comma (not enclosed with double quotes). When a category contains a comma you must escape it with a backslash (\,), a null string as category is created when nothing is filled in the list or when the list ends with a comma, or when two comma separators are directly next to each other.           
-- Categories (at least in this plugin) behave like simple tags and  have no intrinsic meaning or relation. So if you want to select all events with category flower, rose or tulip you have to add them all in the filterlist category flower will not automatical also select rose and tulip 
+- List of filter categories separated by a comma (not in double quotes). If a category contains a comma, you must add a backslash (\,) to it. A null string is created as a category if nothing is entered in the list or if the list ends with a comma, or if there are two comma separators immediately next to each other.             
+- Categories (at least in this plugin) behave like simple tags and have no intrinsic meaning or relationship. So if you want to select all events with category flower, rose or tulip, you have to add them all to the filter list. With category flower, you don't automatically select rose and tulip too    
   
 -- Display categories with separator:
-- Here you can chose to show the list of categories of the event above the description and with wich separator. If you leave this field empty the list is not showed.
+- Here you can choose to display the list of event categories after the summary and with what separator. If you leave this field empty, the list will not be displayed.
 
 If the event contains categories, the list of categories of this event cleaned as classes (removed spaces etc.) is added to the  html-classes of the event (to the list-group-item). 
 

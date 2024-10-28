@@ -12,7 +12,7 @@
  * $content (string): The block default content.
  * $block (WP_Block): The block instance.
  * 
- * version 2.4.3
+ * version 2.5.0
   * 2.4.3 created to replace render_callback option in server side register_block_type    
  */
 use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalBlock;
