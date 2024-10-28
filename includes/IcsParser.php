@@ -70,23 +70,21 @@ DTEND:20240928T160000
 RRULE:FREQ=WEEKLY;INTERVAL=3;BYDAY=SU,WE,SA
 UID:a-1
 DESCRIPTION:Description event every 3 weeks sunday wednesday and saturday. T
- est A-Z.\nLine 2 of description.
-LOCATION:Located at home \, or somewhere else \\\\,
-SUMMARY: Every 3 weeks sunday\\wednesday \\\\ saturday
-CATEGORIES:cat1,Cat Two\,, Cat with \, 
-  comma and spaces
+ est A-Z.\nLine 2 of description. Category flower
+LOCATION:Located at home \, or somewhere else 
+SUMMARY: Every 3 weeks sunday \\ wednesday \\\\ saturday
+CATEGORIES:Flower
 END:VEVENT
 BEGIN:VEVENT
 DTSTART:20240929T143000
 DTEND:20240929T153000
 RRULE:FREQ=MONTHLY;COUNT=24;BYMONTHDAY=29
 UID:a-2
-DESCRIPTION:Monthly day 29\nCat 4 with semicolon and double quote
-  \; " \, and comma
+DESCRIPTION:Monthly day 29\nCategory Rose\, (with comma in category. test on
+  semicolon and double quote and comma \; " \, .
 LOCATION:
 SUMMARY:Example\; Monthly day 29
-CATEGORIES:Cat Two\,,,Cat 4 
-  \; " \,,cat two\,
+CATEGORIES:Rose\,
 END:VEVENT
 BEGIN:VEVENT
 DTSTART;VALUE=DATE:20240928
@@ -94,19 +92,20 @@ DTSTART;VALUE=DATE:20240928
 DURATION:P1DT23H59M60S
 RRULE:FREQ=MONTHLY;COUNT=13;BYDAY=4SA
 UID:a-3
-DESCRIPTION:Example Monthly 4th weekend
+DESCRIPTION:Example Monthly 4th weekend\ncategories:
+ flower,Red Rose,Tulip
 LOCATION:Loc. unknown
 SUMMARY:X Monthly 4th weekend
-CATEGORIES:cat1
+CATEGORIES:flower,Red Rose,Tulip
 END:VEVENT
 BEGIN:VEVENT
 DTSTART:20241015T143000
 DTEND:20241015T153000
 RRULE:FREQ=MONTHLY;COUNT=24;BYMONTHDAY=29
 UID:a-4
-DESCRIPTION:Example \\\\\, Monthly day 15, without category
+DESCRIPTION:Monthly day 29, without category
 LOCATION:
-SUMMARY:Monthly day 15
+SUMMARY:Monthly day 29
 END:VEVENT
 END:VCALENDAR';
     
@@ -726,11 +725,6 @@ END:VCALENDAR';
                     default:
                         $cat_filter_result = false;
                 }
-//TODO remove after testing
-                if (empty($e->description)) {$e->description = '';}
-                $e->description .= "\nFilter:" . $cat_filter . ' Op:'. $cat_filter_op
-                . "\nArray:" . implode( '#', $cat_filter_ary) . ' Ln:' . $cat_filter_ln 
-                . "\nIntersc:" . implode(',',array_intersect($cat_filter_ary,(array_map("strtolower",($e->categories) ?? ['']))));
             }
             if (($p_start) < $e->end
                 && $p_end > $e->start 

@@ -4,7 +4,7 @@ Plugin name: Simple Google Calendar Outlook Events Block Widget
 Contributors: bramwaas   
 Tags: Google Calendar, iCal, Events, Block, Calendar   
 Requires at least: 5.3.0   
-Tested up to: 6.6   
+Tested up to: 6.7   
 Requires PHP: 7.4   
 Stable tag: 2.4.4   
 License: GPLv2 or later   
@@ -187,22 +187,24 @@ font-size: 16px;
 = How do I filter on categories =
 
 Warning: the plugin only supports categories that are available in the iCal file. Microsoft Outlook does support categories but does not share them via the ical file.
- 
-This is what I have in mind now for the implementation:
-
-- Retrieve the set of categories from the iCal events (when they exist) into my plugin-events as the event-set. Keep in mind that one event can contain 0 or more categories and that a category can contain a space.
-- Make one filter with a comma separated list of categories as the filter-set.
-- Make possible to choose one method to assess the intersection of both sets from a limited list of operators, ANY, ALL, NOTANY, NOTALL (maybe I find better names or symbols later)
+When the ical contains categories there are three options in the advanced section to use them.
+      
+-- Categories Filter Operator:
+- empty no filtering.
 - ANY is true when at least one of the elements of the filter-set is contained in the event set, or in other words, the filter-set intersects the event-set, the intersection contains at least one element. This seems to me the most practical operator.
 - ALL is true when all the elements of the filter-set are contained in the event set, or in other words, the intersection contains the same number of elements as the filter-set. The event-set may contain other elements.
 - NOTANY is true when ANY is NOT true. The intersection is empty.
 - NOTALL is true when ALL is NOT true. The intersection contains less elements then the filter-set.
-- A special case are events without a categories set. As I have described it here the will only appear when the operator is NOTANY or NOTALL. I think of using a null-string ("") in the filter set to represent events without a categories set. I don’t think this is correct in set theory and it may theoretical possible to define a category as a null string. Nevertheless I think this is te most practical solution to add the events without a category positive to a filter.
-- Make a toggle (or select) option to display the set of categories on top of an event (in a SMALL HTML line)
-- Add the list of categories of an event cleaned as classes (removed spaces etc.) to the html-classes of event.
-- Categories (at least in this plugin) behave like simple tags and  have no intrinsic meaning or relation. So if you want to select all events with catergory flower, rose or tulip you have to add them all in the filterlist category flower will not automatical also select rose and tulip 
+- A special case are events without a categories set. In the filter I process those as if the category were a null-string (""). 
+     
+-- Categories Filter List:
+- List of filter categories separated by a comma (not enclosed with double quotes). When a category contains a comma you must escape it with a backslash (\,), a null string as category is created when nothing is filled in the list or when the list ends with a comma, or when two comma separators are directly next to each other.           
+- Categories (at least in this plugin) behave like simple tags and  have no intrinsic meaning or relation. So if you want to select all events with category flower, rose or tulip you have to add them all in the filterlist category flower will not automatical also select rose and tulip 
+  
+-- Display categories with separator:
+- Here you can chose to show the list of categories of the event above the description and with wich separator. If you leave this field empty the list is not showed.
 
-- 
+If the event contains categories, the list of categories of this event cleaned as classes (removed spaces etc.) is added to the  html-classes of the event (to the list-group-item). 
 
 = How do I contribute to Simple Google Calendar Outlook Events Widget? =
 
@@ -244,7 +246,7 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 * error in WP 6.6 this block (with serverside rendering) breaks editor when placed on a page via a synced pattern. Issue reported as WordPress Trac #61592
 
 == Changelog ==
-* 2.5.0 Add filter and display support for categories.
+* 2.5.0 Add filter and display support for categories. Tested with 6.7-RC1. 
 * 2.4.4 Initialization sibid also with direct assign in case setAttribute does not work (e.g. in Synced pattern 6.6)
  replace ServerSideRender in block editor by custom Rest call (only for WP 6.3 +) and place_holder html in Javascript Edit and Save.   
  Tested with Elementor v3.23.3   

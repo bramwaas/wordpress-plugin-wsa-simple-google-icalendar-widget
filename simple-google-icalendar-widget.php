@@ -6,7 +6,7 @@
  Author: Bram Waasdorp
  Version: 2.4.4
  License: GPL3
- Tested up to: 6.6
+ Tested up to: 6.7
  Requires at least: 5.3
  Requires PHP:  7.4 tested with 8
  Text Domain:  simple-google-icalendar-widget
@@ -41,7 +41,8 @@
  *   bw 20240125 v2.3.0 v2 dir for older versions eg block.json version 2 for WP6.3 - Extra save instance/attributes in option 'simple_ical_block_attrs', like in standaard
  *      wp-widget in array with sibid as index so that the attributes are available for REST call.
  *   bw 20240509 v2.4.1 added defaults to all used keys of $args to solve issue 'PHP warnings' of johansam on support forum. Undefined array key “classname” in .../simple-google-icalendar-widget.php on line 170
- *   b4 20240727 v2.4.4 simplified defaulting args and improved code around that for the widget output    
+ *   bw 20240727 v2.4.4 simplified defaulting args and improved code around that for the widget output
+ *   bw 20241028 v2.5.0 Add support for categories    
  */
 /*
  Simple Google Calendar Outlook Events Widget
@@ -392,8 +393,8 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
         <p>
           <label for="<?php echo $this->get_field_id('categories_display'); ?>"><?php _e('Display categories with separator:', 'simple-google-icalendar-widget'); ?></label> 
           <input class="widefat" id="<?php echo $this->get_field_id('categories_display'); ?>" name="<?php echo $this->get_field_name('categories_display'); ?>" type="text" value="<?php echo esc_attr($instance['categories_display']); ?>" />
+		<label style="font-size:12px; color:#7f7f7f;"><?php _e('Empty no display. Else display categories above event with this separator.', 'simple-google-icalendar-widget'); ?></label>
         </p>
-		<small><?php _e('Empty no display. Else display categories above event with this separator.', 'simple-google-icalendar-widget'); ?></small>
         <p>
           <label for="<?php echo $this->get_field_id('tag_sum'); ?>"><?php _e('Tag for summary:', 'simple-google-icalendar-widget'); ?></label> 
           <select class="widefat" id="<?php echo $this->get_field_id('tag_sum'); ?>" name="<?php echo $this->get_field_name('tag_sum'); ?>" >

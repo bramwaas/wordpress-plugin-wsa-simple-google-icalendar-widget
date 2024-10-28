@@ -9,7 +9,7 @@
  * @link https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * Gutenberg Block functions since v2.1.2 also used for widget.
- * Version: 2.4.4
+ * Version: 2.5.0
  * 20220427 namespaced and renamed after classname.
  * 20220430 try with static calls
  * 20220509 fairly correct front-end display. attributes back to block.json
@@ -309,9 +309,10 @@ class SimpleicalBlock
                 $itemid = $attributes['sibid'] . '_' . strval(++ $sn) . '_' . $idlist[0];
                 $evdate = wp_kses(wp_date($dflg, $e->start, $attributes['tz_ui']), 'post');
                 $cal_class = ((! empty($e->cal_class)) ? ' ' . sanitize_html_class($e->cal_class) : '');
-                $cat_class = '';
                 $cat_list = '';
-                if (!empty($e->categories)) {
+                if (empty($e->categories)) {
+                    $cat_class = '';
+                } else {
                     $cat_class = ' ' . implode( ' ', array_map( "sanitize_html_class", $e->categories ));
                     if ($cat_disp) { 
                         $cat_list = wp_kses('<div class="categories"><small>'
@@ -335,9 +336,6 @@ class SimpleicalBlock
                         "</h6><h6>"
                     ), '', $evdate . wp_kses(wp_date($dflgend, $e->end - 1, $attributes['tz_ui']), 'post'));
                 }
-//echo PHP_EOL . '<!-- Categories: ' . PHP_EOL;
-//print_r ($e);
-//echo PHP_EOL . ' -->' . PHP_EOL; 
                 $evdtsum = (($e->startisdate === false) ? wp_kses(wp_date($dftsum, $e->start, $attributes['tz_ui']) . wp_date($dftsend, $e->end, $attributes['tz_ui']), 'post') : '');
                 if ($layout < 2 && $curdate != $evdate) {
                     if ($curdate != '') {
@@ -356,11 +354,11 @@ class SimpleicalBlock
                 if (! empty($e->summary)) {
                     echo str_replace("\n", '<br>', wp_kses($e->summary, 'post'));
                 }
-                echo '</' . $attributes['tag_sum'] . '>'. $cat_list;
+                echo '</' . $attributes['tag_sum'] . '>';
                 if ($layout == 2) {
                     echo '<span>', $evdate, $evdtsum, '</span>';
                 }
-                echo '<div class="ical_details' . $sflgia . (('a' == $attributes['tag_sum']) ? ' collapse' : '') . '" id="', $itemid, '">';
+                echo $cat_list . '<div class="ical_details' . $sflgia . (('a' == $attributes['tag_sum']) ? ' collapse' : '') . '" id="', $itemid, '">';
                 if (! empty($e->description) && trim($e->description) > '' && $excerptlength !== 0) {
                     if ($excerptlength !== '' && strlen($e->description) > $excerptlength) {
                         $e->description = substr($e->description, 0, $excerptlength + 1);
