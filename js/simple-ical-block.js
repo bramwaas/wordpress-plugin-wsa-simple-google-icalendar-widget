@@ -23,7 +23,7 @@
  *   extra option Wordpress timezone with rest
  * 2.4.4 initialization sibid also with direct assign in case setAttribute does not work (e.g. in Synced pattern 6.6) 
  *   removed references to ServerSideRender added deprecated 243; decoupled render and save changed attributes. 
- * 2.5.0
+ * 2.5.0 support for categories.
  */
 (function(blocks, i18n, element, blockEditor, components) {
 	const el = element.createElement;
