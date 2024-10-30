@@ -4,7 +4,7 @@
  Description: Widget that displays events from a public google calendar or iCal file
  Plugin URI: https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  Author: Bram Waasdorp
- Version: 2.5.0
+ Version: 2.5.0.RC
  License: GPL3
  Tested up to: 6.7
  Requires at least: 5.3
@@ -42,7 +42,7 @@
  *      wp-widget in array with sibid as index so that the attributes are available for REST call.
  *   bw 20240509 v2.4.1 added defaults to all used keys of $args to solve issue 'PHP warnings' of johansam on support forum. Undefined array key “classname” in .../simple-google-icalendar-widget.php on line 170
  *   bw 20240727 v2.4.4 simplified defaulting args and improved code around that for the widget output
- *   bw 20241028 v2.5.0 Add support for categories    
+ *   bw 20241028 v2.5.0 Add support for categories    Tested with 6.7-RC and 5.9.5. 
  */
 /*
  Simple Google Calendar Outlook Events Widget
