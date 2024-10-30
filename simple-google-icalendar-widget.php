@@ -383,7 +383,7 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
             <option value="ANY"<?php echo ('ANY'==esc_attr($instance['categories_filter_op']))?'selected':''; ?>><?php _e('ANY, one or more match', 'simple-google-icalendar-widget'); ?></option>
             <option value="ALL"<?php echo ('ALL'==esc_attr($instance['categories_filter_op']))?'selected':''; ?>><?php _e('ALL, all match', 'simple-google-icalendar-widget'); ?></option>
             <option value="NOTANY"<?php echo ('NOTANY'==esc_attr($instance['categories_filter_op']))?'selected':''; ?>><?php _e('NOT ANY, no match', 'simple-google-icalendar-widget'); ?></option>
-            <option value="NOTALL"<?php echo ('NOTALL'==esc_attr($instance['categories_filter_op']))?'selected':''; ?>><?php _e('NOT ALL, not all match, with REST', 'simple-google-icalendar-widget'); ?></option>
+            <option value="NOTALL"<?php echo ('NOTALL'==esc_attr($instance['categories_filter_op']))?'selected':''; ?>><?php _e('NOT ALL, not all match', 'simple-google-icalendar-widget'); ?></option>
   		 </select>
   		</p> 	
         <p>

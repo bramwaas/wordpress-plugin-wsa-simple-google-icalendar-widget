@@ -365,10 +365,10 @@
 							onChange: function(value) { props.setAttributes({ categories_filter_op: value }); },
 							options: [
 								{ value: '', label: __('No filter', 'simple-google-icalendar-widget') },
-								{ value: 'ANY', label: __('ANY', 'simple-google-icalendar-widget') },
-								{ value: 'ALL', label: __('ALL', 'simple-google-icalendar-widget') },
-								{ value: 'NOTANY', label: __('NOT ANY', 'simple-google-icalendar-widget') },
-								{ value: 'NOTALL', label: __('NOT ALL', 'simple-google-icalendar-widget') }
+								{ value: 'ANY', label: __('ANY, one or more match', 'simple-google-icalendar-widget') },
+								{ value: 'ALL', label: __('ALL, all match', 'simple-google-icalendar-widget') },
+								{ value: 'NOTANY', label: __('NOT ANY, no match', 'simple-google-icalendar-widget') },
+								{ value: 'NOTALL', label: __('NOT ALL, not all match', 'simple-google-icalendar-widget') }
 							]
 						}
 					),
