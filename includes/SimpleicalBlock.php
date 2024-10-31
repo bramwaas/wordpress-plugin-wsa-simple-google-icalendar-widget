@@ -308,12 +308,10 @@ class SimpleicalBlock
                 $idlist = explode("@", esc_attr($e->uid));
                 $itemid = $attributes['sibid'] . '_' . strval(++ $sn) . '_' . $idlist[0];
                 $evdate = wp_kses(wp_date($dflg, $e->start, $attributes['tz_ui']), 'post');
-                $cal_class = ((! empty($e->cal_class)) ? ' ' . sanitize_html_class($e->cal_class) : '');
+                $ev_class = ((! empty($e->cal_class)) ? ' ' . sanitize_html_class($e->cal_class) : '');
                 $cat_list = '';
-                if (empty($e->categories)) {
-                    $cat_class = '';
-                } else {
-                    $cat_class = ' ' . implode( ' ', array_map( "sanitize_html_class", $e->categories ));
+                if (!empty($e->categories)) {
+                    $ev_class = $ev_class . ' ' . implode( ' ', array_map( "sanitize_html_class", $e->categories ));
                     if ($cat_disp) { 
                         $cat_list = wp_kses('<div class="categories"><small>'
                             . implode($cat_sep,str_replace("\n", '<br>', $e->categories ))
@@ -341,9 +339,9 @@ class SimpleicalBlock
                     if ($curdate != '') {
                         echo '</ul></li>';
                     }
-                    echo '<li class="list-group-item' . $sflgi . $cat_class . ' head">' . '<span class="ical-date">' . ucfirst($evdate) . '</span><ul class="list-group' . $attributes['suffix_lg_class'] . '">';
+                    echo '<li class="list-group-item' . $sflgi . $ev_class . ' head">' . '<span class="ical-date">' . ucfirst($evdate) . '</span><ul class="list-group' . $attributes['suffix_lg_class'] . '">';
                 }
-                echo '<li class="list-group-item' . $sflgi . $cat_class . '">';
+                echo '<li class="list-group-item' . $sflgi . $ev_class . '">';
                 if ($layout == 3 && $curdate != $evdate) {
                     echo '<span class="ical-date">' . ucfirst($evdate) . '</span>' . (('a' == $attributes['tag_sum']) ? '<br>' : '');
                 }

@@ -2,7 +2,7 @@
  * simple-ical-block-view.js
  * view simple-ical-block output with extra client parameter tzid_ui using REST 
  * restRoot for endpoint passed via inlinescript and this script in enqueue_block_assets
- *  * v2.4.3 0
+ *  * v2.5.0
  * 2.4.3 add search in iFrame and choice of used timezone via data-sib-utzui
  * 2.4.4 title from params
 **/
