@@ -319,12 +319,9 @@ class SimpleicalBlock
                     }
                 }
                 if (! $attributes['allowhtml']) {
-                    if (! empty($e->summary))
-                        $e->summary = htmlspecialchars($e->summary);
-                    if (! empty($e->description))
-                        $e->description = htmlspecialchars($e->description);
-                    if (! empty($e->location))
-                        $e->location = htmlspecialchars($e->location);
+                    if (!empty($e->summary)) $e->summary = htmlspecialchars($e->summary);
+                    if (!empty($e->description)) $e->description = htmlspecialchars($e->description);
+                    if (!empty($e->location)) $e->location = htmlspecialchars($e->location);
                 }
                 if (date('yz', $e->start) != date('yz', $e->end)) {
                     $evdate = str_replace(array(
