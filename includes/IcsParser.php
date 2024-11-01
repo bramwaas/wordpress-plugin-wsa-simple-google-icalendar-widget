@@ -807,9 +807,9 @@ END:VCALENDAR';
     /**
      * Checks if Zero time (timezone UTC)
      * Checks if a time zone ID is a Iana timezone then return this timezone.
-     * If empty return timezone from WP
      * Checks if time zone ID is windows timezone then return this timezone
-     * If nothing istrue return timezone from WP
+     * If empty return timezone from application
+     * If nothing istrue return timezone from application
      * If timezone string from WP doesn't make a good timezone return UTC timezone.
      *
      * @param  string $ptzid (timezone ID)
