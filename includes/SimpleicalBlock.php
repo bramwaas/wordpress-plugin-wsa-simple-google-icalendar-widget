@@ -199,7 +199,7 @@ class SimpleicalBlock
             'title' => __('Events', 'simple-google-icalendar-widget'),
             'tzid_ui' => wp_timezone_string()
         ], $block_attributes);
-        $block_attributes['anchorId'] = sanitize_html_class($block_attributes['anchorId'], $block_attributes['sibid']);
+        $block_attributes['anchorId'] = self::sanitize_html_clss($block_attributes['anchorId'], $block_attributes['sibid']);
         if (empty($block_attributes['tzid_ui'])) {
             $block_attributes['tzid_ui'] = wp_timezone_string();
         }
@@ -289,9 +289,9 @@ class SimpleicalBlock
         $dftstart = (isset($attributes['dateformat_tstart'])) ? $attributes['dateformat_tstart'] : 'G:i';
         $dftend = (isset($attributes['dateformat_tend'])) ? $attributes['dateformat_tend'] : ' - G:i ';
         $excerptlength = (isset($attributes['excerptlength']) && ' ' < trim($attributes['excerptlength'])) ? (int) $attributes['excerptlength'] : '';
-        $attributes['suffix_lg_class'] = wp_kses($attributes['suffix_lg_class'], 'post');
-        $sflgi = wp_kses($attributes['suffix_lgi_class'], 'post');
-        $sflgia = wp_kses($attributes['suffix_lgia_class'], 'post');
+        $attributes['suffix_lg_class'] = self::sanitize_html_clss($attributes['suffix_lg_class']);
+        $sflgi = self::sanitize_html_clss($attributes['suffix_lgi_class']);
+        $sflgia = self::sanitize_html_clss($attributes['suffix_lgia_class']);
         if (empty($attributes['categories_display'])) {
             $cat_disp = false;
         } else {
@@ -449,6 +449,26 @@ class SimpleicalBlock
             }
         }
         return $html;
+    }
+    /**
+     * copied from WP sanitize_html_class, and added space as allowed character to accomodate multiple classes in one string.
+     * Strips the string down to A-Z, ,a-z,0-9,_,-. If this results in an empty string then it will return the alternative value supplied.
+     *
+     * @param string $class
+     * @param string $fallback
+     * @return string sanitized class or fallback.
+     */
+    static function sanitize_html_clss( $class, $fallback = '' ) {
+        // Strip out any %-encoded octets.
+        $sanitized = preg_replace( '|%[a-fA-F0-9][a-fA-F0-9]|', '', $class );
+        
+        // Limit to A-Z, ' ', a-z, 0-9, '_', '-'.
+        $sanitized = preg_replace( '/[^A-Z a-z0-9_-]/', '', $sanitized );
+        
+        if ( '' === $sanitized && $fallback ) {
+            return  $fallback;
+        }
+        return $sanitized;
     }
     
 } // end class SimpleicalBlock
