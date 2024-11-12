@@ -246,7 +246,7 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 * error in WP 6.6 this block (with serverside rendering) breaks editor when placed on a page via a synced pattern. Issue reported as WordPress Trac #61592
 
 == Changelog ==
-* 2.5.0 Add filter and display support for categories. Tested with 6.7-RC and 5.9.5. 
+* 2.5.0 Add filter and display support for categories. Tested with 6.7-RC and 5.9.5. improved sanitize suffix classes    
 * 2.4.4 Initialization sibid also with direct assign in case setAttribute does not work (e.g. in Synced pattern 6.6)
  replace ServerSideRender in block editor by custom Rest call (only for WP 6.3 +) and place_holder html in Javascript Edit and Save.   
  Tested with Elementor v3.23.3   
