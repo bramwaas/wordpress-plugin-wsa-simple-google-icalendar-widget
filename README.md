@@ -4,7 +4,7 @@ Plugin name: Simple Google Calendar Outlook Events Block Widget
 Contributors: bramwaas   
 Tags: Google Calendar, iCal, Events, Block, Calendar   
 Requires at least: 5.3.0   
-Tested up to: 6.6   
+Tested up to: 6.7   
 Requires PHP: 7.4   
 Stable tag: 2.4.4   
 License: GPLv2 or later   
@@ -32,6 +32,7 @@ These are great, but as soon as you want to make a few adjustments to the stylin
 * Choose date / time format in settings screen that best suits your website.
 * Displays per event DTSTART, DTEND, SUMMARY, LOCATION and DESCRIPTION. DTSTART is required other components are optional. 
 * Displays most common repeating events. Frequency Yearly, Monthly, Weekly, Dayly (not Hourly, Minutely and smaller periods)
+* Basic support for filter on Categories Warning: MS Outlook does not share categories via iCal now. Google and iCloud calendar don't support categories at all. So this will not work with these calendars.    
 * In the screenshot below: Left the block with default settings and clicked on one summary. Right with some adjusted settings.   
 Adjusted settings for start with summary:  
 Lay-out: Start with summary.     
@@ -108,9 +109,8 @@ Are you using a page builder like Elementor? The block might not show in the pag
 To support users wo cannot use the Gutenberg block I have in v2.1.1 (with pain in my hart because Gutenberg blocks are in my opinion the future of WP) synchronized the output of the widget again with that of the block. 
  Otherwise they needed to use a work-around with an extra plugin like described in [How to Display Gutenberg Blocks in Other Page Builders (Elementor, Divi, etc)](https://gutenberghub.com/how-to-display-gutenberg-blocks-in-other-page-builders/) or use an other plugin that adds a shortcode to a Gutenberg block or maybe some pro functionality of Elementor.   
 
-= How to use Apple Calendar (iCloud Mac/ios)? =
-Choose the calendar you want to share. On the line of that calendar click on the radio symbol (a dot with three quart circles) right in that line. In the pop up Calendar Sharing check the box Public Calendar. You see the url below something like webcal://p59-caldav.icloud.com/published/2/MTQxNzk0NDA2NjE0MTc5AAAAAXt2Dy6XXXXXPXXxuZnTLDV9xr6A6_m3r_GU33Qj. Click on Copy Link and OK. Paste that in the "Calendar ID, or iCal URL" field of the widget (before version 1.3.1 you have to change webcal in https)
-[More details on the MacObserver](https://www.macobserver.com/tips/quick-tip/icloud-configure-public-calendar)
+= How to use Apple Calendar (iCloud)? =
+Choose the calendar you want to share (in browser layout on the left panel). On that calendar's line, click the show calendar information icon (a person cropped into a circle) on the right side of the line. In the pop up Calendar Sharing check the box Public Calendar. You see the url below something like webcal://p59-caldav.icloud.com/published/2/MTQxNzk0NDA2NjE0MTc5AAAAAXt2Dy6XXXXXPXXxuZnTLDV9xr6A6_m3r_GU33Qj. Click on Copy Link and OK. Paste that in the "Calendar ID, or iCal URL" field of the widget (before version 1.3.1 you had to change webcal in https)
 
 = Error: cURL error 28: Operation timed out after 5000 milliseconds with 0 bytes received =
 
@@ -140,13 +140,6 @@ If you cannot resolve it, you can of course report an error / question in our [c
 Probably you have (re)opened a page where the block is edited but your password cookie is expired.   
 Log in in Wordpress again and open the page again. The block will be available. 
 
-= After an update 6.6 of Wordpress a page with this block in a synced pattern on it freezes in the editor. =   
-
-Maybe the block is long time ago placed on several pages as a synced pattern or reusable block and everything worked fine until Wordpress 6.5   
-It is possible that the id of the block is not initialized, the editor tries to initialize the id but this is not prossible in a synced pattern.
-Before 6.6 the update failed and the processing went ahead, from 6.6 the update fails and tries again (in an endless loop).     
-Solution: Update and save the block in the editor of the pattern to which the block belongs. 
-
 = This block contains unexpected or invalid content. =   
 
 After an update of the plugin in stead of the block content the message "This block contains unexpected or invalid content." is displayed and a button "Attempt Block Recovery".  
@@ -154,7 +147,6 @@ Probably this is caused by a difference in the Saved output and the output that 
 * Pushing the button "Attempt Block Recovery" will save the output in the new format and thereby solve the issue.   
 * When it comes to a synced pattern you have to "Attempt Block Recovery" in the original pattern via Edit original or "Appearance/Patterns".   
       
-
 = How do I set different colours and text size for the dates, the summary, and the details? =
 
 There is no setting for the color or font of parts in this plugin.
@@ -190,6 +182,29 @@ font-size: 16px;
 }
 /*end additional CSS for Simple-ical-Block-1 */
 ~~~
+
+= How do I filter on categories =
+
+Warning: the plugin only supports categories that are available in the iCal file. Microsoft Outlook does support categories but does not share them via the ical file.
+When the ical contains categories there are three options in the advanced section to use them.
+      
+-- Categories Filter Operator:
+Here you can choose how to compare the filter categories with the event categories.  
+- empty no filtering.
+- ANY is true if at least one of the elements of the filter set is present in the event set, or in other words the filter set intersects the event set, the intersection contains at least one element. This seems to me to be the most practical operator.  
+- ALL is true if all elements of the filter set exist in the event set, or in other words, the intersection contains the same number of elements as the filter set. The event set can contain other elements.  
+- NOTANY is true if ANY is NOT true. The intersection is empty.
+- NOTALL is true if ALL is NOT true. The intersection contains fewer elements than the filter set.   
+- A special case are events without categories. In the filter, the plugin handles this as if the category were a null string ("").        
+     
+-- Categories Filter List:
+- List of filter categories separated by a comma (not in double quotes). If a category contains a comma, you must add a backslash (\,) to it. A null string is created as a category if nothing is entered in the list or if the list ends with a comma, or if there are two comma separators immediately next to each other.             
+- Categories (at least in this plugin) behave like simple tags and have no intrinsic meaning or relationship. So if you want to select all events with category flower, rose or tulip, you have to add them all to the filter list. With category flower, you don't automatically select rose and tulip too    
+  
+-- Display categories with separator:
+- Here you can choose to display the list of event categories after the summary and with what separator. If you leave this field empty, the list will not be displayed.
+
+If the event contains categories, the list of categories of this event cleaned as classes (removed spaces etc.) is added to the  html-classes of the event (to the list-group-item). 
 
 = How do I contribute to Simple Google Calendar Outlook Events Widget? =
 
@@ -231,6 +246,7 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 * error in WP 6.6 this block (with serverside rendering) breaks editor when placed on a page via a synced pattern. Issue reported as WordPress Trac #61592
 
 == Changelog ==
+* 2.5.0 Add filter and display support for categories. Tested with 6.7-RC and 5.9.5. 
 * 2.4.4 Initialization sibid also with direct assign in case setAttribute does not work (e.g. in Synced pattern 6.6)
  replace ServerSideRender in block editor by custom Rest call (only for WP 6.3 +) and place_holder html in Javascript Edit and Save.   
  Tested with Elementor v3.23.3   

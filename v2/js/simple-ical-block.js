@@ -4,7 +4,7 @@
  * Move styles to stylesheets - both edit and front-end.
  * and use attributes and editable fields
  * attributes as Inspectorcontrols (settings)
- * v2.3.0
+ * v2.5.0
  * 20230625 added quotes to the options of the Layout SelectControl,
  *  add parseInt to all integers in transform, added conversion dateformat_lgend and _tsend and anchorid = sibid
  * 20230420 added parseInt on line 147(now 148) to keep layout in block-editor
@@ -21,7 +21,8 @@
  *   wptype 'ssr'.
  * 2.4.3 initializations also inside useEffect and setAttibute only for sibid only when necessary to reduce change of looping in Synced Pattern 
  *   extra option Wordpress timezone with rest  
- * 2.4.4 saved from 2.4.3 to V2 to keep older use of ServerSideRender 
+ * 2.4.4 saved from 2.4.3 to V2 to keep older use of ServerSideRender
+ * 2.5.0 support for categories. 
  */
 (function(blocks, i18n, element, blockEditor, components, serverSideRender) {
 	const el = element.createElement;
@@ -338,6 +339,38 @@
 								{ value: '1', label: __('Use Client timezone settings, with REST', 'simple-google-icalendar-widget') },
 								{ value: '2', label: __('Use WordPress timezone settings, with REST', 'simple-google-icalendar-widget') },
 							]
+						}
+					),
+					el(
+						SelectControl,
+						{
+							label: __('Categories Filter Operator:', 'simple-google-icalendar-widget'),
+							value: props.attributes.categories_filter_op,
+							onChange: function(value) { props.setAttributes({ categories_filter_op: value }); },
+							options: [
+								{ value: '', label: __('No filter', 'simple-google-icalendar-widget') },
+								{ value: 'ANY', label: __('ANY, one or more match', 'simple-google-icalendar-widget') },
+								{ value: 'ALL', label: __('ALL, all match', 'simple-google-icalendar-widget') },
+								{ value: 'NOTANY', label: __('NOT ANY, no match', 'simple-google-icalendar-widget') },
+								{ value: 'NOTALL', label: __('NOT ALL, not all match', 'simple-google-icalendar-widget') }
+							]
+						}
+					),
+					el(
+						TextControl,
+						{
+							label: __('Categories Filter List:', 'simple-google-icalendar-widget'),
+							value: props.attributes.categories_filter,
+							onChange: function(value) { props.setAttributes({ categories_filter: value }); },
+						}
+					),
+					el(
+						TextControl,
+						{
+							label: __('Display categories with separator', 'simple-google-icalendar-widget'),
+							value: props.attributes.categories_display,
+							help: __('Empty no display. Else display categories above event with this separator.', 'simple-google-icalendar-widget'),
+							onChange: function(value) { props.setAttributes({ categories_display: value }); },
 						}
 					),
 					el(

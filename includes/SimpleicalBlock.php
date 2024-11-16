@@ -9,7 +9,7 @@
  * @link https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * Gutenberg Block functions since v2.1.2 also used for widget.
- * Version: 2.4.4
+ * Version: 2.5.0
  * 20220427 namespaced and renamed after classname.
  * 20220430 try with static calls
  * 20220509 fairly correct front-end display. attributes back to block.json
@@ -35,8 +35,8 @@
  * 2.4.1 resolved with wptype 'rest_ph_w' warning on wrapper_attributes when wptype 'rest_ph' and started from widget 
  * 2.4.3 replace render_callback in server side register_block_type by render in block.json (v3 plus ( is_wp_version_compatible( '6.3' ) )) 
  *       add  "data-sib-utzui":props.attributes.rest_utzui to rest placeholder tag; use tag_title when not placeholder for widget
- * 2.4.4 improve compare equallity in update_rest_attrs by removing attributes that are added during save process or depend on saving environment.        
- 
+ * 2.4.4 improve compare equallity in update_rest_attrs by removing attributes that are added during save process or depend on saving environment.
+ * 2.5.0 Add filter and display support for categories.
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
@@ -78,6 +78,9 @@ class SimpleicalBlock
         'event_count' => 10,
         'event_period' => 92,
         'cache_time' => 60,
+        'categories_filter_op' => '',
+        'categories_filter' => '',
+        'categories_display' => '',      
         'layout' => 3,
         'dateformat_lg' => 'l jS \of F',
         'dateformat_lgend' => '',
@@ -144,6 +147,9 @@ class SimpleicalBlock
             'calendar_id' => ['type' => 'string', 'default' => ''],
             'event_count' => ['type' => 'integer', 'default' => 10],
             'event_period' => ['type' => 'integer', 'default' => 92],
+            'categories_filter_op' => ['type' => 'string', 'enum' => ['','ANY','ALL','NOTANY','NOTALL'], 'default' => ''],
+            'categories_filter' => ['type' => 'string', 'default' => ''],
+            'categories_display' => ['type' => 'string', 'default' => ''],
             'layout' => ['type' => 'integer', 'default' => 3],
             'cache_time' => ['type' => 'integer', 'default' => 60],
             'dateformat_lg' => ['type' => 'string', 'default' => 'l jS \of F'],
@@ -193,7 +199,7 @@ class SimpleicalBlock
             'title' => __('Events', 'simple-google-icalendar-widget'),
             'tzid_ui' => wp_timezone_string()
         ], $block_attributes);
-        $block_attributes['anchorId'] = sanitize_html_class($block_attributes['anchorId'], $block_attributes['sibid']);
+        $block_attributes['anchorId'] = self::sanitize_html_clss($block_attributes['anchorId'], $block_attributes['sibid']);
         if (empty($block_attributes['tzid_ui'])) {
             $block_attributes['tzid_ui'] = wp_timezone_string();
         }
@@ -283,9 +289,15 @@ class SimpleicalBlock
         $dftstart = (isset($attributes['dateformat_tstart'])) ? $attributes['dateformat_tstart'] : 'G:i';
         $dftend = (isset($attributes['dateformat_tend'])) ? $attributes['dateformat_tend'] : ' - G:i ';
         $excerptlength = (isset($attributes['excerptlength']) && ' ' < trim($attributes['excerptlength'])) ? (int) $attributes['excerptlength'] : '';
-        $attributes['suffix_lg_class'] = wp_kses($attributes['suffix_lg_class'], 'post');
-        $sflgi = wp_kses($attributes['suffix_lgi_class'], 'post');
-        $sflgia = wp_kses($attributes['suffix_lgia_class'], 'post');
+        $attributes['suffix_lg_class'] = self::sanitize_html_clss($attributes['suffix_lg_class']);
+        $sflgi = self::sanitize_html_clss($attributes['suffix_lgi_class']);
+        $sflgia = self::sanitize_html_clss($attributes['suffix_lgia_class']);
+        if (empty($attributes['categories_display'])) {
+            $cat_disp = false;
+        } else {
+           $cat_disp = true;
+           $cat_sep = '</small>'.$attributes['categories_display'].'<small>';
+        }
         if (! in_array($attributes['tag_sum'], self::$allowed_tags_sum))
             $attributes['tag_sum'] = 'a';
         $data = IcsParser::getData($attributes);
@@ -296,14 +308,20 @@ class SimpleicalBlock
                 $idlist = explode("@", esc_attr($e->uid));
                 $itemid = $attributes['sibid'] . '_' . strval(++ $sn) . '_' . $idlist[0];
                 $evdate = wp_kses(wp_date($dflg, $e->start, $attributes['tz_ui']), 'post');
-                $cal_class = ((! empty($e->cal_class)) ? ' ' . sanitize_html_class($e->cal_class) : '');
+                $ev_class = ((! empty($e->cal_class)) ? ' ' . sanitize_html_class($e->cal_class) : '');
+                $cat_list = '';
+                if (!empty($e->categories)) {
+                    $ev_class = $ev_class . ' ' . implode( ' ', array_map( "sanitize_html_class", $e->categories ));
+                    if ($cat_disp) { 
+                        $cat_list = wp_kses('<div class="categories"><small>'
+                            . implode($cat_sep,str_replace("\n", '<br>', $e->categories ))
+                            . '</small></div>', 'post');
+                    }
+                }
                 if (! $attributes['allowhtml']) {
-                    if (! empty($e->summary))
-                        $e->summary = htmlspecialchars($e->summary);
-                    if (! empty($e->description))
-                        $e->description = htmlspecialchars($e->description);
-                    if (! empty($e->location))
-                        $e->location = htmlspecialchars($e->location);
+                    if (!empty($e->summary)) $e->summary = htmlspecialchars($e->summary);
+                    if (!empty($e->description)) $e->description = htmlspecialchars($e->description);
+                    if (!empty($e->location)) $e->location = htmlspecialchars($e->location);
                 }
                 if (date('yz', $e->start) != date('yz', $e->end)) {
                     $evdate = str_replace(array(
@@ -318,13 +336,13 @@ class SimpleicalBlock
                     if ($curdate != '') {
                         echo '</ul></li>';
                     }
-                    echo '<li class="list-group-item' . $sflgi . ' head">' . '<span class="ical-date">' . ucfirst($evdate) . '</span><ul class="list-group' . $attributes['suffix_lg_class'] . '">';
+                    echo '<li class="list-group-item' . $sflgi . $ev_class . ' head">' . '<span class="ical-date">' . ucfirst($evdate) . '</span><ul class="list-group' . $attributes['suffix_lg_class'] . '">';
                 }
-                echo '<li class="list-group-item' . $sflgi . $cal_class . '">';
+                echo '<li class="list-group-item' . $sflgi . $ev_class . '">';
                 if ($layout == 3 && $curdate != $evdate) {
                     echo '<span class="ical-date">' . ucfirst($evdate) . '</span>' . (('a' == $attributes['tag_sum']) ? '<br>' : '');
                 }
-                echo '<' . $attributes['tag_sum'] . ' class="ical_summary' . $sflgia . (('a' == $attributes['tag_sum']) ? '" data-toggle="collapse" data-bs-toggle="collapse" href="#' . $itemid . '" aria-expanded="false" aria-controls="' . $itemid . '">' : '">');
+                echo  '<' . $attributes['tag_sum'] . ' class="ical_summary' . $sflgia . (('a' == $attributes['tag_sum']) ? '" data-toggle="collapse" data-bs-toggle="collapse" href="#' . $itemid . '" aria-expanded="false" aria-controls="' . $itemid . '">' : '">');
                 if ($layout != 2) {
                     echo $evdtsum;
                 }
@@ -335,7 +353,7 @@ class SimpleicalBlock
                 if ($layout == 2) {
                     echo '<span>', $evdate, $evdtsum, '</span>';
                 }
-                echo '<div class="ical_details' . $sflgia . (('a' == $attributes['tag_sum']) ? ' collapse' : '') . '" id="', $itemid, '">';
+                echo $cat_list . '<div class="ical_details' . $sflgia . (('a' == $attributes['tag_sum']) ? ' collapse' : '') . '" id="', $itemid, '">';
                 if (! empty($e->description) && trim($e->description) > '' && $excerptlength !== 0) {
                     if ($excerptlength !== '' && strlen($e->description) > $excerptlength) {
                         $e->description = substr($e->description, 0, $excerptlength + 1);
@@ -431,6 +449,26 @@ class SimpleicalBlock
             }
         }
         return $html;
+    }
+    /**
+     * copied from WP sanitize_html_class, and added space as allowed character to accomodate multiple classes in one string.
+     * Strips the string down to A-Z, ,a-z,0-9,_,-. If this results in an empty string then it will return the alternative value supplied.
+     *
+     * @param string $class
+     * @param string $fallback
+     * @return string sanitized class or fallback.
+     */
+    static function sanitize_html_clss( $class, $fallback = '' ) {
+        // Strip out any %-encoded octets.
+        $sanitized = preg_replace( '|%[a-fA-F0-9][a-fA-F0-9]|', '', $class );
+        
+        // Limit to A-Z, ' ', a-z, 0-9, '_', '-'.
+        $sanitized = preg_replace( '/[^A-Z a-z0-9_-]/', '', $sanitized );
+        
+        if ( '' === $sanitized && $fallback ) {
+            return  $fallback;
+        }
+        return $sanitized;
     }
     
 } // end class SimpleicalBlock

@@ -23,6 +23,7 @@
  *   extra option Wordpress timezone with rest
  * 2.4.4 initialization sibid also with direct assign in case setAttribute does not work (e.g. in Synced pattern 6.6) 
  *   removed references to ServerSideRender added deprecated 243; decoupled render and save changed attributes. 
+ * 2.5.0 support for categories.
  */
 (function(blocks, i18n, element, blockEditor, components) {
 	const el = element.createElement;
@@ -354,6 +355,38 @@
 								{ value: '1', label: __('Use Client timezone settings, with REST', 'simple-google-icalendar-widget') },
 								{ value: '2', label: __('Use WordPress timezone settings, with REST', 'simple-google-icalendar-widget') },
 							]
+						}
+					),
+					el(
+						SelectControl,
+						{
+							label: __('Categories Filter Operator:', 'simple-google-icalendar-widget'),
+							value: props.attributes.categories_filter_op,
+							onChange: function(value) { props.setAttributes({ categories_filter_op: value }); },
+							options: [
+								{ value: '', label: __('No filter', 'simple-google-icalendar-widget') },
+								{ value: 'ANY', label: __('ANY, one or more match', 'simple-google-icalendar-widget') },
+								{ value: 'ALL', label: __('ALL, all match', 'simple-google-icalendar-widget') },
+								{ value: 'NOTANY', label: __('NOT ANY, no match', 'simple-google-icalendar-widget') },
+								{ value: 'NOTALL', label: __('NOT ALL, not all match', 'simple-google-icalendar-widget') }
+							]
+						}
+					),
+					el(
+						TextControl,
+						{
+							label: __('Categories Filter List:', 'simple-google-icalendar-widget'),
+							value: props.attributes.categories_filter,
+							onChange: function(value) { props.setAttributes({ categories_filter: value }); },
+						}
+					),
+					el(
+						TextControl,
+						{
+							label: __('Display categories with separator', 'simple-google-icalendar-widget'),
+							value: props.attributes.categories_display,
+							help: __('Empty no display. Else display categories above event with this separator.', 'simple-google-icalendar-widget'),
+							onChange: function(value) { props.setAttributes({ categories_display: value }); },
 						}
 					),
 					el(

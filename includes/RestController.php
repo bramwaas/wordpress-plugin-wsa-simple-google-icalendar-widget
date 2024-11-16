@@ -4,7 +4,7 @@
  * @copyright Copyright (C) 2024 - 2024 Bram Waasdorp. All rights reserved.
  * @license GNU General Public License version 3 or later
  *
- * 2.4.4 
+ * 2.5.0 
  * 2.4.1 adressed Notice: register_rest_route was called <strong>incorrectly</strong>. Namespace must not start or end with a slash.
  *  and added 'permission_callback' => '__return_true', for public routes.
  * 2.4.4 add all (non default) attributes to returned params 'get_content_by_ids';
