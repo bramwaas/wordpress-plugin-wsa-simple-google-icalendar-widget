@@ -179,7 +179,15 @@ class SimpleicalBlock
             )
         ));
     }
-
+    /**
+     * Widget init register legacy widget
+     *
+     * @param
+     *            .
+     */
+    static function simple_ical_widget ()
+    {  register_widget( 'WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalWidget' );}
+    
     /**
      * Render the content of the block
      *

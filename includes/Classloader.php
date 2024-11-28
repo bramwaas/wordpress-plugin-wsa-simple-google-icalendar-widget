@@ -42,9 +42,9 @@ class Classloader {
 //          echo PHP_EOL . ' -->' . PHP_EOL;
             if (file_exists($file)) {
                 require $file;
-          echo '<!-- Classloader::load' . PHP_EOL . 'Class:' . $class;
-          echo PHP_EOL . '$file:' . $file;
-          echo PHP_EOL . 'loaded -->' . PHP_EOL;
+//           echo '<!-- Classloader::load' . PHP_EOL . 'Class:' . $class;
+//           echo PHP_EOL . '$file:' . $file;
+//           echo PHP_EOL . 'loaded -->' . PHP_EOL;
                 return true;
             }
             return false;
