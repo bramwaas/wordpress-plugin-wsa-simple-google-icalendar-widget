@@ -73,23 +73,19 @@
      WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\Classloader::register();
 }
 
-//   require_once( 'includes/SimpleicalBlock.php' );
-//   require_once( 'includes/RestController.php' );
-//   require_once('includes/SimpleicalWidgetAdmin.php');
-
 if ( is_wp_version_compatible( '6.3' ) )   { // block  v3
     // Static class method call with name of the class
-    add_action( 'init', array ('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalBlock', 'init_block') );
+    add_action( 'init', array ('\WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalHelper', 'init_block') );
     
 } // end wp-version > 6.3 block v3
 else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
-    add_action( 'init', array ('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalBlock', 'init_block_v2') );
+    add_action( 'init', array ('\WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalHelper', 'init_block_v2') );
     
 } // end wp-version > 5.9 block v2
 
-{ // old widget always
+
     add_action('rest_api_init', array(
-        'WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\RestController',
+        '\WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\RestController',
         'init_and_register_routes'
     ));
     add_action( 'wp_enqueue_scripts', 'enqueue_view_script');
@@ -105,9 +101,8 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
     }
     
     
-    add_action ('widgets_init', array ('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalBlock','simple_ical_widget')  );
+    add_action ('widgets_init', array ('\WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalHelper','simple_ical_widget')  );
 
-$ical_admin = new WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalWidgetAdmin;
+$ical_admin = new \WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalWidgetAdmin;
 add_action('admin_menu',array ($ical_admin, 'simple_ical_admin_menu'));
 
-} // old widget

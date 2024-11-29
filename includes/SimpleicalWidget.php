@@ -52,7 +52,7 @@ class SimpleicalWidget extends \WP_Widget
                 'classname' => 'Simple_iCal_Widget' ],
                 $args);
             $instance = array_merge(
-                SimpleicalBlock::$default_block_attributes,
+                SimpleicalHelper::$default_block_attributes,
                 ['title' => __('Events', 'simple-google-icalendar-widget'),
                     'tzid_ui' => wp_timezone_string(),
                     'wptype' => 'widget'],
@@ -82,12 +82,12 @@ class SimpleicalWidget extends \WP_Widget
                     echo $args['before_title'], $title, $args['after_title'];
                 }
                 if ('rest_ph_w' == $instance['wptype'] ) {
-                    SimpleicalBlock::update_rest_attrs($instance );
+                    SimpleicalHelper::update_rest_attrs($instance );
                     echo '<p>';
                     _e('Processing', 'simple-google-icalendar-widget');
                     echo '</p>';
                 } else {
-                    SimpleicalBlock::display_block($instance);
+                    SimpleicalHelper::display_block($instance);
                 }
                 // end lay-out block
                 echo $args['after_widget'];
@@ -170,7 +170,7 @@ class SimpleicalWidget extends \WP_Widget
                 $instance['postid'] = (string) $this->id;
             }
             if (!empty($old_instance['sibid'])) $instance['prev_sibid'] = $old_instance['sibid'];
-            if (SimpleicalBlock::update_rest_attrs($instance )) $instance['prev_sibid'] = $instance['sibid'];
+            if (SimpleicalHelper::update_rest_attrs($instance )) $instance['prev_sibid'] = $instance['sibid'];
             
             return $instance;
         }
@@ -188,7 +188,7 @@ class SimpleicalWidget extends \WP_Widget
                 'wptype' => 'widget',
                 'title' => __('Events', 'simple-google-icalendar-widget'),
             ],
-                SimpleicalBlock::$default_block_attributes);
+                SimpleicalHelper::$default_block_attributes);
             
             if (empty($instance['sibid'])) {
                 if  (!empty($instance['blockid'])) {

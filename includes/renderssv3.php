@@ -12,14 +12,10 @@
  * $content (string): The block default content.
  * $block (WP_Block): The block instance.
  * 
- * version 2.5.0
+ * version 2.5.1
   * 2.4.3 created to replace render_callback option in server side register_block_type    
  */
-use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalBlock;
+use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalHelper;
 
-if (!class_exists('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalBlock')) {
-    require_once( 'SimpleicalBlock.php' );
-    class_alias('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalBlock', 'SimpleicalBlock');
-}
 ?>
-<?php echo SimpleicalBlock::render_block($attributes);
+<?php echo SimpleicalHelper::render_block($attributes);

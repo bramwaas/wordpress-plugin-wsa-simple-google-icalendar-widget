@@ -1,6 +1,6 @@
 <?php
 /*
- * SimpleicalBlock.php
+ * SimpleicalHelper.php
  *
  * @package Simple Google iCalendar Block
  * @subpackage Block
@@ -9,7 +9,7 @@
  * @link https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * Gutenberg Block functions since v2.1.2 also used for widget.
- * Version: 2.5.0
+ * Version: 2.5.1
  * 20220427 namespaced and renamed after classname.
  * 20220430 try with static calls
  * 20220509 fairly correct front-end display. attributes back to block.json
@@ -40,7 +40,7 @@
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
-class SimpleicalBlock
+class SimpleicalHelper
 {
     const SIB_ATTR = 'simple_ical_block_attrs';
 
@@ -174,7 +174,7 @@ class SimpleicalBlock
             'blockid' => ['type' => 'string'],
             ],
             'render_callback' => array(
-                'WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalBlock',
+                '\WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalHelper',
                 'render_block'
             )
         ));
@@ -186,7 +186,7 @@ class SimpleicalBlock
      *            .
      */
     static function simple_ical_widget ()
-    {  register_widget( 'WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalWidget' );}
+    {  register_widget( '\WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalWidget' );}
     
     /**
      * Render the content of the block
@@ -479,4 +479,4 @@ class SimpleicalBlock
         return $sanitized;
     }
     
-} // end class SimpleicalBlock
+} // end class SimpleicalHelper
