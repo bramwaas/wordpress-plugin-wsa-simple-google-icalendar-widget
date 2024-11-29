@@ -43,11 +43,10 @@
  *   bw 20240509 v2.4.1 added defaults to all used keys of $args to solve issue 'PHP warnings' of johansam on support forum. Undefined array key “classname” in .../simple-google-icalendar-widget.php on line 170
  *   bw 20240727 v2.4.4 simplified defaulting args and improved code around that for the widget output
  *   bw 20241028 v2.5.0 Add support for categories    Tested with 6.7-RC and 5.9.5. 
- *   bw 20241127 v2.5.1 Using simple classloader and PSR-4 name conventions. Moved  SimpleicalWidget class to seperate file*/
-/*
- Simple Google Calendar Outlook Events Widget
+ *   bw 20241127 v2.5.1 Using simple classloader and PSR-4 name conventions. Moved  SimpleicalWidget class to seperate file. Use namespace in all php
+ 
  Copyright (C) Bram Waasdorp 2017 - 2024
- 2024-11-13
+ 2024-11-29
  Forked from Simple Google Calendar Widget v 0.7 by Nico Boehr
  
  This program is free software: you can redistribute it and/or modify
@@ -63,32 +62,29 @@
  You should have received a copy of the GNU General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-// use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\IcsParser;
-// use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalBlock;
-// use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalWidgetAdmin;
+namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
-
- if (!class_exists('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\Classloader')) {
+ if (!class_exists('Classloader')) {
      require_once( 'includes/Classloader.php' );
-     WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\Classloader::register();
+     Classloader::register();
 }
 
 if ( is_wp_version_compatible( '6.3' ) )   { // block  v3
     // Static class method call with name of the class
-    add_action( 'init', array ('\WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalHelper', 'init_block') );
-    
+    \add_action( 'init', array (__NAMESPACE__ .'\SimpleicalHelper', 'init_block') );
+   
 } // end wp-version > 6.3 block v3
 else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
-    add_action( 'init', array ('\WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalHelper', 'init_block_v2') );
+    add_action( 'init', array (__NAMESPACE__ .'\SimpleicalHelper', 'init_block_v2') );
     
 } // end wp-version > 5.9 block v2
 
 
-    add_action('rest_api_init', array(
-        '\WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\RestController',
+    \add_action('rest_api_init', array(
+        __NAMESPACE__ .'\RestController',
         'init_and_register_routes'
     ));
-    add_action( 'wp_enqueue_scripts', 'enqueue_view_script');
+    \add_action( 'wp_enqueue_scripts', __NAMESPACE__ .'\enqueue_view_script');
     /**
      * enqueue scripts for use in client REST view
      * for v 6.3 up args array strategy = defer, else in_footer = that array is casted to boolean true. 
@@ -99,10 +95,7 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
             ['strategy' => 'defer' ]);
         wp_add_inline_script('simplegoogleicalenderwidget-simple-ical-block-view-script', '(window.simpleIcalBlock=window.simpleIcalBlock || {}).restRoot = "' . get_rest_url() . '"', 'before');
     }
-    
-    
-    add_action ('widgets_init', array ('\WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalHelper','simple_ical_widget')  );
+    \add_action ('widgets_init', array (__NAMESPACE__ .'\SimpleicalHelper','simple_ical_widget')  );
 
-$ical_admin = new \WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalWidgetAdmin;
-add_action('admin_menu',array ($ical_admin, 'simple_ical_admin_menu'));
-
+$ical_admin = new SimpleicalWidgetAdmin;
+\add_action('admin_menu',array ($ical_admin, 'simple_ical_admin_menu'));
