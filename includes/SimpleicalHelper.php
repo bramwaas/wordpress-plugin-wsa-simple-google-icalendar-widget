@@ -36,7 +36,8 @@
  * 2.4.3 replace render_callback in server side register_block_type by render in block.json (v3 plus ( is_wp_version_compatible( '6.3' ) )) 
  *       add  "data-sib-utzui":props.attributes.rest_utzui to rest placeholder tag; use tag_title when not placeholder for widget
  * 2.4.4 improve compare equallity in update_rest_attrs by removing attributes that are added during save process or depend on saving environment.
- * 2.5.0 Add filter and display support for categories.
+ * 2.5.0 Add filter and display support for categories. 
+ * 2.5.1 rename SimpleicalBlock to SimpleicalHelper and register widget in this class.
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
