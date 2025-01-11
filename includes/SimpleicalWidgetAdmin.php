@@ -54,7 +54,7 @@ class SimpleicalWidgetAdmin {
         __('Info on Simple Google Calendar Outlook Events Block Widget', 'simple-google-icalendar-widget') .
         '</h2><h3>' .
         __('Settings for this block/widget:' , 'simple-google-icalendar-widget') .
-        '<p><strong>'.
+        '</h3><p><strong>'.
         __('Title', 'simple-google-icalendar-widget') .
         '</strong></p><p>' .
         __('Title of this instance of the widget', 'simple-google-icalendar-widget') .
