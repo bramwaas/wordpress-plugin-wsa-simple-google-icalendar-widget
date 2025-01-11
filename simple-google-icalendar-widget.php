@@ -8,9 +8,8 @@
  License: GPLv2
  Tested up to: 6.7
  Requires at least: 5.3
- Requires PHP:  7.4 tested with 8
+ Requires PHP:  7.4
  Text Domain:  simple-google-icalendar-widget
- Domain Path:  /languages
  *   bw 20201122 v1.2.0 find solution for DTSTART and DTEND without time by explicit using isDate and only displaying times when isDate === false.;
  *               found that date_i18n($format, $timestamp) formats according to the locale, but not the timezone but the newer function wp_date() does,
  *               so date_i18n() replaced bij wp_date()
@@ -365,21 +364,21 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
           <select class="widefat" id="<?php echo $this->get_field_id('period_limits'); ?>" name="<?php echo $this->get_field_name('period_limits'); ?>" >
             <option value="1"<?php echo ('1'==esc_attr($instance['period_limits']))?'selected':''; ?>><?php _e('Start Whole  day, End Whole  day', 'simple-google-icalendar-widget'); ?></option>
   			<option value="2"<?php echo ('2'==esc_attr($instance['period_limits']))?'selected':''; ?>><?php _e('Start Time of day, End Whole  day', 'simple-google-icalendar-widget'); ?></option>
-  			<option value="3"<?php echo ('3'==esc_attr($instance['period_limits']))?'selected':''; ?>><?php _e('Start Time of day, End Time of day'); ?></option>
+  			<option value="3"<?php echo ('3'==esc_attr($instance['period_limits']))?'selected':''; ?>><?php _e('Start Time of day, End Time of day', 'simple-google-icalendar-widget'); ?></option>
   			<option value="4"<?php echo ('4'==esc_attr($instance['period_limits']))?'selected':''; ?>><?php _e('Start Whole  day, End Time of day', 'simple-google-icalendar-widget'); ?></option>
   		 </select>	
         </p>
         <p>
           <label for="<?php echo $this->get_field_id('rest_utzui'); ?>"><?php _e('Use client timezone settings:', 'simple-google-icalendar-widget'); ?></label> 
           <select class="widefat" id="<?php echo $this->get_field_id('rest_utzui'); ?>" name="<?php echo $this->get_field_name('rest_utzui'); ?>" >
-  			<option value=""<?php echo (''==esc_attr($instance['rest_utzui']))?'selected':''; ?>><?php _e('Use WordPress timezone settings, no REST'); ?></option>
+  			<option value=""<?php echo (''==esc_attr($instance['rest_utzui']))?'selected':''; ?>><?php _e('Use WordPress timezone settings, no REST', 'simple-google-icalendar-widget'); ?></option>
             <option value="1"<?php echo ('1'==esc_attr($instance['rest_utzui']))?'selected':''; ?>><?php _e('Use Client timezone settings, with REST', 'simple-google-icalendar-widget'); ?></option>
   		 </select>
   		</p> 	
         <p>
           <label for="<?php echo $this->get_field_id('categories_filter_op'); ?>"><?php _e('Categories Filter Operator:', 'simple-google-icalendar-widget'); ?></label> 
           <select class="widefat" id="<?php echo $this->get_field_id('categories_filter_op'); ?>" name="<?php echo $this->get_field_name('categories_filter_op'); ?>" >
-  			<option value=""<?php echo (''==esc_attr($instance['categories_filter_op']))?'selected':''; ?>><?php _e('No filter'); ?></option>
+  			<option value=""<?php echo (''==esc_attr($instance['categories_filter_op']))?'selected':''; ?>><?php _e('No filter', 'simple-google-icalendar-widget'); ?></option>
             <option value="ANY"<?php echo ('ANY'==esc_attr($instance['categories_filter_op']))?'selected':''; ?>><?php _e('ANY, one or more match', 'simple-google-icalendar-widget'); ?></option>
             <option value="ALL"<?php echo ('ALL'==esc_attr($instance['categories_filter_op']))?'selected':''; ?>><?php _e('ALL, all match', 'simple-google-icalendar-widget'); ?></option>
             <option value="NOTANY"<?php echo ('NOTANY'==esc_attr($instance['categories_filter_op']))?'selected':''; ?>><?php _e('NOT ANY, no match', 'simple-google-icalendar-widget'); ?></option>
