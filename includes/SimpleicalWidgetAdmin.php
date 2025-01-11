@@ -199,9 +199,9 @@ class SimpleicalWidgetAdmin {
        '</li><li>' .
         __('ANY is true if at least one of the elements of the filter set is present in the event set, or in other words the filter set intersects the event set, the intersection contains at least one element. This seems to me to be the most practical operator.', 'simple-google-icalendar-widget') .
         '</li><li>' .
-        __('<li>ALL is true if all elements of the filter set exist in the event set, or in other words, the intersection contains the same number of elements as the filter set. The event set can contain other elements.', 'simple-google-icalendar-widget') .
+        __('ALL is true if all elements of the filter set exist in the event set, or in other words, the intersection contains the same number of elements as the filter set. The event set can contain other elements.', 'simple-google-icalendar-widget') .
         '</li><li>' .
-        __('<li>NOTANY is true if ANY is NOT true. The intersection is empty.', 'simple-google-icalendar-widget') .
+        __('NOTANY is true if ANY is NOT true. The intersection is empty.', 'simple-google-icalendar-widget') .
         '</li><li>' .
         __('NOTALL is true if ALL is NOT true. The intersection contains fewer elements than the filter set.', 'simple-google-icalendar-widget').
         '</li><p>'.
