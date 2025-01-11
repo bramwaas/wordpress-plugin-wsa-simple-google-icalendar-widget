@@ -77,20 +77,24 @@ class SimpleicalWidgetAdmin {
        __('The maximum number of events to display', 'simple-google-icalendar-widget') .
         '</p>');
         
-        echo wp_kses_post('<span id="event-period"></span>').
+        echo wp_kses_post('<span id="event-period"></span>'.
         '<p><strong>'.
        __('Number of days after today with events displayed</strong>', 'simple-google-icalendar-widget').
         '</p><p>'.
-       __('Last date to display events in number of days after today.</p>', 'simple-google-icalendar-widget');
-        echo '<p><a href="#period-limits" target="_self" >';
-        __('See also', 'simple-google-icalendar-widget');
-        echo '<strong>Period limits</strong></a></p>';
+       __('Last date to display events in number of days after today.', 'simple-google-icalendar-widget').
+            '</p>');
+       echo wp_kses_post('<p><a href="#period-limits" target="_self" >' .
+        __('See also', 'simple-google-icalendar-widget').
+        '<strong>'.   
+           __('Period limits', 'simple-google-icalendar-widget').
+        '</strong></a></p>');
         
-        echo wp_kses_post('<span id="layout"></span>').
+        echo wp_kses_post('<span id="layout"></span>'.
         '<p><strong>'.
        __('Select lay-out</strong>', 'simple-google-icalendar-widget').
         '</p><p>'.
-       __('Startdate line on a higher level in the list; Start with summary before first date line; Old style, summary after first date line, remove duplicate date lines.</p>', 'simple-google-icalendar-widget');
+       __('Startdate line on a higher level in the list; Start with summary before first date line; Old style, summary after first date line, remove duplicate date lines.', 'simple-google-icalendar-widget').
+        '</p>');
         
         echo wp_kses_post('<span id="dateformat-lg"></span>'.
         '<p><strong>'.
@@ -250,12 +254,12 @@ class SimpleicalWidgetAdmin {
        __('Since the transient cache id is derived from the block id, this also clears the data cache once.', 'simple-google-icalendar-widget') .
        '</p>');
         
-        echo wp_kses_post('<span id="html-anchor"></span>').
+        echo wp_kses_post('<span id="html-anchor"></span>'.
         '<p><strong>'.
        __('HTML anchor', 'simple-google-icalendar-widget').
         '</strong></p><p>'.
-       __('HTML anchor for this block.<br>Type one or two words - no spaces - to create a unique web address for this block, called an "anchor". Then you can link directly to this section on your page.<br>You can als use this ID to make parts of your extra css specific for this block</p>', 'simple-google-icalendar-widget');
-        echo wp_kses_post('</div>');
+       __('HTML anchor for this block.<br>Type one or two words - no spaces - to create a unique web address for this block, called an "anchor". Then you can link directly to this section on your page.<br>You can als use this ID to make parts of your extra css specific for this block', 'simple-google-icalendar-widget').
+        '</p></div>');
         
     }
     // info in admin-menu
