@@ -92,14 +92,14 @@ class SimpleicalWidgetAdmin {
         '</p><p>'.
        __('Startdate line on a higher level in the list; Start with summary before first date line; Old style, summary after first date line, remove duplicate date lines.</p>', 'simple-google-icalendar-widget');
         
-        echo wp_kses_post('<span id="dateformat-lg"></span>').
+        echo wp_kses_post('<span id="dateformat-lg"></span>'.
         '<p><strong>'.
        __('Date format first line</strong>', 'simple-google-icalendar-widget').
         '</p><p>'.
         __('Start date format first (date) line. Default: l jS \of F,', 'simple-google-icalendar-widget').
         '<br>' .
-        __('l = day of the week (Monday); j =  day of the month (25) F = name of month (december)'
-            <br>
+        __('l = day of the week (Monday); j =  day of the month (25) F = name of month (december)', 'simple-google-icalendar-widget').
+            '<br>' .
         __('y or Y = Year (17 or 2017);<br>make empty if you don\'t want to show this date', 'simple-google-icalendar-widget').
             '<br>' .
         __('Although this is intended for date all date and time fields contain date and time so you can als use time formats in date fields and date formats in time field', 'simple-google-icalendar-widget').
