@@ -42,6 +42,7 @@
  *   bw 20240509 v2.4.1 added defaults to all used keys of $args to solve issue 'PHP warnings' of johansam on support forum. Undefined array key “classname” in .../simple-google-icalendar-widget.php on line 170
  *   bw 20240727 v2.4.4 simplified defaulting args and improved code around that for the widget output
  *   bw 20241028 v2.5.0 Add support for categories    Tested with 6.7-RC and 5.9.5. 
+ *   bw 20250112 v2.6.0 plugin check
  */
 /*
  Simple Google Calendar Outlook Events Widget
