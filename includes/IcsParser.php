@@ -1,7 +1,7 @@
 <?php
 /**
  * a simple ICS parser.
- * @copyright Copyright (C) 2017 - 2024 Bram Waasdorp. All rights reserved.
+ * @copyright Copyright (C) 2017 - 2025 Bram Waasdorp. All rights reserved.
  * @license GNU General Public License version 3 or later
  *
  * note that this class does not implement all ICS functionality.
@@ -50,6 +50,7 @@
  * 2.5.0 Add filter and display support for categories. Add function self::unescTextList to explode items in Categories list to array 
  * while retaining , or ; when escaped with \ and use the same function for list of url's and input filter categorie list. 
  * use temporary replace \\ by chr(20) and replace chr(20) by \ instead of explode and implode to prevent use of \\ as unescape char.
+ * 2.6.0 escaping error messages.
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
@@ -1110,10 +1111,10 @@ END:VCALENDAR';
                 $url = self::getCalendarUrl($cal_id);
                 $httpData = wp_remote_get($url);
                 if(is_wp_error($httpData)) {
-                    echo '<!-- ' . $url . ' not found ' . 'fall back to https:// -->';
+                    echo '<!-- ' . esc_url( $url ) . ' not found ' . 'fall back to https:// -->';
                     $httpData = wp_remote_get('https://' . explode('://', $url)[1]);
                     if(is_wp_error($httpData)) {
-                        echo '<!-- Simple iCal Block: ', $httpData->get_error_message(), ' -->';
+                        echo '<!-- Simple iCal Block: ', wp_kses_post($httpData->get_error_message()), ' -->';
                         continue;
                     }
                 }
