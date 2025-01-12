@@ -5,7 +5,7 @@
  * @package Simple Google iCalendar Block
  * @subpackage Block
  * @author Bram Waasdorp <bram@waasdorpsoekhan.nl>
- * @copyright Copyright (c) 2024 - 2024, Bram Waasdorp
+ * @copyright Copyright (c) 2024 - 2025, Bram Waasdorp
  * call server side render for block.json v3
  * available variables:
  * $attributes (array): The block attributes.
