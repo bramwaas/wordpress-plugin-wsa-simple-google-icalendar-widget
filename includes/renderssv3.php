@@ -12,7 +12,8 @@
  * $content (string): The block default content.
  * $block (WP_Block): The block instance.
  * 
- * version 2.5.0
+ * version 2.6.0
+ * 2.6.0 escape output
   * 2.4.3 created to replace render_callback option in server side register_block_type    
  */
 use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalBlock;
@@ -22,4 +23,4 @@ if (!class_exists('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\Simplei
     class_alias('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalBlock', 'SimpleicalBlock');
 }
 ?>
-<?php echo SimpleicalBlock::render_block($attributes);
+<?php echo wp_kses_post(SimpleicalBlock::render_block($attributes));
