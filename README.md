@@ -1,4 +1,4 @@
-=== Simple Google Calendar Outlook Events Block Widget ===
+=== Simple Google Calendar Outlook Events Widget ===
 
 Plugin name: Simple Google Calendar Outlook Events Widget   
 Contributors: bramwaas   
