@@ -192,7 +192,7 @@ class SimpleicalBlock
                         if (!empty($e->description)) $e->description = htmlspecialchars($e->description);
                         if (!empty($e->location)) $e->location = htmlspecialchars($e->location);
                     }
-                    if (date('yz', $e->start) != date('yz', $e->end)) {
+                    if (gmdate('yz', $e->start) != gmdate('yz', $e->end)) {
                         $evdate = str_replace(array(
                             "</div><div>",
                             "</h4><h4>",
@@ -239,7 +239,7 @@ class SimpleicalBlock
                         $e->description = str_replace("\n", '<br>', wp_kses($e->description, 'post'));
                         echo '<span class="dsc">', $e->description, (strrpos($e->description, '<br>') === (strlen($e->description) - 4)) ? '' : '<br>', '</span>';
                     }
-                    if ($e->startisdate === false && date('yz', $e->start) === date('yz', $e->end)) {
+                    if ($e->startisdate === false && gmdate('yz', $e->start) === gmdate('yz', $e->end)) {
                         echo '<span class="time">', wp_kses(wp_date($dftstart, $e->start, $attributes['tz_ui']), 'post'), '</span><span class="time">', wp_kses(wp_date($dftend, $e->end, $attributes['tz_ui']), 'post'), '</span> ';
                     } else {
                         echo '';
@@ -377,7 +377,7 @@ class SimpleicalBlock
                 return true;
             }
             else {
-                $new_instance['saved'] = date('YmdHis');
+                $new_instance['saved'] = gmdate('YmdHis');
                 $instances[$instance['sibid']] = $new_instance;
                 if (update_option(self::SIB_ATTR, $instances, true))
                     return $instance['sibid'];
