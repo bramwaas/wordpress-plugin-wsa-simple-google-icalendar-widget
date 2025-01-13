@@ -323,31 +323,31 @@ class SimpleicalBlock
                 case 'rest_ph':
                     // Placeholder starting point for REST processing display of block.
                     $wrapperattr = (is_wp_version_compatible('5.6')) ? get_block_wrapper_attributes() : '';
-                    echo sprintf($block_attributes['before_widget'], ($block_attributes['anchorId'] . '" data-sib-id="' . $block_attributes['sibid'] . '" data-sib-utzui="' . $block_attributes['rest_utzui'] . '" data-sib-st="0-start' ), $wrapperattr);
-                    echo $titlenode;
+                    echo wp_kses(sprintf($block_attributes['before_widget'], ($block_attributes['anchorId'] . '" data-sib-id="' . $block_attributes['sibid'] . '" data-sib-utzui="' . $block_attributes['rest_utzui'] . '" data-sib-st="0-start' ), $wrapperattr),'post');
+                    echo wp_kses($titlenode,'post');
                     echo '<p>';
-                    _e('Processing', 'simple-google-icalendar-widget');
-                    echo '</p>' . $block_attributes['after_widget'];
+                    esc_attr__('Processing', 'simple-google-icalendar-widget');
+                    echo '</p>' . wp_kses($block_attributes['after_widget'],'post');
                     try {
                         unset($block_attributes['before_widget'], $block_attributes['after_widget']);
                         self::update_rest_attrs($block_attributes);
                     } catch (\Exception $e) {
-                        echo '<p>Caught exception: ', $e->getMessage(), "</p>\n";
+                        echo '<p>Caught exception: ' . wp_kses($e->getMessage(),'post') . "</p>\n";
                     }
                     break;
                 case 'block':
                 case 'ssr':
                     // Block rendered serverside, or in admin via serversiderenderer
                     $wrapperattr = (is_wp_version_compatible('5.6')) ? get_block_wrapper_attributes() : '';
-                    echo sprintf($block_attributes['before_widget'], ($block_attributes['anchorId'] . '" data-sib-id="' . $block_attributes['sibid']), $wrapperattr);
+                    echo wp_kses(sprintf($block_attributes['before_widget'], ($block_attributes['anchorId'] . '" data-sib-id="' . $block_attributes['sibid']), $wrapperattr),'post');
                     if (! empty($block_attributes['title'])) {
-                        echo $titlenode;
+                        echo wp_kses($titlenode,'post');
                     }
                     self::display_block($block_attributes);
-                    echo $block_attributes['after_widget'];
+                    echo wp_kses($block_attributes['after_widget'],'post');
                     break;
                 default:
-                    echo "<!-- unknown wptype:" . $block_attributes['wptype'] . "-->" . PHP_EOL;
+                    echo "<!-- unknown wptype:" . esc_attr($block_attributes['wptype']) . "-->" . PHP_EOL;
             }
             $output = $output . ob_get_clean();
             return $output;
