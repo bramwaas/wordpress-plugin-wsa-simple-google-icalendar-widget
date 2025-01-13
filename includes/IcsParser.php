@@ -320,6 +320,13 @@ END:VCALENDAR';
      */
     protected $timezone_string = 'UTC';
     /**
+     * The array of messages during execution. To echo in the calling routine if needed, to remove echoing in this class.
+     *
+     * @var    array array of message strings
+     * @since  2.6.0
+     */
+    public $messages = [];
+    /**
      * Constructor.
      *
      * @param string  $calendar_ids Comma separated list of Id's or url's of the calendar to fetch data. Each Id/url may be followed by semicolon and a html-class
@@ -1076,16 +1083,19 @@ END:VCALENDAR';
             $pdt_start->setTimestamp($now);
             $p_end = $pdt_start->modify("+$ep day")->getTimestamp();
         }
+        $messages = [];
         if ($instance['clear_cache_now']) delete_transient($transientId);
         if(false === ($data = get_transient($transientId))) {
             $parser = new IcsParser($instance['calendar_id'], $instance['cache_time'], $instance['event_period'], $instance['tzid_ui'] );
             $data = $parser->fetch( );
+            $messages = $parser->messages;
             // do not cache data if fetching failed
             if ($data) {
                 set_transient($transientId, $data, $instance['cache_time']*60);
             }
         }
-        return self::getFutureEvents($data, $p_start, $p_end, $instance['event_count'], (($instance['categories_filter'])??''), (($instance['categories_filter_op'])??''));
+        return ['data'=>self::getFutureEvents($data, $p_start, $p_end, $instance['event_count'], (($instance['categories_filter'])??''), (($instance['categories_filter_op'])??'')),
+                'messages'=>$messages];
     }
     /**
      * Fetches from calender using calendar_ids and event_period
@@ -1111,10 +1121,10 @@ END:VCALENDAR';
                 $url = self::getCalendarUrl($cal_id);
                 $httpData = wp_remote_get($url);
                 if(is_wp_error($httpData)) {
-                    echo '<!-- ' . esc_url( $url ) . ' not found ' . 'fall back to https:// -->';
+                    $this->messages[] =  esc_url( $url ) . ' not found ' . 'fall back to https://';
                     $httpData = wp_remote_get('https://' . explode('://', $url)[1]);
                     if(is_wp_error($httpData)) {
-                        echo '<!-- Simple iCal Block: ', wp_kses_post($httpData->get_error_message()), ' -->';
+                        $this->messages[] = 'Simple iCal Block: '. $httpData->get_error_message();
                         continue;
                     }
                 }
