@@ -166,9 +166,8 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
                 }
                 // lay-out block:
                 $instance['clear_cache_now'] = false;
-                
-                echo wp_kses(sprintf($args['before_widget'].
-                    ('w-' . $instance['anchorId'] ).
+                echo wp_kses(sprintf($args['before_widget'],
+                    ('w-' . $instance['anchorId']),
                     $args['classname']),'post') ;
                 echo wp_kses('<span id="' . $instance['anchorId'] . '" data-sib-id="'
                         . $instance['sibid'] . '" data-sib-utzui="' . $instance['rest_utzui'] 
