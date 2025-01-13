@@ -206,7 +206,7 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
              */
             public function update($new_instance, $old_instance)
             {
-                $instance['title'] = strip_tags($new_instance['title']);
+                $instance['title'] = wp_strip_all_tags($new_instance['title']);
                 
                 $instance['calendar_id'] = htmlspecialchars($new_instance['calendar_id']);
                 
@@ -237,7 +237,7 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
                 } else {
                     $instance['event_count'] = 5;
                 }
-                // using strip_tags because it can start with space or contain more classe seperated by spaces
+                // using wp_strip_all_tags because it can start with space or contain more classe seperated by spaces
                 $instance['dateformat_lg'] = ($new_instance['dateformat_lg']);
                 $instance['dateformat_lgend'] = ($new_instance['dateformat_lgend']);
                 $instance['dateformat_tsum'] = ($new_instance['dateformat_tsum']);
@@ -250,23 +250,23 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
                     $instance['excerptlength'] = '';
                 }
                 if(!empty($new_instance['period_limits']) &&  is_numeric($new_instance['period_limits'])) {
-                    $instance['period_limits'] = strip_tags($new_instance['period_limits']);
+                    $instance['period_limits'] = wp_strip_all_tags($new_instance['period_limits']);
                 }
                 if(!empty($new_instance['rest_utzui']) &&  is_numeric($new_instance['rest_utzui'])) {
-                    $instance['rest_utzui'] = strip_tags($new_instance['rest_utzui']);
+                    $instance['rest_utzui'] = wp_strip_all_tags($new_instance['rest_utzui']);
                 }
-                $instance['tag_sum'] = strip_tags($new_instance['tag_sum']);
-                $instance['suffix_lg_class'] = strip_tags($new_instance['suffix_lg_class']);
-                $instance['suffix_lgi_class'] = strip_tags($new_instance['suffix_lgi_class']);
-                $instance['suffix_lgia_class'] = strip_tags($new_instance['suffix_lgia_class']);
+                $instance['tag_sum'] = wp_strip_all_tags($new_instance['tag_sum']);
+                $instance['suffix_lg_class'] = wp_strip_all_tags($new_instance['suffix_lg_class']);
+                $instance['suffix_lgi_class'] = wp_strip_all_tags($new_instance['suffix_lgi_class']);
+                $instance['suffix_lgia_class'] = wp_strip_all_tags($new_instance['suffix_lgia_class']);
                 $instance['after_events'] = ($new_instance['after_events']);
                 $instance['no_events'] = ($new_instance['no_events']);
                 $instance['allowhtml'] = !empty($new_instance['allowhtml']);
                 if (!empty($new_instance['blockid']) && empty($new_instance['sibid'])) {
                     $new_instance['sibid'] = $new_instance['blockid'];
                 }
-                $instance['anchorId'] = strip_tags($new_instance['anchorId']);
-                $instance['sibid'] = strip_tags($new_instance['sibid']);
+                $instance['anchorId'] = wp_strip_all_tags($new_instance['anchorId']);
+                $instance['sibid'] = wp_strip_all_tags($new_instance['sibid']);
                 
                 if (!empty($this->number && is_numeric($this->number))) {
                    $instance['postid'] = (string) $this->id;
