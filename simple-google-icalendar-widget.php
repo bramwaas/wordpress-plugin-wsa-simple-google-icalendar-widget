@@ -186,7 +186,7 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
                 if ('rest_ph_w' == $instance['wptype'] ) {
                     SimpleicalBlock::update_rest_attrs($instance );
                     echo '<p>';
-                    esc_attr(_e('Processing', 'simple-google-icalendar-widget'));
+                    esc_attr_e('Processing', 'simple-google-icalendar-widget');
                     echo '</p>';
                 } else {
                     SimpleicalBlock::display_block($instance);
@@ -332,37 +332,37 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
           <input class="widefat" id="<?php echo esc_attr($this->get_field_id('dateformat_lg')); ?>" name="<?php echo esc_attr($this->get_field_name('dateformat_lg')); ?>" type="text" value="<?php echo esc_attr($instance['dateformat_lg']); ?>" />
         </p>
          <p>
-          <label for="<?php echo $this->get_field_id('dateformat_lgend'); ?>"><?php esc_attr_e('Enddate format first line:', 'simple-google-icalendar-widget'); ?></label> 
-          <input class="widefat" id="<?php echo $this->get_field_id('dateformat_lgend'); ?>" name="<?php echo $this->get_field_name('dateformat_lgend'); ?>" type="text" value="<?php echo esc_attr($instance['dateformat_lgend']); ?>" />
+          <label for="<?php echo esc_attr($this->get_field_id('dateformat_lgend')); ?>"><?php esc_attr_e('Enddate format first line:', 'simple-google-icalendar-widget'); ?></label> 
+          <input class="widefat" id="<?php echo esc_attr($this->get_field_id('dateformat_lgend')); ?>" name="<?php echo esc_attr($this->get_field_name('dateformat_lgend')); ?>" type="text" value="<?php echo esc_attr($instance['dateformat_lgend']); ?>" />
         </p>
         <p>
-          <label for="<?php echo $this->get_field_id('dateformat_tsum'); ?>"><?php esc_attr_e('Time format time summary line:', 'simple-google-icalendar-widget'); ?></label> 
-          <input class="widefat" id="<?php echo $this->get_field_id('dateformat_tsum'); ?>" name="<?php echo $this->get_field_name('dateformat_tsum'); ?>" type="text" value="<?php echo esc_attr($instance['dateformat_tsum']); ?>" />
+          <label for="<?php echo esc_attr($this->get_field_id('dateformat_tsum')); ?>"><?php esc_attr_e('Time format time summary line:', 'simple-google-icalendar-widget'); ?></label> 
+          <input class="widefat" id="<?php echo esc_attr($this->get_field_id('dateformat_tsum')); ?>" name="<?php echo esc_attr($this->get_field_name('dateformat_tsum')); ?>" type="text" value="<?php echo esc_attr($instance['dateformat_tsum']); ?>" />
         </p>
         <p>
-          <label for="<?php echo $this->get_field_id('dateformat_tsend'); ?>"><?php esc_attr_e('Time format end time summary line:', 'simple-google-icalendar-widget'); ?></label> 
-          <input class="widefat" id="<?php echo $this->get_field_id('dateformat_tsend'); ?>" name="<?php echo $this->get_field_name('dateformat_tsend'); ?>" type="text" value="<?php echo esc_attr($instance['dateformat_tsend']); ?>" />
+          <label for="<?php echo esc_attr($this->get_field_id('dateformat_tsend')); ?>"><?php esc_attr_e('Time format end time summary line:', 'simple-google-icalendar-widget'); ?></label> 
+          <input class="widefat" id="<?php echo esc_attr($this->get_field_id('dateformat_tsend')); ?>" name="<?php echo esc_attr($this->get_field_name('dateformat_tsend')); ?>" type="text" value="<?php echo esc_attr($instance['dateformat_tsend']); ?>" />
         </p>
         <p>
-          <label for="<?php echo $this->get_field_id('dateformat_tstart'); ?>"><?php esc_attr_e('Time format start time:', 'simple-google-icalendar-widget'); ?></label> 
-          <input class="widefat" id="<?php echo $this->get_field_id('dateformat_tstart'); ?>" name="<?php echo $this->get_field_name('dateformat_tstart'); ?>" type="text" value="<?php echo esc_attr($instance['dateformat_tstart']); ?>" />
+          <label for="<?php echo esc_attr($this->get_field_id('dateformat_tstart')); ?>"><?php esc_attr_e('Time format start time:', 'simple-google-icalendar-widget'); ?></label> 
+          <input class="widefat" id="<?php echo esc_attr($this->get_field_id('dateformat_tstart')); ?>" name="<?php echo esc_attr($this->get_field_name('dateformat_tstart')); ?>" type="text" value="<?php echo esc_attr($instance['dateformat_tstart']); ?>" />
         </p>
         <p>
-          <label for="<?php echo $this->get_field_id('dateformat_tend'); ?>"><?php esc_attr_e('Time format end time:', 'simple-google-icalendar-widget'); ?></label> 
-          <input class="widefat" id="<?php echo $this->get_field_id('dateformat_tend'); ?>" name="<?php echo $this->get_field_name('dateformat_tend'); ?>" type="text" value="<?php echo esc_attr($instance['dateformat_tend']); ?>" />
+          <label for="<?php echo esc_attr($this->get_field_id('dateformat_tend')); ?>"><?php esc_attr_e('Time format end time:', 'simple-google-icalendar-widget'); ?></label> 
+          <input class="widefat" id="<?php echo esc_attr($this->get_field_id('dateformat_tend')); ?>" name="<?php echo esc_attr($this->get_field_name('dateformat_tend')); ?>" type="text" value="<?php echo esc_attr($instance['dateformat_tend']); ?>" />
         </p>
         <h4>Advanced</h4>
         <p>
-          <label for="<?php echo $this->get_field_id('cache_time'); ?>"><?php esc_attr_e('Cache expiration time in minutes:', 'simple-google-icalendar-widget'); ?></label> 
-          <input class="widefat" id="<?php echo $this->get_field_id('cache_time'); ?>" name="<?php echo $this->get_field_name('cache_time'); ?>" type="text" value="<?php echo esc_attr($instance['cache_time']); ?>" />
+          <label for="<?php echo esc_attr($this->get_field_id('cache_time')); ?>"><?php esc_attr_e('Cache expiration time in minutes:', 'simple-google-icalendar-widget'); ?></label> 
+          <input class="widefat" id="<?php echo esc_attr($this->get_field_id('cache_time')); ?>" name="<?php echo esc_attr($this->get_field_name('cache_time')); ?>" type="text" value="<?php echo esc_attr($instance['cache_time']); ?>" />
         </p>
         <p>
-          <label for="<?php echo $this->get_field_id('excerptlength'); ?>"><?php esc_attr_e('Excerpt length, max length of description:', 'simple-google-icalendar-widget'); ?></label> 
-          <input class="widefat" id="<?php echo $this->get_field_id('excerptlength'); ?>" name="<?php echo $this->get_field_name('excerptlength'); ?>" type="text" value="<?php echo esc_attr($instance['excerptlength']); ?>" />
+          <label for="<?php echo esc_attr($this->get_field_id('excerptlength')); ?>"><?php esc_attr_e('Excerpt length, max length of description:', 'simple-google-icalendar-widget'); ?></label> 
+          <input class="widefat" id="<?php echo esc_attr($this->get_field_id('excerptlength')); ?>" name="<?php echo esc_attr($this->get_field_name('excerptlength')); ?>" type="text" value="<?php echo esc_attr($instance['excerptlength']); ?>" />
         </p>
         <p>
-          <label for="<?php echo $this->get_field_id('period_limits'); ?>"><?php esc_attr_e('Period limits:', 'simple-google-icalendar-widget'); ?></label> 
-          <select class="widefat" id="<?php echo $this->get_field_id('period_limits'); ?>" name="<?php echo $this->get_field_name('period_limits'); ?>" >
+          <label for="<?php echo esc_attr($this->get_field_id('period_limits')); ?>"><?php esc_attr_e('Period limits:', 'simple-google-icalendar-widget'); ?></label> 
+          <select class="widefat" id="<?php echo esc_attr($this->get_field_id('period_limits')); ?>" name="<?php echo esc_attr($this->get_field_name('period_limits')); ?>" >
             <option value="1"<?php echo ('1'==esc_attr($instance['period_limits']))?'selected':''; ?>><?php esc_attr_e('Start Whole  day, End Whole  day', 'simple-google-icalendar-widget'); ?></option>
   			<option value="2"<?php echo ('2'==esc_attr($instance['period_limits']))?'selected':''; ?>><?php esc_attr_e('Start Time of day, End Whole  day', 'simple-google-icalendar-widget'); ?></option>
   			<option value="3"<?php echo ('3'==esc_attr($instance['period_limits']))?'selected':''; ?>><?php esc_attr_e('Start Time of day, End Time of day', 'simple-google-icalendar-widget'); ?></option>
@@ -370,15 +370,15 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
   		 </select>	
         </p>
         <p>
-          <label for="<?php echo $this->get_field_id('rest_utzui'); ?>"><?php esc_attr_e('Use client timezone settings:', 'simple-google-icalendar-widget'); ?></label> 
-          <select class="widefat" id="<?php echo $this->get_field_id('rest_utzui'); ?>" name="<?php echo $this->get_field_name('rest_utzui'); ?>" >
+          <label for="<?php echo esc_attr($this->get_field_id('rest_utzui')); ?>"><?php esc_attr_e('Use client timezone settings:', 'simple-google-icalendar-widget'); ?></label> 
+          <select class="widefat" id="<?php echo esc_attr($this->get_field_id('rest_utzui')); ?>" name="<?php echo esc_attr($this->get_field_name('rest_utzui')); ?>" >
   			<option value=""<?php echo (''==esc_attr($instance['rest_utzui']))?'selected':''; ?>><?php esc_attr_e('Use WordPress timezone settings, no REST', 'simple-google-icalendar-widget'); ?></option>
             <option value="1"<?php echo ('1'==esc_attr($instance['rest_utzui']))?'selected':''; ?>><?php esc_attr_e('Use Client timezone settings, with REST', 'simple-google-icalendar-widget'); ?></option>
   		 </select>
   		</p> 	
         <p>
-          <label for="<?php echo $this->get_field_id('categories_filter_op'); ?>"><?php esc_attr_e('Categories Filter Operator:', 'simple-google-icalendar-widget'); ?></label> 
-          <select class="widefat" id="<?php echo $this->get_field_id('categories_filter_op'); ?>" name="<?php echo $this->get_field_name('categories_filter_op'); ?>" >
+          <label for="<?php echo esc_attr($this->get_field_id('categories_filter_op')); ?>"><?php esc_attr_e('Categories Filter Operator:', 'simple-google-icalendar-widget'); ?></label> 
+          <select class="widefat" id="<?php echo esc_attr($this->get_field_id('categories_filter_op')); ?>" name="<?php echo esc_attr($this->get_field_name('categories_filter_op')); ?>" >
   			<option value=""<?php echo (''==esc_attr($instance['categories_filter_op']))?'selected':''; ?>><?php esc_attr_e('No filter', 'simple-google-icalendar-widget'); ?></option>
             <option value="ANY"<?php echo ('ANY'==esc_attr($instance['categories_filter_op']))?'selected':''; ?>><?php esc_attr_e('ANY, one or more match', 'simple-google-icalendar-widget'); ?></option>
             <option value="ALL"<?php echo ('ALL'==esc_attr($instance['categories_filter_op']))?'selected':''; ?>><?php esc_attr_e('ALL, all match', 'simple-google-icalendar-widget'); ?></option>
@@ -387,17 +387,17 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
   		 </select>
   		</p> 	
         <p>
-          <label for="<?php echo $this->get_field_id('categories_filter'); ?>"><?php esc_attr_e('Categories Filter List:', 'simple-google-icalendar-widget'); ?></label> 
-          <input class="widefat" id="<?php echo $this->get_field_id('categories_filter'); ?>" name="<?php echo $this->get_field_name('categories_filter'); ?>" type="text" value="<?php echo esc_attr($instance['categories_filter']); ?>" />
+          <label for="<?php echo esc_attr($this->get_field_id('categories_filter')); ?>"><?php esc_attr_e('Categories Filter List:', 'simple-google-icalendar-widget'); ?></label> 
+          <input class="widefat" id="<?php echo esc_attr($this->get_field_id('categories_filter')); ?>" name="<?php echo esc_attr($this->get_field_name('categories_filter')); ?>" type="text" value="<?php echo esc_attr($instance['categories_filter']); ?>" />
         </p>
         <p>
-          <label for="<?php echo $this->get_field_id('categories_display'); ?>"><?php esc_attr_e('Display categories with separator:', 'simple-google-icalendar-widget'); ?></label> 
-          <input class="widefat" id="<?php echo $this->get_field_id('categories_display'); ?>" name="<?php echo $this->get_field_name('categories_display'); ?>" type="text" value="<?php echo esc_attr($instance['categories_display']); ?>" />
+          <label for="<?php echo esc_attr($this->get_field_id('categories_display')); ?>"><?php esc_attr_e('Display categories with separator:', 'simple-google-icalendar-widget'); ?></label> 
+          <input class="widefat" id="<?php echo esc_attr($this->get_field_id('categories_display')); ?>" name="<?php echo esc_attr($this->get_field_name('categories_display')); ?>" type="text" value="<?php echo esc_attr($instance['categories_display']); ?>" />
 		<label style="font-size:12px; color:#7f7f7f;"><?php esc_attr_e('Empty no display. Else display categories above event with this separator.', 'simple-google-icalendar-widget'); ?></label>
         </p>
         <p>
-          <label for="<?php echo $this->get_field_id('tag_sum'); ?>"><?php esc_attr_e('Tag for summary:', 'simple-google-icalendar-widget'); ?></label> 
-          <select class="widefat" id="<?php echo $this->get_field_id('tag_sum'); ?>" name="<?php echo $this->get_field_name('tag_sum'); ?>" >
+          <label for="<?php echo esc_attr($this->get_field_id('tag_sum')); ?>"><?php esc_attr_e('Tag for summary:', 'simple-google-icalendar-widget'); ?></label> 
+          <select class="widefat" id="<?php echo esc_attr($this->get_field_id('tag_sum')); ?>" name="<?php echo esc_attr($this->get_field_name('tag_sum')); ?>" >
             <option value="a"<?php echo ('a'==esc_attr($instance['tag_sum']))?'selected':''; ?>><?php esc_attr_e('a (link)', 'simple-google-icalendar-widget'); ?></option>
   			<option value="b"<?php echo ('b'==esc_attr($instance['tag_sum']))?'selected':''; ?>><?php esc_attr_e('b (attention, bold)', 'simple-google-icalendar-widget'); ?></option>
   			<option value="div"<?php echo ('div'==esc_attr($instance['tag_sum']))?'selected':''; ?>><?php esc_attr_e('div', 'simple-google-icalendar-widget'); ?></option>
@@ -411,43 +411,43 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
   		 </select>	
         </p>
         <p>
-          <label for="<?php echo $this->get_field_id('suffix_lg_class'); ?>"><?php esc_attr_e('Suffix group class:', 'simple-google-icalendar-widget'); ?></label> 
-          <input class="widefat" id="<?php echo $this->get_field_id('suffix_lg_class'); ?>" name="<?php echo $this->get_field_name('suffix_lg_class'); ?>" type="text" value="<?php echo esc_attr($instance['suffix_lg_class']); ?>" />
+          <label for="<?php echo esc_attr($this->get_field_id('suffix_lg_class')); ?>"><?php esc_attr_e('Suffix group class:', 'simple-google-icalendar-widget'); ?></label> 
+          <input class="widefat" id="<?php echo esc_attr($this->get_field_id('suffix_lg_class')); ?>" name="<?php echo esc_attr($this->get_field_name('suffix_lg_class')); ?>" type="text" value="<?php echo esc_attr($instance['suffix_lg_class']); ?>" />
         </p>
         <p>
-          <label for="<?php echo $this->get_field_id('suffix_lgi_class'); ?>"><?php esc_attr_e('Suffix event start class:', 'simple-google-icalendar-widget'); ?></label> 
-          <input class="widefat" id="<?php echo $this->get_field_id('suffix_lgi_class'); ?>" name="<?php echo $this->get_field_name('suffix_lgi_class'); ?>" type="text" value="<?php echo esc_attr($instance['suffix_lgi_class']); ?>" />
+          <label for="<?php echo esc_attr($this->get_field_id('suffix_lgi_class')); ?>"><?php esc_attr_e('Suffix event start class:', 'simple-google-icalendar-widget'); ?></label> 
+          <input class="widefat" id="<?php echo esc_attr($this->get_field_id('suffix_lgi_class')); ?>" name="<?php echo esc_attr($this->get_field_name('suffix_lgi_class')); ?>" type="text" value="<?php echo esc_attr($instance['suffix_lgi_class']); ?>" />
         </p>
         <p>
-          <label for="<?php echo $this->get_field_id('suffix_lgia_class'); ?>"><?php esc_attr_e('Suffix event details class:', 'simple-google-icalendar-widget'); ?></label> 
-          <input class="widefat" id="<?php echo $this->get_field_id('suffix_lgia_class'); ?>" name="<?php echo $this->get_field_name('suffix_lgia_class'); ?>" type="text" value="<?php echo esc_attr($instance['suffix_lgia_class']); ?>" />
+          <label for="<?php echo esc_attr($this->get_field_id('suffix_lgia_class')); ?>"><?php esc_attr_e('Suffix event details class:', 'simple-google-icalendar-widget'); ?></label> 
+          <input class="widefat" id="<?php echo esc_attr($this->get_field_id('suffix_lgia_class')); ?>" name="<?php echo esc_attr($this->get_field_name('suffix_lgia_class')); ?>" type="text" value="<?php echo esc_attr($instance['suffix_lgia_class']); ?>" />
         </p>
         <p>
-          <input class="checkbox" id="<?php echo $this->get_field_id('allowhtml'); ?>" name="<?php echo $this->get_field_name('allowhtml'); ?>" type="checkbox" value="1" <?php checked( '1', $instance['allowhtml'] ); ?> />
-          <label for="<?php echo $this->get_field_id('allowhtml'); ?>"><?php esc_attr_e('Allow safe html in description and summary.', 'simple-google-icalendar-widget'); ?></label> 
+          <input class="checkbox" id="<?php echo esc_attr($this->get_field_id('allowhtml')); ?>" name="<?php echo esc_attr($this->get_field_name('allowhtml')); ?>" type="checkbox" value="1" <?php checked( '1', $instance['allowhtml'] ); ?> />
+          <label for="<?php echo esc_attr($this->get_field_id('allowhtml')); ?>"><?php esc_attr_e('Allow safe html in description and summary.', 'simple-google-icalendar-widget'); ?></label> 
         </p>
         <p>
-          <label for="<?php echo $this->get_field_id('after_events'); ?>"><?php esc_attr_e('Closing HTML after available events:', 'simple-google-icalendar-widget'); ?></label> 
-          <input class="widefat" id="<?php echo $this->get_field_id('after_events'); ?>" name="<?php echo $this->get_field_name('after_events'); ?>" type="text" value="<?php echo esc_attr($instance['after_events']); ?>" />
+          <label for="<?php echo esc_attr($this->get_field_id('after_events')); ?>"><?php esc_attr_e('Closing HTML after available events:', 'simple-google-icalendar-widget'); ?></label> 
+          <input class="widefat" id="<?php echo esc_attr($this->get_field_id('after_events')); ?>" name="<?php echo esc_attr($this->get_field_name('after_events')); ?>" type="text" value="<?php echo esc_attr($instance['after_events']); ?>" />
         </p>
         <p>
-          <label for="<?php echo $this->get_field_id('no_events'); ?>"><?php esc_attr_e('Closing HTML when no events:', 'simple-google-icalendar-widget'); ?></label> 
-          <input class="widefat" id="<?php echo $this->get_field_id('no_events'); ?>" name="<?php echo $this->get_field_name('no_events'); ?>" type="text" value="<?php echo esc_attr($instance['no_events']); ?>" />
+          <label for="<?php echo esc_attr($this->get_field_id('no_events')); ?>"><?php esc_attr_e('Closing HTML when no events:', 'simple-google-icalendar-widget'); ?></label> 
+          <input class="widefat" id="<?php echo esc_attr($this->get_field_id('no_events')); ?>" name="<?php echo esc_attr($this->get_field_name('no_events')); ?>" type="text" value="<?php echo esc_attr($instance['no_events']); ?>" />
         </p>
         <p>
-          <label for="<?php echo $this->get_field_id('anchorId'); ?>"><?php esc_attr_e('HTML anchor:', 'simple-google-icalendar-widget'); ?></label> 
-          <input class="widefat" id="<?php echo $this->get_field_id('anchorId'); ?>" name="<?php echo $this->get_field_name('anchorId'); ?>" type="text" value="<?php echo esc_attr($instance['anchorId']); ?>" />
+          <label for="<?php echo esc_attr($this->get_field_id('anchorId')); ?>"><?php esc_attr_e('HTML anchor:', 'simple-google-icalendar-widget'); ?></label> 
+          <input class="widefat" id="<?php echo esc_attr($this->get_field_id('anchorId')); ?>" name="<?php echo esc_attr($this->get_field_name('anchorId')); ?>" type="text" value="<?php echo esc_attr($instance['anchorId']); ?>" />
         </p>
         <p>
-          <label for="<?php echo $this->get_field_id('sibid'); ?>"><?php esc_attr_e('Sib ID:', 'simple-google-icalendar-widget'); ?></label> 
-          <input class="widefat" id="<?php echo $this->get_field_id('sibid'); ?>" name="<?php echo $this->get_field_name('sibid'); ?>" type="text" value="<?php echo esc_attr($instance['sibid']); ?>" readonly />
+          <label for="<?php echo esc_attr($this->get_field_id('sibid')); ?>"><?php esc_attr_e('Sib ID:', 'simple-google-icalendar-widget'); ?></label> 
+          <input class="widefat" id="<?php echo esc_attr($this->get_field_id('sibid')); ?>" name="<?php echo esc_attr($this->get_field_name('sibid')); ?>" type="text" value="<?php echo esc_attr($instance['sibid']); ?>" readonly />
         </p>
          <p>
-          <button class="button" id="<?php echo $this->get_field_id('reset_id'); ?>" name="<?php echo $this->get_field_name('reset_id'); ?>" onclick="document.getElementById('<?php echo $this->get_field_id('sibid'); ?>').value = '<?php echo $nwsibid; ?>'" ><?php esc_attr_e('Reset ID.', 'simple-google-icalendar-widget')  ?></button>
-          <label for="<?php echo $this->get_field_id('reset_id'); ?>"><?php esc_attr_e('Reset ID, only necessary to clear cache or after duplicating block. You may have to change another field to save the new values to the DB', 'simple-google-icalendar-widget'); ?></label> 
+          <button class="button" id="<?php echo esc_attr($this->get_field_id('reset_id')); ?>" name="<?php echo esc_attr($this->get_field_name('reset_id')); ?>" onclick="document.getElementById('<?php echo esc_attr($this->get_field_id('sibid')); ?>').value = '<?php echo esc_attr($nwsibid); ?>'" ><?php esc_attr_e('Reset ID.', 'simple-google-icalendar-widget')  ?></button>
+          <label for="<?php echo esc_attr($this->get_field_id('reset_id')); ?>"><?php esc_attr_e('Reset ID, only necessary to clear cache or after duplicating block. You may have to change another field to save the new values to the DB', 'simple-google-icalendar-widget'); ?></label> 
         </p>
         <p>
-            <?php echo '<a href="' . admin_url('admin.php?page=simple_ical_info') . '" target="_blank">' ; 
+            <?php echo '<a href="' . esc_url(admin_url('admin.php?page=simple_ical_info')) . '" target="_blank">' ; 
                 esc_attr_e('Need help?', 'simple-google-icalendar-widget'); 
                 echo '</a>';
                 ?>
