@@ -1083,19 +1083,21 @@ END:VCALENDAR';
             $pdt_start->setTimestamp($now);
             $p_end = $pdt_start->modify("+$ep day")->getTimestamp();
         }
-        $messages = [];
         if ($instance['clear_cache_now']) delete_transient($transientId);
-        if(false === ($data = get_transient($transientId))) {
+        if(false === ($ipd = get_transient($transientId))) {
             $parser = new IcsParser($instance['calendar_id'], $instance['cache_time'], $instance['event_period'], $instance['tzid_ui'] );
             $data = $parser->fetch( );
-            $messages = $parser->messages;
+            $ipd = ['data'=>$data, 'messages'=>$parser->messages];
             // do not cache data if fetching failed
             if ($data) {
-                set_transient($transientId, $data, $instance['cache_time']*60);
+                set_transient($transientId, $ipd, $instance['cache_time']*60);
             }
         }
-        return ['data'=>self::getFutureEvents($data, $p_start, $p_end, $instance['event_count'], (($instance['categories_filter'])??''), (($instance['categories_filter_op'])??'')),
-                'messages'=>$messages];
+        if ( ! array_key_exists('data', $ipd)) {
+            $ipd = ['data'=>$ipd, 'messages'=>[]];
+        }
+        return ['data'=>self::getFutureEvents($ipd['data'], $p_start, $p_end, $instance['event_count'], (($instance['categories_filter'])??''), (($instance['categories_filter_op'])??'')),
+            'messages'=>$ipd['messages']];
     }
     /**
      * Fetches from calender using calendar_ids and event_period
