@@ -8,7 +8,7 @@
  * @author Bram Waasdorp <bram@waasdorpsoekhan.nl>
  * @copyright Copyright (c) 2024 - 2025, Bram Waasdorp
  * 
- * 2.6.0 in a separate claas with namespace since 2.6.0 no underscores in classname. *
+ * 2.6.0 in a separate class with namespace since 2.6.0 no underscores in classname. SimpleicalBlock => SimpleicalHelper
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 class SimpleicalWidget extends \WP_Widget
@@ -50,7 +50,7 @@ class SimpleicalWidget extends \WP_Widget
                 'after_widget' => '',
                 'classname' => 'Simple_iCal_Widget' ],
                 $args);
-            $instance = array_merge(SimpleicalBlock::$default_block_attributes,
+            $instance = array_merge(SimpleicalHelper::$default_block_attributes,
                 ['title' => __('Events', 'simple-google-icalendar-widget'),
                     'tzid_ui' => wp_timezone_string(),
                     'wptype' => 'widget'],
@@ -79,12 +79,12 @@ class SimpleicalWidget extends \WP_Widget
                 echo wp_kses($args['before_title']. $title. $args['after_title'],'post');
             }
             if ('rest_ph_w' == $instance['wptype'] ) {
-                SimpleicalBlock::update_rest_attrs($instance );
+                SimpleicalHelper::update_rest_attrs($instance );
                 echo '<p>';
                 esc_attr_e('Processing', 'simple-google-icalendar-widget');
                 echo '</p>';
             } else {
-                SimpleicalBlock::display_block($instance);
+                SimpleicalHelper::display_block($instance);
             }
             // end lay-out block
             echo wp_kses($args['after_widget'],'post');
@@ -167,7 +167,7 @@ class SimpleicalWidget extends \WP_Widget
                 $instance['postid'] = (string) $this->id;
             }
             if (!empty($old_instance['sibid'])) $instance['prev_sibid'] = $old_instance['sibid'];
-            if (SimpleicalBlock::update_rest_attrs($instance )) $instance['prev_sibid'] = $instance['sibid'];
+            if (SimpleicalHelper::update_rest_attrs($instance )) $instance['prev_sibid'] = $instance['sibid'];
             
             return $instance;
         }
@@ -185,7 +185,7 @@ class SimpleicalWidget extends \WP_Widget
                 'wptype' => 'widget',
                 'title' => __('Events', 'simple-google-icalendar-widget'),
             ],
-                SimpleicalBlock::$default_block_attributes);
+                SimpleicalHelper::$default_block_attributes);
             
             if (empty($instance['sibid'])) {
                 if  (!empty($instance['blockid'])) {
