@@ -1,8 +1,8 @@
 <?php
 /*
- * SimpleicalBlock.php
+ * SimpleicalHelper.php
  *
- * @package Simple Google iCalendar Block
+ * @package Simple Google iCalendar Widget
  * @subpackage Block
  * @author Bram Waasdorp <bram@waasdorpsoekhan.nl>
  * @copyright Copyright (c) 2022 - 2025, Bram Waasdorp
@@ -10,20 +10,6 @@
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * Gutenberg Block functions since v2.1.2 also used for widget.
  * Version: 2.6.0
- * 20220427 namespaced and renamed after classname.
- * 20220430 try with static calls
- * 20220509 fairly correct front-end display. attributes back to block.json
- * 20220510 attributes again in php also added anchor, align and className who can be added by support hopefully that is enough for ServerSideRender.
- * 20220511 integer excerptlength not initialised with '' because serversiderender REST type validation gives an error (rest_invalid_type)
- * excerptlength string and in javascript '' when not parsed as integer.
- * 20220526 added example
- * 20220620 added enddate/times for startdate and starttime added Id as anchor and choice of tagg for summary, collaps only when tag_for summary = a.
- * 2.1.0 add calendar class to list-group-item
- * add htmlspecialchars() to summary, description and location when not 'allowhtml', replacing similar code from IcsParser
- * 2.1.1 20230401 use select 'layout' in stead of 'start with summary' to create more lay-out options.
- * 2.1.2 20230410 move assignment of cal_class to a place where e=>cal_class is available.
- * 2.1.3 20230418 Added optional placeholder HTML output when no upcoming events are avalable. Also added optional output after the events list (when upcoming events are available).
- * 2.1.5 20230824 default_block_attributes as static variable and alowed_tags_sum made public to use same values also in the widget, option anchorId moved to render_block.
  * 2.2.0 20240106 changed text domain to simple-google-icalendar-widget
  * 2.2.1 20240123 don't display description line when excerpt-length = 0
  * 2.3.0 remove definition of attributes, leave it to block.json
@@ -37,11 +23,12 @@
  *       add  "data-sib-utzui":props.attributes.rest_utzui to rest placeholder tag; use tag_title when not placeholder for widget
  * 2.4.4 improve compare equallity in update_rest_attrs by removing attributes that are added during save process or depend on saving environment.
  * 2.5.0 Add filter and display support for categories.
- * 2.6.0 improve security by following Plugin Check recommendations; Moved functions common with Joomla to top
+ * 2.6.0 improve security by following Plugin Check recommendations; Moved functions common with Joomla to top. 
+ * rename SimpleicalBlock to SimpleicalHelper and register widget in this class.
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
-class SimpleicalBlock
+class SimpleicalHelper
 {
     const SIB_ATTR = 'simple_ical_block_attrs';
 
@@ -471,7 +458,16 @@ class SimpleicalBlock
             )
         ));
     }
-
+    /**
+     * Widget init register legacy widget
+     *
+     * @param
+     *            .
+     */
+    static function simple_ical_widget ()
+    {  register_widget( '\WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalWidget' );
+    }
+    
 
 
 
