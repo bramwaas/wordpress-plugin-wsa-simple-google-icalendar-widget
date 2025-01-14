@@ -76,17 +76,16 @@ if ( is_wp_version_compatible( '6.3' ) )   { // block  v3
     
 } // end wp-version > 6.3 block v3
 else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
-    add_action( 'init', array (__NAMESPACE__ .'\SimpleicalHelper', 'init_block_v2') );
+    \add_action( 'init', array (__NAMESPACE__ .'\SimpleicalHelper', 'init_block_v2') );
     
 } // end wp-version > 5.9 block v2
 
-{ // old widget always
-    add_action('rest_api_init', array(
-        'WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\RestController',
-        'init_and_register_routes'
-    ));
-    add_action( 'wp_enqueue_scripts', 'enqueue_view_script');
-    /**
+\add_action('rest_api_init', array(
+    __NAMESPACE__ .'\RestController',
+    'init_and_register_routes'
+));
+\add_action( 'wp_enqueue_scripts', __NAMESPACE__ .'\enqueue_view_script');
+/**
      * enqueue scripts for use in client REST view
      * for v 6.3 up args array strategy = defer, else in_footer = that array is casted to boolean true. 
      */
@@ -96,12 +95,7 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
             ['strategy' => 'defer' ]);
         wp_add_inline_script('simplegoogleicalenderwidget-simple-ical-block-view-script', '(window.simpleIcalBlock=window.simpleIcalBlock || {}).restRoot = "' . get_rest_url() . '"', 'before');
     }
+    \add_action ('widgets_init', array (__NAMESPACE__ .'\SimpleicalHelper','simple_ical_widget')  );
     
-    
-function simple_ical_widget () {  register_widget( 'Simple_iCal_Widget' );}
-add_action ('widgets_init', 'simple_ical_widget'  );
-
 $ical_admin = new SimpleicalWidgetAdmin;
 add_action('admin_menu',array ($ical_admin, 'simple_ical_admin_menu'));
-
-} // old widget
