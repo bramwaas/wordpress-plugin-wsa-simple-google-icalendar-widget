@@ -24,7 +24,8 @@
  * 2.4.4 improve compare equallity in update_rest_attrs by removing attributes that are added during save process or depend on saving environment.
  * 2.5.0 Add filter and display support for categories.
  * 2.6.0 improve security by following Plugin Check recommendations; Moved functions common with Joomla to top. 
- * rename SimpleicalBlock to SimpleicalHelper and register widget in this class.
+ * rename SimpleicalBlock to SimpleicalHelper and register widget in this class. 
+ * Replace echo by $secho in &$secho param a.o. in display_block, to simplify escaping output by replacing multiple echoes by one. 
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
@@ -111,9 +112,10 @@ class SimpleicalHelper
      * @see
      *
      * @param array $attributes
+     * @param string &$secho (reference to $secho), output to echo in calling function, to simplify escaping output by replacing multiple echoes by one 
      *            Saved attribute/option values from database.
      */
-    static function display_block($attributes)
+    static function display_block($attributes, &$secho)
     {
         $sn = 0;
         try {
@@ -155,10 +157,10 @@ class SimpleicalHelper
             $ipd = IcsParser::getData($attributes);
             $data = $ipd['data'];
             foreach ($ipd['messages'] as $msg) {
-                echo '<!-- ' . wp_kses($msg,'post') . ' -->';
+                $secho .= '<!-- ' . $msg . ' -->';
             }
             if (! empty($data) && is_array($data)) {
-                echo '<ul class="list-group' . esc_attr($attributes['suffix_lg_class']) . ' simple-ical-widget" > ';
+                $secho .= '<ul class="list-group' . esc_attr($attributes['suffix_lg_class']) . ' simple-ical-widget" > ';
                 $curdate = '';
                 foreach ($data as $e) {
                     $idlist = explode("@", esc_attr($e->uid));
@@ -169,9 +171,9 @@ class SimpleicalHelper
                     if (!empty($e->categories)) {
                         $ev_class = $ev_class . ' ' . implode( ' ', array_map( "sanitize_html_class", $e->categories ));
                         if ($cat_disp) {
-                            $cat_list = wp_kses('<div class="categories"><small>'
+                            $cat_list = '<div class="categories"><small>'
                                 . implode($cat_sep,str_replace("\n", '<br>', $e->categories ))
-                                . '</small></div>', 'post');
+                                . '</small></div>';
                         }
                     }
                     if (! $attributes['allowhtml']) {
@@ -185,31 +187,31 @@ class SimpleicalHelper
                             "</h4><h4>",
                             "</h5><h5>",
                             "</h6><h6>"
-                        ), '', $evdate . wp_kses(wp_date($dflgend, $e->end - 1, $attributes['tz_ui']), 'post'));
+                        ), '', $evdate . wp_date($dflgend, $e->end - 1, $attributes['tz_ui']));
                     }
                     $evdtsum = (($e->startisdate === false) ? wp_date($dftsum, $e->start, $attributes['tz_ui']) . wp_date($dftsend, $e->end, $attributes['tz_ui']) : '');
                     if ($layout < 2 && $curdate != $evdate) {
                         if ($curdate != '') {
-                            echo '</ul></li>';
+                            $secho .= '</ul></li>';
                         }
-                        echo '<li class="list-group-item' . esc_attr($sflgi . $ev_class) . ' head">' . '<span class="ical-date">' . esc_attr(ucfirst($evdate)) . '</span><ul class="list-group' . esc_attr($attributes['suffix_lg_class']) . '">';
+                        $secho .= '<li class="list-group-item' . esc_attr($sflgi . $ev_class) . ' head">' . '<span class="ical-date">' . esc_attr(ucfirst($evdate)) . '</span><ul class="list-group' . esc_attr($attributes['suffix_lg_class']) . '">';
                     }
-                    echo '<li class="list-group-item' . esc_attr($sflgi . $ev_class) . '">';
+                    $secho .= '<li class="list-group-item' . esc_attr($sflgi . $ev_class) . '">';
                     if ($layout == 3 && $curdate != $evdate) {
-                        echo '<span class="ical-date">' . esc_attr(ucfirst($evdate)) . '</span>' . (('a' == $attributes['tag_sum']) ? '<br>' : '');
+                        $secho .= '<span class="ical-date">' . esc_attr(ucfirst($evdate)) . '</span>' . (('a' == $attributes['tag_sum']) ? '<br>' : '');
                     }
-                    echo  '<' . esc_attr($attributes['tag_sum']) . ' class="ical_summary' . esc_attr($sflgia) . (('a' == $attributes['tag_sum']) ? '" data-toggle="collapse" data-bs-toggle="collapse" href="#' . esc_attr($itemid) . '" aria-expanded="false" aria-controls="' . esc_attr($itemid) . '">' : '">');
+                    $secho .=  '<' . esc_attr($attributes['tag_sum']) . ' class="ical_summary' . esc_attr($sflgia) . (('a' == $attributes['tag_sum']) ? '" data-toggle="collapse" data-bs-toggle="collapse" href="#' . esc_attr($itemid) . '" aria-expanded="false" aria-controls="' . esc_attr($itemid) . '">' : '">');
                     if ($layout != 2) {
-                        echo wp_kses($evdtsum, 'post');
+                        $secho .= $evdtsum;
                     }
                     if (! empty($e->summary)) {
-                        echo wp_kses(str_replace("\n", '<br>', $e->summary), 'post');
+                        $secho .= str_replace("\n", '<br>', $e->summary);
                     }
-                    echo '</' . esc_attr($attributes['tag_sum']) . '>';
+                    $secho .= '</' . esc_attr($attributes['tag_sum']) . '>';
                     if ($layout == 2) {
-                        echo '<span>', wp_kses($evdate . $evdtsum, 'post') , '</span>';
+                        $secho .= '<span>'. $evdate . $evdtsum . '</span>';
                     }
-                    echo wp_kses($cat_list . '<div class="ical_details' . $sflgia . (('a' == $attributes['tag_sum']) ? ' collapse' : '') . '" id="'. $itemid. '">', 'post');
+                    $secho .= $cat_list . '<div class="ical_details' . $sflgia . (('a' == $attributes['tag_sum']) ? ' collapse' : '') . '" id="'. $itemid. '">';
                     if (! empty($e->description) && trim($e->description) > '' && $excerptlength !== 0) {
                         if ($excerptlength !== '' && strlen($e->description) > $excerptlength) {
                             $e->description = substr($e->description, 0, $excerptlength + 1);
@@ -223,29 +225,29 @@ class SimpleicalHelper
                                 }
                             }
                         }
-                        $e->description = str_replace("\n", '<br>', wp_kses($e->description, 'post'));
-                        echo '<span class="dsc">', $e->description, (strrpos($e->description, '<br>') === (strlen($e->description) - 4)) ? '' : '<br>', '</span>';
+                        $e->description = str_replace("\n", '<br>', $e->description);
+                        $secho .= '<span class="dsc">'. $e->description. (strrpos($e->description, '<br>') === (strlen($e->description) - 4)) ? '' : '<br>'. '</span>';
                     }
                     if ($e->startisdate === false && gmdate('yz', $e->start) === gmdate('yz', $e->end)) {
-                        echo '<span class="time">', wp_kses(wp_date($dftstart, $e->start, $attributes['tz_ui']), 'post'), '</span><span class="time">', wp_kses(wp_date($dftend, $e->end, $attributes['tz_ui']), 'post'), '</span> ';
+                        $secho .= '<span class="time">'. wp_date($dftstart, $e->start, $attributes['tz_ui']). '</span><span class="time">'. wp_date($dftend, $e->end, $attributes['tz_ui']). '</span> ';
                     } else {
-                        echo '';
+                        $secho .= '';
                     }
                     if (! empty($e->location)) {
-                        echo '<span class="location">', wp_kses(str_replace("\n", '<br>', $e->location), 'post'), '</span>';
+                        $secho .= '<span class="location">'. str_replace("\n", '<br>', $e->location). '</span>';
                     }
-                    echo '</div></li>';
+                    $secho .= '</div></li>';
                     $curdate = $evdate;
                 }
                 if ($layout < 2) {
-                    echo '</ul></li>';
+                    $secho .= '</ul></li>';
                 }
-                echo '</ul>';
-                echo wp_kses($attributes['after_events'], 'post');
+                $secho .= '</ul>';
+                $secho .= $attributes['after_events'];
             } else {
-                echo wp_kses($attributes['no_events'], 'post');
+                $secho .= $attributes['no_events'];
             }
-            echo '<br class="clear" />';
+            $secho .= '<br class="clear" />';
     }
     /**
      * copied from WP sanitize_html_class, and added space as allowed character to accomodate multiple classes in one string.
@@ -297,47 +299,47 @@ class SimpleicalHelper
         ;
         if  (empty($block_attributes['tag_title']))  $block_attributes['tag_title'] = 'h3';
         $titlenode = '<' . $block_attributes['tag_title'] .' class="widget-title block-title" data-sib-t="true">'
-            . wp_kses($block_attributes['title'], 'post')
+            . $block_attributes['title']
             . '</' . $block_attributes['tag_title'] . '>';
             
-            $output = '';
-            ob_start();
+            $secho = '';
+//            ob_start();
             switch ($block_attributes['wptype']) {
                 case 'REST':
                     // Block displayed via REST
-                    self::display_block($block_attributes);
+                    self::display_block($block_attributes, $secho);
                     break;
                 case 'rest_ph':
                     // Placeholder starting point for REST processing display of block.
                     $wrapperattr = (is_wp_version_compatible('5.6')) ? get_block_wrapper_attributes() : '';
-                    echo wp_kses(sprintf($block_attributes['before_widget'], ($block_attributes['anchorId'] . '" data-sib-id="' . $block_attributes['sibid'] . '" data-sib-utzui="' . $block_attributes['rest_utzui'] . '" data-sib-st="0-start' ), $wrapperattr),'post');
-                    echo wp_kses($titlenode,'post');
-                    echo '<p>';
-                    esc_attr__('Processing', 'simple-google-icalendar-widget');
-                    echo '</p>' . wp_kses($block_attributes['after_widget'],'post');
+                    $secho .= sprintf($block_attributes['before_widget'], ($block_attributes['anchorId'] . '" data-sib-id="' . $block_attributes['sibid'] . '" data-sib-utzui="' . $block_attributes['rest_utzui'] . '" data-sib-st="0-start' ), $wrapperattr);
+                    $secho .= $titlenode;
+                    $secho .= '<p>';
+                    $secho .= __('Processing', 'simple-google-icalendar-widget');
+                    $secho .= '</p>' . $block_attributes['after_widget'];
                     try {
                         unset($block_attributes['before_widget'], $block_attributes['after_widget']);
                         self::update_rest_attrs($block_attributes);
                     } catch (\Exception $e) {
-                        echo '<p>Caught exception: ' . wp_kses($e->getMessage(),'post') . "</p>\n";
+                        $secho .= '<p>Caught exception: ' . $e->getMessage() . "</p>\n";
                     }
                     break;
                 case 'block':
                 case 'ssr':
                     // Block rendered serverside, or in admin via serversiderenderer
                     $wrapperattr = (is_wp_version_compatible('5.6')) ? get_block_wrapper_attributes() : '';
-                    echo wp_kses(sprintf($block_attributes['before_widget'], ($block_attributes['anchorId'] . '" data-sib-id="' . $block_attributes['sibid']), $wrapperattr),'post');
+                    $secho .= sprintf($block_attributes['before_widget'], ($block_attributes['anchorId'] . '" data-sib-id="' . $block_attributes['sibid']), $wrapperattr);
                     if (! empty($block_attributes['title'])) {
-                        echo wp_kses($titlenode,'post');
+                        $secho .= $titlenode;
                     }
-                    self::display_block($block_attributes);
-                    echo wp_kses($block_attributes['after_widget'],'post');
+                    self::display_block($block_attributes, $secho);
+                    $secho .= $block_attributes['after_widget'];
                     break;
                 default:
-                    echo "<!-- unknown wptype:" . esc_attr($block_attributes['wptype']) . "-->" . PHP_EOL;
+                    $secho .= "<!-- unknown wptype:" . esc_attr($block_attributes['wptype']) . "-->" . PHP_EOL;
             }
-            $output = $output . ob_get_clean();
-            return $output;
+//            $output = $output . ob_get_clean();
+            return $secho;
     }
     /**
      * Compare attributes with those in widget option and changed

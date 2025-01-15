@@ -9,6 +9,7 @@
  * @copyright Copyright (c) 2024 - 2025, Bram Waasdorp
  * 
  * 2.6.0 in a separate class with namespace since 2.6.0 no underscores in classname. SimpleicalBlock => SimpleicalHelper
+ * Replace echo by $secho a.o. in widget(), to simplify escaping output by replacing multiple echoes by one.
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 class SimpleicalWidget extends \WP_Widget
@@ -44,6 +45,7 @@ class SimpleicalWidget extends \WP_Widget
          */
         public function widget($args, $instance)
         {
+            $secho = '';
             $args = array_merge(['before_widget' => '',
                 'before_title' => '<h3 class="widget-title block-title">',
                 'after_title' => '<h3 class="widget-title block-title">',
@@ -62,12 +64,12 @@ class SimpleicalWidget extends \WP_Widget
             }
             // lay-out block:
             $instance['clear_cache_now'] = false;
-            echo wp_kses(sprintf($args['before_widget'],
+            $secho .= sprintf($args['before_widget'],
                 ('w-' . $instance['anchorId']),
-                $args['classname']),'post') ;
-            echo wp_kses('<span id="' . $instance['anchorId'] . '" data-sib-id="'
+                $args['classname']) ;
+            $secho .= '<span id="' . $instance['anchorId'] . '" data-sib-id="'
                 . $instance['sibid'] . '" data-sib-utzui="' . $instance['rest_utzui']
-                . (('rest_ph_w' == $instance['wptype']) ? '" data-sib-st="0-start" >' : '">'),'post');
+                . (('rest_ph_w' == $instance['wptype']) ? '" data-sib-st="0-start" >' : '">');
             $args['after_widget'] = '</span>' . $args['after_widget'];
             
             if (! empty($instance['title'])) {
@@ -76,18 +78,19 @@ class SimpleicalWidget extends \WP_Widget
                     $args['before_title'] = implode(' data-sib-t="true" >', $l);
                 }
                 $title = apply_filters('widget_title', $instance['title']);
-                echo wp_kses($args['before_title']. $title. $args['after_title'],'post');
+                $secho .= $args['before_title']. $title. $args['after_title'];
             }
             if ('rest_ph_w' == $instance['wptype'] ) {
                 SimpleicalHelper::update_rest_attrs($instance );
-                echo '<p>';
-                esc_attr_e('Processing', 'simple-google-icalendar-widget');
-                echo '</p>';
+                $secho .= '<p>';
+               $secho .= __('Processing', 'simple-google-icalendar-widget');
+                $secho .= '</p>';
             } else {
-                SimpleicalHelper::display_block($instance);
+                SimpleicalHelper::display_block($instance, $secho);
             }
             // end lay-out block
-            echo wp_kses($args['after_widget'],'post');
+            $secho .= $args['after_widget'];
+            echo wp_kses($secho,'post');
         }
         /**
          * Sanitize widget form values as they are saved.
