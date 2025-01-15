@@ -226,7 +226,7 @@ class SimpleicalHelper
                             }
                         }
                         $e->description = str_replace("\n", '<br>', $e->description);
-                        $secho .= '<span class="dsc">'. $e->description. (strrpos($e->description, '<br>') === (strlen($e->description) - 4)) ? '' : '<br>'. '</span>';
+                        $secho .= '<span class="dsc">'. $e->description. ((strrpos($e->description, '<br>') === (strlen($e->description) - 4)) ? '' : '<br>'). '</span>';
                     }
                     if ($e->startisdate === false && gmdate('yz', $e->start) === gmdate('yz', $e->end)) {
                         $secho .= '<span class="time">'. wp_date($dftstart, $e->start, $attributes['tz_ui']). '</span><span class="time">'. wp_date($dftend, $e->end, $attributes['tz_ui']). '</span> ';
