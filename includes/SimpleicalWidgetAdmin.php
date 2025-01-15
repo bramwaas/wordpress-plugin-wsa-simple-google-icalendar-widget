@@ -85,7 +85,7 @@ class SimpleicalWidgetAdmin {
             '</p>');
        echo wp_kses_post('<p><a href="#period-limits" target="_self" >' .
         __('See also', 'simple-google-icalendar-widget').
-        '<strong>'.   
+        '<strong> '.   
            __('Period limits', 'simple-google-icalendar-widget').
         '</strong></a></p>');
         
