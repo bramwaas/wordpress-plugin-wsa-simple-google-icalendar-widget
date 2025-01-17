@@ -303,7 +303,6 @@ class SimpleicalHelper
             . '</' . $block_attributes['tag_title'] . '>';
             
             $secho = '';
-//            ob_start();
             switch ($block_attributes['wptype']) {
                 case 'REST':
                     // Block displayed via REST
@@ -338,7 +337,6 @@ class SimpleicalHelper
                 default:
                     $secho .= "<!-- unknown wptype:" . esc_attr($block_attributes['wptype']) . "-->" . PHP_EOL;
             }
-//            $output = $output . ob_get_clean();
             return $secho;
     }
     /**
@@ -455,7 +453,7 @@ class SimpleicalHelper
             'blockid' => ['type' => 'string'],
             ],
             'render_callback' => array(
-                'WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalBlock',
+                'WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalHelper',
                 'render_block'
             )
         ));
