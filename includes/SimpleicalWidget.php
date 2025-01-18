@@ -90,7 +90,7 @@ class SimpleicalWidget extends \WP_Widget
             }
             // end lay-out block
             $secho .= $args['after_widget'];
-            echo wp_kses($secho,'post');
+            echo wp_kses_post($secho);
         }
         /**
          * Sanitize widget form values as they are saved.
