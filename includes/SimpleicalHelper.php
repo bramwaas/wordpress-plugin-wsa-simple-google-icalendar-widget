@@ -163,7 +163,7 @@ class SimpleicalHelper
                 $secho .= '<ul class="list-group' . $attributes['suffix_lg_class'] . ' simple-ical-widget" > ';
                 $curdate = '';
                 foreach ($data as $e) {
-                    $idlist = explode("@", $e->uid,1);
+                    $idlist = explode("@", $e->uid,2);
                     $itemid = $attributes['sibid'] . '_' . strval(++ $sn) . '_' . $idlist[0];
                     $evdate = wp_date($dflg, $e->start, $attributes['tz_ui']);
                     $ev_class = ((! empty($e->cal_class)) ? ' ' . sanitize_html_class($e->cal_class) : '');

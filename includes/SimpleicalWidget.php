@@ -154,9 +154,10 @@ class SimpleicalWidget extends \WP_Widget
                 $instance['rest_utzui'] = wp_strip_all_tags($new_instance['rest_utzui']);
             }
             $instance['tag_sum'] = wp_strip_all_tags($new_instance['tag_sum']);
-            $instance['suffix_lg_class'] = wp_strip_all_tags($new_instance['suffix_lg_class']);
-            $instance['suffix_lgi_class'] = wp_strip_all_tags($new_instance['suffix_lgi_class']);
-            $instance['suffix_lgia_class'] = wp_strip_all_tags($new_instance['suffix_lgia_class']);
+            // prevent trimming first space in suffix
+            $instance['suffix_lg_class'] = substr(wp_strip_all_tags('a' . $new_instance['suffix_lg_class']),1);
+            $instance['suffix_lgi_class'] = substr(wp_strip_all_tags('a' . $new_instance['suffix_lgi_class']),1);
+            $instance['suffix_lgia_class'] = substr(wp_strip_all_tags('a' . $new_instance['suffix_lgia_class']),1);
             $instance['after_events'] = ($new_instance['after_events']);
             $instance['no_events'] = ($new_instance['no_events']);
             $instance['allowhtml'] = !empty($new_instance['allowhtml']);

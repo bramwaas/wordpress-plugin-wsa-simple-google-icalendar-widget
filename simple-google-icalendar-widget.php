@@ -91,7 +91,7 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
      */
     function enqueue_view_script()
     {
-        wp_enqueue_script('simplegoogleicalenderwidget-simple-ical-block-view-script', plugins_url('/js/simple-ical-block-view.js', __FILE__), [], '2.3.0-' . filemtime(plugin_dir_path(__FILE__) . 'js/simple-ical-block-view.js'), 
+        wp_enqueue_script('simplegoogleicalenderwidget-simple-ical-block-view-script', plugins_url('/js/simple-ical-block-view.js', __FILE__), [], '2.6.0-' . filemtime(plugin_dir_path(__FILE__) . 'js/simple-ical-block-view.js'), 
             ['strategy' => 'defer' ]);
         wp_add_inline_script('simplegoogleicalenderwidget-simple-ical-block-view-script', '(window.simpleIcalBlock=window.simpleIcalBlock || {}).restRoot = "' . get_rest_url() . '"', 'before');
     }
