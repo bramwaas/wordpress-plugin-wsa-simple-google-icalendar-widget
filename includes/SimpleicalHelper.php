@@ -160,10 +160,10 @@ class SimpleicalHelper
                 $secho .= '<!-- ' . $msg . ' -->';
             }
             if (! empty($data) && is_array($data)) {
-                $secho .= '<ul class="list-group' . esc_attr($attributes['suffix_lg_class']) . ' simple-ical-widget" > ';
+                $secho .= '<ul class="list-group' . $attributes['suffix_lg_class'] . ' simple-ical-widget" > ';
                 $curdate = '';
                 foreach ($data as $e) {
-                    $idlist = explode("@", esc_attr($e->uid));
+                    $idlist = explode("@", $e->uid,1);
                     $itemid = $attributes['sibid'] . '_' . strval(++ $sn) . '_' . $idlist[0];
                     $evdate = wp_date($dflg, $e->start, $attributes['tz_ui']);
                     $ev_class = ((! empty($e->cal_class)) ? ' ' . sanitize_html_class($e->cal_class) : '');
@@ -194,20 +194,20 @@ class SimpleicalHelper
                         if ($curdate != '') {
                             $secho .= '</ul></li>';
                         }
-                        $secho .= '<li class="list-group-item' . esc_attr($sflgi . $ev_class) . ' head">' . '<span class="ical-date">' . esc_attr(ucfirst($evdate)) . '</span><ul class="list-group' . esc_attr($attributes['suffix_lg_class']) . '">';
+                        $secho .= '<li class="list-group-item' . $sflgi . $ev_class . ' head">' . '<span class="ical-date">' . ucfirst($evdate) . '</span><ul class="list-group' . $attributes['suffix_lg_class'] . '">';
                     }
-                    $secho .= '<li class="list-group-item' . esc_attr($sflgi . $ev_class) . '">';
+                    $secho .= '<li class="list-group-item' . $sflgi . $ev_class . '">';
                     if ($layout == 3 && $curdate != $evdate) {
-                        $secho .= '<span class="ical-date">' . esc_attr(ucfirst($evdate)) . '</span>' . (('a' == $attributes['tag_sum']) ? '<br>' : '');
+                        $secho .= '<span class="ical-date">' . ucfirst($evdate) . '</span>' . (('a' == $attributes['tag_sum']) ? '<br>' : '');
                     }
-                    $secho .=  '<' . esc_attr($attributes['tag_sum']) . ' class="ical_summary' . esc_attr($sflgia) . (('a' == $attributes['tag_sum']) ? '" data-toggle="collapse" data-bs-toggle="collapse" href="#' . esc_attr($itemid) . '" aria-expanded="false" aria-controls="' . esc_attr($itemid) . '">' : '">');
+                    $secho .=  '<' . $attributes['tag_sum'] . ' class="ical_summary' . $sflgia . (('a' == $attributes['tag_sum']) ? '" data-toggle="collapse" data-bs-toggle="collapse" href="#' . $itemid . '" aria-expanded="false" aria-controls="' . $itemid . '">' : '">');
                     if ($layout != 2) {
                         $secho .= $evdtsum;
                     }
                     if (! empty($e->summary)) {
                         $secho .= str_replace("\n", '<br>', $e->summary);
                     }
-                    $secho .= '</' . esc_attr($attributes['tag_sum']) . '>';
+                    $secho .= '</' . $attributes['tag_sum'] . '>';
                     if ($layout == 2) {
                         $secho .= '<span>'. $evdate . $evdtsum . '</span>';
                     }
@@ -335,7 +335,7 @@ class SimpleicalHelper
                     $secho .= $block_attributes['after_widget'];
                     break;
                 default:
-                    $secho .= "<!-- unknown wptype:" . esc_attr($block_attributes['wptype']) . "-->" . PHP_EOL;
+                    $secho .= "<!-- unknown wptype:" . $block_attributes['wptype'] . "-->" . PHP_EOL;
             }
             return $secho;
     }
