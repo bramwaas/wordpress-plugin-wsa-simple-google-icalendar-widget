@@ -10,6 +10,8 @@
  * 
  * 2.6.0 in a separate class with namespace since 2.6.0 no underscores in classname. SimpleicalBlock => SimpleicalHelper
  * Replace echo by $secho a.o. in widget(), to simplify escaping output by replacing multiple echoes by one.
+ * known error: in wp 5.9.5 with elementor 3.14.1 aria-expanded and aria-controls are stripped bij wpkses in instances displayed with elementor
+ *    in widgets outside elementor, in wp blocks and widgets and blocks displayed with REST they are not stripped. 
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 class SimpleicalWidget extends \WP_Widget
@@ -90,7 +92,7 @@ class SimpleicalWidget extends \WP_Widget
             }
             // end lay-out block
             $secho .= $args['after_widget'];
-            echo wp_kses_post($secho);
+            echo wp_kses($secho, 'post');
         }
         /**
          * Sanitize widget form values as they are saved.

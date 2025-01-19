@@ -17,4 +17,4 @@
   * 2.4.3 created to replace render_callback option in server side register_block_type    
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
-echo wp_kses_post(SimpleicalHelper::render_block($attributes));
+echo wp_kses(SimpleicalHelper::render_block($attributes),'post');
