@@ -10,7 +10,7 @@
  * 2.4.4 add all (non default) attributes to returned params 'get_content_by_ids';
  *  add attribute tag_title (default h3); remove calendar_id from returned params.
  *  when saved attributes are not found and calendar_id is present in params use params as attributes
- *  2.6.0 SimpleicalBlock => SimpleicalHelper 
+ *  2.6.0 SimpleicalBlock => SimpleicalHelper, added wp_kses post  to REST_response   
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
@@ -148,7 +148,7 @@ class RestController extends WP_REST_Controller {
                 __('Not possible to get block content', 'simple-google-icalendar-widget') . '</p>';
         } else {
         $block_attributes = array_merge($block_attributes, $params);
-        $content = SimpleicalHelper::render_block($block_attributes, []);
+        $content = wp_kses(SimpleicalHelper::render_block($block_attributes, []),'post');
         unset($block_attributes['calendar_id']);
         }
         $data = $this->prepare_item_for_response([
