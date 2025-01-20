@@ -26,6 +26,9 @@
  * 2.6.0 improve security by following Plugin Check recommendations; Moved functions common with Joomla to top. 
  * rename SimpleicalBlock to SimpleicalHelper and register widget in this class. 
  * Replace echo by $secho in &$secho param a.o. in display_block, to simplify escaping output by replacing multiple echoes by one. 
+ * known error: in wp 5.9.5 with elementor 3.14.1 aria-expanded and aria-controls are stripped bij wp_kses before wp 6.3.0 (see wp_kses.php) 
+ *   issue is solved tested with wp 6.7.1 with elementor 3.26.5 . 
+
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
