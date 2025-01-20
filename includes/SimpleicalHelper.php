@@ -457,10 +457,28 @@ class SimpleicalHelper
             ],
             'render_callback' => array(
                 'WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalHelper',
-                'render_block'
+                'render_blockv2'
             )
         ));
     }
+    /**
+     * Render the content of the block v2
+     *
+     * see
+     *
+     * @param array $block_attributes
+     *            the block attributes (that are changed from default therefore first merged with defaults.)
+     * @param array $content
+     *            as saved in post by save in ...block.js
+     * @param object $block
+     *            the bolck that is rendered
+     * @return string escaped HTML to render for the block (frontend)
+     */
+    static function render_blockv2($block_attributes, $content = null, $block = null)
+    {
+        return wp_kses(SimpleicalHelper::render_block($block_attributes),'post');
+    }
+    
     /**
      * Widget init register legacy widget
      *
