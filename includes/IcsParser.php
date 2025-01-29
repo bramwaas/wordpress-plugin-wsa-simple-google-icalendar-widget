@@ -1,7 +1,7 @@
 <?php
 /**
  * a simple ICS parser.
- * @copyright Copyright (C) 2017 - 2024 Bram Waasdorp. All rights reserved.
+ * @copyright Copyright (C) 2017 - 2025 Bram Waasdorp. All rights reserved.
  * @license GNU General Public License version 3 or later
  *
  * note that this class does not implement all ICS functionality.
@@ -50,6 +50,7 @@
  * 2.5.0 Add filter and display support for categories. Add function self::unescTextList to explode items in Categories list to array 
  * while retaining , or ; when escaped with \ and use the same function for list of url's and input filter categorie list. 
  * use temporary replace \\ by chr(20) and replace chr(20) by \ instead of explode and implode to prevent use of \\ as unescape char.
+ * 2.6.0 escaping error messages.
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
@@ -318,6 +319,13 @@ END:VCALENDAR';
      * @since  2.0.0
      */
     protected $timezone_string = 'UTC';
+    /**
+     * The array of messages during execution. To echo in the calling routine if needed, to remove echoing in this class.
+     *
+     * @var    array array of message strings
+     * @since  2.6.0
+     */
+    public $messages = [];
     /**
      * Constructor.
      *
@@ -1076,15 +1084,20 @@ END:VCALENDAR';
             $p_end = $pdt_start->modify("+$ep day")->getTimestamp();
         }
         if ($instance['clear_cache_now']) delete_transient($transientId);
-        if(false === ($data = get_transient($transientId))) {
+        if(false === ($ipd = get_transient($transientId))) {
             $parser = new IcsParser($instance['calendar_id'], $instance['cache_time'], $instance['event_period'], $instance['tzid_ui'] );
             $data = $parser->fetch( );
+            $ipd = ['data'=>$data, 'messages'=>$parser->messages];
             // do not cache data if fetching failed
             if ($data) {
-                set_transient($transientId, $data, $instance['cache_time']*60);
+                set_transient($transientId, $ipd, $instance['cache_time']*60);
             }
         }
-        return self::getFutureEvents($data, $p_start, $p_end, $instance['event_count'], (($instance['categories_filter'])??''), (($instance['categories_filter_op'])??''));
+        if ( ! array_key_exists('data', $ipd)) {
+            $ipd = ['data'=>$ipd, 'messages'=>[]];
+        }
+        return ['data'=>self::getFutureEvents($ipd['data'], $p_start, $p_end, $instance['event_count'], (($instance['categories_filter'])??''), (($instance['categories_filter_op'])??'')),
+            'messages'=>$ipd['messages']];
     }
     /**
      * Fetches from calender using calendar_ids and event_period
@@ -1110,10 +1123,10 @@ END:VCALENDAR';
                 $url = self::getCalendarUrl($cal_id);
                 $httpData = wp_remote_get($url);
                 if(is_wp_error($httpData)) {
-                    echo '<!-- ' . $url . ' not found ' . 'fall back to https:// -->';
+                    $this->messages[] =  esc_url( $url ) . ' not found ' . 'fall back to https://';
                     $httpData = wp_remote_get('https://' . explode('://', $url)[1]);
                     if(is_wp_error($httpData)) {
-                        echo '<!-- Simple iCal Block: ', $httpData->get_error_message(), ' -->';
+                        $this->messages[] = 'Simple iCal Block: '. $httpData->get_error_message();
                         continue;
                     }
                 }

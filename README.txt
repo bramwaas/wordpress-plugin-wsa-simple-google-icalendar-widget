@@ -1,12 +1,12 @@
-=== Simple Google Calendar Outlook Events Block Widget ===
+=== Simple Google Calendar Outlook Events Widget ===
 
-Plugin name: Simple Google Calendar Outlook Events Block Widget   
+Plugin name: Simple Google Calendar Outlook Events Widget   
 Contributors: bramwaas   
 Tags: Google Calendar, iCal, Events, Block, Calendar   
 Requires at least: 5.3.0   
 Tested up to: 6.7   
 Requires PHP: 7.4   
-Stable tag: 2.4.4   
+Stable tag: 2.6.0
 License: GPLv2 or later   
 License URI: http://www.gnu.org/licenses/gpl-2.0.html   
     
@@ -240,12 +240,11 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 
 == Upgrade Notice ==
 * from 2024 (v2.3.0) requires php 7.4. "Use Client timezone settings, with REST" in "Use client timezone settings" works only correct with Javascript enabled in a browser with version newer than 2016 but not in Internet Explorer (fetch and Promise are used).         
-* from 2023 (v2.1.1) deprecation php older than 7.4. I don't test in older php versions than 7.4 older versions might still work, but in future I may use new functions of php 8.
-* in v2.1.1 Start with summary is replaced with a select. After upgrade you may have to choose the correct option again. 
-* since v1.2.0 Wordpress version 5.3.0 is required because of the use of wp_date() 
-* error in WP 6.6 this block (with serverside rendering) breaks editor when placed on a page via a synced pattern. Issue reported as WordPress Trac #61592
 
 == Changelog ==
+* 2.6.0 Due to a reported XSS vulnerability. Checked with Wordpress Plugin Check (PCP). Fixed this vulnerability and other PCP errors and warnings, as required by Wordpress to remain in the plugin directory.  
+known issue: in wp 5.9.5 with elementor 3.14.1 aria-expanded and aria-controls are stripped bij wp_kses before wp 6.3.0 (see wp_kses.php)   
+    issue is solved tested with wp 6.7.1 with elementor 3.26.5 .   
 * 2.5.0 Add filter and display support for categories. Tested with 6.7-RC and 5.9.5. 
 * 2.4.4 Initialization sibid also with direct assign in case setAttribute does not work (e.g. in Synced pattern 6.6)
  replace ServerSideRender in block editor by custom Rest call (only for WP 6.3 +) and place_holder html in Javascript Edit and Save.   
