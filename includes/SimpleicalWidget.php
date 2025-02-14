@@ -8,6 +8,7 @@
  * @author Bram Waasdorp <bram@waasdorpsoekhan.nl>
  * @copyright Copyright (c) 2024 - 2025, Bram Waasdorp
  * 
+ * 2.6.1  Started simplifying (bootstrap) collapse by toggles for adding javascript and trigger collapse by title. In response to Joomla module github issue #35 'naming calendars to filter them in front end' by Joomlafun.   
  * 2.6.0 in a separate class with namespace since 2.6.0 no underscores in classname. SimpleicalBlock => SimpleicalHelper
  * Replace echo by $secho a.o. in widget(), to simplify escaping output by replacing multiple echoes by one.
  * known error: in wp 5.9.5 with elementor 3.14.1 aria-expanded and aria-controls are stripped bij wp_kses before wp 6.3.0 (see wp_kses.php) 
@@ -339,6 +340,37 @@ class SimpleicalWidget extends \WP_Widget
           <label for="<?php echo esc_attr($this->get_field_id('anchorId')); ?>"><?php esc_attr_e('HTML anchor:', 'simple-google-icalendar-widget'); ?></label> 
           <input class="widefat" id="<?php echo esc_attr($this->get_field_id('anchorId')); ?>" name="<?php echo esc_attr($this->get_field_name('anchorId')); ?>" type="text" value="<?php echo esc_attr($instance['anchorId']); ?>" />
         </p>
+        <p>
+          <label for="<?php echo esc_attr($this->get_field_id('title_collapse_toggle')); ?>"><?php esc_attr_e('Title as collapse toggle.', 'simple-google-icalendar-widget'); ?></label> 
+          <select class="widefat" id="<?php echo esc_attr($this->get_field_id('title_collapse_toggle')); ?>" name="<?php echo esc_attr($this->get_field_name('title_collapse_toggle')); ?>" >
+            <option value=""<?php echo (''==esc_attr($instance['tag_sum']))?'selected':''; ?>><?php esc_attr_e('No toggle', 'simple-google-icalendar-widget'); ?></option>
+  			<option value="collapse"<?php echo ('collapse'==esc_attr($instance['tag_sum']))?'selected':''; ?>><?php esc_attr_e('Start collapsed', 'simple-google-icalendar-widget'); ?></option>
+  			<option value="collapse show"<?php echo ('collapse show'==esc_attr($instance['tag_sum']))?'selected':''; ?>><?php esc_attr_e('Start open', 'simple-google-icalendar-widget'); ?></option>
+  		 </select>	
+        </p>
+<!--         
+    Use title link as collapse/show toggle for this module content.    
+ -->
+        <p>
+          <input class="checkbox" id="<?php echo esc_attr($this->get_field_id('add_collapse_code')); ?>" name="<?php echo esc_attr($this->get_field_name('add_collapse_code')); ?>" type="checkbox" value="1" <?php checked( '1', $instance['allowhtml'] ); ?> />
+          <label for="<?php echo esc_attr($this->get_field_id('add_collapse_code')); ?>"><?php esc_attr_e('Add bootstrap collapse code.', 'simple-google-icalendar-widget'); ?></label> 
+<!-- Add bootstrap collapse code (js and css) when not provided by template -->
+        </p>
+
+				<field name="title_collapse_toggle" type="list" default="" label="MOD_SIMPLEICALBLOCK_TITLE_COLL_TGL" description="MOD_SIMPLEICALBLOCK_TITLE_COLL_TGL_DESC">
+					<option value="">MOD_SIMPLEICALBLOCK_TITLE_COLL_TGL_NO_TOGGLE</option>
+					<option value="collapse">MOD_SIMPLEICALBLOCK_TITLE_COLL_TGL_START_COLLAPSED</option>
+					<option value="collapse show">MOD_SIMPLEICALBLOCK_TITLE_COLL_TGL_START_OPEN</option>
+				</field>
+				<field name="add_collapse_code" type="radio" layout="joomla.form.field.radio.switcher"
+				class="switcher btn-group" default="0" label="MOD_SIMPLEICALBLOCK_ADD_COLLAPSE_CODE" description="MOD_SIMPLEICALBLOCK_ADD_COLLAPSE_CODE_DESC" >
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+
+
+
+
         <p>
           <label for="<?php echo esc_attr($this->get_field_id('sibid')); ?>"><?php esc_attr_e('Sib ID:', 'simple-google-icalendar-widget'); ?></label> 
           <input class="widefat" id="<?php echo esc_attr($this->get_field_id('sibid')); ?>" name="<?php echo esc_attr($this->get_field_name('sibid')); ?>" type="text" value="<?php echo esc_attr($instance['sibid']); ?>" readonly />
