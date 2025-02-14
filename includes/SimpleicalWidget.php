@@ -8,7 +8,8 @@
  * @author Bram Waasdorp <bram@waasdorpsoekhan.nl>
  * @copyright Copyright (c) 2024 - 2025, Bram Waasdorp
  * 
- * 2.6.1  Started simplifying (bootstrap) collapse by toggles for adding javascript and trigger collapse by title. In response to Joomla module github issue #35 'naming calendars to filter them in front end' by Joomlafun.   
+ * 2.6.1  Started simplifying (bootstrap) collapse by toggles for adding javascript and trigger collapse by title.
+ *  Remove toggle to allow safe html in summary and description, save html is always allowed now.      
  * 2.6.0 in a separate class with namespace since 2.6.0 no underscores in classname. SimpleicalBlock => SimpleicalHelper
  * Replace echo by $secho a.o. in widget(), to simplify escaping output by replacing multiple echoes by one.
  * known error: in wp 5.9.5 with elementor 3.14.1 aria-expanded and aria-controls are stripped bij wp_kses before wp 6.3.0 (see wp_kses.php) 
@@ -325,10 +326,6 @@ class SimpleicalWidget extends \WP_Widget
           <input class="widefat" id="<?php echo esc_attr($this->get_field_id('suffix_lgia_class')); ?>" name="<?php echo esc_attr($this->get_field_name('suffix_lgia_class')); ?>" type="text" value="<?php echo esc_attr($instance['suffix_lgia_class']); ?>" />
         </p>
         <p>
-          <input class="checkbox" id="<?php echo esc_attr($this->get_field_id('allowhtml')); ?>" name="<?php echo esc_attr($this->get_field_name('allowhtml')); ?>" type="checkbox" value="1" <?php checked( '1', $instance['allowhtml'] ); ?> />
-          <label for="<?php echo esc_attr($this->get_field_id('allowhtml')); ?>"><?php esc_attr_e('Allow safe html in description and summary.', 'simple-google-icalendar-widget'); ?></label> 
-        </p>
-        <p>
           <label for="<?php echo esc_attr($this->get_field_id('after_events')); ?>"><?php esc_attr_e('Closing HTML after available events:', 'simple-google-icalendar-widget'); ?></label> 
           <input class="widefat" id="<?php echo esc_attr($this->get_field_id('after_events')); ?>" name="<?php echo esc_attr($this->get_field_name('after_events')); ?>" type="text" value="<?php echo esc_attr($instance['after_events']); ?>" />
         </p>
@@ -348,29 +345,10 @@ class SimpleicalWidget extends \WP_Widget
   			<option value="collapse show"<?php echo ('collapse show'==esc_attr($instance['tag_sum']))?'selected':''; ?>><?php esc_attr_e('Start open', 'simple-google-icalendar-widget'); ?></option>
   		 </select>	
         </p>
-<!--         
-    Use title link as collapse/show toggle for this module content.    
- -->
         <p>
           <input class="checkbox" id="<?php echo esc_attr($this->get_field_id('add_collapse_code')); ?>" name="<?php echo esc_attr($this->get_field_name('add_collapse_code')); ?>" type="checkbox" value="1" <?php checked( '1', $instance['allowhtml'] ); ?> />
           <label for="<?php echo esc_attr($this->get_field_id('add_collapse_code')); ?>"><?php esc_attr_e('Add bootstrap collapse code.', 'simple-google-icalendar-widget'); ?></label> 
-<!-- Add bootstrap collapse code (js and css) when not provided by template -->
         </p>
-
-				<field name="title_collapse_toggle" type="list" default="" label="MOD_SIMPLEICALBLOCK_TITLE_COLL_TGL" description="MOD_SIMPLEICALBLOCK_TITLE_COLL_TGL_DESC">
-					<option value="">MOD_SIMPLEICALBLOCK_TITLE_COLL_TGL_NO_TOGGLE</option>
-					<option value="collapse">MOD_SIMPLEICALBLOCK_TITLE_COLL_TGL_START_COLLAPSED</option>
-					<option value="collapse show">MOD_SIMPLEICALBLOCK_TITLE_COLL_TGL_START_OPEN</option>
-				</field>
-				<field name="add_collapse_code" type="radio" layout="joomla.form.field.radio.switcher"
-				class="switcher btn-group" default="0" label="MOD_SIMPLEICALBLOCK_ADD_COLLAPSE_CODE" description="MOD_SIMPLEICALBLOCK_ADD_COLLAPSE_CODE_DESC" >
-					<option value="0">JNO</option>
-					<option value="1">JYES</option>
-				</field>
-
-
-
-
         <p>
           <label for="<?php echo esc_attr($this->get_field_id('sibid')); ?>"><?php esc_attr_e('Sib ID:', 'simple-google-icalendar-widget'); ?></label> 
           <input class="widefat" id="<?php echo esc_attr($this->get_field_id('sibid')); ?>" name="<?php echo esc_attr($this->get_field_name('sibid')); ?>" type="text" value="<?php echo esc_attr($instance['sibid']); ?>" readonly />

@@ -6,10 +6,10 @@
  * @package    Simple Google iCalendar Widget
  * @subpackage Admin
  * @author     Bram Waasdorp <bram@waasdorpsoekhan.nl>
- * @copyright  Copyright (c)  2017 - 2024, Bram Waasdorp
+ * @copyright  Copyright (c)  2017 - 2025, Bram Waasdorp
  * @link       https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  * @license    http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * Version: 2.5.0
+ * Version: 2.6.1
  * 20220410 namespaced and renamed after classname.
  * 2.1.0 option for comma seperated list of IDs
  * 2.1.3 block footer after events and placeholder when no events.
@@ -17,6 +17,8 @@
  * 2.3.0 anchors (id) at several places in document
  * 2.4.2 replaced null by 'admin.php' to solve issue 'Deprecation warnings in PHP 8.3'  
  * 2.4.4 added tag_title and extra option for timzone settings 
+ * 2.6.1  Started simplifying (bootstrap) collapse by toggles for adding javascript and trigger collapse by title.
+   Remove toggle to allow safe html in summary and description, save html is always allowed now.      
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
@@ -232,11 +234,6 @@ class SimpleicalWidgetAdmin {
         __('Suffix event details classs', 'simple-google-icalendar-widget').
         '</strong></p><p>'.
        __('Suffix to add after the css-class around the event details link (ical_details),<br>start with space to keep the original class and add another class.', 'simple-google-icalendar-widget').
-       '</p><p><strong>' .
-        __('Checkbox Allow safe html in description and summary.', 'simple-google-icalendar-widget').
-        '</strong></p><p>'.
-       __('Check checkbox to allow the use of some safe html in description and summary,<br>otherwise it will only be displayed as text.', 'simple-google-icalendar-widget').
-       '</p><p><strong>' .
         __('Closing HTML after available events.', 'simple-google-icalendar-widget').
         '</strong></p><p>'.
        __('Closing (safe) HTML after events list, when events are available.<br><br>This text with simple HTML will be displayed after the events list.<br>Use &amp;lt; or &amp;gt; if you want to output &lt; or &gt; otherwise they may be removed as unknown and therefore unsafe tags.<br>E.g. &lt;hr class=&quot;module-ft&quot;	&gt;.', 'simple-google-icalendar-widget').
@@ -259,8 +256,20 @@ class SimpleicalWidgetAdmin {
        __('HTML anchor', 'simple-google-icalendar-widget').
         '</strong></p><p>'.
        __('HTML anchor for this block.<br>Type one or two words - no spaces - to create a unique web address for this block, called an "anchor". Then you can link directly to this section on your page.<br>You can als use this ID to make parts of your extra css specific for this block', 'simple-google-icalendar-widget').
-        '</p></div>');
-        
+        '</p>');
+
+       echo wp_kses_post('<span id="title_collapse_toggle"></span>'.
+           '<p><strong>' .
+           __('Title as collapse toggle.', 'simple-google-icalendar-widget').
+           '</strong></p><p>'.
+           __('Use title link as collapse/show toggle for this module content.', 'simple-google-icalendar-widget').
+           '</p><p><strong>' .
+           __('Checkbox Add bootstrap collapse code.', 'simple-google-icalendar-widget').
+       '</strong></p><p>'.
+       __('Check checkbox to Add bootstrap collapse code (js and css) when not provided by theme', 'simple-google-icalendar-widget').
+       '</p></div>' );
+       
+       
     }
     // info in admin-menu
 }

@@ -28,6 +28,8 @@
  * Replace echo by $secho in &$secho param a.o. in display_block, to simplify escaping output by replacing multiple echoes by one. 
  * known error: in wp 5.9.5 with elementor 3.14.1 aria-expanded and aria-controls are stripped bij wp_kses before wp 6.3.0 (see wp_kses.php) 
  *   issue is solved tested with wp 6.7.1 with elementor 3.26.5 . 
+ * 2.6.1  Started simplifying (bootstrap) collapse by toggles for adding javascript and trigger collapse by title.
+   Remove toggle to allow safe html in summary and description, save html is always allowed now.      
 
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
@@ -178,11 +180,6 @@ class SimpleicalHelper
                                 . implode($cat_sep,str_replace("\n", '<br>', $e->categories ))
                                 . '</small></div>';
                         }
-                    }
-                    if (! $attributes['allowhtml']) {
-                        if (!empty($e->summary)) $e->summary = htmlspecialchars($e->summary);
-                        if (!empty($e->description)) $e->description = htmlspecialchars($e->description);
-                        if (!empty($e->location)) $e->location = htmlspecialchars($e->location);
                     }
                     if (gmdate('yz', $e->start) != gmdate('yz', $e->end)) {
                         $evdate = str_replace(array(
