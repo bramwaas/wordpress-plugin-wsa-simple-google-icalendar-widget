@@ -301,10 +301,10 @@ class SimpleicalHelper
         if (!empty($block_attributes['title_collapse_toggle'])){
                  switch ($block_attributes['title_collapse_toggle']) {
              case 'collapse':
-                 $block_attributes['title'] = ('<a data-toggle="collapse" data-bs-toggle="collapse" href="#' .$data['params']->get('anchorId') . '" role="button" aria-expanded="false" aria-controls="collapseMod">' . $block_attributes['title'] . '</a>');
+                 $block_attributes['title'] = ('<a data-toggle="collapse" data-bs-toggle="collapse" href="#' .$block_attributes['anchorId'] . '" role="button" aria-expanded="false" aria-controls="collapseMod">' . $block_attributes['title'] . '</a>');
                  break;
              case 'collapse show':
-                 $block_attributes['title'] = ('<a data-toggle="collapse" data-bs-toggle="collapse" href="#' .$data['params']->get('anchorId') . '" role="button" aria-expanded="true" aria-controls="collapseMod">' . $block_attributes['title'] . '</a>');
+                 $block_attributes['title'] = ('<a data-toggle="collapse" data-bs-toggle="collapse" href="#' .$block_attributes['anchorId'] . '" role="button" aria-expanded="true" aria-controls="collapseMod">' . $block_attributes['title'] . '</a>');
                  break;
                  }
         }

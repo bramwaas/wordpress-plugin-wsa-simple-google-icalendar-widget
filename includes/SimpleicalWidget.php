@@ -164,11 +164,13 @@ class SimpleicalWidget extends \WP_Widget
             $instance['suffix_lgia_class'] = substr(wp_strip_all_tags('a' . $new_instance['suffix_lgia_class']),1);
             $instance['after_events'] = ($new_instance['after_events']);
             $instance['no_events'] = ($new_instance['no_events']);
-            $instance['allowhtml'] = !empty($new_instance['allowhtml']);
             if (!empty($new_instance['blockid']) && empty($new_instance['sibid'])) {
                 $new_instance['sibid'] = $new_instance['blockid'];
             }
             $instance['anchorId'] = wp_strip_all_tags($new_instance['anchorId']);
+            $instance['title_collapse_toggle'] = wp_strip_all_tags($new_instance['title_collapse_toggle'] ?? '' );
+            $instance['add_collapse_code'] = wp_strip_all_tags($new_instance['add_collapse_code'] ?? '' );
+            
             $instance['sibid'] = wp_strip_all_tags($new_instance['sibid']);
             
             if (!empty($this->number && is_numeric($this->number))) {
