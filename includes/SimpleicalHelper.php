@@ -29,7 +29,8 @@
  * known error: in wp 5.9.5 with elementor 3.14.1 aria-expanded and aria-controls are stripped bij wp_kses before wp 6.3.0 (see wp_kses.php) 
  *   issue is solved tested with wp 6.7.1 with elementor 3.26.5 . 
  * 2.6.1  Started simplifying (bootstrap) collapse by toggles for adding javascript and trigger collapse by title.
-   Remove toggle to allow safe html in summary and description, save html is always allowed now.      
+   Remove toggle to allow safe html in summary and description, save html is always allowed now.
+   Sameday as logical and calculated with localtime instead of gmdate.        
 
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
@@ -171,6 +172,7 @@ class SimpleicalHelper
                     $idlist = explode("@", $e->uid,2);
                     $itemid = $attributes['sibid'] . '_' . strval(++ $sn) . '_' . $idlist[0];
                     $evdate = wp_date($dflg, $e->start, $attributes['tz_ui']);
+                    $sameday = (wp_date('yz', $e->start, $attributes['tz_ui']) === wp_date('yz', $e->end, $attributes['tz_ui']));
                     $ev_class = ((! empty($e->cal_class)) ? ' ' . sanitize_html_class($e->cal_class) : '');
                     $cat_list = '';
                     if (!empty($e->categories)) {
@@ -181,7 +183,7 @@ class SimpleicalHelper
                                 . '</small></div>';
                         }
                     }
-                    if (gmdate('yz', $e->start) != gmdate('yz', $e->end)) {
+                    if (! $sameday ) {
                         $evdate = str_replace(array(
                             "</div><div>",
                             "</h4><h4>",
@@ -228,7 +230,7 @@ class SimpleicalHelper
                         $e->description = str_replace("\n", '<br>', $e->description);
                         $secho .= '<span class="dsc">'. $e->description. ((strrpos($e->description, '<br>') === (strlen($e->description) - 4)) ? '' : '<br>'). '</span>';
                     }
-                    if ($e->startisdate === false && gmdate('yz', $e->start) === gmdate('yz', $e->end)) {
+                    if ($e->startisdate === false && $sameday) {
                         $secho .= '<span class="time">'. wp_date($dftstart, $e->start, $attributes['tz_ui']). '</span><span class="time">'. wp_date($dftend, $e->end, $attributes['tz_ui']). '</span> ';
                     } else {
                         $secho .= '';
@@ -292,13 +294,22 @@ class SimpleicalHelper
         if (empty($block_attributes['tzid_ui'])) {
             $block_attributes['tzid_ui'] = wp_timezone_string();
         }
-        ;
         if (empty($block_attributes['sibid']) && ! empty($block_attributes['blockid'])) {
             $block_attributes['sibid'] = $block_attributes['blockid'];
         }
-        ;
         if  (empty($block_attributes['tag_title']))  $block_attributes['tag_title'] = 'h3';
-        $titlenode = '<' . $block_attributes['tag_title'] .' class="widget-title block-title" data-sib-t="true">'
+        if (!empty($block_attributes['title_collapse_toggle'])){
+                 switch ($block_attributes['title_collapse_toggle']) {
+             case 'collapse':
+                 $block_attributes['title'] = ('<a data-toggle="collapse" data-bs-toggle="collapse" href="#' .$data['params']->get('anchorId') . '" role="button" aria-expanded="false" aria-controls="collapseMod">' . $block_attributes['title'] . '</a>');
+                 break;
+             case 'collapse show':
+                 $block_attributes['title'] = ('<a data-toggle="collapse" data-bs-toggle="collapse" href="#' .$data['params']->get('anchorId') . '" role="button" aria-expanded="true" aria-controls="collapseMod">' . $block_attributes['title'] . '</a>');
+                 break;
+                 }
+        }
+        $titlenode = '<' . $block_attributes['tag_title'] 
+            .' class="widget-title block-title" data-sib-t="true">'
             . $block_attributes['title']
             . '</' . $block_attributes['tag_title'] . '>';
             
