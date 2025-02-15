@@ -4,7 +4,7 @@
  * Move styles to stylesheets - both edit and front-end.
  * and use attributes and editable fields
  * attributes as Inspectorcontrols (settings)
- * v2.5.0
+ * v2.6.1
  * 20230625 added quotes to the options of the Layout SelectControl,
  *  add parseInt to all integers in transform, added conversion dateformat_lgend and _tsend and anchorid = sibid
  * 20230420 added parseInt on line 147(now 148) to keep layout in block-editor
@@ -23,6 +23,7 @@
  *   extra option Wordpress timezone with rest  
  * 2.4.4 saved from 2.4.3 to V2 to keep older use of ServerSideRender
  * 2.5.0 support for categories. 
+ * 2.6.1  Started simplifying (bootstrap) collapse by toggles for adding javascript and trigger collapse by title.  
  */
 (function(blocks, i18n, element, blockEditor, components, serverSideRender) {
 	const el = element.createElement;
@@ -494,6 +495,27 @@
 							value: props.attributes.anchorId,
 							help: __('HTML anchor for this block. Type one or two words no spaces to create a unique web address for this block, called an "anchor". Then you can link directly to this section on your page. You can als use this ID to make parts of your extra css refer specific for this block', 'simple-google-icalendar-widget'),
 							onChange: function(value) { props.setAttributes({ anchorId: value }); },
+						}
+					),
+					el(
+						SelectControl,
+						{
+							label: __('Title as collapse toggle.', 'simple-google-icalendar-widget'),
+							value: props.attributes.title_collapse_toggle,
+							onChange: function(value) { props.setAttributes({ title_collapse_toggle: value }); },
+							options: [
+								{ value: '', label: __('No toggle', 'simple-google-icalendar-widget') },
+								{ value: 'collapse', label: __('Start collapsed', 'simple-google-icalendar-widget') },
+								{ value: 'collapse show', label: __('Start open', 'simple-google-icalendar-widget') },
+							]
+						}
+					),
+					el(
+						ToggleControl,
+						{
+							label: __('Add bootstrap collapse code.', 'simple-google-icalendar-widget'),
+							checked: props.attributes.add_collapse_code,
+							onChange: function(value) { props.setAttributes({ add_collapse_code: value }); },
 						}
 					)
 				));

@@ -9,7 +9,7 @@
  * @link https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * Gutenberg Block functions since v2.1.2 also used for widget.
- * Version: 2.6.0
+ * Version: 2.6.1
  * 2.2.0 20240106 changed text domain to simple-google-icalendar-widget
  * 2.2.1 20240123 don't display description line when excerpt-length = 0
  * 2.3.0 remove definition of attributes, leave it to block.json
@@ -20,14 +20,14 @@
  * 2.4.0 str_replace('Etc/GMT ','Etc/GMT+' for some UTC-... timezonesettings.
  * 2.4.1 resolved with wptype 'rest_ph_w' warning on wrapper_attributes when wptype 'rest_ph' and started from widget 
  * 2.4.3 replace render_callback in server side register_block_type by render in block.json (v3 plus ( is_wp_version_compatible( '6.3' ) )) 
- *       add  "data-sib-utzui":props.attributes.rest_utzui to rest placeholder tag; use tag_title when not placeholder for widget
+   add  "data-sib-utzui":props.attributes.rest_utzui to rest placeholder tag; use tag_title when not placeholder for widget
  * 2.4.4 improve compare equallity in update_rest_attrs by removing attributes that are added during save process or depend on saving environment.
  * 2.5.0 Add filter and display support for categories.
  * 2.6.0 improve security by following Plugin Check recommendations; Moved functions common with Joomla to top. 
- * rename SimpleicalBlock to SimpleicalHelper and register widget in this class. 
- * Replace echo by $secho in &$secho param a.o. in display_block, to simplify escaping output by replacing multiple echoes by one. 
- * known error: in wp 5.9.5 with elementor 3.14.1 aria-expanded and aria-controls are stripped bij wp_kses before wp 6.3.0 (see wp_kses.php) 
- *   issue is solved tested with wp 6.7.1 with elementor 3.26.5 . 
+   rename SimpleicalBlock to SimpleicalHelper and register widget in this class. 
+   Replace echo by $secho in &$secho param a.o. in display_block, to simplify escaping output by replacing multiple echoes by one. 
+   known error: in wp 5.9.5 with elementor 3.14.1 aria-expanded and aria-controls are stripped bij wp_kses before wp 6.3.0 (see wp_kses.php) 
+    issue is solved tested with wp 6.7.1 with elementor 3.26.5 . 
  * 2.6.1  Started simplifying (bootstrap) collapse by toggles for adding javascript and trigger collapse by title.
    Remove toggle to allow safe html in summary and description, save html is always allowed now.
    Sameday as logical and calculated with localtime instead of gmdate.        
@@ -461,6 +461,8 @@ class SimpleicalHelper
             'rest_utzui' => ['type' => 'string', 'enum' => ['', '1', '2'], 'default' => ''],
             'clear_cache_now' => ['type' => 'boolean', 'default' => false],
             'anchorId' => ['type' => 'string', 'default' => ''],
+            'title_collapse_toggle' => ['type' => 'string', 'enum' => [ '', 'collapse', 'collapse show']],
+            'add_collapse_code' => ['type' => 'string', 'default' => ''],
             'blockid' => ['type' => 'string'],
             ],
             'render_callback' => array(

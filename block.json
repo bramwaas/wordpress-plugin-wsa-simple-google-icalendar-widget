@@ -141,7 +141,7 @@
 		},
 		"allowhtml" : {
 			"type" : "boolean",
-			"default" : false
+			"default" : true
 		},
 		"after_events" : {
 			"type" : "string"
@@ -172,6 +172,17 @@
 			]
 		},
 		"anchorId" : {
+			"type" : "string"
+		},
+		"title_collapse_toggle" : {
+			"type" : "string",
+			"enum" : [
+				"",
+				"collapse",
+				"collapse show"
+			]
+		},
+		"add_collapse_code" : {
 			"type" : "string"
 		},
 		"blockid" : {

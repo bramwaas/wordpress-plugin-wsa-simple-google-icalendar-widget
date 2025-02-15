@@ -340,9 +340,9 @@ class SimpleicalWidget extends \WP_Widget
         <p>
           <label for="<?php echo esc_attr($this->get_field_id('title_collapse_toggle')); ?>"><?php esc_attr_e('Title as collapse toggle.', 'simple-google-icalendar-widget'); ?></label> 
           <select class="widefat" id="<?php echo esc_attr($this->get_field_id('title_collapse_toggle')); ?>" name="<?php echo esc_attr($this->get_field_name('title_collapse_toggle')); ?>" >
-            <option value=""<?php echo (''==esc_attr($instance['tag_sum']))?'selected':''; ?>><?php esc_attr_e('No toggle', 'simple-google-icalendar-widget'); ?></option>
-  			<option value="collapse"<?php echo ('collapse'==esc_attr($instance['tag_sum']))?'selected':''; ?>><?php esc_attr_e('Start collapsed', 'simple-google-icalendar-widget'); ?></option>
-  			<option value="collapse show"<?php echo ('collapse show'==esc_attr($instance['tag_sum']))?'selected':''; ?>><?php esc_attr_e('Start open', 'simple-google-icalendar-widget'); ?></option>
+            <option value=""<?php echo (''==esc_attr($instance['title_collapse_toggle']))?'selected':''; ?>><?php esc_attr_e('No toggle', 'simple-google-icalendar-widget'); ?></option>
+  			<option value="collapse"<?php echo ('collapse'==esc_attr($instance['title_collapse_toggle']))?'selected':''; ?>><?php esc_attr_e('Start collapsed', 'simple-google-icalendar-widget'); ?></option>
+  			<option value="collapse show"<?php echo ('collapse show'==esc_attr($instance['title_collapse_toggle']))?'selected':''; ?>><?php esc_attr_e('Start open', 'simple-google-icalendar-widget'); ?></option>
   		 </select>	
         </p>
         <p>

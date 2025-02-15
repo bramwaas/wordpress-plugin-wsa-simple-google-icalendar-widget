@@ -24,6 +24,7 @@
  * 2.4.4 initialization sibid also with direct assign in case setAttribute does not work (e.g. in Synced pattern 6.6) 
  *   removed references to ServerSideRender added deprecated 243; decoupled render and save changed attributes. 
  * 2.5.0 support for categories.
+ * 2.6.1  Started simplifying (bootstrap) collapse by toggles for adding javascript and trigger collapse by title.
  */
 (function(blocks, i18n, element, blockEditor, components) {
 	const el = element.createElement;
@@ -451,14 +452,6 @@
 						}
 					),
 					el(
-						ToggleControl,
-						{
-							label: __('Allow safe html in description and summary.', 'simple-google-icalendar-widget'),
-							checked: props.attributes.allowhtml,
-							onChange: function(value) { props.setAttributes({ allowhtml: value }); },
-						}
-					),
-					el(
 						TextControl,
 						{
 							label: __('Closing HTML after available events:', 'simple-google-icalendar-widget'),
@@ -499,6 +492,27 @@
 							value: props.attributes.anchorId,
 							help: __('HTML anchor for this block. Type one or two words no spaces to create a unique web address for this block, called an "anchor". Then you can link directly to this section on your page. You can als use this ID to make parts of your extra css refer specific for this block', 'simple-google-icalendar-widget'),
 							onChange: function(value) { props.setAttributes({ anchorId: value }); },
+						}
+					),
+					el(
+						SelectControl,
+						{
+							label: __('Title as collapse toggle.', 'simple-google-icalendar-widget'),
+							value: props.attributes.title_collapse_toggle,
+							onChange: function(value) { props.setAttributes({ title_collapse_toggle: value }); },
+							options: [
+								{ value: '', label: __('No toggle', 'simple-google-icalendar-widget') },
+								{ value: 'collapse', label: __('Start collapsed', 'simple-google-icalendar-widget') },
+								{ value: 'collapse show', label: __('Start open', 'simple-google-icalendar-widget') },
+							]
+						}
+					),
+					el(
+						ToggleControl,
+						{
+							label: __('Add bootstrap collapse code.', 'simple-google-icalendar-widget'),
+							checked: props.attributes.add_collapse_code,
+							onChange: function(value) { props.setAttributes({ add_collapse_code: value }); },
 						}
 					)
 				)
