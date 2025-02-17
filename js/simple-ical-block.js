@@ -519,7 +519,7 @@
 				);
 		},
 		save: function (props) {
-	    return (el(
+				    return (el(
 			'div',
 			useBlockProps.save({
 				key: 'simple_ical',
@@ -535,7 +535,20 @@
 				  "class":"widget-title block-title", 
 				  "data-sib-t":"true",
 				},
-				props.attributes.title
+				((props.attributes.title_collapse_toggle > '')
+				 ? el( 'a',
+				 	 {
+					   "href": "#" + (props.attributes.anchorId ? props.attributes.anchorId : props.attributes.sibid),
+					   "data-toggle": "collapse",
+  					   "data-bs-toggle": "collapse",
+					   "role":"button",
+					   "aria-expanded":("collapse show" == props.attributes.title_collapse_toggle),
+					   "aria-controls":"collapseMod"
+				 	 },
+					 props.attributes.title
+			 	)
+				 : props.attributes.title
+			    )
 			 ),
 			el('p',
 			    {},

@@ -299,14 +299,7 @@ class SimpleicalHelper
         }
         if  (empty($block_attributes['tag_title']))  $block_attributes['tag_title'] = 'h3';
         if (!empty($block_attributes['title_collapse_toggle'])){
-                 switch ($block_attributes['title_collapse_toggle']) {
-             case 'collapse':
-                 $block_attributes['title'] = ('<a data-toggle="collapse" data-bs-toggle="collapse" href="#' .$block_attributes['anchorId'] . '" role="button" aria-expanded="false" aria-controls="collapseMod">' . $block_attributes['title'] . '</a>');
-                 break;
-             case 'collapse show':
-                 $block_attributes['title'] = ('<a data-toggle="collapse" data-bs-toggle="collapse" href="#' .$block_attributes['anchorId'] . '" role="button" aria-expanded="true" aria-controls="collapseMod">' . $block_attributes['title'] . '</a>');
-                 break;
-                 }
+                 $block_attributes['title'] = ('<a data-toggle="collapse" data-bs-toggle="collapse" href="#' .$block_attributes['anchorId'] . '" role="button" aria-expanded="'.(('collapse' == $block_attributes['title_collapse_toggle'])?'false':'true').'" aria-controls="collapseMod">' . $block_attributes['title'] . '</a>');
         }
         $titlenode = '<' . $block_attributes['tag_title'] 
             .' class="widget-title block-title" data-sib-t="true">'
