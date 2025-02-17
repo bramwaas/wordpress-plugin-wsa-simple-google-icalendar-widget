@@ -184,9 +184,6 @@
 		},
 		"add_collapse_code" : {
 			"type" : "string"
-		},
-		"blockid" : {
-			"type" : "string"
 		}
 	},
 	"render" : "file:./includes/renderssv3.php",
