@@ -535,7 +535,7 @@
 				  "class":"widget-title block-title", 
 				  "data-sib-t":"true",
 				},
-				((props.attributes.title_collapse_toggle > '')
+				(('' < props.attributes.title_collapse_toggle )
 				 ? el( 'a',
 				 	 {
 					   "href": "#" + (props.attributes.anchorId ? props.attributes.anchorId : props.attributes.sibid),

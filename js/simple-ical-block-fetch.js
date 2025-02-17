@@ -6,6 +6,7 @@
  * added search in iFrame,  selection on sibid, and choice of Timezone
  * object simpleIcalBlock differentiated by adding F
  * v2.4.4 use present attrs to fetch content not from option in case attrs are not set in option
+ * v2.6.1 ad collapse code tot title
 **/
 window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 	bizzySavingAttrs: 0, 
@@ -20,7 +21,14 @@ window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 		}).then((res) => {
 			if (res.params && res.params.title) {
 					if (!res.params.tag_title) {res.params.tag_title = 'h3';}
-					titl = '<' + res.params.tag_title + ' class="widget-title block-title" data-sib-t="true">' + res.params.title + '</' + res.params.tag_title + '>';
+					titl = '<' + res.params.tag_title + ' class="widget-title block-title" data-sib-t="true">'
+					+ (('' < res.params.title_collapse_toggle ) 
+						? '<a data-toggle="collapse" data-bs-toggle="collapse" href="#' + ((res.params.anchorId ? res.params.anchorId : res.params.sibid)) 
+						  + '" role="button" aria-expanded="'
+						  + (('collapse' == res.params.title_collapse_toggle) ?'false':'true') +'" aria-controls="collapseMod">'
+						  + res.params.title + '</a>'
+						: res.params.title) 
+					+ '</' + res.params.tag_title + '>';
 			} else {
 				titl = '';
 			}
