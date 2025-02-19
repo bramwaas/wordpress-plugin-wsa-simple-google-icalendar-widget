@@ -98,7 +98,7 @@ class SimpleicalHelper
         'className' => '',
         'anchorId' => '',
         'title_collapse_toggle' => '',
-        'add_collapse_code' => '',
+        'add_collapse_code' => false,
         'before_widget' => '<div id="%1$s" %2$s>',
         'after_widget'  => '</div>'
     ];
@@ -300,10 +300,10 @@ class SimpleicalHelper
             $block_attributes['sibid'] = $block_attributes['blockid'];
         }
         if  (empty($block_attributes['tag_title']))  $block_attributes['tag_title'] = 'h3';
-        if (!empty($block_attributes['add_collapse_code'])){
-            \add_action('wp_footer', __NAMESPACE__ .'\enqueue_bs_scripts', 999);
+        if ($block_attributes['add_collapse_code']){
+            enqueue_bs_scripts();
         }
-            if (!empty($block_attributes['title_collapse_toggle'])){
+        if (!empty($block_attributes['title_collapse_toggle'])){
             $block_attributes['title'] = ('<a data-toggle="collapse" data-bs-toggle="collapse" href="#lg' .$block_attributes['anchorId'] . '" role="button" aria-expanded="'.(('collapse' == $block_attributes['title_collapse_toggle'])?'false':'true').'" aria-controls="collapseMod">' . $block_attributes['title'] . '</a>');
         }
         $titlenode = '<' . $block_attributes['tag_title'] 
@@ -312,6 +312,7 @@ class SimpleicalHelper
             . '</' . $block_attributes['tag_title'] . '>';
             
             $secho = '';
+//            $secho .= PHP_EOL . '<!-- ' . PHP_EOL . print_r($block_attributes, true) . PHP_EOL . '-->' . PHP_EOL;
             switch ($block_attributes['wptype']) {
                 case 'REST':
                     // Block displayed via REST

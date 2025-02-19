@@ -183,7 +183,8 @@
 			]
 		},
 		"add_collapse_code" : {
-			"type" : "string"
+			"type" : "boolean",
+			"default" : false
 		}
 	},
 	"render" : "file:./includes/renderssv3.php",
