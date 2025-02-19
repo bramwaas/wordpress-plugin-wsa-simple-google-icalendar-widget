@@ -85,6 +85,8 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
     'init_and_register_routes'
 ));
 \add_action( 'wp_enqueue_scripts', __NAMESPACE__ .'\enqueue_view_script');
+\add_action( 'enqueue_collapse_script', __NAMESPACE__ .'\enqueue_collapse_script');
+
 /**
      * enqueue scripts for use in client REST view
      * for v 6.3 up args array strategy = defer, else in_footer = that array is casted to boolean true. 

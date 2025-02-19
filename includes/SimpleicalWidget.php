@@ -351,7 +351,7 @@ class SimpleicalWidget extends \WP_Widget
   		 </select>	
         </p>
         <p>
-          <input class="checkbox" id="<?php echo esc_attr($this->get_field_id('add_collapse_code')); ?>" name="<?php echo esc_attr($this->get_field_name('add_collapse_code')); ?>" type="checkbox" value="1" <?php checked( '1', $instance['allowhtml'] ); ?> />
+          <input class="checkbox" id="<?php echo esc_attr($this->get_field_id('add_collapse_code')); ?>" name="<?php echo esc_attr($this->get_field_name('add_collapse_code')); ?>" type="checkbox" value="1" <?php checked( '1', $instance['add_collapse_code'] ); ?> />
           <label for="<?php echo esc_attr($this->get_field_id('add_collapse_code')); ?>"><?php esc_attr_e('Add bootstrap collapse code.', 'simple-google-icalendar-widget'); ?></label> 
         </p>
         <p>

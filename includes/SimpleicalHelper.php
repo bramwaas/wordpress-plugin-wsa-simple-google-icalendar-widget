@@ -97,6 +97,8 @@ class SimpleicalHelper
         'rest_utzui' => '',
         'className' => '',
         'anchorId' => '',
+        'title_collapse_toggle' => '',
+        'add_collapse_code' => '',
         'before_widget' => '<div id="%1$s" %2$s>',
         'after_widget'  => '</div>'
     ];
@@ -299,7 +301,8 @@ class SimpleicalHelper
         }
         if  (empty($block_attributes['tag_title']))  $block_attributes['tag_title'] = 'h3';
         if (!empty($block_attributes['title_collapse_toggle'])){
-                 $block_attributes['title'] = ('<a data-toggle="collapse" data-bs-toggle="collapse" href="#' .$block_attributes['anchorId'] . '" role="button" aria-expanded="'.(('collapse' == $block_attributes['title_collapse_toggle'])?'false':'true').'" aria-controls="collapseMod">' . $block_attributes['title'] . '</a>');
+            \add_action( 'enqueue_collapse_script', __NAMESPACE__ .'\enqueue_collapse_script');
+            $block_attributes['title'] = ('<a data-toggle="collapse" data-bs-toggle="collapse" href="#' .$block_attributes['anchorId'] . '" role="button" aria-expanded="'.(('collapse' == $block_attributes['title_collapse_toggle'])?'false':'true').'" aria-controls="collapseMod">' . $block_attributes['title'] . '</a>');
         }
         $titlenode = '<' . $block_attributes['tag_title'] 
             .' class="widget-title block-title" data-sib-t="true">'
@@ -399,6 +402,17 @@ class SimpleicalHelper
             }
         }
         return $html;
+    }
+    /**
+     * enqueue bootstrap scripts and css for collapse
+     * for v 6.3 up args array strategy = defer, else in_footer = that array is casted to boolean true.
+     */
+    function enqueue_collapse_script()
+    {
+        wp_enqueue_script('simplegoogleicalenderwidget-collapse-script', plugins_url('/vendor/bs/js/collapse.js', __FILE__), [], '2.6.1-' . filemtime(plugin_dir_path(__FILE__) . 'vendor/bs/js/collapse.js'),
+            ['strategy' => 'defer' ]);
+        wp_enqueue_style('simplegoogleicalenderwidget-collapse-style', plugins_url('/vendor/bs/css/collapse.css', __FILE__), [], '2.6.1-' . filemtime(plugin_dir_path(__FILE__) . 'vendor/bs/css/collapse.css'),
+            'all');
     }
     
     /**
