@@ -168,7 +168,7 @@ class SimpleicalHelper
                 $secho .= '<!-- ' . $msg . ' -->';
             }
             if (! empty($data) && is_array($data)) {
-                $secho .= '<ul class="list-group' . $attributes['suffix_lg_class'] . ' simple-ical-widget '. $attributes['title_collapse_toggle'] . '" > ';
+                $secho .= '<ul id="lg' .$attributes['anchorId'] .'" class="list-group' . $attributes['suffix_lg_class'] . ' simple-ical-widget '. $attributes['title_collapse_toggle'] . '" > ';
                 $curdate = '';
                 foreach ($data as $e) {
                     $idlist = explode("@", $e->uid,2);
@@ -302,7 +302,7 @@ class SimpleicalHelper
         if  (empty($block_attributes['tag_title']))  $block_attributes['tag_title'] = 'h3';
         if (!empty($block_attributes['title_collapse_toggle'])){
             \add_action( 'wp_enqueue_scripts', __NAMESPACE__ .'\enqueue_collapse_script');
-            $block_attributes['title'] = ('<a data-toggle="collapse" data-bs-toggle="collapse" href="#' .$block_attributes['anchorId'] . '" role="button" aria-expanded="'.(('collapse' == $block_attributes['title_collapse_toggle'])?'false':'true').'" aria-controls="collapseMod">' . $block_attributes['title'] . '</a>');
+            $block_attributes['title'] = ('<a data-toggle="collapse" data-bs-toggle="collapse" href="#lg' .$block_attributes['anchorId'] . '" role="button" aria-expanded="'.(('collapse' == $block_attributes['title_collapse_toggle'])?'false':'true').'" aria-controls="collapseMod">' . $block_attributes['title'] . '</a>');
         }
         $titlenode = '<' . $block_attributes['tag_title'] 
             .' class="widget-title block-title" data-sib-t="true">'
