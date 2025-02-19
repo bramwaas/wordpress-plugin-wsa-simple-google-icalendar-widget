@@ -43,6 +43,7 @@
  *   bw 20240727 v2.4.4 simplified defaulting args and improved code around that for the widget output
  *   bw 20241028 v2.5.0 Add support for categories    Tested with 6.7-RC and 5.9.5. 
  *   bw 20250112 v2.6.0 plugin check, Using simple classloader and PSR-4 name conventions. Moved  SimpleicalWidget class to separate file.
+ *   bw 20250219 v2.6.1 use bootstrap collapse script if desired
  */
 /*
  Simple Google Calendar Outlook Events Widget
@@ -85,10 +86,6 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
     'init_and_register_routes'
 ));
 \add_action('wp_enqueue_scripts', __NAMESPACE__ .'\enqueue_view_script');
-\add_action('wp_enqueue_scripts', __NAMESPACE__ .'\enqueue_bs_scripts', 999);
-//todo facultatief maken
-// \do_action('sib_enqueue_bs_scripts');
-
 /**
  * enqueue scripts for use in client REST view
  * for v 6.3 up args array strategy = defer, else in_footer = that array is casted to boolean true. 
@@ -100,7 +97,7 @@ function enqueue_view_script()
     wp_add_inline_script('simplegoogleicalenderwidget-simple-ical-block-view-script', '(window.simpleIcalBlock=window.simpleIcalBlock || {}).restRoot = "' . get_rest_url() . '"', 'before');
 }
 /**
- * enqueue bootstrap scripts and css for collapse
+ * enqueue bootstrap scripts and css for collapse (in footer to load it only when 'add_collapse_code' is true)
  * for v 6.3 up args array strategy = defer, else in_footer = that array is casted to boolean true.
  */
 function enqueue_bs_scripts()
