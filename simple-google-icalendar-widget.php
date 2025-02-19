@@ -85,18 +85,32 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
     'init_and_register_routes'
 ));
 \add_action( 'wp_enqueue_scripts', __NAMESPACE__ .'\enqueue_view_script');
-\add_action( 'enqueue_collapse_script', __NAMESPACE__ .'\enqueue_collapse_script');
+\add_action( 'wp_enqueue_scripts', __NAMESPACE__ .'\enqueue_collapse_script');
 
 /**
-     * enqueue scripts for use in client REST view
-     * for v 6.3 up args array strategy = defer, else in_footer = that array is casted to boolean true. 
-     */
-    function enqueue_view_script()
-    {
-        wp_enqueue_script('simplegoogleicalenderwidget-simple-ical-block-view-script', plugins_url('/js/simple-ical-block-view.js', __FILE__), [], '2.6.0-' . filemtime(plugin_dir_path(__FILE__) . 'js/simple-ical-block-view.js'), 
-            ['strategy' => 'defer' ]);
-        wp_add_inline_script('simplegoogleicalenderwidget-simple-ical-block-view-script', '(window.simpleIcalBlock=window.simpleIcalBlock || {}).restRoot = "' . get_rest_url() . '"', 'before');
-    }
+ * enqueue scripts for use in client REST view
+ * for v 6.3 up args array strategy = defer, else in_footer = that array is casted to boolean true. 
+ */
+function enqueue_view_script()
+{
+    wp_enqueue_script('simplegoogleicalenderwidget-simple-ical-block-view-script', plugins_url('/js/simple-ical-block-view.js', __FILE__), [], '2.6.0-' . filemtime(plugin_dir_path(__FILE__) . 'js/simple-ical-block-view.js'), 
+        ['strategy' => 'defer' ]);
+    wp_add_inline_script('simplegoogleicalenderwidget-simple-ical-block-view-script', '(window.simpleIcalBlock=window.simpleIcalBlock || {}).restRoot = "' . get_rest_url() . '"', 'before');
+}
+/**
+ * enqueue bootstrap scripts and css for collapse
+ * for v 6.3 up args array strategy = defer, else in_footer = that array is casted to boolean true.
+ */
+function enqueue_collapse_script()
+{
+    wp_enqueue_script('simplegoogleicalenderwidget-base-component-script', plugins_url('/vendor/bs/js/base-component.js', __FILE__), [], '2.6.1-' . filemtime(plugin_dir_path(__FILE__) . 'vendor/bs/js/base-component.js'),
+        ['strategy' => 'defer' ]);
+    wp_enqueue_script('simplegoogleicalenderwidget-collapse-script', plugins_url('/vendor/bs/js/collapse.js', __FILE__), [], '2.6.1-' . filemtime(plugin_dir_path(__FILE__) . 'vendor/bs/js/collapse.js'),
+        ['strategy' => 'defer' ]);
+    wp_enqueue_style('simplegoogleicalenderwidget-collapse-style', plugins_url('/vendor/bs/css/collapse.css', __FILE__), [], '2.6.1-' . filemtime(plugin_dir_path(__FILE__) . 'vendor/bs/css/collapse.css'),
+        'all');
+}
+    
     \add_action ('widgets_init', array (__NAMESPACE__ .'\SimpleicalHelper','simple_ical_widget')  );
     
 $ical_admin = new SimpleicalWidgetAdmin;
