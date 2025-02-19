@@ -84,8 +84,10 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
     __NAMESPACE__ .'\RestController',
     'init_and_register_routes'
 ));
-\add_action( 'wp_enqueue_scripts', __NAMESPACE__ .'\enqueue_view_script');
-\add_action( 'wp_enqueue_scripts', __NAMESPACE__ .'\enqueue_collapse_script');
+\add_action('wp_enqueue_scripts', __NAMESPACE__ .'\enqueue_view_script');
+\add_action('wp_enqueue_scripts', __NAMESPACE__ .'\enqueue_bs_scripts', 999);
+//todo facultatief maken
+// \do_action('sib_enqueue_bs_scripts');
 
 /**
  * enqueue scripts for use in client REST view
@@ -101,7 +103,7 @@ function enqueue_view_script()
  * enqueue bootstrap scripts and css for collapse
  * for v 6.3 up args array strategy = defer, else in_footer = that array is casted to boolean true.
  */
-function enqueue_collapse_script()
+function enqueue_bs_scripts()
 {
     wp_register_script('simplegoogleicalenderwidget-util-index-script', plugins_url('/vendor/bs/js/util/index.js', __FILE__),
         [],

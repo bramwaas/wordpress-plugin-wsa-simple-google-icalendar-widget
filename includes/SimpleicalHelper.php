@@ -300,8 +300,11 @@ class SimpleicalHelper
             $block_attributes['sibid'] = $block_attributes['blockid'];
         }
         if  (empty($block_attributes['tag_title']))  $block_attributes['tag_title'] = 'h3';
-        if (!empty($block_attributes['title_collapse_toggle'])){
-            \add_action( 'wp_enqueue_scripts', __NAMESPACE__ .'\enqueue_collapse_script');
+        if (!empty($block_attributes['add_collapse_code'])){
+//todo werkt niet            
+//            \do_action('sib_enqueue_bs_scripts');
+        }
+            if (!empty($block_attributes['title_collapse_toggle'])){
             $block_attributes['title'] = ('<a data-toggle="collapse" data-bs-toggle="collapse" href="#lg' .$block_attributes['anchorId'] . '" role="button" aria-expanded="'.(('collapse' == $block_attributes['title_collapse_toggle'])?'false':'true').'" aria-controls="collapseMod">' . $block_attributes['title'] . '</a>');
         }
         $titlenode = '<' . $block_attributes['tag_title'] 
