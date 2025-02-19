@@ -103,7 +103,19 @@ function enqueue_view_script()
  */
 function enqueue_collapse_script()
 {
+    wp_enqueue_script('simplegoogleicalenderwidget-util-config-script', plugins_url('/vendor/bs/js/util/config.js', __FILE__), [], '2.6.1-' . filemtime(plugin_dir_path(__FILE__) . 'vendor/bs/js/util/config.js'),
+        ['strategy' => 'defer' ]);
+    wp_enqueue_script('simplegoogleicalenderwidget-dom-data-script', plugins_url('/vendor/bs/js/dom/data.js', __FILE__), [], '2.6.1-' . filemtime(plugin_dir_path(__FILE__) . 'vendor/bs/js/dom/data.js'),
+        ['strategy' => 'defer' ]);
     wp_enqueue_script('simplegoogleicalenderwidget-base-component-script', plugins_url('/vendor/bs/js/base-component.js', __FILE__), [], '2.6.1-' . filemtime(plugin_dir_path(__FILE__) . 'vendor/bs/js/base-component.js'),
+        ['strategy' => 'defer' ]);
+    wp_enqueue_script('simplegoogleicalenderwidget-util-index-script', plugins_url('/vendor/bs/js/util/index.js', __FILE__), [], '2.6.1-' . filemtime(plugin_dir_path(__FILE__) . 'vendor/bs/js/util/index.js'),
+        ['strategy' => 'defer' ]);
+    wp_enqueue_script('simplegoogleicalenderwidget-dom-event-handler-script', plugins_url('/vendor/bs/js/dom/event-handler.js', __FILE__), [], '2.6.1-' . filemtime(plugin_dir_path(__FILE__) . 'vendor/bs/js/dom/event-handler.js'),
+        ['strategy' => 'defer' ]);
+    wp_enqueue_script('simplegoogleicalenderwidget-manipulator-handler-script', plugins_url('/vendor/bs/js/dom/manipulator.js', __FILE__), [], '2.6.1-' . filemtime(plugin_dir_path(__FILE__) . 'vendor/bs/js/dom/manipulator.js'),
+        ['strategy' => 'defer' ]);
+    wp_enqueue_script('simplegoogleicalenderwidget-selector-engine-script', plugins_url('/vendor/bs/js/dom/selector-engine.js', __FILE__), [], '2.6.1-' . filemtime(plugin_dir_path(__FILE__) . 'vendor/bs/js/dom/selector-engine.js'),
         ['strategy' => 'defer' ]);
     wp_enqueue_script('simplegoogleicalenderwidget-collapse-script', plugins_url('/vendor/bs/js/collapse.js', __FILE__), [], '2.6.1-' . filemtime(plugin_dir_path(__FILE__) . 'vendor/bs/js/collapse.js'),
         ['strategy' => 'defer' ]);
