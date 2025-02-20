@@ -102,39 +102,13 @@ function enqueue_view_script()
  */
 function enqueue_bs_scripts()
 {
-    wp_register_script('simplegoogleicalenderwidget-util-index-script', plugins_url('/vendor/bs/js/util/index.js', __FILE__),
+    wp_enqueue_script('simplegoogleicalenderwidget-collapse-bundle-script', plugins_url('/vendor/bs/js/collapse.bundle.js', __FILE__),
         [],
-        '2.6.1-' . filemtime(plugin_dir_path(__FILE__) . 'vendor/bs/js/util/index.js'),
+        '5.3.3-' . filemtime(plugin_dir_path(__FILE__) . 'vendor/bs/js/collapse.bundle.js'),
         ['strategy' => 'defer' ]);
-    wp_register_script('simplegoogleicalenderwidget-manipulator-script', plugins_url('/vendor/bs/js/dom/manipulator.js', __FILE__),
+    wp_enqueue_style('simplegoogleicalenderwidget-collapse-style', plugins_url('/vendor/bs/css/collapse.css', __FILE__),
         [],
-        '2.6.1-' . filemtime(plugin_dir_path(__FILE__) . 'vendor/bs/js/dom/manipulator.js'),
-        ['strategy' => 'defer' ]);
-    wp_register_script('simplegoogleicalenderwidget-dom-data-script', plugins_url('/vendor/bs/js/dom/data.js', __FILE__),
-        [],
-        '2.6.1-' . filemtime(plugin_dir_path(__FILE__) . 'vendor/bs/js/dom/data.js'),
-        ['strategy' => 'defer' ]);
-    wp_register_script('simplegoogleicalenderwidget-util-config-script', plugins_url('/vendor/bs/js/util/config.js', __FILE__),
-        ['simplegoogleicalenderwidget-manipulator-script','simplegoogleicalenderwidget-util-index-script'],
-        '2.6.1-' . filemtime(plugin_dir_path(__FILE__) . 'vendor/bs/js/util/config.js'),
-        ['strategy' => 'defer' ]);
-    wp_register_script('simplegoogleicalenderwidget-selector-engine-script', plugins_url('/vendor/bs/js/dom/selector-engine.js', __FILE__),
-        ['simplegoogleicalenderwidget-util-index-script'],
-        '2.6.1-' . filemtime(plugin_dir_path(__FILE__) . 'vendor/bs/js/dom/selector-engine.js'),
-        ['strategy' => 'defer' ]);
-    wp_register_script('simplegoogleicalenderwidget-dom-event-handler-script', plugins_url('/vendor/bs/js/dom/event-handler.js', __FILE__),
-        ['simplegoogleicalenderwidget-util-index-script'],
-        '2.6.1-' . filemtime(plugin_dir_path(__FILE__) . 'vendor/bs/js/dom/event-handler.js'),
-        ['strategy' => 'defer' ]);
-    wp_register_script('simplegoogleicalenderwidget-base-component-script', plugins_url('/vendor/bs/js/base-component.js', __FILE__),
-        ['simplegoogleicalenderwidget-dom-data-script', 'simplegoogleicalenderwidget-dom-event-handler-script', 'simplegoogleicalenderwidget-util-config-script','simplegoogleicalenderwidget-util-index-script'],
-        '2.6.1-' . filemtime(plugin_dir_path(__FILE__) . 'vendor/bs/js/base-component.js'),
-        ['strategy' => 'defer' ]);
-    wp_enqueue_script('simplegoogleicalenderwidget-collapse-script', plugins_url('/vendor/bs/js/collapse.js', __FILE__),
-        ['simplegoogleicalenderwidget-base-component-script','simplegoogleicalenderwidget-dom-event-handler-script','simplegoogleicalenderwidget-selector-engine-script','simplegoogleicalenderwidget-util-index-script'],
-        '2.6.1-' . filemtime(plugin_dir_path(__FILE__) . 'vendor/bs/js/collapse.js'),
-        ['strategy' => 'defer' ]);
-    wp_enqueue_style('simplegoogleicalenderwidget-collapse-style', plugins_url('/vendor/bs/css/collapse.css', __FILE__), [], '2.6.1-' . filemtime(plugin_dir_path(__FILE__) . 'vendor/bs/css/collapse.css'),
+        '5.3.3-' . filemtime(plugin_dir_path(__FILE__) . 'vendor/bs/css/collapse.css'),
         'all');
 }
     
