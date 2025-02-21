@@ -519,30 +519,43 @@
 				);
 		},
 		save: function (props) {
-    return (el(
-				'div',
-				useBlockProps.save({
-					key: 'simple_ical',
-		 				"id":(props.attributes.anchorId ? props.attributes.anchorId : props.attributes.sibid),
-						 "data-sib-id":props.attributes.sibid,
-						 "data-sib-utzui":props.attributes.rest_utzui,
-						 "data-sib-st":"0-start",
-				}),
-				     {
-					 },
-					 el(
-						 props.attributes.tag_title,
-						 {
-							 "class":"widget-title block-title", 
-						     "data-sib-t":"true",
-						 },
-						 props.attributes.title
-						 ),
-					 el('p',
-					    {},
-   						__('Processing', 'simple-google-icalendar-widget')
-   						)
-    		));
+				    return (el(
+			'div',
+			useBlockProps.save({
+				key: 'simple_ical',
+	 			"id":(props.attributes.anchorId ? props.attributes.anchorId : props.attributes.sibid),
+				"data-sib-id":props.attributes.sibid,
+				"data-sib-utzui":props.attributes.rest_utzui,
+				"data-sib-st":"0-start",
+			}),
+			{},
+			el(
+				props.attributes.tag_title,
+				{
+				  "class":"widget-title block-title", 
+				  "data-sib-t":"true",
+				},
+				(('' < props.attributes.title_collapse_toggle )
+				 ? el( 'a',
+				 	 {
+					   "href": "#lg" + (props.attributes.anchorId ? props.attributes.anchorId : props.attributes.sibid),
+					   "data-toggle": "collapse",
+  					   "data-bs-toggle": "collapse",
+					   "role":"button",
+					   "aria-expanded":("collapse show" == props.attributes.title_collapse_toggle),
+					   "aria-controls":"collapseMod"
+				 	 },
+					 props.attributes.title
+			 	)
+				 : props.attributes.title
+			    )
+			 ),
+			el('p',
+			    {},
+				__('Processing', 'simple-google-icalendar-widget')
+			)
+    	  )
+		))
 		},
 		deprecated: [
 			{ // dep261 
