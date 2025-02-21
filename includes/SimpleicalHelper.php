@@ -30,7 +30,7 @@
     issue is solved tested with wp 6.7.1 with elementor 3.26.5 . 
  * 2.6.1  Started simplifying (bootstrap) collapse by toggles for adding javascript and trigger collapse by title.
    Remove toggle to allow safe html in summary and description, save html is always allowed now.
-   Sameday as logical and calculated with localtime instead of gmdate.        
+   Sameday as logical and calculated with localtime instead of gmdate. Add titlenode to REST output.        
 
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
@@ -314,6 +314,8 @@ class SimpleicalHelper
             $secho = '';
 //            $secho .= PHP_EOL . '<!-- ' . PHP_EOL . print_r($block_attributes, true) . PHP_EOL . '-->' . PHP_EOL;
             switch ($block_attributes['wptype']) {
+                case 'REST_t':
+                    $secho .= $titlenode;
                 case 'REST':
                     // Block displayed via REST
                     self::display_block($block_attributes, $secho);

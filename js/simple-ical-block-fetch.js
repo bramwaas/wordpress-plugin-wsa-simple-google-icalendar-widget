@@ -22,12 +22,7 @@ window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 			if (res.params && res.params.title) {
 					if (!res.params.tag_title) {res.params.tag_title = 'h3';}
 					titl = '<' + res.params.tag_title + ' class="widget-title block-title" data-sib-t="true">'
-					+ (('' < res.params.title_collapse_toggle ) 
-						? '<a data-toggle="collapse" data-bs-toggle="collapse" href="#' + ((res.params.anchorId ? res.params.anchorId : res.params.sibid)) 
-						  + '" role="button" aria-expanded="'
-						  + (('collapse' == res.params.title_collapse_toggle) ?'false':'true') +'" aria-controls="collapseMod">'
-						  + res.params.title + '</a>'
-						: res.params.title) 
+					+  res.params.title 
 					+ '</' + res.params.tag_title + '>';
 			} else {
 				titl = '';
@@ -55,7 +50,7 @@ window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 		const nf = document.querySelectorAll('iframe');
 		let sibid = attrs.sibid;
 		let cwf, nodeList = document.querySelectorAll('[data-sib-st][data-sib-id='+ sibid + ']');
-		let dobj = {...attrs, 'wptype' : "REST"};
+		let dobj = {...attrs, 'wptype' : "REST_t"};
         this.processNodelist(nodeList, dobj);
 		for (let j = 0; j < nf.length; j++) {
 			cwf = (nf[j].contentWindow  || nf[j].contentDocument );

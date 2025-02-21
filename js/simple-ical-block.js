@@ -538,7 +538,7 @@
 				(('' < props.attributes.title_collapse_toggle )
 				 ? el( 'a',
 				 	 {
-					   "href": "#" + (props.attributes.anchorId ? props.attributes.anchorId : props.attributes.sibid),
+					   "href": "#lg" + (props.attributes.anchorId ? props.attributes.anchorId : props.attributes.sibid),
 					   "data-toggle": "collapse",
   					   "data-bs-toggle": "collapse",
 					   "role":"button",
