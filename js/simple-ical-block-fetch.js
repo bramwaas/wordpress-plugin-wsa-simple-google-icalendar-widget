@@ -19,15 +19,7 @@ window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 			method: 'POST',
 			data: dobj,
 		}).then((res) => {
-			if (res.params && res.params.title) {
-					if (!res.params.tag_title) {res.params.tag_title = 'h3';}
-					titl = '<' + res.params.tag_title + ' class="widget-title block-title" data-sib-t="true">'
-					+  res.params.title 
-					+ '</' + res.params.tag_title + '>';
-			} else {
-				titl = '';
-			}
-			ni.innerHTML = titl + res.content;
+			ni.innerHTML = res.content;
 			ni.setAttribute('data-sib-st', 'completed');
 		}).catch((error) => {
 			ni.setAttribute('data-sib-st', 'Error :' + error.code + ':' + error.message);
