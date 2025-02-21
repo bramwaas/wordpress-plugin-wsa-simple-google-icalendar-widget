@@ -1,5 +1,5 @@
 <?php 
 /*
- * version 2.5.0
+ * version 2.6.1
  */
-return ['dependencies' => ['wp-api-fetch'],  'version' => '2.6.0-' . filemtime( plugin_dir_path( __FILE__ ) . 'simple-ical-block-fetch.js' ) ];
+return ['dependencies' => ['wp-api-fetch'],  'version' => '2.6.1-' . filemtime( plugin_dir_path( __FILE__ ) . 'simple-ical-block-fetch.js' ) ];
