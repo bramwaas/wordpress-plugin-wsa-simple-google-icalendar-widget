@@ -150,22 +150,25 @@
 				useBlockProps({
 					key: 'simple_ical',
 				})
-/*	rest placeholder for render in editor with setSibbAttrs 	*/		
 				,
-					el(
-				     'div',
-				     {
-		 				"id":(props.attributes.anchorId ? props.attributes.anchorId : props.attributes.sibid),
-						 "data-sib-id":props.attributes.sibid,
-						 "data-sib-utzui":props.attributes.rest_utzui,
-						 "data-sib-st":"0-start",
-					 }
-					 ,
-					 el('p',
-					    {},
-   						__('Processing', 'simple-google-icalendar-widget')
-   						)
+// render editor
+				('test text'),				
+// rest placeholder for save sibAttributes and render in editor with simple-ical-block-fetch.js		
+				el(
+			     'div',
+			     {
+	 				"id":(props.attributes.anchorId ? props.attributes.anchorId : props.attributes.sibid),
+					 "data-sib-id":props.attributes.sibid,
+					 "data-sib-utzui":props.attributes.rest_utzui,
+					 "data-sib-st":"0-start",
+				 }
+				 ,
+				 el('p',
+				    {},
+					__('Processing', 'simple-google-icalendar-widget')
 					)
+				)
+// end render editor
 				,
 				el(InspectorControls,
 					{ key: 'setting' },
@@ -555,7 +558,7 @@
 				__('Processing', 'simple-google-icalendar-widget')
 			)
     	  )
-		))
+		)
 		},
 		deprecated: [
 			{ // dep261 
