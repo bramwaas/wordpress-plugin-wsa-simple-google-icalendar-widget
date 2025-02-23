@@ -152,16 +152,6 @@
 				})
 				,
 // render editor
-el(
- 'link',
- {
-	"id":"simplegoogleicalenderwidget-collapse-style-css",
-	"rel":"stylesheet",
-	"href":"../wp-content/plugins/simple-google-icalendar-widget/vendor/bs/css/collapse.css?ver=5.3.3-2.6.1",
-    "disabled":(! props.attributes.add_collapse_code),
- }
- )
- ,
 // rest placeholder for save sibAttributes and render in editor with simple-ical-block-fetch.js		
 				el(
 			     'div',

@@ -205,7 +205,6 @@
 	},
 	"editorScript" : [
 		"file:./js/simple-ical-block-fetch.js",
-		"file:./js/simple-ical-block.js",
-		"file:./vendor/bs/js/collapse.bundle.js"
+		"file:./js/simple-ical-block.js"
 	]
 }

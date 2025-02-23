@@ -23,6 +23,151 @@
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
 class SimpleicalWidgetAdmin {
+// Start Options    
+    /**
+     * custom option and settings
+     */
+    function simple_ical_settings_init() {
+        // Register a new setting for "simpleical" page.
+        register_setting( 'simpleical', 'simple_ical_options' );
+        
+        // Register a new section in the "simpleical" page.
+        add_settings_section(
+            'simpleical_section_developers',
+            __( 'The Matrix has you.', 'simple-google-icalendar-widget' ),
+            [$this, 'simpleical_section_developers_callback'],
+            'simpleical'
+            );
+        
+        // Register a new field in the "simpleical_section_developers" section, inside the "simpleical" page.
+        add_settings_field(
+            'simpleical_field_pill', // As of WP 4.6 this value is used only internally.
+            // Use $args' label_for to populate the id inside the callback.
+            __( 'Pill', 'simple-google-icalendar-widget' ),
+            [$this, 'simpleical_field_pill_cb'],
+            'simpleical',
+            'simpleical_section_developers',
+            array(
+                'label_for'         => 'simpleical_field_pill',
+                'class'             => 'simpleical_row',
+                'simpleical_custom_data' => 'custom',
+            )
+            );
+    }
+    /**
+     * Register our simple_ical_settings_init to the admin_init action hook.
+     */
+    //add_action( 'admin_init', 'simple_ical_settings_init' );
+    /**
+     * Custom option and settings:
+     *  - callback functions
+     */
+    
+    
+    /**
+     * Developers section callback function.
+     *
+     * @param array $args  The settings array, defining title, id, callback.
+     */
+    function simpleical_section_developers_callback( $args ) {
+        ?>
+	<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'Follow the white rabbit.', 'simpleical' ); ?></p>
+	<?php
+}
+
+/**
+ * Pill field callbakc function.
+ *
+ * WordPress has magic interaction with the following keys: label_for, class.
+ * - the "label_for" key value is used for the "for" attribute of the <label>.
+ * - the "class" key value is used for the "class" attribute of the <tr> containing the field.
+ * Note: you can add custom key value pairs to be used inside your callbacks.
+ *
+ * @param array $args
+ */
+function simpleical_field_pill_cb( $args ) {
+	// Get the value of the setting we've registered with register_setting()
+	$options = get_option( 'simple_ical_options' );
+	?>
+	<select
+			id="<?php echo esc_attr( $args['label_for'] ); ?>"
+			data-custom="<?php echo esc_attr( $args['simpleical_custom_data'] ); ?>"
+			name="simple_ical_options[<?php echo esc_attr( $args['label_for'] ); ?>]">
+		<option value="red" <?php echo isset( $options[ $args['label_for'] ] ) ? ( selected( $options[ $args['label_for'] ], 'red', false ) ) : ( '' ); ?>>
+			<?php esc_html_e( 'red pill', 'simpleical' ); ?>
+		</option>
+ 		<option value="blue" <?php echo isset( $options[ $args['label_for'] ] ) ? ( selected( $options[ $args['label_for'] ], 'blue', false ) ) : ( '' ); ?>>
+			<?php esc_html_e( 'blue pill', 'simpleical' ); ?>
+		</option>
+	</select>
+	<p class="description">
+		<?php esc_html_e( 'You take the blue pill and the story ends. You wake in your bed and you believe whatever you want to believe.', 'simpleical' ); ?>
+	</p>
+	<p class="description">
+		<?php esc_html_e( 'You take the red pill and you stay in Wonderland and I show you how deep the rabbit-hole goes.', 'simpleical' ); ?>
+	</p>
+	<?php
+}
+
+/**
+ * Add the top level menu page.
+ */
+function simple_ical_options_page() {
+	add_menu_page(
+	    __('Simple Google Calendar Outlook Events Widget options', 'simple-google-icalendar-widget' ), //title
+	    __('Simple iCal','simple-google-icalendar-widget' ), //menuoption
+	    'manage_options', //capability 
+	    'simple_ical_options', //menu slug
+	    [$this, 'simple_ical_options_page_html'] //function
+	);
+}
+
+    
+/**
+ * Register our simple_ical_options_page to the admin_menu action hook.
+ */
+//add_action( 'admin_menu', 'simple_ical_options_page' );
+
+
+/**
+ * Top level menu callback function
+ */
+function simple_ical_options_page_html() {
+	// check user capabilities
+	if ( ! current_user_can( 'manage_options' ) ) {
+		return;
+	}
+
+	// add error/update messages
+
+	// check if the user have submitted the settings
+	// WordPress will add the "settings-updated" $_GET parameter to the url
+	if ( isset( $_GET['settings-updated'] ) ) {
+		// add settings saved message with the class of "updated"
+		add_settings_error( 'simpleical_messages', 'simpleical_message', __( 'Settings Saved', 'simple-google-icalendar-widget' ), 'updated' );
+	}
+
+	// show error/update messages
+	settings_errors( 'simpleical_messages' );
+	?>
+	<div class="wrap">
+		<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
+		<form action="options.php" method="post">
+			<?php
+			// output security fields for the registered setting "simpleical"
+			settings_fields( 'simpleical' );
+			// output setting sections and their fields
+			// (sections are registered for "simpleical", each field is registered to a specific section)
+			do_settings_sections( 'simpleical' );
+			// output save settings button
+			submit_button( 'Save Settings' );
+			?>
+		</form>
+	</div>
+	<?php
+}
+// End options    
+// Start info    
     //menu items
     /**
      * Back-end sub menu item to display widget help page.
@@ -31,16 +176,18 @@ class SimpleicalWidgetAdmin {
      *
      * @param .
      */
-    public function simple_ical_admin_menu() {
+    public function simple_ical_info_page() {
         
         //ther is no main menu item for simple_ical
         //this submenu is HIDDEN, however, we need to add it to create a page in the admin area
-        add_submenu_page('admin.php', //parent slug (or the file name of a standard WordPress admin page).
-            __('Info', 'simple-google-icalendar-widget'), //page title
+       add_submenu_page('admin.php', //parent slug (or the file name of a standard WordPress admin page).
+//       add_submenu_page('simple_ical_options', //parent slug (or the file name of a standard WordPress admin page).
+//        add_menu_page( 
+        __('Info', 'simple-google-icalendar-widget'), //page title
             __('Info', 'simple-google-icalendar-widget'), //menu title
             'read', //capability read because it 's only info
             'simple_ical_info', //menu slug
-            array($this, 'simple_ical_info')); //function
+            array($this, 'simple_ical_info_page_html')); //function
             
     }
     /**
@@ -50,7 +197,7 @@ class SimpleicalWidgetAdmin {
      *
      * @param .
      */
-    public function simple_ical_info () {
+    public function simple_ical_info_page_html () {
         //
         echo wp_kses_post( '<div class="wrap"><h2>' .
         __('Info on Simple Google Calendar Outlook Events Block Widget', 'simple-google-icalendar-widget') .
