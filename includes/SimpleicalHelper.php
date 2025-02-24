@@ -300,9 +300,6 @@ class SimpleicalHelper
             $block_attributes['sibid'] = $block_attributes['blockid'];
         }
         if  (empty($block_attributes['tag_title']))  $block_attributes['tag_title'] = 'h3';
-        if ($block_attributes['add_collapse_code']){
-            enqueue_bs_scripts();
-        }
         if (!empty($block_attributes['title_collapse_toggle'])){
             $block_attributes['title'] = ('<a data-toggle="collapse" data-bs-toggle="collapse" href="#lg' .$block_attributes['anchorId'] . '" role="button" aria-expanded="'.(('collapse' == $block_attributes['title_collapse_toggle'])?'false':'true').'" aria-controls="collapseMod">' . $block_attributes['title'] . '</a>');
         }
@@ -481,7 +478,7 @@ class SimpleicalHelper
      * @param array $content
      *            as saved in post by save in ...block.js
      * @param object $block
-     *            the bolck that is rendered
+     *            the block that is rendered
      * @return string escaped HTML to render for the block (frontend)
      */
     static function render_blockv2($block_attributes, $content = null, $block = null)

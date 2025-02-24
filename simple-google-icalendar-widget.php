@@ -85,15 +85,17 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
     __NAMESPACE__ .'\RestController',
     'init_and_register_routes'
 ));
-\add_action('wp_enqueue_scripts', __NAMESPACE__ .'\enqueue_view_script');
 $ical_admin = new SimpleicalWidgetAdmin;
+$options = SimpleicalWidgetAdmin::get_plugin_options();
+\add_action('wp_enqueue_scripts', __NAMESPACE__ .'\enqueue_view_script');
+if ($options['simpleical_add_collapse_code']){
+    \add_action('wp_enqueue_scripts', __NAMESPACE__ .'\enqueue_bs_scripts');
+}
 /**
  * Register our simple_ical_settings_init to the admin_init action hook.
- */
-add_action( 'admin_init', [$ical_admin, 'simple_ical_settings_init'] );
-/**
  * Register our simple_ical_options_page and simple_ical_info_page to the admin_menu action hook.
  */
+add_action( 'admin_init', [$ical_admin, 'simple_ical_settings_init'] );
 add_action('admin_menu',[$ical_admin, 'simple_ical_options_page']);
 add_action('admin_menu',array ($ical_admin, 'simple_ical_info_page'));
 

@@ -23,6 +23,8 @@
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
 class SimpleicalWidgetAdmin {
+    const SIB_OPTIONS = 'simple_ical_options';
+    
 // Start Options    
     /**
      * custom option and settings
@@ -92,7 +94,7 @@ class SimpleicalWidgetAdmin {
  */
 function simpleical_add_collapse_code_cb( $args ) {
 	// Get the value of the setting we've registered with register_setting()
-	$options = get_option( 'simple_ical_options' );
+    $options = self::get_plugin_options();
 	?>	 
 	<input
 			id="<?php echo esc_attr( $args['field_name'] ); ?>"
@@ -166,6 +168,21 @@ function simple_ical_options_page_html() {
 
 	</div>
 	<?php
+}
+/**
+ * Gets options and assigns defaults if necessary.
+ *
+ * @param void
+ * @return array of plugin options
+ */
+static function get_plugin_options(){
+    $options = get_option(self::SIB_OPTIONS);
+    if (! is_array($options)) $options = [];
+    $options = array_merge([
+        'simpleical_add_collapse_code' => false,
+        'simpleical_add_collapse_code_admin' => false,
+    ], $options);
+    return $options;
 }
 // End options    
 // Start info    
