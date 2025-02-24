@@ -28,42 +28,47 @@ class SimpleicalWidgetAdmin {
      * custom option and settings
      */
     function simple_ical_settings_init() {
-        // Register a new setting for "simpleical" page.
-        register_setting( 'simpleical', 'simple_ical_options' );
+        // Register a new setting for "simple_ical_options" page.
+        register_setting( 'simpleical_options_form', 'simple_ical_options' );
         
         // Register a new section in the "simpleical" page.
         add_settings_section(
             'simpleical_section_developers',
-            __( 'The Matrix has you.', 'simple-google-icalendar-widget' ),
+            __( 'Plugin level options for this plugin:', 'simple-google-icalendar-widget' ),
             [$this, 'simpleical_section_developers_callback'],
-            'simpleical'
+            'simpleical_options_form'
             );
-        
         // Register a new field in the "simpleical_section_developers" section, inside the "simpleical" page.
         add_settings_field(
-            'simpleical_field_pill', // As of WP 4.6 this value is used only internally.
-            // Use $args' label_for to populate the id inside the callback.
-            __( 'Pill', 'simple-google-icalendar-widget' ),
-            [$this, 'simpleical_field_pill_cb'],
-            'simpleical',
+            'simpleical_add_collapse_code', // As of WP 4.6 this value is used only internally.
+            // Use $args' field_name to populate the id inside the callback.
+            __( 'Site add BS collapse code', 'simple-google-icalendar-widget' ),
+            [$this, 'simpleical_add_collapse_code_cb'],
+            'simpleical_options_form',
             'simpleical_section_developers',
             array(
-                'label_for'         => 'simpleical_field_pill',
-                'class'             => 'simpleical_row',
+                'field_name'         => 'simpleical_add_collapse_code',
+                'class'             => 'checkbox',
                 'simpleical_custom_data' => 'custom',
+                'field_desc' => __('Check checkbox (only) to add Bootstrap collapse code (js and css) in front end when not provided by theme.', 'simple-google-icalendar-widget' ),
+            )
+            );
+        // Register a new field in the "simpleical_section_developers" section, inside the "simpleical" page.
+        add_settings_field(
+            'simpleical_add_collapse_code_admin', // As of WP 4.6 this value is used only internally.
+            // Use $args' field_name to populate the id inside the callback.
+            __( 'Admin add BS collapse code', 'simple-google-icalendar-widget' ),
+            [$this, 'simpleical_add_collapse_code_cb'],
+            'simpleical_options_form',
+            'simpleical_section_developers',
+            array(
+                'field_name'         => 'simpleical_add_collapse_code_admin',
+                'class'             => 'checkbox',
+                'simpleical_custom_data' => 'custom',
+                'field_desc' => __('Check checkbox to add Bootstrap collapse code (js and css) in admin page when not provided by admin theme.', 'simple-google-icalendar-widget' ),
             )
             );
     }
-    /**
-     * Register our simple_ical_settings_init to the admin_init action hook.
-     */
-    //add_action( 'admin_init', 'simple_ical_settings_init' );
-    /**
-     * Custom option and settings:
-     *  - callback functions
-     */
-    
-    
     /**
      * Developers section callback function.
      *
@@ -71,40 +76,35 @@ class SimpleicalWidgetAdmin {
      */
     function simpleical_section_developers_callback( $args ) {
         ?>
-	<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'Follow the white rabbit.', 'simpleical' ); ?></p>
+	<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'Plugin level options for this plugin.', 'simple-google-icalendar-widget' ); ?></p>
 	<?php
 }
 
 /**
  * Pill field callbakc function.
  *
- * WordPress has magic interaction with the following keys: label_for, class.
- * - the "label_for" key value is used for the "for" attribute of the <label>.
+ * WordPress has magic interaction with the following keys: field_name, class.
+ * - the "field_name" key value is used for the "for" attribute of the <label>.
  * - the "class" key value is used for the "class" attribute of the <tr> containing the field.
  * Note: you can add custom key value pairs to be used inside your callbacks.
  *
  * @param array $args
  */
-function simpleical_field_pill_cb( $args ) {
+function simpleical_add_collapse_code_cb( $args ) {
 	// Get the value of the setting we've registered with register_setting()
 	$options = get_option( 'simple_ical_options' );
-	?>
-	<select
-			id="<?php echo esc_attr( $args['label_for'] ); ?>"
+	?>	 
+	<input
+			id="<?php echo esc_attr( $args['field_name'] ); ?>"
 			data-custom="<?php echo esc_attr( $args['simpleical_custom_data'] ); ?>"
-			name="simple_ical_options[<?php echo esc_attr( $args['label_for'] ); ?>]">
-		<option value="red" <?php echo isset( $options[ $args['label_for'] ] ) ? ( selected( $options[ $args['label_for'] ], 'red', false ) ) : ( '' ); ?>>
-			<?php esc_html_e( 'red pill', 'simpleical' ); ?>
-		</option>
- 		<option value="blue" <?php echo isset( $options[ $args['label_for'] ] ) ? ( selected( $options[ $args['label_for'] ], 'blue', false ) ) : ( '' ); ?>>
-			<?php esc_html_e( 'blue pill', 'simpleical' ); ?>
-		</option>
-	</select>
+			name="simple_ical_options[<?php echo esc_attr( $args['field_name'] ); ?>]"
+			type="checkbox" value="1"
+			 <?php checked( '1', $options[ $args['field_name'] ] ); ?> 
+			
+			>
+	</input>
 	<p class="description">
-		<?php esc_html_e( 'You take the blue pill and the story ends. You wake in your bed and you believe whatever you want to believe.', 'simpleical' ); ?>
-	</p>
-	<p class="description">
-		<?php esc_html_e( 'You take the red pill and you stay in Wonderland and I show you how deep the rabbit-hole goes.', 'simpleical' ); ?>
+		<?php echo wp_kses_post($args['field_desc']) ?>
 	</p>
 	<?php
 }
@@ -154,15 +154,16 @@ function simple_ical_options_page_html() {
 		<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
 		<form action="options.php" method="post">
 			<?php
-			// output security fields for the registered setting "simpleical"
-			settings_fields( 'simpleical' );
+			// output security fields for the registered setting "simpleical_options_form"
+			settings_fields( 'simpleical_options_form' );
 			// output setting sections and their fields
-			// (sections are registered for "simpleical", each field is registered to a specific section)
-			do_settings_sections( 'simpleical' );
+			// (sections are registered for "simpleical_options_form", each field is registered to a specific section)
+			do_settings_sections( 'simpleical_options_form' );
 			// output save settings button
 			submit_button( 'Save Settings' );
 			?>
 		</form>
+
 	</div>
 	<?php
 }
