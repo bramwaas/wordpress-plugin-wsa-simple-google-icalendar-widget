@@ -91,7 +91,9 @@ $options = SimpleicalWidgetAdmin::get_plugin_options();
 if ($options['simpleical_add_collapse_code']){
     \add_action('wp_enqueue_scripts', __NAMESPACE__ .'\enqueue_bs_scripts');
 }
-/**
+if ($options['simpleical_add_collapse_code_admin']){
+    \add_action('admin_enqueue_scripts', __NAMESPACE__ .'\enqueue_bs_scripts');
+}/**
  * Register our simple_ical_settings_init to the admin_init action hook.
  * Register our simple_ical_options_page and simple_ical_info_page to the admin_menu action hook.
  */
