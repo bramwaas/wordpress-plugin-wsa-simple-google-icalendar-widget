@@ -117,6 +117,16 @@ function enqueue_view_script()
  */
 function enqueue_bs_scripts()
 {
+    // test
+    wp_enqueue_script('jq', 'https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js',
+        [],
+        '3.5.1',
+        ['strategy' => 'defer', 'integrity' => 'sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj', 'crossorigin' => 'anonymous' ]);
+    wp_enqueue_script('bs', 'https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js',
+        [],
+        '4.6.2',
+        ['strategy' => 'defer', 'integrity' => 'sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct', 'crossorigin' => 'anonymous' ]);
+    // end test
     wp_enqueue_script('simplegoogleicalenderwidget-collapse-bundle-script', plugins_url('/vendor/bs/js/collapse.bundle.js', __FILE__),
         [],
         '5.3.3-' . filemtime(plugin_dir_path(__FILE__) . 'vendor/bs/js/collapse.bundle.js'),
