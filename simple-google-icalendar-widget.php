@@ -92,6 +92,7 @@ if ($options['simpleical_add_collapse_code']){
     \add_action('wp_enqueue_scripts', __NAMESPACE__ .'\enqueue_bs_scripts');
 }
 if ($options['simpleical_add_collapse_code_admin']){
+    \add_action('wp_enqueue_scripts', __NAMESPACE__ .'\enqueue_bs4_scripts'); // for testing
     \add_action('admin_enqueue_scripts', __NAMESPACE__ .'\enqueue_bs_scripts');
     add_action( 'enqueue_block_assets', __NAMESPACE__ .'\enqueue_bs_block_assets' );}/**
  * Register our simple_ical_settings_init to the admin_init action hook.
@@ -111,11 +112,7 @@ function enqueue_view_script()
         ['strategy' => 'defer' ]);
     wp_add_inline_script('simplegoogleicalenderwidget-simple-ical-block-view-script', '(window.simpleIcalBlock=window.simpleIcalBlock || {}).restRoot = "' . get_rest_url() . '"', 'before');
 }
-/**
- * enqueue bootstrap scripts and css for collapse (in footer to load it only when 'add_collapse_code' is true)
- * for v 6.3 up args array strategy = defer, else in_footer = that array is casted to boolean true.
- */
-function enqueue_bs_scripts()
+function enqueue_bs4_scripts()
 {
     // test
     wp_enqueue_script('jq', 'https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js',
@@ -127,6 +124,13 @@ function enqueue_bs_scripts()
         '4.6.2',
         ['strategy' => 'defer', 'integrity' => 'sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct', 'crossorigin' => 'anonymous' ]);
     // end test
+}
+    /**
+ * enqueue bootstrap scripts and css for collapse (in footer to load it only when 'add_collapse_code' is true)
+ * for v 6.3 up args array strategy = defer, else in_footer = that array is casted to boolean true.
+ */
+function enqueue_bs_scripts()
+{
     wp_enqueue_script('simplegoogleicalenderwidget-collapse-bundle-script', plugins_url('/vendor/bs/js/collapse.bundle.js', __FILE__),
         [],
         '5.3.3-' . filemtime(plugin_dir_path(__FILE__) . 'vendor/bs/js/collapse.bundle.js'),
