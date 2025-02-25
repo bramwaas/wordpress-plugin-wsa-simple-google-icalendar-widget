@@ -510,12 +510,18 @@
 						}
 					),
 					el(
-						ToggleControl,
-						{
-							label: __('Add bootstrap collapse code.', 'simple-google-icalendar-widget'),
-							checked: props.attributes.add_collapse_code,
-							onChange: function(value) { props.setAttributes({ add_collapse_code: value }); },
-						}
+						'p',
+						{},
+						__('Use plugin options form to add Bootstrap collapse code (js and css) when not provided by theme.', 'simple-google-icalendar-widget'),
+						el ('br',{}),
+						el(
+							'a',
+							{
+								href: 'admin.php?page=simple_ical_options',
+								target: '_blank',
+							},
+							__('Options form', 'simple-google-icalendar-widget')
+						)
 					)
 				)
 				);

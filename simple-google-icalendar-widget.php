@@ -92,7 +92,7 @@ if ($options['simpleical_add_collapse_code']){
     \add_action('wp_enqueue_scripts', __NAMESPACE__ .'\enqueue_bs_scripts');
 }
 if ($options['simpleical_add_collapse_code_admin']){
-    \add_action('wp_enqueue_scripts', __NAMESPACE__ .'\enqueue_bs4_scripts'); // for testing
+//    \add_action('wp_enqueue_scripts', __NAMESPACE__ .'\enqueue_bs4_scripts'); // for testing
     \add_action('admin_enqueue_scripts', __NAMESPACE__ .'\enqueue_bs_scripts');
     add_action( 'enqueue_block_assets', __NAMESPACE__ .'\enqueue_bs_block_assets' );}/**
  * Register our simple_ical_settings_init to the admin_init action hook.
