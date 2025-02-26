@@ -81,6 +81,10 @@ class SimpleicalWidget extends \WP_Widget
                     $l = explode('>', $args['before_title'], 2);
                     $args['before_title'] = implode(' data-sib-t="true" >', $l);
                 }
+                if (!empty($instance['title_collapse_toggle'])){
+                    $args['before_title'] .= '<a data-toggle="collapse" data-bs-toggle="collapse" href="#' .$instance['anchorId'] . '" role="button" aria-expanded="'.(('collapse' == $instance['title_collapse_toggle'])?'false':'true').'" aria-controls="collapseMod">';
+                    $args['after_title']  = '</a>' . $args['after_title'];
+                }
                 $title = apply_filters('widget_title', $instance['title']);
                 $secho .= $args['before_title']. $title. $args['after_title'];
             }
@@ -171,9 +175,6 @@ class SimpleicalWidget extends \WP_Widget
             
             $instance['sibid'] = wp_strip_all_tags($new_instance['sibid']);
             $instance['anchorId'] = wp_strip_all_tags($new_instance['anchorId'], 1) ?? $instance['sibid'];
-           if (!empty($instance['title_collapse_toggle'])){
-               $instance['title'] = ('<a data-toggle="collapse" data-bs-toggle="collapse" href="#' .$instance['anchorId'] . '" role="button" aria-expanded="'.(('collapse' == $instance['title_collapse_toggle'])?'false':'true').'" aria-controls="collapseMod">' . $instance['title'] . '</a>');
-           }
             
             if (!empty($this->number && is_numeric($this->number))) {
                 $instance['postid'] = (string) $this->id;

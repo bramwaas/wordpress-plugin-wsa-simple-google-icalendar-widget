@@ -30,7 +30,7 @@
     issue is solved tested with wp 6.7.1 with elementor 3.26.5 . 
  * 2.6.1  Started simplifying (bootstrap) collapse by toggles for adding javascript and trigger collapse by title.
    Remove toggle to allow safe html in summary and description, save html is always allowed now.
-   Sameday as logical and calculated with localtime instead of gmdate. Add titlenode to REST output.        
+   Sameday as logical and calculated with localtime instead of gmdate. Add titlenode to REST output. Removed ev_class from li head.       
 
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
@@ -198,7 +198,7 @@ class SimpleicalHelper
                         if ($curdate != '') {
                             $secho .= '</ul></li>';
                         }
-                        $secho .= '<li class="list-group-item' . $sflgi . $ev_class . ' head">' . '<span class="ical-date">' . ucfirst($evdate) . '</span><ul class="list-group' . $attributes['suffix_lg_class'] . '">';
+                        $secho .= '<li class="list-group-item' . $sflgi . ' head">' . '<span class="ical-date">' . ucfirst($evdate) . '</span><ul class="list-group' . $attributes['suffix_lg_class'] . '">';
                     }
                     $secho .= '<li class="list-group-item' . $sflgi . $ev_class . '">';
                     if ($layout == 3 && $curdate != $evdate) {
