@@ -36,7 +36,7 @@ class SimpleicalWidgetAdmin {
         // Register a new section in the "simpleical" page.
         add_settings_section(
             'simpleical_section_developers',
-            __( 'Plugin level options for this plugin:', 'simple-google-icalendar-widget' ),
+            __( 'Plugin level settings.', 'simple-google-icalendar-widget' ),
             [$this, 'simpleical_section_developers_callback'],
             'simpleical_options_form'
             );
@@ -52,7 +52,7 @@ class SimpleicalWidgetAdmin {
                 'field_name'         => 'simpleical_add_collapse_code',
                 'class'             => 'checkbox',
                 'simpleical_custom_data' => 'custom',
-                'field_desc' => __('Check checkbox (only) to add Bootstrap collapse code (js and css) in front end when not provided by theme.', 'simple-google-icalendar-widget' ),
+                'field_desc' => __('Check checkbox to add Bootstrap collapse code in front-end (live site) when not provided by theme.', 'simple-google-icalendar-widget' ),
             )
             );
         // Register a new field in the "simpleical_section_developers" section, inside the "simpleical" page.
@@ -67,7 +67,7 @@ class SimpleicalWidgetAdmin {
                 'field_name'         => 'simpleical_add_collapse_code_admin',
                 'class'             => 'checkbox',
                 'simpleical_custom_data' => 'custom',
-                'field_desc' => __('Check checkbox to add Bootstrap collapse code (js and css) in admin page when not provided by admin theme.', 'simple-google-icalendar-widget' ),
+                'field_desc' => __('Check checkbox to add Bootstrap collapse code in admin (block editor).', 'simple-google-icalendar-widget' ),
             )
             );
     }
@@ -78,12 +78,15 @@ class SimpleicalWidgetAdmin {
      */
     function simpleical_section_developers_callback( $args ) {
         ?>
-	<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'Plugin level options for this plugin.', 'simple-google-icalendar-widget' ); ?></p>
+	<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'Bootstrap collapse code, javascript and css necessary for correct operation of collapse toggle html. If code is twice loaded it may not work. So don\'t check if code is already loaded e.g. by theme.', 'simple-google-icalendar-widget' ); ?>
+    <br/><?php esc_html_e( '(Initial preview legacy widget uses front-end code)', 'simple-google-icalendar-widget' ); ?>
+    </p>
+    
 	<?php
 }
 
 /**
- * Pill field callbakc function.
+ * Cecknox field callback function.
  *
  * WordPress has magic interaction with the following keys: field_name, class.
  * - the "field_name" key value is used for the "for" attribute of the <label>.
@@ -115,9 +118,10 @@ function simpleical_add_collapse_code_cb( $args ) {
  * Add the top level menu page.
  */
 function simple_ical_options_page() {
-	add_menu_page(
+add_options_page(
+//    add_menu_page(
 	    __('Simple Google Calendar Outlook Events Widget options', 'simple-google-icalendar-widget' ), //title
-	    __('Simple iCal','simple-google-icalendar-widget' ), //menuoption
+	    __('Simple iCal Options','simple-google-icalendar-widget' ), //menuoption
 	    'manage_options', //capability 
 	    'simple_ical_options', //menu slug
 	    [$this, 'simple_ical_options_page_html'] //function
@@ -195,14 +199,10 @@ static function get_plugin_options(){
      * @param .
      */
     public function simple_ical_info_page() {
-        
-        //ther is no main menu item for simple_ical
-        //this submenu is HIDDEN, however, we need to add it to create a page in the admin area
 //       add_submenu_page('admin.php', //parent slug (or the file name of a standard WordPress admin page).
-       add_submenu_page('simple_ical_options', //parent slug (or the file name of a standard WordPress admin page).
-//        add_menu_page( 
-        __('Info', 'simple-google-icalendar-widget'), //page title
-            __('Info', 'simple-google-icalendar-widget'), //menu title
+       add_options_page(
+       __('Simple Google Calendar Outlook Events Widget Help', 'simple-google-icalendar-widget'), //page title
+            __('Simple iCal Help', 'simple-google-icalendar-widget'), //menu title
             'read', //capability read because it 's only info
             'simple_ical_info', //menu slug
             array($this, 'simple_ical_info_page_html')); //function
@@ -218,7 +218,7 @@ static function get_plugin_options(){
     public function simple_ical_info_page_html () {
         //
         echo wp_kses_post( '<div class="wrap"><h2>' .
-        __('Info on Simple Google Calendar Outlook Events Block Widget', 'simple-google-icalendar-widget') .
+        __('Info on Simple Google Calendar Outlook Events Block Widget settings', 'simple-google-icalendar-widget') .
         '</h2><h3>' .
         __('Settings for this block/widget:' , 'simple-google-icalendar-widget') .
         '</h3><p><strong>'.

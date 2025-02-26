@@ -206,6 +206,10 @@ Here you can choose how to compare the filter categories with the event categori
 
 If the event contains categories, the list of categories of this event cleaned as classes (removed spaces etc.) is added to the  html-classes of the event (to the list-group-item). 
 
+= How can I report security bugs? =   
+
+You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/wordpress/plugin/simple-google-icalendar-widget/vdp)  
+
 = How do I contribute to Simple Google Calendar Outlook Events Widget? =
 
 We'd love your help! Here's a few things you can do:
