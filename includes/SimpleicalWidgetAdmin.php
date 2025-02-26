@@ -198,8 +198,8 @@ static function get_plugin_options(){
         
         //ther is no main menu item for simple_ical
         //this submenu is HIDDEN, however, we need to add it to create a page in the admin area
-       add_submenu_page('admin.php', //parent slug (or the file name of a standard WordPress admin page).
-//       add_submenu_page('simple_ical_options', //parent slug (or the file name of a standard WordPress admin page).
+//       add_submenu_page('admin.php', //parent slug (or the file name of a standard WordPress admin page).
+       add_submenu_page('simple_ical_options', //parent slug (or the file name of a standard WordPress admin page).
 //        add_menu_page( 
         __('Info', 'simple-google-icalendar-widget'), //page title
             __('Info', 'simple-google-icalendar-widget'), //menu title
@@ -432,9 +432,13 @@ static function get_plugin_options(){
            __('Checkbox Add bootstrap collapse code.', 'simple-google-icalendar-widget').
        '</strong></p><p>'.
        __('Check checkbox to Add bootstrap collapse code (js and css) when not provided by theme', 'simple-google-icalendar-widget').
-       '</p></div>' );
-       
-       
+       '</p>' .
+        __('Use plugin options form to add Bootstrap collapse code (js and css) when not provided by theme.', 'simple-google-icalendar-widget') .
+        '<p><a href="' .
+        esc_url(admin_url('admin.php?page=simple_ical_options')) .
+        '" target="_blank">' . 
+        __('Options form', 'simple-google-icalendar-widget') .
+        '</a></p></div>');
     }
     // info in admin-menu
 }
