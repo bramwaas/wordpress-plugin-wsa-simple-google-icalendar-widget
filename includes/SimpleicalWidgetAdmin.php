@@ -318,10 +318,15 @@ static function get_plugin_options(){
         '<p><strong>'.
        __('Tag for summary', 'simple-google-icalendar-widget').
         '</strong></p><p>'.
-       __('Tag for summary. Choose a tag from the list. Default: a (link) When using bootstrap or other collapse css and java-script the description is collapsed and wil be opened bij clicking on the summary link.<br>Link is not included with the other tags. If not using bootstrap collapse h4, div or strong may be a better choice then a..', 'simple-google-icalendar-widget').
+       __('Tag for summary. Choose a tag from the list. Default: a (link) When using bootstrap or other collapse css and java-script the description is collapsed and wil be opened bij clicking on the summary link.<br>Link is not included with the other tags. If not using bootstrap collapse h4, div or strong may be a better choice then a.', 'simple-google-icalendar-widget').
         '</p><p>'.
-       __('Only available in block.', 'simple-google-icalendar-widget').
-        '</p>');
+            __('This only works when Bootstrap collapse code is in place.', 'simple-google-icalendar-widget') . ' ' .
+        __('Use plugin options form to add Bootstrap collapse code (js and css) when not provided by theme.', 'simple-google-icalendar-widget') .
+          '<br/><a href="' .
+          esc_url(admin_url('admin.php?page=simple_ical_options')) .
+            '" target="_blank">' .
+          __('Options form', 'simple-google-icalendar-widget') .
+          '</a></p>');
         
         echo wp_kses_post('<span id="period-limits"></span>'.
         '<p><strong>'.
@@ -421,9 +426,7 @@ static function get_plugin_options(){
            __('Use title link as collapse/show toggle for this module content.', 'simple-google-icalendar-widget').
            '</p><p><strong>' .
            __('Checkbox Add bootstrap collapse code.', 'simple-google-icalendar-widget').
-       '</strong></p><p>'.
-       __('Check checkbox to Add bootstrap collapse code (js and css) when not provided by theme', 'simple-google-icalendar-widget').
-       '</p>' .
+       '</strong></p>'.
         __('Use plugin options form to add Bootstrap collapse code (js and css) when not provided by theme.', 'simple-google-icalendar-widget') .
         '<p><a href="' .
         esc_url(admin_url('admin.php?page=simple_ical_options')) .
