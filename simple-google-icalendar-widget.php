@@ -134,4 +134,3 @@ function enqueue_bs_block_assets() {
     }
 }
     add_action ('widgets_init', array (__NAMESPACE__ .'\SimpleicalHelper','simple_ical_widget')  );
-    
