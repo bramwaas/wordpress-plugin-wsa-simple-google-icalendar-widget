@@ -33,14 +33,14 @@ class SimpleicalWidgetAdmin {
         // Register a new setting for "simple_ical_options" page.
         register_setting( 'simpleical_options_form', 'simple_ical_options' );
         
-        // Register a new section in the "simpleical" page.
+        // Register a new section in the "simpleical_options_form" page.
         add_settings_section(
             'simpleical_section_developers',
             __( 'Plugin level settings.', 'simple-google-icalendar-widget' ),
             [$this, 'simpleical_section_developers_callback'],
             'simpleical_options_form'
             );
-        // Register a new field in the "simpleical_section_developers" section, inside the "simpleical" page.
+        // Register a new field in the "simpleical_section_developers" section, inside the "simpleical_options_form" page.
         add_settings_field(
             'simpleical_add_collapse_code', // As of WP 4.6 this value is used only internally.
             // Use $args' field_name to populate the id inside the callback.
@@ -55,7 +55,6 @@ class SimpleicalWidgetAdmin {
                 'field_desc' => __('Check checkbox to add Bootstrap collapse code in front-end (live site) when not provided by theme.', 'simple-google-icalendar-widget' ),
             )
             );
-        // Register a new field in the "simpleical_section_developers" section, inside the "simpleical" page.
         add_settings_field(
             'simpleical_add_collapse_code_admin', // As of WP 4.6 this value is used only internally.
             // Use $args' field_name to populate the id inside the callback.
@@ -127,14 +126,6 @@ add_options_page(
 	    [$this, 'simple_ical_options_page_html'] //function
 	);
 }
-
-    
-/**
- * Register our simple_ical_options_page to the admin_menu action hook.
- */
-//add_action( 'admin_menu', 'simple_ical_options_page' );
-
-
 /**
  * Top level menu callback function
  */

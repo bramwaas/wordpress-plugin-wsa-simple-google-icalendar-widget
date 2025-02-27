@@ -4,7 +4,7 @@
  * Move styles to stylesheets - both edit and front-end.
  * and use attributes and editable fields
  * attributes as Inspectorcontrols (settings)
- * v2.3.0
+ * v2.6.1
  * 20230625 added quotes to the options of the Layout SelectControl,
  *  add parseInt to all integers in transform, added conversion dateformat_lgend and _tsend and anchorid = sibid
  * 20230420 added parseInt on line 147(now 148) to keep layout in block-editor

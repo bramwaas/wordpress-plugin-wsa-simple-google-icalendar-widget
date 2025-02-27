@@ -57,9 +57,18 @@
 	{ value: 'h6', label: __('h6 (sub header)', 'simple-google-icalendar-widget') },
 	{ value: 'span', label: __('span', 'simple-google-icalendar-widget') },
 	];
-
+	const tagOps = [{ value: 'a', label: __('a (link)', 'simple-google-icalendar-widget') },
+	{ value: 'b', label: __('b (attention, bold)', 'simple-google-icalendar-widget') },
+	{ value: 'div', label: __('div', 'simple-google-icalendar-widget') },
+	{ value: 'h4', label: __('h4 (sub header)', 'simple-google-icalendar-widget') },
+	{ value: 'h5', label: __('h5 (sub header)', 'simple-google-icalendar-widget') },
+	{ value: 'h6', label: __('h6 (sub header)', 'simple-google-icalendar-widget') },
+	{ value: 'i', label: __('i (idiomatic, italic)', 'simple-google-icalendar-widget') },
+	{ value: 'span', label: __('span', 'simple-google-icalendar-widget') },
+	{ value: 'strong', label: __('strong', 'simple-google-icalendar-widget') },
+	{ value: 'u', label: __('u (unarticulated, underline )', 'simple-google-icalendar-widget') }
+	];
 	let ptzid_ui;
-
 	blocks.registerBlockType('simplegoogleicalenderwidget/simple-ical-block', {
 		icon: iconEl,
 
@@ -405,18 +414,7 @@
 								__('More info', 'simple-google-icalendar-widget')
 							),
 							onChange: function(value) { props.setAttributes({ tag_sum: value }); },
-							options: [
-								{ value: 'a', label: __('a (link)', 'simple-google-icalendar-widget') },
-								{ value: 'b', label: __('b (attention, bold)', 'simple-google-icalendar-widget') },
-								{ value: 'div', label: __('div', 'simple-google-icalendar-widget') },
-								{ value: 'h4', label: __('h4 (sub header)', 'simple-google-icalendar-widget') },
-								{ value: 'h5', label: __('h5 (sub header)', 'simple-google-icalendar-widget') },
-								{ value: 'h6', label: __('h6 (sub header)', 'simple-google-icalendar-widget') },
-								{ value: 'i', label: __('i (idiomatic, italic)', 'simple-google-icalendar-widget') },
-								{ value: 'span', label: __('span', 'simple-google-icalendar-widget') },
-								{ value: 'strong', label: __('strong', 'simple-google-icalendar-widget') },
-								{ value: 'u', label: __('u (unarticulated, underline )', 'simple-google-icalendar-widget') }
-							]
+							options: tagOps
 						}
 					),
 					el(
@@ -444,14 +442,6 @@
 							value: props.attributes.suffix_lgia_class,
 							help: __('Suffix to add after the css-class around the event summary and details, start with space to keep the original class (ical_summary and ical_details) and add another class.', 'simple-google-icalendar-widget'),
 							onChange: function(value) { props.setAttributes({ suffix_lgia_class: value }); },
-						}
-					),
-					el(
-						ToggleControl,
-						{
-							label: __('Allow safe html in description and summary.', 'simple-google-icalendar-widget'),
-							checked: props.attributes.allowhtml,
-							onChange: function(value) { props.setAttributes({ allowhtml: value }); },
 						}
 					),
 					el(
@@ -511,14 +501,21 @@
 						}
 					),
 					el(
-						ToggleControl,
-						{
-							label: __('Add bootstrap collapse code.', 'simple-google-icalendar-widget'),
-							checked: props.attributes.add_collapse_code,
-							onChange: function(value) { props.setAttributes({ add_collapse_code: value }); },
-						}
+						'p',
+						{},
+						__('Use plugin options form to add Bootstrap collapse code (js and css) when not provided by theme.', 'simple-google-icalendar-widget'),
+						el ('br',{}),
+						el(
+							'a',
+							{
+								"href": 'admin.php?page=simple_ical_options',
+								"target": '_blank',
+							},
+							__('Options form', 'simple-google-icalendar-widget')
+						)
 					)
-				));
+				)
+				);
 		}
 	});
 }(window.wp.blocks,
@@ -526,6 +523,5 @@
 	window.wp.element,
 	window.wp.blockEditor,
 	window.wp.components,
-	window.wp.serverSideRender
-)
+	window.wp.serverSideRender)
 );

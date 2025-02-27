@@ -48,7 +48,7 @@
 /*
  Simple Google Calendar Outlook Events Widget
  Copyright (C) Bram Waasdorp 2017 - 2025
- 2025-01-13
+ 2025-02-28
  Forked from Simple Google Calendar Widget v 0.7 by Nico Boehr
  
  This program is free software: you can redistribute it and/or modify
@@ -92,8 +92,6 @@ if ($options['simpleical_add_collapse_code']){
     add_action('wp_enqueue_scripts', __NAMESPACE__ .'\enqueue_bs_scripts');
 }
 if ($options['simpleical_add_collapse_code_admin']){
-//    add_action('wp_enqueue_scripts', __NAMESPACE__ .'\enqueue_bs4_scripts'); // for testing
-//    add_action('admin_enqueue_scripts', __NAMESPACE__ .'\enqueue_bs_scripts');
     add_action( 'enqueue_block_assets', __NAMESPACE__ .'\enqueue_bs_block_assets' );}/**
  * Register our simple_ical_settings_init to the admin_init action hook.
  * Register our simple_ical_options_page and simple_ical_info_page to the admin_menu action hook.
@@ -111,19 +109,6 @@ function enqueue_view_script()
     wp_enqueue_script('simplegoogleicalenderwidget-simple-ical-block-view-script', plugins_url('/js/simple-ical-block-view.js', __FILE__), [], '2.6.1-' . filemtime(plugin_dir_path(__FILE__) . 'js/simple-ical-block-view.js'), 
         ['strategy' => 'defer' ]);
     wp_add_inline_script('simplegoogleicalenderwidget-simple-ical-block-view-script', '(window.simpleIcalBlock=window.simpleIcalBlock || {}).restRoot = "' . get_rest_url() . '"', 'before');
-}
-function enqueue_bs4_scripts()
-{
-    // test
-    wp_enqueue_script('jq', 'https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js',
-        [],
-        '3.5.1',
-        ['strategy' => 'defer', 'integrity' => 'sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj', 'crossorigin' => 'anonymous' ]);
-    wp_enqueue_script('bs', 'https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js',
-        [],
-        '4.6.2',
-        ['strategy' => 'defer', 'integrity' => 'sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct', 'crossorigin' => 'anonymous' ]);
-    // end test
 }
     /**
  * enqueue bootstrap scripts and css for collapse (in footer to load it only when 'add_collapse_code' is true)
@@ -148,7 +133,5 @@ function enqueue_bs_block_assets() {
         enqueue_bs_scripts();
     }
 }
-
-    
-    \add_action ('widgets_init', array (__NAMESPACE__ .'\SimpleicalHelper','simple_ical_widget')  );
+    add_action ('widgets_init', array (__NAMESPACE__ .'\SimpleicalHelper','simple_ical_widget')  );
     
