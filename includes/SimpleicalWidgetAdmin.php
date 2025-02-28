@@ -31,8 +31,7 @@ class SimpleicalWidgetAdmin {
      */
     function simple_ical_settings_init() {
         // Register a new setting for "simple_ical_options" page.
-        register_setting( 'simpleical_options_form', 'simple_ical_options', ['sanitize_callback' =>  [$this, 'sanitize_options']] );
-        
+        register_setting( 'simpleical_options_form', 'simple_ical_options', ['sanitize_callback' =>  [$this, 'sanitize_options'], 'default' => []] );
         // Register a new section in the "simpleical_options_form" page.
         add_settings_section(
             'simpleical_section_developers',
@@ -153,10 +152,11 @@ function simple_ical_options_page_html() {
 
 	// check if the user have submitted the settings
 	// WordPress will add the "settings-updated" $_GET parameter to the url
-	if ( isset( $_GET['settings-updated'] ) ) {
-		// add settings saved message with the class of "updated"
-		add_settings_error( 'simpleical_messages', 'simpleical_message', __( 'Settings Saved', 'simple-google-icalendar-widget' ), 'updated' );
-	}
+	//toDo recrate with nonce for GET
+// 	if ( isset( $_GET['settings-updated'] ) ) {
+// 		// add settings saved message with the class of "updated"
+// 		add_settings_error( 'simpleical_messages', 'simpleical_message', __( 'Settings Saved', 'simple-google-icalendar-widget' ), 'updated' );
+// 	}
 
 	// show error/update messages
 	settings_errors( 'simpleical_messages' );
