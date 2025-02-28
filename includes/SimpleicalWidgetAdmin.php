@@ -31,6 +31,8 @@ class SimpleicalWidgetAdmin {
      */
     function simple_ical_settings_init() {
         // Register a new setting for "simple_ical_options" page.
+        // Sadly plugin-check gives a incorrect warning here that I am not able to solve.
+        // See https://github.com/WordPress/plugin-check/issues/871
         register_setting( 'simpleical_options_form', 'simple_ical_options', ['sanitize_callback' =>  [$this, 'sanitize_options'], 'default' => []] );
         // Register a new section in the "simpleical_options_form" page.
         add_settings_section(
