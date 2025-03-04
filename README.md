@@ -206,6 +206,10 @@ Here you can choose how to compare the filter categories with the event categori
 
 If the event contains categories, the list of categories of this event cleaned as classes (removed spaces etc.) is added to the  html-classes of the event (to the list-group-item). 
 
+= How can I report security bugs? =   
+
+You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/wordpress/plugin/simple-google-icalendar-widget/vdp)  
+
 = How do I contribute to Simple Google Calendar Outlook Events Widget? =
 
 We'd love your help! Here's a few things you can do:
@@ -242,6 +246,8 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 * from 2024 (v2.3.0) requires php 7.4. "Use Client timezone settings, with REST" in "Use client timezone settings" works only correct with Javascript enabled in a browser with version newer than 2016 but not in Internet Explorer (fetch and Promise are used).         
 
 == Changelog ==
+* 2.6.1  Started simplifying (bootstrap) collapse by toggles for adding javascript and trigger collapse by title. In response to Joomla module github issue #35 'naming calendars to filter them in front end' by Joomlafun.  
+   Remove toggle to allow safe html in summary and description, save html is always allowed now.      
 * 2.6.0 Due to a reported XSS vulnerability. Checked with Wordpress Plugin Check (PCP). Fixed this vulnerability and other PCP errors and warnings, as required by Wordpress to remain in the plugin directory.  
 known issue: in wp 5.9.5 with elementor 3.14.1 aria-expanded and aria-controls are stripped bij wp_kses before wp 6.3.0 (see wp_kses.php)   
     issue is solved tested with wp 6.7.1 with elementor 3.26.5 .   

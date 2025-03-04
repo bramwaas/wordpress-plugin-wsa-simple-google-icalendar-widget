@@ -6,6 +6,7 @@
  * added search in iFrame,  selection on sibid, and choice of Timezone
  * object simpleIcalBlock differentiated by adding F
  * v2.4.4 use present attrs to fetch content not from option in case attrs are not set in option
+ * v2.6.1 ad collapse code tot title
 **/
 window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 	bizzySavingAttrs: 0, 
@@ -18,13 +19,7 @@ window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 			method: 'POST',
 			data: dobj,
 		}).then((res) => {
-			if (res.params && res.params.title) {
-					if (!res.params.tag_title) {res.params.tag_title = 'h3';}
-					titl = '<' + res.params.tag_title + ' class="widget-title block-title" data-sib-t="true">' + res.params.title + '</' + res.params.tag_title + '>';
-			} else {
-				titl = '';
-			}
-			ni.innerHTML = titl + res.content;
+			ni.innerHTML = res.content;
 			ni.setAttribute('data-sib-st', 'completed');
 		}).catch((error) => {
 			ni.setAttribute('data-sib-st', 'Error :' + error.code + ':' + error.message);
@@ -47,7 +42,7 @@ window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 		const nf = document.querySelectorAll('iframe');
 		let sibid = attrs.sibid;
 		let cwf, nodeList = document.querySelectorAll('[data-sib-st][data-sib-id='+ sibid + ']');
-		let dobj = {...attrs, 'wptype' : "REST"};
+		let dobj = {...attrs, 'wptype' : "REST_t"};
         this.processNodelist(nodeList, dobj);
 		for (let j = 0; j < nf.length; j++) {
 			cwf = (nf[j].contentWindow  || nf[j].contentDocument );

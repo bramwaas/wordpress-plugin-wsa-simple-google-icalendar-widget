@@ -4,7 +4,7 @@
  * Move styles to stylesheets - both edit and front-end.
  * and use attributes and editable fields
  * attributes as Inspectorcontrols (settings)
- * v2.5.0
+ * v2.6.1
  * 20230625 added quotes to the options of the Layout SelectControl,
  *  add parseInt to all integers in transform, added conversion dateformat_lgend and _tsend and anchorid = sibid
  * 20230420 added parseInt on line 147(now 148) to keep layout in block-editor
@@ -23,6 +23,7 @@
  *   extra option Wordpress timezone with rest  
  * 2.4.4 saved from 2.4.3 to V2 to keep older use of ServerSideRender
  * 2.5.0 support for categories. 
+ * 2.6.1  Started simplifying (bootstrap) collapse by toggles for adding javascript and trigger collapse by title.  
  */
 (function(blocks, i18n, element, blockEditor, components, serverSideRender) {
 	const el = element.createElement;
@@ -56,9 +57,18 @@
 	{ value: 'h6', label: __('h6 (sub header)', 'simple-google-icalendar-widget') },
 	{ value: 'span', label: __('span', 'simple-google-icalendar-widget') },
 	];
-
+	const tagOps = [{ value: 'a', label: __('a (link)', 'simple-google-icalendar-widget') },
+	{ value: 'b', label: __('b (attention, bold)', 'simple-google-icalendar-widget') },
+	{ value: 'div', label: __('div', 'simple-google-icalendar-widget') },
+	{ value: 'h4', label: __('h4 (sub header)', 'simple-google-icalendar-widget') },
+	{ value: 'h5', label: __('h5 (sub header)', 'simple-google-icalendar-widget') },
+	{ value: 'h6', label: __('h6 (sub header)', 'simple-google-icalendar-widget') },
+	{ value: 'i', label: __('i (idiomatic, italic)', 'simple-google-icalendar-widget') },
+	{ value: 'span', label: __('span', 'simple-google-icalendar-widget') },
+	{ value: 'strong', label: __('strong', 'simple-google-icalendar-widget') },
+	{ value: 'u', label: __('u (unarticulated, underline )', 'simple-google-icalendar-widget') }
+	];
 	let ptzid_ui;
-
 	blocks.registerBlockType('simplegoogleicalenderwidget/simple-ical-block', {
 		icon: iconEl,
 
@@ -404,18 +414,7 @@
 								__('More info', 'simple-google-icalendar-widget')
 							),
 							onChange: function(value) { props.setAttributes({ tag_sum: value }); },
-							options: [
-								{ value: 'a', label: __('a (link)', 'simple-google-icalendar-widget') },
-								{ value: 'b', label: __('b (attention, bold)', 'simple-google-icalendar-widget') },
-								{ value: 'div', label: __('div', 'simple-google-icalendar-widget') },
-								{ value: 'h4', label: __('h4 (sub header)', 'simple-google-icalendar-widget') },
-								{ value: 'h5', label: __('h5 (sub header)', 'simple-google-icalendar-widget') },
-								{ value: 'h6', label: __('h6 (sub header)', 'simple-google-icalendar-widget') },
-								{ value: 'i', label: __('i (idiomatic, italic)', 'simple-google-icalendar-widget') },
-								{ value: 'span', label: __('span', 'simple-google-icalendar-widget') },
-								{ value: 'strong', label: __('strong', 'simple-google-icalendar-widget') },
-								{ value: 'u', label: __('u (unarticulated, underline )', 'simple-google-icalendar-widget') }
-							]
+							options: tagOps
 						}
 					),
 					el(
@@ -443,14 +442,6 @@
 							value: props.attributes.suffix_lgia_class,
 							help: __('Suffix to add after the css-class around the event summary and details, start with space to keep the original class (ical_summary and ical_details) and add another class.', 'simple-google-icalendar-widget'),
 							onChange: function(value) { props.setAttributes({ suffix_lgia_class: value }); },
-						}
-					),
-					el(
-						ToggleControl,
-						{
-							label: __('Allow safe html in description and summary.', 'simple-google-icalendar-widget'),
-							checked: props.attributes.allowhtml,
-							onChange: function(value) { props.setAttributes({ allowhtml: value }); },
 						}
 					),
 					el(
@@ -495,8 +486,36 @@
 							help: __('HTML anchor for this block. Type one or two words no spaces to create a unique web address for this block, called an "anchor". Then you can link directly to this section on your page. You can als use this ID to make parts of your extra css refer specific for this block', 'simple-google-icalendar-widget'),
 							onChange: function(value) { props.setAttributes({ anchorId: value }); },
 						}
+					),
+					el(
+						SelectControl,
+						{
+							label: __('Title as collapse toggle.', 'simple-google-icalendar-widget'),
+							value: props.attributes.title_collapse_toggle,
+							onChange: function(value) { props.setAttributes({ title_collapse_toggle: value }); },
+							options: [
+								{ value: '', label: __('No toggle', 'simple-google-icalendar-widget') },
+								{ value: 'collapse', label: __('Start collapsed', 'simple-google-icalendar-widget') },
+								{ value: 'collapse show', label: __('Start open', 'simple-google-icalendar-widget') },
+							]
+						}
+					),
+					el(
+						'p',
+						{},
+						__('Use plugin options form to add Bootstrap collapse code (js and css) when not provided by theme.', 'simple-google-icalendar-widget'),
+						el ('br',{}),
+						el(
+							'a',
+							{
+								"href": 'admin.php?page=simple_ical_options',
+								"target": '_blank',
+							},
+							__('Options form', 'simple-google-icalendar-widget')
+						)
 					)
-				));
+				)
+				);
 		}
 	});
 }(window.wp.blocks,
@@ -504,6 +523,5 @@
 	window.wp.element,
 	window.wp.blockEditor,
 	window.wp.components,
-	window.wp.serverSideRender
-)
+	window.wp.serverSideRender)
 );

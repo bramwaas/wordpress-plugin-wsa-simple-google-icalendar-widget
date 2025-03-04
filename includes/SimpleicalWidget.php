@@ -12,6 +12,8 @@
  * Replace echo by $secho a.o. in widget(), to simplify escaping output by replacing multiple echoes by one.
  * known error: in wp 5.9.5 with elementor 3.14.1 aria-expanded and aria-controls are stripped bij wp_kses before wp 6.3.0 (see wp_kses.php) 
  *   issue is solved tested with wp 6.7.1 with elementor 3.26.5 . 
+ * 2.6.1  Started simplifying (bootstrap) collapse by toggles for adding javascript and trigger collapse by title.
+ *  Remove toggle to allow safe html in summary and description, save html is always allowed now.      
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 class SimpleicalWidget extends \WP_Widget
@@ -78,6 +80,10 @@ class SimpleicalWidget extends \WP_Widget
                 if (false === stripos(' data-sib-t="true" ', $args['before_title'])) {
                     $l = explode('>', $args['before_title'], 2);
                     $args['before_title'] = implode(' data-sib-t="true" >', $l);
+                }
+                if (!empty($instance['title_collapse_toggle'])){
+                    $args['before_title'] .= '<a data-toggle="collapse" data-bs-toggle="collapse" href="#lg' .$instance['anchorId'] . '" role="button" aria-expanded="'.(('collapse' == $instance['title_collapse_toggle'])?'false':'true').'" aria-controls="collapseMod">';
+                    $args['after_title']  = '</a>' . $args['after_title'];
                 }
                 $title = apply_filters('widget_title', $instance['title']);
                 $secho .= $args['before_title']. $title. $args['after_title'];
@@ -162,12 +168,13 @@ class SimpleicalWidget extends \WP_Widget
             $instance['suffix_lgia_class'] = substr(wp_strip_all_tags('a' . $new_instance['suffix_lgia_class']),1);
             $instance['after_events'] = ($new_instance['after_events']);
             $instance['no_events'] = ($new_instance['no_events']);
-            $instance['allowhtml'] = !empty($new_instance['allowhtml']);
             if (!empty($new_instance['blockid']) && empty($new_instance['sibid'])) {
                 $new_instance['sibid'] = $new_instance['blockid'];
             }
-            $instance['anchorId'] = wp_strip_all_tags($new_instance['anchorId']);
+            $instance['title_collapse_toggle'] = wp_strip_all_tags($new_instance['title_collapse_toggle'] ?? '' );
+            
             $instance['sibid'] = wp_strip_all_tags($new_instance['sibid']);
+            $instance['anchorId'] = wp_strip_all_tags($new_instance['anchorId'], 1) ?? $instance['sibid'];
             
             if (!empty($this->number && is_numeric($this->number))) {
                 $instance['postid'] = (string) $this->id;
@@ -324,10 +331,6 @@ class SimpleicalWidget extends \WP_Widget
           <input class="widefat" id="<?php echo esc_attr($this->get_field_id('suffix_lgia_class')); ?>" name="<?php echo esc_attr($this->get_field_name('suffix_lgia_class')); ?>" type="text" value="<?php echo esc_attr($instance['suffix_lgia_class']); ?>" />
         </p>
         <p>
-          <input class="checkbox" id="<?php echo esc_attr($this->get_field_id('allowhtml')); ?>" name="<?php echo esc_attr($this->get_field_name('allowhtml')); ?>" type="checkbox" value="1" <?php checked( '1', $instance['allowhtml'] ); ?> />
-          <label for="<?php echo esc_attr($this->get_field_id('allowhtml')); ?>"><?php esc_attr_e('Allow safe html in description and summary.', 'simple-google-icalendar-widget'); ?></label> 
-        </p>
-        <p>
           <label for="<?php echo esc_attr($this->get_field_id('after_events')); ?>"><?php esc_attr_e('Closing HTML after available events:', 'simple-google-icalendar-widget'); ?></label> 
           <input class="widefat" id="<?php echo esc_attr($this->get_field_id('after_events')); ?>" name="<?php echo esc_attr($this->get_field_name('after_events')); ?>" type="text" value="<?php echo esc_attr($instance['after_events']); ?>" />
         </p>
@@ -338,6 +341,22 @@ class SimpleicalWidget extends \WP_Widget
         <p>
           <label for="<?php echo esc_attr($this->get_field_id('anchorId')); ?>"><?php esc_attr_e('HTML anchor:', 'simple-google-icalendar-widget'); ?></label> 
           <input class="widefat" id="<?php echo esc_attr($this->get_field_id('anchorId')); ?>" name="<?php echo esc_attr($this->get_field_name('anchorId')); ?>" type="text" value="<?php echo esc_attr($instance['anchorId']); ?>" />
+        </p>
+        <p>
+          <label for="<?php echo esc_attr($this->get_field_id('title_collapse_toggle')); ?>"><?php esc_attr_e('Title as collapse toggle.', 'simple-google-icalendar-widget'); ?></label> 
+          <select class="widefat" id="<?php echo esc_attr($this->get_field_id('title_collapse_toggle')); ?>" name="<?php echo esc_attr($this->get_field_name('title_collapse_toggle')); ?>" >
+            <option value=""<?php echo (''==esc_attr($instance['title_collapse_toggle']))?'selected':''; ?>><?php esc_attr_e('No toggle', 'simple-google-icalendar-widget'); ?></option>
+  			<option value="collapse"<?php echo ('collapse'==esc_attr($instance['title_collapse_toggle']))?'selected':''; ?>><?php esc_attr_e('Start collapsed', 'simple-google-icalendar-widget'); ?></option>
+  			<option value="collapse show"<?php echo ('collapse show'==esc_attr($instance['title_collapse_toggle']))?'selected':''; ?>><?php esc_attr_e('Start open', 'simple-google-icalendar-widget'); ?></option>
+  		 </select>	
+        </p>
+        <p>
+          <?php esc_attr_e('Use plugin options form to add Bootstrap collapse code (js and css) when not provided by theme.', 'simple-google-icalendar-widget'); ?>
+          <br> 
+            <?php echo '<a href="' . esc_url(admin_url('admin.php?page=simple_ical_options')) . '" target="_blank">' ; 
+                esc_attr_e('Options form', 'simple-google-icalendar-widget'); 
+                echo '</a>';
+                ?>
         </p>
         <p>
           <label for="<?php echo esc_attr($this->get_field_id('sibid')); ?>"><?php esc_attr_e('Sib ID:', 'simple-google-icalendar-widget'); ?></label> 

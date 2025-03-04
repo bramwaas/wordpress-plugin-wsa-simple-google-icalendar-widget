@@ -6,10 +6,10 @@
  * @package    Simple Google iCalendar Widget
  * @subpackage Admin
  * @author     Bram Waasdorp <bram@waasdorpsoekhan.nl>
- * @copyright  Copyright (c)  2017 - 2024, Bram Waasdorp
+ * @copyright  Copyright (c)  2017 - 2025, Bram Waasdorp
  * @link       https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  * @license    http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * Version: 2.5.0
+ * Version: 2.6.1
  * 20220410 namespaced and renamed after classname.
  * 2.1.0 option for comma seperated list of IDs
  * 2.1.3 block footer after events and placeholder when no events.
@@ -17,10 +17,186 @@
  * 2.3.0 anchors (id) at several places in document
  * 2.4.2 replaced null by 'admin.php' to solve issue 'Deprecation warnings in PHP 8.3'  
  * 2.4.4 added tag_title and extra option for timzone settings 
+ * 2.6.1  Started simplifying (bootstrap) collapse by toggles for adding javascript and trigger collapse by title.
+   Remove toggle to allow safe html in summary and description, save html is always allowed now.      
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
 class SimpleicalWidgetAdmin {
+    const SIB_OPTIONS = 'simple_ical_options';
+    
+// Start Options    
+    /**
+     * custom option and settings
+     */
+    function simple_ical_settings_init() {
+        // Register a new setting for "simple_ical_options" page.
+        // Sadly plugin-check gives a incorrect warning here that I am not able to solve.
+        // See https://github.com/WordPress/plugin-check/issues/871
+        register_setting( 'simpleical_options_form', 'simple_ical_options', ['sanitize_callback' =>  [$this, 'sanitize_options'], 'default' => []] );
+        // Register a new section in the "simpleical_options_form" page.
+        add_settings_section(
+            'simpleical_section_developers',
+            __( 'Plugin level settings.', 'simple-google-icalendar-widget' ),
+            [$this, 'simpleical_section_developers_callback'],
+            'simpleical_options_form'
+            );
+        // Register a new field in the "simpleical_section_developers" section, inside the "simpleical_options_form" page.
+        add_settings_field(
+            'simpleical_add_collapse_code', // As of WP 4.6 this value is used only internally.
+            // Use $args' field_name to populate the id inside the callback.
+            __( 'Site add BS collapse code', 'simple-google-icalendar-widget' ),
+            [$this, 'simpleical_add_collapse_code_cb'],
+            'simpleical_options_form',
+            'simpleical_section_developers',
+            array(
+                'field_name'         => 'simpleical_add_collapse_code',
+                'class'             => 'checkbox',
+                'simpleical_custom_data' => 'custom',
+                'field_desc' => __('Check checkbox to add Bootstrap collapse code in front-end (live site) when not provided by theme.', 'simple-google-icalendar-widget' ),
+            )
+            );
+        add_settings_field(
+            'simpleical_add_collapse_code_admin', // As of WP 4.6 this value is used only internally.
+            // Use $args' field_name to populate the id inside the callback.
+            __( 'Admin add BS collapse code', 'simple-google-icalendar-widget' ),
+            [$this, 'simpleical_add_collapse_code_cb'],
+            'simpleical_options_form',
+            'simpleical_section_developers',
+            array(
+                'field_name'         => 'simpleical_add_collapse_code_admin',
+                'class'             => 'checkbox',
+                'simpleical_custom_data' => 'custom',
+                'field_desc' => __('Check checkbox to add Bootstrap collapse code in admin (block editor).', 'simple-google-icalendar-widget' ),
+            )
+            );
+    }
+    /**
+     * Sanitize options array
+     *
+     * @param array $options.
+     */
+    function sanitize_options ($options) {
+        $options['simpleical_add_collapse_code'] =
+        (empty($options['simpleical_add_collapse_code'])? false : esc_attr($options['simpleical_add_collapse_code']));
+        $options['simpleical_add_collapse_code_admin'] =
+        (empty($options['simpleical_add_collapse_code_admin'])? false : esc_attr($options['simpleical_add_collapse_code_admin']));
+        return $options;
+    }
+    /**
+     * Developers section callback function.
+     *
+     * @param array $args  The settings array, defining title, id, callback.
+     */
+    function simpleical_section_developers_callback( $args ) {
+        ?>
+	<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'Bootstrap collapse code, javascript and css necessary for correct operation of collapse toggle html. If code is twice loaded it may not work. So don\'t check if code is already loaded e.g. by theme.', 'simple-google-icalendar-widget' ); ?>
+    <br/><?php esc_html_e( '(Initial preview legacy widget uses front-end code)', 'simple-google-icalendar-widget' ); ?>
+    </p>
+    
+	<?php
+}
+
+
+
+/**
+ * Cecknox field callback function.
+ *
+ * WordPress has magic interaction with the following keys: field_name, class.
+ * - the "field_name" key value is used for the "for" attribute of the <label>.
+ * - the "class" key value is used for the "class" attribute of the <tr> containing the field.
+ * Note: you can add custom key value pairs to be used inside your callbacks.
+ *
+ * @param array $args
+ */
+function simpleical_add_collapse_code_cb( $args ) {
+	// Get the value of the setting we've registered with register_setting()
+    $options = self::get_plugin_options();
+	?>	 
+	<input
+			id="<?php echo esc_attr( $args['field_name'] ); ?>"
+			data-custom="<?php echo esc_attr( $args['simpleical_custom_data'] ); ?>"
+			name="simple_ical_options[<?php echo esc_attr( $args['field_name'] ); ?>]"
+			type="checkbox" value="1"
+			 <?php checked( '1', $options[ $args['field_name'] ] ); ?> 
+			
+			>
+	</input>
+	<p class="description">
+		<?php echo wp_kses_post($args['field_desc']) ?>
+	</p>
+	<?php
+}
+
+/**
+ * Add the top level menu page.
+ */
+function simple_ical_options_page() {
+add_options_page(
+//    add_menu_page(
+	    __('Simple Google Calendar Outlook Events Widget options', 'simple-google-icalendar-widget' ), //title
+	    __('Simple iCal Options','simple-google-icalendar-widget' ), //menuoption
+	    'manage_options', //capability 
+	    'simple_ical_options', //menu slug
+	    [$this, 'simple_ical_options_page_html'] //function
+	);
+}
+/**
+ * Top level menu callback function
+ */
+function simple_ical_options_page_html() {
+	// check user capabilities
+	if ( ! current_user_can( 'manage_options' ) ) {
+		return;
+	}
+
+	// add error/update messages
+
+	// check if the user have submitted the settings
+	// WordPress will add the "settings-updated" $_GET parameter to the url
+	//toDo recrate with nonce for GET
+// 	if ( isset( $_GET['settings-updated'] ) ) {
+// 		// add settings saved message with the class of "updated"
+// 		add_settings_error( 'simpleical_messages', 'simpleical_message', __( 'Settings Saved', 'simple-google-icalendar-widget' ), 'updated' );
+// 	}
+
+	// show error/update messages
+	settings_errors( 'simpleical_messages' );
+	?>
+	<div class="wrap">
+		<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
+		<form action="options.php" method="post">
+			<?php
+			// output security fields for the registered setting "simpleical_options_form"
+			settings_fields( 'simpleical_options_form' );
+			// output setting sections and their fields
+			// (sections are registered for "simpleical_options_form", each field is registered to a specific section)
+			do_settings_sections( 'simpleical_options_form' );
+			// output save settings button
+			submit_button( 'Save Settings' );
+			?>
+		</form>
+
+	</div>
+	<?php
+}
+/**
+ * Gets options and assigns defaults if necessary.
+ *
+ * @param void
+ * @return array of plugin options
+ */
+static function get_plugin_options(){
+    $options = get_option(self::SIB_OPTIONS);
+    if (! is_array($options)) $options = [];
+    $options = array_merge([
+        'simpleical_add_collapse_code' => false,
+        'simpleical_add_collapse_code_admin' => false,
+    ], $options);
+    return $options;
+}
+// End options    
+// Start info    
     //menu items
     /**
      * Back-end sub menu item to display widget help page.
@@ -29,16 +205,14 @@ class SimpleicalWidgetAdmin {
      *
      * @param .
      */
-    public function simple_ical_admin_menu() {
-        
-        //ther is no main menu item for simple_ical
-        //this submenu is HIDDEN, however, we need to add it to create a page in the admin area
-        add_submenu_page('admin.php', //parent slug (or the file name of a standard WordPress admin page).
-            __('Info', 'simple-google-icalendar-widget'), //page title
-            __('Info', 'simple-google-icalendar-widget'), //menu title
+    public function simple_ical_info_page() {
+//       add_submenu_page('admin.php', //parent slug (or the file name of a standard WordPress admin page).
+       add_options_page(
+       __('Simple Google Calendar Outlook Events Widget Help', 'simple-google-icalendar-widget'), //page title
+            __('Simple iCal Help', 'simple-google-icalendar-widget'), //menu title
             'read', //capability read because it 's only info
             'simple_ical_info', //menu slug
-            array($this, 'simple_ical_info')); //function
+            array($this, 'simple_ical_info_page_html')); //function
             
     }
     /**
@@ -48,10 +222,10 @@ class SimpleicalWidgetAdmin {
      *
      * @param .
      */
-    public function simple_ical_info () {
+    public function simple_ical_info_page_html () {
         //
         echo wp_kses_post( '<div class="wrap"><h2>' .
-        __('Info on Simple Google Calendar Outlook Events Block Widget', 'simple-google-icalendar-widget') .
+        __('Info on Simple Google Calendar Outlook Events Block Widget settings', 'simple-google-icalendar-widget') .
         '</h2><h3>' .
         __('Settings for this block/widget:' , 'simple-google-icalendar-widget') .
         '</h3><p><strong>'.
@@ -160,10 +334,15 @@ class SimpleicalWidgetAdmin {
         '<p><strong>'.
        __('Tag for summary', 'simple-google-icalendar-widget').
         '</strong></p><p>'.
-       __('Tag for summary. Choose a tag from the list. Default: a (link) When using bootstrap or other collapse css and java-script the description is collapsed and wil be opened bij clicking on the summary link.<br>Link is not included with the other tags. If not using bootstrap collapse h4, div or strong may be a better choice then a..', 'simple-google-icalendar-widget').
+       __('Tag for summary. Choose a tag from the list. Default: a (link) When using bootstrap or other collapse css and java-script the description is collapsed and wil be opened bij clicking on the summary link.<br>Link is not included with the other tags. If not using bootstrap collapse h4, div or strong may be a better choice then a.', 'simple-google-icalendar-widget').
         '</p><p>'.
-       __('Only available in block.', 'simple-google-icalendar-widget').
-        '</p>');
+            __('This only works when Bootstrap collapse code is in place.', 'simple-google-icalendar-widget') . ' ' .
+        __('Use plugin options form to add Bootstrap collapse code (js and css) when not provided by theme.', 'simple-google-icalendar-widget') .
+          '<br/><a href="' .
+          esc_url(admin_url('admin.php?page=simple_ical_options')) .
+            '" target="_blank">' .
+          __('Options form', 'simple-google-icalendar-widget') .
+          '</a></p>');
         
         echo wp_kses_post('<span id="period-limits"></span>'.
         '<p><strong>'.
@@ -232,11 +411,6 @@ class SimpleicalWidgetAdmin {
         __('Suffix event details classs', 'simple-google-icalendar-widget').
         '</strong></p><p>'.
        __('Suffix to add after the css-class around the event details link (ical_details),<br>start with space to keep the original class and add another class.', 'simple-google-icalendar-widget').
-       '</p><p><strong>' .
-        __('Checkbox Allow safe html in description and summary.', 'simple-google-icalendar-widget').
-        '</strong></p><p>'.
-       __('Check checkbox to allow the use of some safe html in description and summary,<br>otherwise it will only be displayed as text.', 'simple-google-icalendar-widget').
-       '</p><p><strong>' .
         __('Closing HTML after available events.', 'simple-google-icalendar-widget').
         '</strong></p><p>'.
        __('Closing (safe) HTML after events list, when events are available.<br><br>This text with simple HTML will be displayed after the events list.<br>Use &amp;lt; or &amp;gt; if you want to output &lt; or &gt; otherwise they may be removed as unknown and therefore unsafe tags.<br>E.g. &lt;hr class=&quot;module-ft&quot;	&gt;.', 'simple-google-icalendar-widget').
@@ -259,8 +433,22 @@ class SimpleicalWidgetAdmin {
        __('HTML anchor', 'simple-google-icalendar-widget').
         '</strong></p><p>'.
        __('HTML anchor for this block.<br>Type one or two words - no spaces - to create a unique web address for this block, called an "anchor". Then you can link directly to this section on your page.<br>You can als use this ID to make parts of your extra css specific for this block', 'simple-google-icalendar-widget').
-        '</p></div>');
-        
+        '</p>');
+
+       echo wp_kses_post('<span id="title_collapse_toggle"></span>'.
+           '<p><strong>' .
+           __('Title as collapse toggle.', 'simple-google-icalendar-widget').
+           '</strong></p><p>'.
+           __('Use title link as collapse/show toggle for this module content.', 'simple-google-icalendar-widget').
+           '</p><p><strong>' .
+           __('Checkbox Add bootstrap collapse code.', 'simple-google-icalendar-widget').
+       '</strong></p>'.
+        __('Use plugin options form to add Bootstrap collapse code (js and css) when not provided by theme.', 'simple-google-icalendar-widget') .
+        '<p><a href="' .
+        esc_url(admin_url('admin.php?page=simple_ical_options')) .
+        '" target="_blank">' . 
+        __('Options form', 'simple-google-icalendar-widget') .
+        '</a></p></div>');
     }
     // info in admin-menu
 }
