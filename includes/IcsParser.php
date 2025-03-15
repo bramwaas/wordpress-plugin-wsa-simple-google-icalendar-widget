@@ -35,7 +35,6 @@ namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 // no direct access
 defined('ABSPATH') or die ('Restricted access');
 
-
 class IcsParser {
     
     const TOKEN_BEGIN_VEVENT = "BEGIN:VEVENT";
