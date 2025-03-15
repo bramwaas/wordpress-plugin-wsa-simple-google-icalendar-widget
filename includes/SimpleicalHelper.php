@@ -9,7 +9,7 @@
  * @link https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * Gutenberg Block functions since v2.1.2 also used for widget.
- * Version: 2.6.1
+ * Version: 2.7.0
  * 2.2.0 20240106 changed text domain to simple-google-icalendar-widget
  * 2.2.1 20240123 don't display description line when excerpt-length = 0
  * 2.3.0 remove definition of attributes, leave it to block.json
@@ -30,7 +30,8 @@
     issue is solved tested with wp 6.7.1 with elementor 3.26.5 . 
  * 2.6.1  Started simplifying (bootstrap) collapse by toggles for adding javascript and trigger collapse by title.
    Remove toggle to allow safe html in summary and description, save html is always allowed now.
-   Sameday as logical and calculated with localtime instead of gmdate. Add titlenode to REST output. Removed ev_class from li head.       
+   Sameday as logical and calculated with localtime instead of gmdate. Add titlenode to REST output. Removed ev_class from li head.
+ * 2.7.0 Added cast $class to string in sanitize_html_clss, defaults for new collapse fields. Add support for details/summary tag combination.         
 
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
@@ -57,6 +58,7 @@ class SimpleicalHelper
         'i',
         'span',
         'strong',
+        'summary',
         'u'
     ];
 
@@ -204,6 +206,13 @@ class SimpleicalHelper
                     if ($layout == 3 && $curdate != $evdate) {
                         $secho .= '<span class="ical-date">' . ucfirst($evdate) . '</span>' . (('a' == $attributes['tag_sum']) ? '<br>' : '');
                     }
+ 
+                    if ('summary' == $attributes['tag_sum']) {
+                        $secho .= $cat_list . '<details class="ical_details' . $sflgia . '" id="'. $itemid. '">';
+                    }
+                    
+                    
+                    
                     $secho .=  '<' . $attributes['tag_sum'] . ' class="ical_summary' . $sflgia . (('a' == $attributes['tag_sum']) ? '" data-toggle="collapse" data-bs-toggle="collapse" href="#' . $itemid . '" aria-expanded="false" aria-controls="' . $itemid . '">' : '">');
                     if ($layout != 2) {
                         $secho .= $evdtsum;
@@ -215,7 +224,11 @@ class SimpleicalHelper
                     if ($layout == 2) {
                         $secho .= '<span>'. $evdate . $evdtsum . '</span>';
                     }
-                    $secho .= $cat_list . '<div class="ical_details' . $sflgia . (('a' == $attributes['tag_sum']) ? ' collapse' : '') . '" id="'. $itemid. '">';
+
+                    if ('summary' != $attributes['tag_sum']) {
+                        $secho .= $cat_list . '<div class="ical_details' . $sflgia . (('a' == $attributes['tag_sum']) ? ' collapse' : '') . '" id="'. $itemid. '">';
+                    }
+
                     if (! empty($e->description) && trim($e->description) > '' && $excerptlength !== 0) {
                         if ($excerptlength !== '' && strlen($e->description) > $excerptlength) {
                             $e->description = substr($e->description, 0, $excerptlength + 1);
@@ -263,7 +276,7 @@ class SimpleicalHelper
      */
     static function sanitize_html_clss( $class, $fallback = '' ) {
         // Strip out any %-encoded octets.
-        $sanitized = preg_replace( '|%[a-fA-F0-9][a-fA-F0-9]|', '', $class );
+        $sanitized = preg_replace( '|%[a-fA-F0-9][a-fA-F0-9]|', '', (string) $class );
         
         // Limit to A-Z, ' ', a-z, 0-9, '_', '-'.
         $sanitized = preg_replace( '/[^A-Z a-z0-9_-]/', '', $sanitized );
