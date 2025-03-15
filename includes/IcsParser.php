@@ -32,6 +32,9 @@
  * 2.7.0 Enable to add summary to filtering categories, when add_sum_catflt add words from summary to categories for filtering. 
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
+// no direct access
+defined('ABSPATH') or die ('Restricted access');
+
 
 class IcsParser {
     
