@@ -13,7 +13,8 @@
  * known error: in wp 5.9.5 with elementor 3.14.1 aria-expanded and aria-controls are stripped bij wp_kses before wp 6.3.0 (see wp_kses.php) 
  *   issue is solved tested with wp 6.7.1 with elementor 3.26.5 . 
  * 2.6.1  Started simplifying (bootstrap) collapse by toggles for adding javascript and trigger collapse by title.
- *  Remove toggle to allow safe html in summary and description, save html is always allowed now.      
+ *  Remove toggle to allow safe html in summary and description, save html is always allowed now. 
+ * 2.7.0 Enable to add words of summary to categories for filtering. Add support for details/summary tag combination.      
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 class SimpleicalWidget extends \WP_Widget
@@ -136,6 +137,7 @@ class SimpleicalWidget extends \WP_Widget
             $instance['categories_filter_op'] = ($new_instance['categories_filter_op'])??'';
             $instance['categories_filter'] = ($new_instance['categories_filter'])??'';
             $instance['categories_display'] = ($new_instance['categories_display'])??'';
+            $instance['add_sum_catflt'] = !empty($new_instance['add_sum_catflt']);
             
             $instance['event_count'] = $new_instance['event_count'];
             if(is_numeric($new_instance['event_count']) && 0 < $new_instance['event_count']) {
@@ -303,7 +305,14 @@ class SimpleicalWidget extends \WP_Widget
           <input class="widefat" id="<?php echo esc_attr($this->get_field_id('categories_display')); ?>" name="<?php echo esc_attr($this->get_field_name('categories_display')); ?>" type="text" value="<?php echo esc_attr($instance['categories_display']); ?>" />
 		<label style="font-size:12px; color:#7f7f7f;"><?php esc_attr_e('Empty no display. Else display categories above event with this separator.', 'simple-google-icalendar-widget'); ?></label>
         </p>
+        
         <p>
+          <input class="checkbox" id="<?php echo $this->get_field_id('add_sum_catflt'); ?>" name="<?php echo $this->get_field_name('add_sum_catflt'); ?>" type="checkbox" value="1" <?php checked( '1', $instance['add_sum_catflt'] ); ?> />
+          <label for="<?php echo $this->get_field_id('add_sum_catflt'); ?>"><?php _e('Add summary to categories filter.', 'simple-google-icalendar-widget'); ?></label> 
+          <!-- Add words from summary to categories for filtering  -->
+        </p>
+
+		<p>
           <label for="<?php echo esc_attr($this->get_field_id('tag_sum')); ?>"><?php esc_attr_e('Tag for summary:', 'simple-google-icalendar-widget'); ?></label> 
           <select class="widefat" id="<?php echo esc_attr($this->get_field_id('tag_sum')); ?>" name="<?php echo esc_attr($this->get_field_name('tag_sum')); ?>" >
             <option value="a"<?php echo ('a'==esc_attr($instance['tag_sum']))?'selected':''; ?>><?php esc_attr_e('a (link)', 'simple-google-icalendar-widget'); ?></option>
@@ -315,6 +324,7 @@ class SimpleicalWidget extends \WP_Widget
   			<option value="i"<?php echo ('i'==esc_attr($instance['tag_sum']))?'selected':''; ?>><?php esc_attr_e('i (idiomatic, italic)', 'simple-google-icalendar-widget'); ?></option>
   			<option value="span"<?php echo ('span'==esc_attr($instance['tag_sum']))?'selected':''; ?>><?php esc_attr_e('span', 'simple-google-icalendar-widget'); ?></option>
   			<option value="strong"<?php echo ('strong'==esc_attr($instance['tag_sum']))?'selected':''; ?>><?php esc_attr_e('strong', 'simple-google-icalendar-widget'); ?></option>
+  			<option value="summary"<?php echo ('summary'==esc_attr($instance['tag_sum']))?'selected':''; ?>><?php esc_attr_e('summary with details', 'simple-google-icalendar-widget'); ?></option>
   			<option value="u"<?php echo ('u'==esc_attr($instance['tag_sum']))?'selected':''; ?>><?php esc_attr_e('u (unarticulated, underline )', 'simple-google-icalendar-widget'); ?></option>
   		 </select>	
         </p>

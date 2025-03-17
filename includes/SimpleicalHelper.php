@@ -77,7 +77,8 @@ class SimpleicalHelper
         'cache_time' => 60,
         'categories_filter_op' => '',
         'categories_filter' => '',
-        'categories_display' => '',      
+        'categories_display' => '',
+        'add_sum_catflt' => false,
         'layout' => 3,
         'dateformat_lg' => 'l jS \of F',
         'dateformat_lgend' => '',
@@ -210,8 +211,6 @@ class SimpleicalHelper
                     if ('summary' == $attributes['tag_sum']) {
                         $secho .= $cat_list . '<details class="ical_details' . $sflgia . '" id="'. $itemid. '">';
                     }
-                    
-                    
                     
                     $secho .=  '<' . $attributes['tag_sum'] . ' class="ical_summary' . $sflgia . (('a' == $attributes['tag_sum']) ? '" data-toggle="collapse" data-bs-toggle="collapse" href="#' . $itemid . '" aria-expanded="false" aria-controls="' . $itemid . '">' : '">');
                     if ($layout != 2) {
