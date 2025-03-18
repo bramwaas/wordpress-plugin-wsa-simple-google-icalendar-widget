@@ -209,7 +209,7 @@ class SimpleicalHelper
                     }
  
                     if ('summary' == $attributes['tag_sum']) {
-                        $secho .= $cat_list . '<details class="ical_details' . $sflgia . '" id="'. $itemid. '">';
+                        $secho .= '<details class="ical_details' . $sflgia . '" id="'. $itemid. '">';
                     }
                     
                     $secho .=  '<' . $attributes['tag_sum'] . ' class="ical_summary' . $sflgia . (('a' == $attributes['tag_sum']) ? '" data-toggle="collapse" data-bs-toggle="collapse" href="#' . $itemid . '" aria-expanded="false" aria-controls="' . $itemid . '">' : '">');
@@ -219,13 +219,13 @@ class SimpleicalHelper
                     if (! empty($e->summary)) {
                         $secho .= str_replace("\n", '<br>', $e->summary);
                     }
-                    $secho .= '</' . $attributes['tag_sum'] . '>';
+                    $secho .= '</' . $attributes['tag_sum'] . '>' . $cat_list;
                     if ($layout == 2) {
                         $secho .= '<span>'. $evdate . $evdtsum . '</span>';
                     }
 
                     if ('summary' != $attributes['tag_sum']) {
-                        $secho .= $cat_list . '<div class="ical_details' . $sflgia . (('a' == $attributes['tag_sum']) ? ' collapse' : '') . '" id="'. $itemid. '">';
+                        $secho .= '<div class="ical_details' . $sflgia . (('a' == $attributes['tag_sum']) ? ' collapse' : '') . '" id="'. $itemid. '">';
                     }
 
                     if (! empty($e->description) && trim($e->description) > '' && $excerptlength !== 0) {

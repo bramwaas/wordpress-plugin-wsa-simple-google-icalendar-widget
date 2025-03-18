@@ -1089,7 +1089,7 @@ END:VCALENDAR';
         if ( ! array_key_exists('data', $ipd)) {
             $ipd = ['data'=>$ipd, 'messages'=>[]];
         }
-        return ['data'=>self::getFutureEvents($ipd['data'], $p_start, $p_end, $instance['event_count'], (($instance['categories_filter'])??''), (($instance['categories_filter_op'])??'')),
+        return ['data'=>self::getFutureEvents($ipd['data'], $p_start, $p_end, $instance['event_count'], (($instance['categories_filter'])??''), (($instance['categories_filter_op'])??''), ($instance['add_sum_catflt']??false)),
             'messages'=>$ipd['messages']];
     }
     /**

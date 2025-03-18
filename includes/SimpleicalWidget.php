@@ -361,12 +361,13 @@ class SimpleicalWidget extends \WP_Widget
   		 </select>	
         </p>
         <p>
-          <?php esc_attr_e('Use plugin options form to add Bootstrap collapse code (js and css) when not provided by theme.', 'simple-google-icalendar-widget'); ?>
+          <label><?php esc_attr_e('Use plugin options form to add Bootstrap collapse code (js and css) when not provided by theme.', 'simple-google-icalendar-widget'); ?>
           <br> 
             <?php echo '<a href="' . esc_url(admin_url('admin.php?page=simple_ical_options')) . '" target="_blank">' ; 
                 esc_attr_e('Options form', 'simple-google-icalendar-widget'); 
                 echo '</a>';
                 ?>
+           </label>
         </p>
         <p>
           <label for="<?php echo esc_attr($this->get_field_id('sibid')); ?>"><?php esc_attr_e('Sib ID:', 'simple-google-icalendar-widget'); ?></label> 
