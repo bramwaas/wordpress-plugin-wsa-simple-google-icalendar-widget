@@ -307,8 +307,8 @@ class SimpleicalWidget extends \WP_Widget
         </p>
         
         <p>
-          <input class="checkbox" id="<?php echo $this->get_field_id('add_sum_catflt'); ?>" name="<?php echo $this->get_field_name('add_sum_catflt'); ?>" type="checkbox" value="1" <?php checked( '1', $instance['add_sum_catflt'] ); ?> />
-          <label for="<?php echo $this->get_field_id('add_sum_catflt'); ?>"><?php _e('Add summary to categories filter.', 'simple-google-icalendar-widget'); ?></label> 
+          <input class="checkbox" id="<?php echo esc_attr($this->get_field_id('add_sum_catflt')); ?>" name="<?php echo esc_attr($this->get_field_name('add_sum_catflt')); ?>" type="checkbox" value="1" <?php checked( '1', $instance['add_sum_catflt'] ); ?> />
+          <label for="<?php echo esc_attr($this->get_field_id('add_sum_catflt')); ?>"><?php esc_attr_e('Add summary to categories filter.', 'simple-google-icalendar-widget'); ?></label> 
           <!-- Add words from summary to categories for filtering  -->
         </p>
 
