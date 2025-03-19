@@ -4,7 +4,7 @@
  * Move styles to stylesheets - both edit and front-end.
  * and use attributes and editable fields
  * attributes as Inspectorcontrols (settings)
- * v2.6.1
+ * v2.7.0
  * 20230625 added quotes to the options of the Layout SelectControl,
  *  add parseInt to all integers in transform, added conversion dateformat_lgend and _tsend and anchorid = sibid
  * 20230420 added parseInt on line 147(now 148) to keep layout in block-editor
@@ -25,6 +25,7 @@
  *   removed references to ServerSideRender added deprecated 243; decoupled render and save changed attributes. 
  * 2.5.0 support for categories.
  * 2.6.1  Started simplifying (bootstrap) collapse by toggles for adding javascript and trigger collapse by title.
+ * 2.7.0 Enable to add words of summary to categories for filtering. Add support for details/summary tag combination.
  */
 (function(blocks, i18n, element, blockEditor, components) {
 	const el = element.createElement;
@@ -66,6 +67,7 @@
 	{ value: 'i', label: __('i (idiomatic, italic)', 'simple-google-icalendar-widget') },
 	{ value: 'span', label: __('span', 'simple-google-icalendar-widget') },
 	{ value: 'strong', label: __('strong', 'simple-google-icalendar-widget') },
+	{ value: 'summary', label: __('summary with details', 'simple-google-icalendar-widget') },
 	{ value: 'u', label: __('u (unarticulated, underline )', 'simple-google-icalendar-widget') }
 	];
 	
@@ -390,6 +392,15 @@
 							value: props.attributes.categories_display,
 							help: __('Empty no display. Else display categories above event with this separator.', 'simple-google-icalendar-widget'),
 							onChange: function(value) { props.setAttributes({ categories_display: value }); },
+						}
+					),
+					el(
+						ToggleControl,
+						{
+							label: __('Add summary to categories filter.', 'simple-google-icalendar-widget'),
+							checked: props.attributes.add_sum_catflt,
+							help: __('Add words from summary to categories for filtering.', 'simple-google-icalendar-widget'),
+							onChange: function(value) { props.setAttributes({ add_sum_catflt: value }); },
 						}
 					),
 					el(
