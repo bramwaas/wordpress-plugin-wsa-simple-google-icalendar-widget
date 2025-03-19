@@ -50,13 +50,17 @@
 	const SelectControl = components.SelectControl;
 	const useEffect = element.useEffect;
 	const tagOpsh = [{ value: 'div', label: __('div', 'simple-google-icalendar-widget') },
+	{ value: 'b', label: __('b (attention, bold)', 'simple-google-icalendar-widget') },
+	{ value: 'div', label: __('div', 'simple-google-icalendar-widget') },
 	{ value: 'h1', label: __('h1 (header)', 'simple-google-icalendar-widget') },
 	{ value: 'h2', label: __('h2 (sub header)', 'simple-google-icalendar-widget') },
 	{ value: 'h3', label: __('h3 (sub header)', 'simple-google-icalendar-widget') },
 	{ value: 'h4', label: __('h4 (sub header)', 'simple-google-icalendar-widget') },
 	{ value: 'h5', label: __('h5 (sub header)', 'simple-google-icalendar-widget') },
 	{ value: 'h6', label: __('h6 (sub header)', 'simple-google-icalendar-widget') },
+	{ value: 'i', label: __('i (idiomatic, italic)', 'simple-google-icalendar-widget') },
 	{ value: 'span', label: __('span', 'simple-google-icalendar-widget') },
+	{ value: 'u', label: __('u (unarticulated, underline )', 'simple-google-icalendar-widget') }
 	];
 	const tagOps = [{ value: 'a', label: __('a (link)', 'simple-google-icalendar-widget') },
 	{ value: 'b', label: __('b (attention, bold)', 'simple-google-icalendar-widget') },
