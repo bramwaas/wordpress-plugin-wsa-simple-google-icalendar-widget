@@ -171,7 +171,7 @@ class SimpleicalHelper
                 $secho .= '<!-- ' . $msg . ' -->';
             }
             if (! empty($data) && is_array($data)) {
-                $secho .= '<ul id="lg' .$attributes['anchorId'] .'" class="list-group' . $attributes['suffix_lg_class'] . ' simple-ical-widget '. $attributes['title_collapse_toggle'] . '" > ';
+                $secho .= '<ul id="lg' .$attributes['anchorId'] .'" class="list-group' . $attributes['suffix_lg_class'] . ' simple-ical-widget 270 '. $attributes['title_collapse_toggle'] . '" > ';
                 $curdate = '';
                 foreach ($data as $e) {
                     $idlist = explode("@", $e->uid,2);
