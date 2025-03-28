@@ -423,7 +423,7 @@
 							onChange: function(value) { props.setAttributes({ tag_title: value }); },
 							options: tagOpsh
 						}
-						),
+					),
 					el(
 						SelectControl,
 						{
@@ -532,8 +532,8 @@
 						el(
 							'a',
 							{
-								href: 'admin.php?page=simple_ical_options',
-								target: '_blank',
+								"href": 'admin.php?page=simple_ical_options',
+								"target": '_blank',
 							},
 							__('Options form', 'simple-google-icalendar-widget')
 						)

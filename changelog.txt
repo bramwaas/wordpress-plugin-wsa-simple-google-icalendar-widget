@@ -3,7 +3,7 @@ Plugin name: Simple Google Calendar Outlook Events Block Widget
 Requires at least: 5.3.0
 Tested up to: 6.7
 Requires PHP: 7.4
-Version: 2.6.1
+Version: 2.7.0
 
 == Upgrade Notice ==
 * error in WP 6.6 this block (with serverside rendering) breaks editor when placed on a page via a synced pattern. Issue reported as WordPress Trac #61592. probably olved in 2.4.4-a.
@@ -13,6 +13,8 @@ Version: 2.6.1
 * since v1.2.0 Wordpress version 5.3.0 is required because of the use of wp_date() 
 
 == Changelog ==
+*2.7.0 Enable to add words of summary to categories for filtering (after issue #36 'Filtering by keyword' by gonzob for Joomla module). Added support
+ for details/summary tag combination. Added cast $class to string in sanitize_html_clss and sanitize_html_class (after issue #39 by joomlafun for joomla module)
 * 2.6.1  Started simplifying (bootstrap) collapse by toggles for adding javascript and trigger collapse by title. In response to Joomla module github issue #35 'naming calendars to filter them in front end' by Joomlafun.  
    Remove toggle to allow safe html in summary and description, save html is always allowed now.      
 * 2.6.0 Due to a reported XSS vulnerability. Checked with Wordpress Plugin Check (PCP). Fixed this vulnerability and other PCP errors and warnings, as required by Wordpress to remain in the plugin directory.  

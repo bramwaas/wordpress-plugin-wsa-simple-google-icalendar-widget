@@ -23,7 +23,8 @@
  *   extra option Wordpress timezone with rest  
  * 2.4.4 saved from 2.4.3 to V2 to keep older use of ServerSideRender
  * 2.5.0 support for categories. 
- * 2.6.1  Started simplifying (bootstrap) collapse by toggles for adding javascript and trigger collapse by title.  
+* 2.6.1  Started simplifying (bootstrap) collapse by toggles for adding javascript and trigger collapse by title.
+* 2.7.0 Enable to add words of summary to categories for filtering. Add support for details/summary tag combination.
  */
 (function(blocks, i18n, element, blockEditor, components, serverSideRender) {
 	const el = element.createElement;
@@ -49,13 +50,17 @@
 	const SelectControl = components.SelectControl;
 	const useEffect = element.useEffect;
 	const tagOpsh = [{ value: 'div', label: __('div', 'simple-google-icalendar-widget') },
+	{ value: 'b', label: __('b (attention, bold)', 'simple-google-icalendar-widget') },
+	{ value: 'div', label: __('div', 'simple-google-icalendar-widget') },
 	{ value: 'h1', label: __('h1 (header)', 'simple-google-icalendar-widget') },
 	{ value: 'h2', label: __('h2 (sub header)', 'simple-google-icalendar-widget') },
 	{ value: 'h3', label: __('h3 (sub header)', 'simple-google-icalendar-widget') },
 	{ value: 'h4', label: __('h4 (sub header)', 'simple-google-icalendar-widget') },
 	{ value: 'h5', label: __('h5 (sub header)', 'simple-google-icalendar-widget') },
 	{ value: 'h6', label: __('h6 (sub header)', 'simple-google-icalendar-widget') },
+	{ value: 'i', label: __('i (idiomatic, italic)', 'simple-google-icalendar-widget') },
 	{ value: 'span', label: __('span', 'simple-google-icalendar-widget') },
+	{ value: 'u', label: __('u (unarticulated, underline )', 'simple-google-icalendar-widget') }
 	];
 	const tagOps = [{ value: 'a', label: __('a (link)', 'simple-google-icalendar-widget') },
 	{ value: 'b', label: __('b (attention, bold)', 'simple-google-icalendar-widget') },
@@ -66,9 +71,11 @@
 	{ value: 'i', label: __('i (idiomatic, italic)', 'simple-google-icalendar-widget') },
 	{ value: 'span', label: __('span', 'simple-google-icalendar-widget') },
 	{ value: 'strong', label: __('strong', 'simple-google-icalendar-widget') },
+	{ value: 'summary', label: __('summary with details', 'simple-google-icalendar-widget') },
 	{ value: 'u', label: __('u (unarticulated, underline )', 'simple-google-icalendar-widget') }
 	];
-	let ptzid_ui;
+
+		let ptzid_ui;
 	blocks.registerBlockType('simplegoogleicalenderwidget/simple-ical-block', {
 		icon: iconEl,
 
@@ -381,6 +388,15 @@
 							value: props.attributes.categories_display,
 							help: __('Empty no display. Else display categories above event with this separator.', 'simple-google-icalendar-widget'),
 							onChange: function(value) { props.setAttributes({ categories_display: value }); },
+						}
+					),
+					el(
+						ToggleControl,
+						{
+							label: __('Add summary to categories filter.', 'simple-google-icalendar-widget'),
+							checked: props.attributes.add_sum_catflt,
+							help: __('Add words from summary to categories for filtering.', 'simple-google-icalendar-widget'),
+							onChange: function(value) { props.setAttributes({ add_sum_catflt: value }); },
 						}
 					),
 					el(
