@@ -32,7 +32,6 @@
    Remove toggle to allow safe html in summary and description, save html is always allowed now.
    Sameday as logical and calculated with localtime instead of gmdate. Add titlenode to REST output. Removed ev_class from li head.
  * 2.7.0 Added cast $class to string in sanitize_html_clss, defaults for new collapse fields. Add support for details/summary tag combination.         
-
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
@@ -92,7 +91,7 @@ class SimpleicalHelper
         'suffix_lg_class' => '',
         'suffix_lgi_class' => ' py-0',
         'suffix_lgia_class' => '',
-        'allowhtml' => false,
+        'allowhtml' => true,
         'after_events' => '',
         'no_events' => '',
         'clear_cache_now' => false,
@@ -453,6 +452,7 @@ class SimpleicalHelper
             'categories_filter_op' => ['type' => 'string', 'enum' => ['','ANY','ALL','NOTANY','NOTALL'], 'default' => ''],
             'categories_filter' => ['type' => 'string', 'default' => ''],
             'categories_display' => ['type' => 'string', 'default' => ''],
+            'add_sum_catflt' => ['type' => 'boolean', 'default' => false],    
             'layout' => ['type' => 'integer', 'default' => 3],
             'cache_time' => ['type' => 'integer', 'default' => 60],
             'dateformat_lg' => ['type' => 'string', 'default' => 'l jS \of F'],
@@ -467,7 +467,6 @@ class SimpleicalHelper
             'suffix_lg_class' => ['type' => 'string', 'default' => ''],
             'suffix_lgi_class' => ['type' => 'string', 'default' => ' py-0'],
             'suffix_lgia_class' => ['type' => 'string', 'default' => ''],
-            'allowhtml' => ['type' => 'boolean', 'default' => false],
             'after_events' => ['type' => 'string', 'default' => ''],
             'no_events' => ['type' => 'string', 'default' => ''],
             'period_limits' => ['type' => 'string', 'enum' => ['1', '2', '3', '4'], 'default' => '1'],
