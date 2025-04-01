@@ -332,18 +332,24 @@ static function get_plugin_options(){
         
         echo wp_kses_post('<span id="tag-sum"></span>'.
         '<p><strong>'.
-       __('Tag for summary', 'simple-google-icalendar-widget').
+        __('Tag for summary', 'simple-google-icalendar-widget').
         '</strong></p><p>'.
-       __('Tag for summary. Choose a tag from the list. Default: a (link) When using bootstrap or other collapse css and java-script the description is collapsed and wil be opened bij clicking on the summary link.<br>Link is not included with the other tags. If not using bootstrap collapse h4, div or strong may be a better choice then a.', 'simple-google-icalendar-widget').
-        '</p><p>'.
-            __('This only works when Bootstrap collapse code is in place.', 'simple-google-icalendar-widget') . ' ' .
+        __('Tag for summary. Choose a tag from the list. Default: a (link) When using bootstrap or other collapse css and java-script the description is collapsed and wil be opened bij clicking on the summary link.<br>Link is not included with the other tags.', 'simple-google-icalendar-widget').
+        '<br>' .
+        __('This only works when Bootstrap collapse code is in place.', 'simple-google-icalendar-widget') . ' ' .
         __('Use plugin options form to add Bootstrap collapse code (js and css) when not provided by theme.', 'simple-google-icalendar-widget') .
           '<br/><a href="' .
           esc_url(admin_url('admin.php?page=simple_ical_options')) .
             '" target="_blank">' .
-          __('Options form', 'simple-google-icalendar-widget') .
-          '</a></p>');
-        
+        __('Options form', 'simple-google-icalendar-widget') .
+          '</a><br>' .
+        __('A similar effect in pure HTML (without dedicated javascript or css) can be obtained with the summary tag this wil be included on top of the details in a details tag.', 'simple-google-icalendar-widget') .
+            '<br>' .
+        __('On start only a disclosure widget (in most browsers a small triangle) and the summary text is shown. Clicking on the widget or summary opens the details text.', 'simple-google-icalendar-widget') .
+        '<br>' .  
+        __('If not using bootstrap h4, summary strong or div may be a better choice then a.', 'simple-google-icalendar-widget') .
+        '</p>');
+          
         echo wp_kses_post('<span id="period-limits"></span>'.
         '<p><strong>'.
        __('Period limits', 'simple-google-icalendar-widget').
@@ -400,6 +406,12 @@ static function get_plugin_options(){
         '</strong></p><p>'.
        __('Default: Empty, categories are not displayed. Here you can choose to display the list of event categories after the summary and with what separator. If you leave this field empty, the list will not be displayed.', 'simple-google-icalendar-widget').
         '</p><p><strong>' .
+            
+      __('Add summary to categories filter.', 'simple-google-icalendar-widget').
+      '</strong></p><p>' .
+      __('Add words from summary (separated by space or comma) to categories for filtering.', 'simple-google-icalendar-widget').
+      '</p><p><strong>' .
+            
         __('Suffix group class', 'simple-google-icalendar-widget').
         '</strong></p><p>'.
        __('Suffix to add after css-class around the event (list-group),<br>start with space to keep the original class and add another class.', 'simple-google-icalendar-widget').

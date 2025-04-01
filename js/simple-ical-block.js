@@ -4,7 +4,7 @@
  * Move styles to stylesheets - both edit and front-end.
  * and use attributes and editable fields
  * attributes as Inspectorcontrols (settings)
- * v2.6.1
+ * v2.7.0
  * 20230625 added quotes to the options of the Layout SelectControl,
  *  add parseInt to all integers in transform, added conversion dateformat_lgend and _tsend and anchorid = sibid
  * 20230420 added parseInt on line 147(now 148) to keep layout in block-editor
@@ -25,6 +25,7 @@
  *   removed references to ServerSideRender added deprecated 243; decoupled render and save changed attributes. 
  * 2.5.0 support for categories.
  * 2.6.1  Started simplifying (bootstrap) collapse by toggles for adding javascript and trigger collapse by title.
+ * 2.7.0 Enable to add words of summary to categories for filtering. Add support for details/summary tag combination.
  */
 (function(blocks, i18n, element, blockEditor, components) {
 	const el = element.createElement;
@@ -49,13 +50,17 @@
 	const SelectControl = components.SelectControl;
 	const useEffect = element.useEffect;
 	const tagOpsh = [{ value: 'div', label: __('div', 'simple-google-icalendar-widget') },
+	{ value: 'b', label: __('b (attention, bold)', 'simple-google-icalendar-widget') },
+	{ value: 'div', label: __('div', 'simple-google-icalendar-widget') },
 	{ value: 'h1', label: __('h1 (header)', 'simple-google-icalendar-widget') },
 	{ value: 'h2', label: __('h2 (sub header)', 'simple-google-icalendar-widget') },
 	{ value: 'h3', label: __('h3 (sub header)', 'simple-google-icalendar-widget') },
 	{ value: 'h4', label: __('h4 (sub header)', 'simple-google-icalendar-widget') },
 	{ value: 'h5', label: __('h5 (sub header)', 'simple-google-icalendar-widget') },
 	{ value: 'h6', label: __('h6 (sub header)', 'simple-google-icalendar-widget') },
+	{ value: 'i', label: __('i (idiomatic, italic)', 'simple-google-icalendar-widget') },
 	{ value: 'span', label: __('span', 'simple-google-icalendar-widget') },
+	{ value: 'u', label: __('u (unarticulated, underline )', 'simple-google-icalendar-widget') }
 	];
 	const tagOps = [{ value: 'a', label: __('a (link)', 'simple-google-icalendar-widget') },
 	{ value: 'b', label: __('b (attention, bold)', 'simple-google-icalendar-widget') },
@@ -66,6 +71,7 @@
 	{ value: 'i', label: __('i (idiomatic, italic)', 'simple-google-icalendar-widget') },
 	{ value: 'span', label: __('span', 'simple-google-icalendar-widget') },
 	{ value: 'strong', label: __('strong', 'simple-google-icalendar-widget') },
+	{ value: 'summary', label: __('summary with details', 'simple-google-icalendar-widget') },
 	{ value: 'u', label: __('u (unarticulated, underline )', 'simple-google-icalendar-widget') }
 	];
 	
@@ -393,6 +399,15 @@
 						}
 					),
 					el(
+						ToggleControl,
+						{
+							label: __('Add summary to categories filter.', 'simple-google-icalendar-widget'),
+							checked: props.attributes.add_sum_catflt,
+							help: __('Add words from summary to categories for filtering.', 'simple-google-icalendar-widget'),
+							onChange: function(value) { props.setAttributes({ add_sum_catflt: value }); },
+						}
+					),
+					el(
 						SelectControl,
 						{
 							label: __('Tag for title:', 'simple-google-icalendar-widget'),
@@ -408,7 +423,7 @@
 							onChange: function(value) { props.setAttributes({ tag_title: value }); },
 							options: tagOpsh
 						}
-						),
+					),
 					el(
 						SelectControl,
 						{
@@ -517,8 +532,8 @@
 						el(
 							'a',
 							{
-								href: 'admin.php?page=simple_ical_options',
-								target: '_blank',
+								"href": 'admin.php?page=simple_ical_options',
+								"target": '_blank',
 							},
 							__('Options form', 'simple-google-icalendar-widget')
 						)

@@ -17,7 +17,7 @@
 		"ics"
 	],
 	"icon" : "calendar-alt",
-	"version" : "2.6.1",
+	"version" : "2.7.0",
 	"textdomain" : "simple-google-icalendar-widget",
 	"attributes" : {
 		"wptype" : {
@@ -62,6 +62,10 @@
 		"categories_display" : {
 			"type" : "string"
 		},
+		"add_sum_catflt" : {
+			"type" : "boolean",
+			"default" : false
+		},
 		"cache_time" : {
 			"type" : "integer",
 			"default" : 60
@@ -88,6 +92,7 @@
 				"i",
 				"span",
 				"strong",
+				"summary",
 				"u"
 			],
 			"default" : "a"

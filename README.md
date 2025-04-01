@@ -4,9 +4,9 @@ Plugin name: Simple Google Calendar Outlook Events Widget
 Contributors: bramwaas   
 Tags: Google Calendar, iCal, Events, Block, Calendar   
 Requires at least: 5.3.0   
-Tested up to: 6.7   
+Tested up to: 6.8   
 Requires PHP: 7.4   
-Stable tag: 2.6.0
+Stable tag: 2.7.0
 License: GPLv2 or later   
 License URI: http://www.gnu.org/licenses/gpl-2.0.html   
     
@@ -246,8 +246,10 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 * from 2024 (v2.3.0) requires php 7.4. "Use Client timezone settings, with REST" in "Use client timezone settings" works only correct with Javascript enabled in a browser with version newer than 2016 but not in Internet Explorer (fetch and Promise are used).         
 
 == Changelog ==
+* 2.7.0 Enable to add words of summary to categories for filtering (after issue #36 'Filtering by keyword' by gonzob for Joomla module). Added support
+ for details/summary tag combination. Added cast $class to string in sanitize_html_clss and sanitize_html_class (after issue #39 by joomlafun for joomla module)
 * 2.6.1  Started simplifying (bootstrap) collapse by toggles for adding javascript and trigger collapse by title. In response to Joomla module github issue #35 'naming calendars to filter them in front end' by Joomlafun.  
-   Remove toggle to allow safe html in summary and description, save html is always allowed now.      
+ Remove toggle to allow safe html in summary and description, save html is always allowed now.      
 * 2.6.0 Due to a reported XSS vulnerability. Checked with Wordpress Plugin Check (PCP). Fixed this vulnerability and other PCP errors and warnings, as required by Wordpress to remain in the plugin directory.  
 known issue: in wp 5.9.5 with elementor 3.14.1 aria-expanded and aria-controls are stripped bij wp_kses before wp 6.3.0 (see wp_kses.php)   
     issue is solved tested with wp 6.7.1 with elementor 3.26.5 .   

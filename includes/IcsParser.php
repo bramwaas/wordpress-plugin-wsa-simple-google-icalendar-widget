@@ -5,28 +5,6 @@
  * @license GNU General Public License version 3 or later
  *
  * note that this class does not implement all ICS functionality.
- *   bw 20171109 enkele verbeteringen voor start en end in ical.php
- *   bw 20190526 v1.0.2 some adjustments for longer Description or Summary or LOCATION
- *   bw 20190529 v1.0.3 trim only "\n\r\0" and first space but keep last space in Description Summary and Location lines.
- *               adjustments to correct timezone that is ignored in new datetime when the $time parameter is a UNIX timestamp (e.g. @946684800)
- *   bw 20190603 v1.1.0 parse exdate's to exclude events from repeat
- *   bw 20201122 v1.2.0 find solution for DTSTART and DTEND without time by explicit using isDate and only displaying times when isDate === false.;
- *               found a problem with UID in first line when line-ends are \n in stead of \r\n solved by better calculation of start of EventStr.
- *   bw 20201123 handle not available DTEND => !isset($e->end) in response to a comment of lillyberger (@lillyberger) on the plugin page.
- *   bw 20210415 added windows to Iana timezone-array from ics-calendar.7.2.0, to solve error with outlook agenda.
- *               found a solution for colon in description or summary, special attention to colon in second or later line.
- *   bw 20210618 replace EOL <br> by newline ("\n") in Multiline elements Description and Summary to make it easier to trim to excerptlength
- *               and do replacement of newline by <br> when displaying the line.
- *               fixed a trim error that occurred in a previous version, revising the entire trimming so that both \r\n and \n end of lines are handled properly
- *   bw 20220223 fixed timezone error in response to a support topic of edwindekuiper (@edwindekuiper): If timezone appointment is empty or incorrect
- *               timezone fall back was to new \DateTimeZone(get_option('timezone_string')) but with UTC+... UTC-... timezonesetting this string
- *               is empty so I use now wp_timezone() and if even that fails fall back to new \DateTimeZone('UTC').
- *   bw 20220404 V1.5.0 added parameter allowhtml (htmlspecialchars) to allow Html in Description.
- *   bw 20220407 Extra options for parser in array poptions and added temporary new option processdst to process differences in DST between start of series events and the current event.
- *   bw 20220408 v1.5.1 Namespaced and some restructuration of code. Add difference in seconds to timestamp newstart to get timestamp newend instead of working with DateInterval.
- *               This calculation better takes into account the deleted hour at the start of DST.
- *               Correction when time is changed by ST to DST transition set hour and minutes back to beginvalue (because time doesn't exist during changeperiod)
- *               Set event Timezoneid to UTC when datetimesting ends with Z (zero date)
  *   bw 20220527 V2.0.1 code starting with getData from block to this class
  *   bw 20220613 v2.0.2 code to correct endtime (00:00:00) when recurring event with different start and end as dates includes DST to ST transition or vv
  *   bw 20220613 v2.0.4 Improvements IcsParser made as a result of porting to Joomla
@@ -51,8 +29,11 @@
  * while retaining , or ; when escaped with \ and use the same function for list of url's and input filter categorie list. 
  * use temporary replace \\ by chr(20) and replace chr(20) by \ instead of explode and implode to prevent use of \\ as unescape char.
  * 2.6.0 escaping error messages.
+ * 2.7.0 Enable to add summary to filtering categories, when add_sum_catflt add words from summary to categories for filtering. 
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
+// no direct access
+defined('ABSPATH') or die ('Restricted access');
 
 class IcsParser {
     
@@ -72,7 +53,7 @@ RRULE:FREQ=WEEKLY;INTERVAL=3;BYDAY=SU,WE,SA
 UID:a-1
 DESCRIPTION:Description event every 3 weeks sunday wednesday and saturday. T
  est A-Z.\nLine 2 of description. Category flower
-LOCATION:Located at home \, or somewhere else 
+LOCATION:Located at home \, or somewhere else
 SUMMARY: Every 3 weeks sunday \\ wednesday \\\\ saturday
 CATEGORIES:Flower
 END:VEVENT
@@ -284,7 +265,7 @@ END:VCALENDAR';
      * @since 2.3.0
      */
     protected $event_cache = 0;
-    /**
+   /**
      * Timestamp of the start time fo parsing, set by parse function.
      *
      * @var    int
@@ -378,7 +359,6 @@ END:VCALENDAR';
                 $e->cal_ord = $cal_ord;
                 if (!empty($e->recurid)){
                     $this->replaceevents[] = array($e->uid, $e->recurid );
-
                 }
                 if ($this->p_start < $e->end && $this->p_end > $e->start && (empty($e->exdate) || ! in_array($e->start, $e->exdate))) {
                     $this->events[] = $e;
@@ -679,7 +659,7 @@ END:VCALENDAR';
                                 $freqstart->add($interval3day);
                                 $fmdayok = true;
                             }
-                            }  // end while $freqstart->getTimestamp() <= $freqendloop and $count ...
+                        }  // end while $freqstart->getTimestamp() <= $freqendloop and $count ...
                     }
                 } // switch freq
                 //
@@ -690,22 +670,23 @@ END:VCALENDAR';
             }
         } while($haveVevent);
     }
-    /*
-     * Limit events to the first event_count events in the event - period/window.
-     * filter against categories filter.
-     * Events are already sorted
-     * 
-     * @param  array of objects $data_events events parsed or cached.
-     * @param int timestamp $p_start start datetime of period/window with events displayed
-     * @param int timestamp $p_end (not included) end datetime of period/window with events displayed
-     * @param  int $e_count limits the maximum number of events  
-     * @param stringt $cat_filter comma separated list of categories to compare (intersect) with events categories   
-     * @param string  $cat_filter_op Operator to asses result of intersection from a list or '' for no filtering.
-     *
-     * @return  array       remaining event objects.
-     */
-    static function getFutureEvents($data_events, $p_start, $p_end, $e_count, $cat_filter = '', $cat_filter_op = '' ) {
-        //
+/*
+ * Limit events to the first event_count events in the event - period/window.
+ * filter against categories filter and words of summary when add_sum_catflt
+ * Events are already sorted
+ * 
+ * @param  array of objects $data_events events parsed or cached.
+ * @param int timestamp $p_start start datetime of period/window with events displayed
+ * @param int timestamp $p_end (not included) end datetime of period/window with events displayed
+ * @param  int $e_count limits the maximum number of events  
+ * @param stringt $cat_filter comma separated list of categories to compare (intersect) with events categories   
+ * @param string  $cat_filter_op Operator to asses result of intersection from a list or '' for no filtering.
+ * @param boolean $add_sum_catflt add words from summary to categories fro filtering
+ *
+ * @return  array       remaining event objects.
+ */
+    static function getFutureEvents($data_events, $p_start, $p_end, $e_count, $cat_filter = '', $cat_filter_op = '', $add_sum_catflt = false ) {
+        // 
         if (!empty($cat_filter_op))  {
             $cat_filter_ary = array_map("strtolower",(empty($cat_filter)) ? [''] : self::unescTextList($cat_filter));
             $cat_filter_ln = count($cat_filter_ary);
@@ -716,7 +697,15 @@ END:VCALENDAR';
             if (empty($cat_filter_op)) {
                 $cat_filter_result = true; // no filter
             }  else {
-                $cat_is_cnt = count(array_intersect($cat_filter_ary,(array_map("strtolower",($e->categories) ?? ['']))));
+                $cat_ary = array_map("strtolower",(empty($e->categories)) ? ['']:$e->categories );
+                if ($add_sum_catflt){ 
+                    $cat_ary = array_merge($cat_ary, (empty($e->summary)?[]:
+                        explode(',',strtolower(str_replace([' ', ',,'], [','], $e->summary))))
+                        );
+                }
+                if ('' == $cat_ary[0] && 1 < count($cat_ary)) { array_shift($cat_ary);
+                }
+                $cat_is_cnt = count(array_intersect($cat_filter_ary,($cat_ary)));
                 switch ($cat_filter_op) {
                     case "ANY":
                     $cat_filter_result = (0 < $cat_is_cnt);
@@ -774,12 +763,11 @@ END:VCALENDAR';
         return $this->events;
     }
     /*
-     * Parse timestamp from date time string (with timezone ID)
-     * @param  string $datetime date time format YYYYMMDDTHHMMSSZ last letter ='Z' means Zero-time or 'UTC' time. overrides any timezone.
-     * @param  string $ptzid (timezone ID)
-     * @return int timestamp
-     */
-    
+    * Parse timestamp from date time string (with timezone ID)
+    * @param  string $datetime date time format YYYYMMDDTHHMMSSZ last letter ='Z' means Zero-time or 'UTC' time. overrides any timezone.
+    * @param  string $ptzid (timezone ID)
+    * @return int timestamp
+    */
     private function parseIcsDateTime($datetime, $tzid = '') {
         if (strlen($datetime) < 8) {
             return -1;
@@ -816,6 +804,7 @@ END:VCALENDAR';
      * Checks if Zero time (timezone UTC)
      * Checks if a time zone ID is a Iana timezone then return this timezone.
      * Checks if time zone ID is windows timezone then return this timezone
+     * Checks if time zone ID with Etc/GMT 'replaced by'Etc/GMT+' is a Iana timezone then return this timezone.
      * If empty return timezone from application
      * If nothing istrue return timezone from application
      * If timezone string from WP doesn't make a good timezone return UTC timezone.
@@ -833,6 +822,10 @@ END:VCALENDAR';
         if (isset($timezone)) return $timezone;
         try {
             if (isset(self::$windowsTimeZonesMap[$ptzid])) $timezone = new \DateTimeZone(self::$windowsTimeZonesMap[$ptzid]);
+        } catch (\Exception $exc) {}
+        if (isset($timezone)) return $timezone;
+        try {
+            if (!empty($ptzid)) $timezone = new \DateTimeZone(str_replace('Etc/GMT ','Etc/GMT+',$ptzid));
         } catch (\Exception $exc) {}
         if (isset($timezone)) return $timezone;
         try {
@@ -941,7 +934,7 @@ END:VCALENDAR';
                     case "EXDATE":
                         $dtl = explode(",", $value);
                         foreach ($dtl as $value) {
-                            $eventObj->exdate[] = $this->parseIcsDateTime($value, $tzid );
+                            $eventObj->exdate[] = $this->parseIcsDateTime($value, $tzid);
                         }
                         break;
                     case "RECURRENCE-ID":
@@ -1040,7 +1033,7 @@ END:VCALENDAR';
      *    ['tzid_ui']      if avail create ['tz_ui]', else try wp_timezone, or as last resort 'UTC'. 
      *    ['cache_time'] / ['transient_time'] time the transient cache is valid in minutes.
      *    ['calendar_id'] id's or url's of the calendar(s) to fetch data
-     *    ['event_count']  max number of events to return
+     *    ['event_count'] max number of events to return
      *    ['event_period'] max number of days after now to fetch events.
      *    ['categories_filter'] list of categories to filter on, with type of filtering in first item
      *    ['categories_filter_op'] filter operator, if empty no filtering on categories.
@@ -1056,8 +1049,8 @@ END:VCALENDAR';
             } catch (\Exception $exc) {}
         if (empty($instance['tz_ui']) && (! empty($instance['tzid_ui'])))
             try {
-                    $instance['tzid_ui'] = str_replace('Etc/GMT ','Etc/GMT+',$instance['tzid_ui']);
-                    $instance['tz_ui'] = new \DateTimeZone($instance['tzid_ui']);
+                $instance['tzid_ui'] = str_replace('Etc/GMT ','Etc/GMT+',$instance['tzid_ui']);
+                $instance['tz_ui'] = new \DateTimeZone($instance['tzid_ui']);
             } catch (\Exception $exc) {}
         if (empty($instance['tz_ui']))
             try {
@@ -1096,7 +1089,7 @@ END:VCALENDAR';
         if ( ! array_key_exists('data', $ipd)) {
             $ipd = ['data'=>$ipd, 'messages'=>[]];
         }
-        return ['data'=>self::getFutureEvents($ipd['data'], $p_start, $p_end, $instance['event_count'], (($instance['categories_filter'])??''), (($instance['categories_filter_op'])??'')),
+        return ['data'=>self::getFutureEvents($ipd['data'], $p_start, $p_end, $instance['event_count'], (($instance['categories_filter'])??''), (($instance['categories_filter_op'])??''), ($instance['add_sum_catflt']??false)),
             'messages'=>$ipd['messages']];
     }
     /**
@@ -1153,7 +1146,7 @@ END:VCALENDAR';
         $protocol = strtolower(explode('://', $calId)[0]);
         if (array_search($protocol, array(1 => 'http', 'https', 'webcal')))
         { if ('webcal' == $protocol) $calId = 'http://' . explode('://', $calId)[1];
-        return $calId; }
+           return $calId; }
         else
         { return 'https://www.google.com/calendar/ical/'.$calId.'/public/basic.ics'; }
     }
