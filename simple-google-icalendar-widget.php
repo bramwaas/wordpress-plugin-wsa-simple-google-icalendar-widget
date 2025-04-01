@@ -6,29 +6,10 @@
  Author: Bram Waasdorp
  Version: 2.7.0
  License: GPLv2
- Tested up to: 6.7
+ Tested up to: 6.8
  Requires at least: 5.3
  Requires PHP:  7.4
  Text Domain:  simple-google-icalendar-widget
- *   bw 20201122 v1.2.0 find solution for DTSTART and DTEND without time by explicit using isDate and only displaying times when isDate === false.;
- *               found that date_i18n($format, $timestamp) formats according to the locale, but not the timezone but the newer function wp_date() does,
- *               so date_i18n() replaced bij wp_date()
- *   bw 20201123 V1.2.2 added a checkbox to clear cache before expiration.
- *   bw 20210408 V1.3.0 made time formats configurable.
- *   bw 20210421 v1.3.1 test for http changed in test with esc_url_raw() to accomodate webcal protocol e.g for iCloud
- *   bw 20210616 V1.4.0 added parameter excerptlength to limit the length in characters of the description
- *   bw 20220223 fixed timezone error in response to a support topic of edwindekuiper (@edwindekuiper): If timezone appointment is empty or incorrect
- *               timezone fall back was to new \DateTimeZone(get_option('timezone_string')) but with UTC+... UTC-... timezonesetting this string
- *               is empty so I use now wp_timezone() and if even that fails fall back to new \DateTimeZone('UTC').
- *   bw 20220404 V1.5.0 in response to a support topic on github of fhennies added parameter allowhtml (htmlspecialchars) to allow Html
- *               in Description, Summary and Location added wp_kses('post') to output to keep preventing XSS
- *   bw 20220407 Extra options for parser in array poptions and added temporary new option notprocessdst to don't process differences in DST between start of series events and the current event.
- *      20220410 V1.5.1 As notprocessdst is always better within one timezone removed the correction and this option.
- *               If this causes other problems when using more timezones then find specific solution.
- *   bw 20220421 V1.6.0 First steps to convert widget to block
- *      20220430 Block in own class  SimpleicalBlock called when function_exists( 'register_block_type') else old widget (later maybe always also old widget)
- *   bw 20220503 Replaced ( function_exists( 'register_block_type' ) ) by ( is_wp_version_compatible( '5.9' ) ) because we use the newest version of blocks and removed else for the old widget, so that
- *              the legacy block with the old widget still keeps working
  *   bw 20230403 v2.1.1 replaced almost all of the widget (display) function by a call to SimpleicalBlock::display_block($instance); to make the html roughly the same as that of the block.
  *               added layout setting in the settings form. removed strip-tags from date-time fields in settings form
  *   bw 20230409 v2.1.2 small adjustments befor_widget id (probably without effect)
@@ -41,7 +22,7 @@
  *      wp-widget in array with sibid as index so that the attributes are available for REST call.
  *   bw 20240509 v2.4.1 added defaults to all used keys of $args to solve issue 'PHP warnings' of johansam on support forum. Undefined array key “classname” in .../simple-google-icalendar-widget.php on line 170
  *   bw 20240727 v2.4.4 simplified defaulting args and improved code around that for the widget output
- *   bw 20241028 v2.5.0 Add support for categories    Tested with 6.7-RC and 5.9.5. 
+ *   bw 20241028 v2.5.0 Add support for categories    Tested with 6.7-RC and 5.9.5.
  *   bw 20250112 v2.6.0 plugin check, Using simple classloader and PSR-4 name conventions. Moved  SimpleicalWidget class to separate file.
  *   bw 20250219 v2.6.1 use bootstrap collapse script if desired
  */
@@ -93,44 +74,45 @@ if ($options['simpleical_add_collapse_code']){
 }
 if ($options['simpleical_add_collapse_code_admin']){
     add_action( 'enqueue_block_assets', __NAMESPACE__ .'\enqueue_bs_block_assets' );}/**
- * Register our simple_ical_settings_init to the admin_init action hook.
- * Register our simple_ical_options_page and simple_ical_info_page to the admin_menu action hook.
- */
-add_action( 'admin_init', [$ical_admin, 'simple_ical_settings_init'] );
-add_action('admin_menu',[$ical_admin, 'simple_ical_options_page']);
-add_action('admin_menu',array ($ical_admin, 'simple_ical_info_page'));
-
-/**
- * enqueue scripts for use in client REST view
- * for v 6.3 up args array strategy = defer, else in_footer = that array is casted to boolean true. 
- */
-function enqueue_view_script()
-{
-    wp_enqueue_script('simplegoogleicalenderwidget-simple-ical-block-view-script', plugins_url('/js/simple-ical-block-view.js', __FILE__), [], '2.6.1-' . filemtime(plugin_dir_path(__FILE__) . 'js/simple-ical-block-view.js'), 
-        ['strategy' => 'defer' ]);
-    wp_add_inline_script('simplegoogleicalenderwidget-simple-ical-block-view-script', '(window.simpleIcalBlock=window.simpleIcalBlock || {}).restRoot = "' . get_rest_url() . '"', 'before');
-}
+    * Register our simple_ical_settings_init to the admin_init action hook.
+    * Register our simple_ical_options_page and simple_ical_info_page to the admin_menu action hook.
+    */
+    add_action( 'admin_init', [$ical_admin, 'simple_ical_settings_init'] );
+    add_action('admin_menu',[$ical_admin, 'simple_ical_options_page']);
+    add_action('admin_menu',array ($ical_admin, 'simple_ical_info_page'));
+    
     /**
- * enqueue bootstrap scripts and css for collapse (in footer to load it only when 'add_collapse_code' is true)
- * for v 6.3 up args array strategy = defer, else in_footer = that array is casted to boolean true.
- */
-function enqueue_bs_scripts()
-{
-    wp_enqueue_script('simplegoogleicalenderwidget-collapse-bundle-script', plugins_url('/vendor/bs/js/collapse.bundle.js', __FILE__),
-        [],
-        '5.3.3-' . filemtime(plugin_dir_path(__FILE__) . 'vendor/bs/js/collapse.bundle.js'),
-        ['strategy' => 'defer' ]);
-    wp_enqueue_style('simplegoogleicalenderwidget-collapse-style', plugins_url('/vendor/bs/css/collapse.css', __FILE__),
-        [],
-        '5.3.3-' . filemtime(plugin_dir_path(__FILE__) . 'vendor/bs/css/collapse.css'),
-        'all');
-}
-/**
- * Enqueue block content assets but only in the Editor.
- */
-function enqueue_bs_block_assets() {
-    if ( is_admin() ) {
-        enqueue_bs_scripts();
+     * enqueue scripts for use in client REST view
+     * for v 6.3 up args array strategy = defer, else in_footer = that array is casted to boolean true.
+     */
+    function enqueue_view_script()
+    {
+        wp_enqueue_script('simplegoogleicalenderwidget-simple-ical-block-view-script', plugins_url('/js/simple-ical-block-view.js', __FILE__), [], '2.6.1-' . filemtime(plugin_dir_path(__FILE__) . 'js/simple-ical-block-view.js'),
+            ['strategy' => 'defer' ]);
+        wp_add_inline_script('simplegoogleicalenderwidget-simple-ical-block-view-script', '(window.simpleIcalBlock=window.simpleIcalBlock || {}).restRoot = "' . get_rest_url() . '"', 'before');
     }
-}
+    /**
+     * enqueue bootstrap scripts and css for collapse (in footer to load it only when 'add_collapse_code' is true)
+     * for v 6.3 up args array strategy = defer, else in_footer = that array is casted to boolean true.
+     */
+    function enqueue_bs_scripts()
+    {
+        wp_enqueue_script('simplegoogleicalenderwidget-collapse-bundle-script', plugins_url('/vendor/bs/js/collapse.bundle.js', __FILE__),
+            [],
+            '5.3.3-' . filemtime(plugin_dir_path(__FILE__) . 'vendor/bs/js/collapse.bundle.js'),
+            ['strategy' => 'defer' ]);
+        wp_enqueue_style('simplegoogleicalenderwidget-collapse-style', plugins_url('/vendor/bs/css/collapse.css', __FILE__),
+            [],
+            '5.3.3-' . filemtime(plugin_dir_path(__FILE__) . 'vendor/bs/css/collapse.css'),
+            'all');
+    }
+    /**
+     * Enqueue block content assets but only in the Editor.
+     */
+    function enqueue_bs_block_assets() {
+        if ( is_admin() ) {
+            enqueue_bs_scripts();
+        }
+    }
     add_action ('widgets_init', array (__NAMESPACE__ .'\SimpleicalHelper','simple_ical_widget')  );
+    
