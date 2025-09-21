@@ -3,7 +3,7 @@
 Plugin name: Simple Google Calendar Outlook Events Widget   
 Contributors: bramwaas   
 Tags: Google Calendar, iCal, Events, Block, Calendar   
-Requires at least: 5.3.0   
+Requires at least: 5.3   
 Tested up to: 6.8   
 Requires PHP: 7.4   
 Stable tag: 2.7.1
