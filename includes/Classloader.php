@@ -30,15 +30,15 @@ class Classloader
     /**
      * load class (if contained in plugins namespace)
      *
-     * @param string $class
-     *            class to load
+     * @param string $class class to load
+     * 
      * @return boolean true on succes.
      *        
      * @since 2.6.0
      */
     public static function load($class)
     {
-        if (stripos($class,  __NAMESPACE__) === false) return false;
+        if (stripos($class,  __NAMESPACE__) !== 0) return false;
         $file = str_replace([
             __NAMESPACE__,
             '\\'
