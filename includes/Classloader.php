@@ -4,7 +4,7 @@
  *
  * very simple classloader for this project created to load classes only when needed.
  * works for PSR-4 name conventions and use namespace in all php sources
- * 2.6.0
+ * 2.7.1
  * @package Simple Google iCalendar Widget
  * @author Bram Waasdorp <bram@waasdorpsoekhan.nl>
  * @copyright Copyright (c) 2024 - 2025, Bram Waasdorp
@@ -28,7 +28,7 @@ class Classloader
     }
 
     /**
-     * load class
+     * load class (if contained in plugins namespace)
      *
      * @param string $class
      *            class to load
@@ -38,6 +38,7 @@ class Classloader
      */
     public static function load($class)
     {
+        if (stripos($class,  __NAMESPACE__) === false) return false;
         $file = str_replace([
             __NAMESPACE__,
             '\\'
