@@ -14,7 +14,8 @@
  *   issue is solved tested with wp 6.7.1 with elementor 3.26.5 . 
  * 2.6.1  Started simplifying (bootstrap) collapse by toggles for adding javascript and trigger collapse by title.
  *  Remove toggle to allow safe html in summary and description, save html is always allowed now. 
- * 2.7.0 Enable to add words of summary to categories for filtering. Add support for details/summary tag combination.      
+ * 2.7.0 Enable to add words of summary to categories for filtering. Add support for details/summary tag combination.
+ * 2.7.1 remove load textdomain as recommended by PluginCheck      
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 class SimpleicalWidget extends \WP_Widget
