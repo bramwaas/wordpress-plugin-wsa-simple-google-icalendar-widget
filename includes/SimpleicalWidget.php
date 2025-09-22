@@ -27,7 +27,7 @@ class SimpleicalWidget extends \WP_Widget
         public function __construct()
         {
             // load our textdomain
-            load_plugin_textdomain('simple-google-icalendar-widget', false, basename( dirname( __FILE__ ) ) . '/languages' );
+//            load_plugin_textdomain('simple-google-icalendar-widget', false, basename( dirname( __FILE__ ) ) . '/languages' );
             
             parent::__construct('simple_ical_widget', // Base ID
                 'Simple Google iCalendar Widget', // Name
