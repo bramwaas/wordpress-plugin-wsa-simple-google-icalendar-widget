@@ -58,11 +58,11 @@ class Log
     static function log($level, $message, array $context = [])
     {
         if ( ! WP_DEBUG ) {
-            return; // Don't allow writing when WP_DEBUG is false
+         //   return; // Don't allow writing when WP_DEBUG is false
         }
         
         if ( ! WP_DEBUG_LOG ) {
-            return; // Don't allow writing when WP_DEBUG_LOG is false
+           // return; // Don't allow writing when WP_DEBUG_LOG is false
         }
         
         if (!is_string($message)) $message = print_r ($message, true);
@@ -73,8 +73,10 @@ class Log
 //        JLog::add($message, self::$priorityMap[$level], $context['category']);
         
         if ( $minlevelnr >= self::$priorityMap[$level] ) {
-            $content = date('Y-m-d H:i:s' ) . ' ';
-            $content .= strtoupper( $level ) . ': ';
+            $content = date('Y-m-d H:i:sP' ) . Chr(9);
+            $content .= strtoupper( $level ) . Chr(9);
+            $content .= 'clientipadddress' .Chr(9);
+            $content .= strtolower( $context['category']) . Chr(9);
             $content .= $message;
             
             error_log( $content );

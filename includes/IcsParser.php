@@ -1117,9 +1117,11 @@ END:VCALENDAR';
                 $httpData = wp_remote_get($url);
                 if(is_wp_error($httpData)) {
                     $this->messages[] =  esc_url( $url ) . ' not found ' . 'fall back to https://';
+                    Log::log(Log::NOTICE, esc_url( $url ) . ' not found ' . 'fall back to https://');
                     $httpData = wp_remote_get('https://' . explode('://', $url)[1]);
                     if(is_wp_error($httpData)) {
                         $this->messages[] = 'Simple iCal Block: '. $httpData->get_error_message();
+                        Log::log(Log::WARNING, $httpData->get_error_message());
                         continue;
                     }
                 }
