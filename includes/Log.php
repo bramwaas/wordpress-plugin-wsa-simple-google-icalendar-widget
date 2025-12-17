@@ -58,25 +58,20 @@ class Log
     static function log($level, $message, array $context = [])
     {
         if ( ( WP_DEBUG && WP_DEBUG_LOG) ) {
-        
             if (!is_string($message)) $message = print_r ($message, true);
             if (empty(self::$priorityMap[$level])) $level = self::NOTICE;
             $minlevelnr = (empty(self::$priorityMap[$level])) ? self::$priorityMap[self::ERROR] : self::$priorityMap[WP_DEBUG_MINIMUM_LEVEL] ;
             if ((!empty($message)) && (!empty($context))) $message = self::interpolate($message,$context);
             if (empty($context['category'])) $context['category'] = 'simple-ical-block';
-    //        JLog::add($message, self::$priorityMap[$level], $context['category']);
-            
             if ( $minlevelnr >= self::$priorityMap[$level] ) {
     //            $content = date('Y-m-d H:i:sP' ) . Chr(9);
                 $content = strtoupper( $level ) . Chr(9);
-                $content .= 'clientipadddress' .Chr(9);
+    //            $content .= 'clientipadddress' .Chr(9);
                 $content .= strtolower( $context['category']) . Chr(9);
                 $content .= $message;
-                
                 error_log( $content );
             }
         }
-        
     }
     /**
      * Interpolates context values into the message placeholders.
