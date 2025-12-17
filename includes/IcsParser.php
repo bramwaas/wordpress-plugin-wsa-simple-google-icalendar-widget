@@ -1138,7 +1138,7 @@ END:VCALENDAR';
                 	$httpData = wp_remote_get($url);
 	                if(is_wp_error($httpData)|| empty($httpData['response']['code'])) {
 						$this->codes[] = 100.0;
-                        Log::log(Log::WARNING, $httpData->get_error_message());
+						Log::log(Log::WARNING, $httpData->get_error_code() . '.0 '. $httpData->get_error_message());
                         continue;
                     }
                     $statuscode = $httpData['response']['code'];
@@ -1156,7 +1156,7 @@ END:VCALENDAR';
                             $httpData = wp_remote_get('https://' . explode('://', $url)[1]);
 	    	              if(is_wp_error($httpData)|| empty($httpData['response']['code'])) {
 							$this->codes[] = 100.3;
-                	        Log::log(Log::WARNING, $httpData->get_error_message());
+							Log::log(Log::WARNING, $httpData->get_error_code() . '.3 '. $httpData->get_error_message());
                     	    continue;
 	                      }
     	                  $statuscode = $httpData['response']['code'];
@@ -1171,7 +1171,7 @@ END:VCALENDAR';
                     	   continue ;
                        }
                     } else {
-                        Log::log(Log::WARNING, 'Response code: ' . $statuscode . ' body: ' . htmlspecialchars($httpData['body'] ?? ''));
+                        Log::log(Log::WARNING, 'Response code: ' . $statuscode . '.5 body: ' . htmlspecialchars($httpData['body'] ?? ''));
                         continue;
                     }
                 }
