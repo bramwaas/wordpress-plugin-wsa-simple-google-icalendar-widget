@@ -2,13 +2,13 @@
 /**
  * @version $Id: Log.php 
  * @package simpleicalblock
- * @subpackage simpleicalblock Module
+ * @subpackage simpleicalblock plugin
  * @copyright Copyright (C) 2025 -2026 A.H.C. Waasdorp, All rights reserved.
  * @license GNU General Public License version 3 or later
  * @author url: https://www.waasdorpsoekhan.nl
  * @author email contact@waasdorpsoekhan.nl
  * @developer A.H.C. Waasdorp
- * Log to standard Joomla Log for mod_simpleicalblock
+ * Log formatted to standard error_log (WordPress default debug.log in content dir) for plugin simpleicalblock
  * @since  3.0
  * 3.0.0 remove messages to front-end, replaced by Log
  */
@@ -57,29 +57,20 @@ class Log
      */
     static function log($level, $message, array $context = [])
     {
-        if ( ! WP_DEBUG ) {
-         //   return; // Don't allow writing when WP_DEBUG is false
-        }
-        
-        if ( ! WP_DEBUG_LOG ) {
-           // return; // Don't allow writing when WP_DEBUG_LOG is false
-        }
-        
-        if (!is_string($message)) $message = print_r ($message, true);
-        if (empty(self::$priorityMap[$level])) $level = self::NOTICE;
-        $minlevelnr = (empty(self::$priorityMap[$level])) ? self::$priorityMap[self::ERROR] : self::$priorityMap[WP_DEBUG_MINIMUM_LEVEL] ;
-        if ((!empty($message)) && (!empty($context))) $message = self::interpolate($message,$context);
-        if (empty($context['category'])) $context['category'] = 'simple-ical-block';
-//        JLog::add($message, self::$priorityMap[$level], $context['category']);
-        
-        if ( $minlevelnr >= self::$priorityMap[$level] ) {
-            $content = date('Y-m-d H:i:sP' ) . Chr(9);
-            $content .= strtoupper( $level ) . Chr(9);
-            $content .= 'clientipadddress' .Chr(9);
-            $content .= strtolower( $context['category']) . Chr(9);
-            $content .= $message;
-            
-            error_log( $content );
+        if (WP_DEBUG && WP_DEBUG_LOG ) {
+            if (!is_string($message)) $message = print_r ($message, true);
+            if (empty(self::$priorityMap[$level])) $level = self::NOTICE;
+            $minlevelnr = (empty(self::$priorityMap[WP_DEBUG_MINIMUM_LEVEL])) ? self::$priorityMap[self::ERROR] : self::$priorityMap[WP_DEBUG_MINIMUM_LEVEL] ;
+            if ((!empty($message)) && (!empty($context))) $message = self::interpolate($message,$context);
+            if (empty($context['category'])) $context['category'] = 'simple-ical-block';
+            if ( $minlevelnr >= self::$priorityMap[$level] ) {
+    //            $content = date('Y-m-d H:i:sP' ) . Chr(9);
+                $content = strtoupper( $level ) . Chr(9);
+    //            $content .= 'clientipadddress' .Chr(9);
+                $content .= strtolower( $context['category']) . Chr(9);
+                $content .= $message;
+                error_log( $content );
+            }
         }
         
     }
