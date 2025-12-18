@@ -78,7 +78,7 @@ class Log
                 else {
                     $messages = str_split($content,self::SIB_MSG_LEN);
                     foreach ($messages as $key=>$val) {
-                        error_log( $content );
+                        error_log( $val );
                     }
                 }
             }

@@ -1149,7 +1149,7 @@ END:VCALENDAR';
                     continue ;
                 }
                 if (200 != $statuscode) {
-                    Log::log(Log::NOTICE,($statuscode ?? 0) . '.0 ' . esc_url($url) . ' not found ');
+                    Log::log(Log::NOTICE,($statuscode ?? 0) . '.2 ' . esc_url($url) . ' not found ');
                     if (substr($url, 0, 6) != 'https:') {
                        Log::log(Log::NOTICE,'100.2  fall back to https//:');
 					   try {
@@ -1171,7 +1171,7 @@ END:VCALENDAR';
                     	   continue ;
                        }
                     } else {
-                        Log::log(Log::WARNING, 'Response code: ' . $statuscode . '.5 body: ' . htmlspecialchars($httpData['body'] ?? ''));
+                        Log::log(Log::WARNING, 'Response code: ' . ($statuscode ?? 0) . '.5 body: ' . htmlspecialchars($httpData['body'] ?? ''));
                         continue;
                     }
                 }
