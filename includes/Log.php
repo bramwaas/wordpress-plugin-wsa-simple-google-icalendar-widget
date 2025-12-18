@@ -2,15 +2,14 @@
 /**
  * @version $Id: Log.php 
  * @package simpleicalblock
- * @subpackage simpleicalblock Module
  * @copyright Copyright (C) 2025 -2026 A.H.C. Waasdorp, All rights reserved.
  * @license GNU General Public License version 3 or later
  * @author url: https://www.waasdorpsoekhan.nl
  * @author email contact@waasdorpsoekhan.nl
  * @developer A.H.C. Waasdorp
- * Log to standard Joomla Log for mod_simpleicalblock
+ * Log to standard error Log for plugin simpleicalblock
  * @since  3.0
- * 3.0.0 remove messages to front-end, replaced by Log
+ * 3.0.0 remove messages to front-end, replaced by Log, distribute long messages over more log lines.
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 // no direct access
@@ -29,6 +28,10 @@ class Log
     const NOTICE    = 'notice';
     const INFO      = 'info';
     const DEBUG     = 'debug';
+ /**
+  * max length log message line
+  */   
+   const SIB_MSG_LEN = 1024; 
     /**
      * Mapping array to map a PSR-3 level to an ascending integer Joomla priority.
      *
@@ -69,7 +72,15 @@ class Log
     //            $content .= 'clientipadddress' .Chr(9);
                 $content .= strtolower( $context['category']) . Chr(9);
                 $content .= $message;
-                error_log( $content );
+                if (self::SIB_MSG_LEN >= strlen($content)){
+                    error_log( $content );
+                }
+                else {
+                    $messages = str_split($content,self::SIB_MSG_LEN);
+                    foreach ($messages as $key=>$val) {
+                        error_log( $content );
+                    }
+                }
             }
         }
     }
