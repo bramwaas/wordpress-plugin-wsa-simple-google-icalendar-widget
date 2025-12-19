@@ -28,10 +28,6 @@ class Log
     const NOTICE    = 'notice';
     const INFO      = 'info';
     const DEBUG     = 'debug';
- /**
-  * max length log message line
-  */   
-   const SIB_MSG_LEN = 1024; 
     /**
      * Mapping array to map a PSR-3 level to an ascending integer Joomla priority.
      *
@@ -60,7 +56,7 @@ class Log
      */
     static function log($level, $message, array $context = [])
     {
-        if ( ( WP_DEBUG && WP_DEBUG_LOG) ) {
+        if ( ( defined(WP_DEBUG) && defined(WP_DEBUG_LOG) && WP_DEBUG && WP_DEBUG_LOG) ) {
             if (!is_string($message)) $message = print_r ($message, true);
             if (empty(self::$priorityMap[$level])) $level = self::NOTICE;
             $minlevelnr = (empty(self::$priorityMap[$level])) ? self::$priorityMap[self::ERROR] : self::$priorityMap[SIB_LOG_MINIMUM_LEVEL] ;
@@ -110,5 +106,6 @@ class Log
     }
     
 }
+
 
 
