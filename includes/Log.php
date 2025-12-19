@@ -63,7 +63,7 @@ class Log
         if ( ( WP_DEBUG && WP_DEBUG_LOG) ) {
             if (!is_string($message)) $message = print_r ($message, true);
             if (empty(self::$priorityMap[$level])) $level = self::NOTICE;
-            $minlevelnr = (empty(self::$priorityMap[$level])) ? self::$priorityMap[self::ERROR] : self::$priorityMap[WP_DEBUG_MINIMUM_LEVEL] ;
+            $minlevelnr = (empty(self::$priorityMap[$level])) ? self::$priorityMap[self::ERROR] : self::$priorityMap[SIB_LOG_MINIMUM_LEVEL] ;
             if ((!empty($message)) && (!empty($context))) $message = self::interpolate($message,$context);
             if (empty($context['category'])) $context['category'] = 'simple-ical-block';
             if ( $minlevelnr >= self::$priorityMap[$level] ) {
@@ -72,11 +72,13 @@ class Log
     //            $content .= 'clientipadddress' .Chr(9);
                 $content .= strtolower( $context['category']) . Chr(9);
                 $content .= $message;
-                if (self::SIB_MSG_LEN >= strlen($content)){
+                if ((! defined(SIB_LOG_MSG_LEN))
+                    OR ((int) SIB_LOG_MSG_LEN >= strlen($content))
+                    OR (10 <= (int) SIB_LOG_MSG_LEN)){
                     error_log( $content );
                 }
                 else {
-                    $messages = str_split($content,self::SIB_MSG_LEN);
+                    $messages = str_split($content,(int) SIB_LOG_MSG_LEN);
                     foreach ($messages as $key=>$val) {
                         error_log( $val );
                     }
@@ -108,4 +110,5 @@ class Log
     }
     
 }
+
 
