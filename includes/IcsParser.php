@@ -1162,7 +1162,7 @@ END:VCALENDAR';
     	                  $statuscode = $httpData['response']['code'];
         	              $this->codes[] = $statuscode;
                           if (200 != $statuscode) {
-                              Log::log(Log::WARNING, '404.3 ' . esc_url($url) . ' not found response code: ' . $statuscode . ' body: ' . htmlspecialchars($httpData['body'] ?? ''));
+                              Log::log(Log::WARNING, '404.3 ' . esc_url($url) . ' not found. Response code: ' . $statuscode . ' body: ' . htmlspecialchars($httpData['body'] ?? ''));
                             continue;
                           }
             	       } catch(\Exception $exc) {
