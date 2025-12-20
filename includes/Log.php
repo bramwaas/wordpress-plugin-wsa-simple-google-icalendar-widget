@@ -56,21 +56,21 @@ class Log
      */
     static function log($level, $message, array $context = [])
     {
-        if ( ( defined(WP_DEBUG) && defined(WP_DEBUG_LOG) && WP_DEBUG && WP_DEBUG_LOG) ) {
+        if ( ( defined('WP_DEBUG') && defined('WP_DEBUG_LOG') && WP_DEBUG && WP_DEBUG_LOG) ) {
             if (!is_string($message)) $message = print_r ($message, true);
             if (empty(self::$priorityMap[$level])) $level = self::NOTICE;
-            $minlevelnr = (empty(self::$priorityMap[$level])) ? self::$priorityMap[self::ERROR] : self::$priorityMap[SIB_LOG_MINIMUM_LEVEL] ;
+            $minlevelnr = self::$priorityMap[self::WARNING];
+            if (defined('SIB_LOG_MINIMUM_LEVEL') && (!empty(self::$priorityMap[SIB_LOG_MINIMUM_LEVEL])))  $minlevelnr = self::$priorityMap[SIB_LOG_MINIMUM_LEVEL];
             if ((!empty($message)) && (!empty($context))) $message = self::interpolate($message,$context);
             if (empty($context['category'])) $context['category'] = 'simple-ical-block';
             if ( $minlevelnr >= self::$priorityMap[$level] ) {
-    //            $content = date('Y-m-d H:i:sP' ) . Chr(9);
                 $content = strtoupper( $level ) . Chr(9);
     //            $content .= 'clientipadddress' .Chr(9);
                 $content .= strtolower( $context['category']) . Chr(9);
                 $content .= $message;
-                if ((! defined(SIB_LOG_MSG_LEN))
+                if ((! defined('SIB_LOG_MSG_LEN'))
                     OR ((int) SIB_LOG_MSG_LEN >= strlen($content))
-                    OR (10 <= (int) SIB_LOG_MSG_LEN)){
+                    OR (10 >= (int) SIB_LOG_MSG_LEN)){
                     error_log( $content );
                 }
                 else {

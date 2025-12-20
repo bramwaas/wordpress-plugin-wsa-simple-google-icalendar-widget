@@ -1171,7 +1171,7 @@ END:VCALENDAR';
                     	   continue ;
                        }
                     } else {
-                        Log::log(Log::WARNING, 'Response code: ' . ($statuscode ?? 0) . '.5 body: ' . htmlspecialchars($httpData['body'] ?? ''));
+                        Log::log(Log::WARNING, ($statuscode ?? 0) . '.5 body: ' . htmlspecialchars($httpData['body'] ?? ''));
                         continue;
                     }
                 }
