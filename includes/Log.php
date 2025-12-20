@@ -9,7 +9,7 @@
  * @developer A.H.C. Waasdorp
  * Log to standard error Log for plugin simpleicalblock
  * @since  3.0
- * 3.0.0 remove messages to front-end, replaced by Log, distribute long messages over more log lines.
+ * 3.0.0 remove messages to front-end, replaced by Log to error_log(), distribute long messages over more log lines.
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 // no direct access
@@ -20,14 +20,14 @@ class Log
 /**
  * Describes PSR-3 log levels.
  */
-    const EMERGENCY = 'emergency';
-    const ALERT     = 'alert';
-    const CRITICAL  = 'critical';
-    const ERROR     = 'error';
-    const WARNING   = 'warning';
-    const NOTICE    = 'notice';
-    const INFO      = 'info';
-    const DEBUG     = 'debug';
+    const EMERGENCY = 'EMERGENCY';
+    const ALERT     = 'ALERT';
+    const CRITICAL  = 'CRITICAL';
+    const ERROR     = 'ERROR';
+    const WARNING   = 'WARNING';
+    const NOTICE    = 'NOTICE';
+    const INFO      = 'INFO';
+    const DEBUG     = 'DEBUG';
     /**
      * Mapping array to map a PSR-3 level to an ascending integer Joomla priority.
      *
@@ -57,14 +57,18 @@ class Log
     static function log($level, $message, array $context = [])
     {
         if ( ( defined('WP_DEBUG') && defined('WP_DEBUG_LOG') && WP_DEBUG && WP_DEBUG_LOG) ) {
+            $level = strtoupper($level);
             if (!is_string($message)) $message = print_r ($message, true);
             if (empty(self::$priorityMap[$level])) $level = self::NOTICE;
             $minlevelnr = self::$priorityMap[self::WARNING];
-            if (defined('SIB_LOG_MINIMUM_LEVEL') && (!empty(self::$priorityMap[SIB_LOG_MINIMUM_LEVEL])))  $minlevelnr = self::$priorityMap[SIB_LOG_MINIMUM_LEVEL];
+            if (defined('SIB_LOG_MINIMUM_LEVEL')) {
+                $minlevel = strtoupper(SIB_LOG_MINIMUM_LEVEL);
+				if (!empty(self::$priorityMap[$minlevel]))  $minlevelnr = self::$priorityMap[$minlevel];
+			}	
             if ((!empty($message)) && (!empty($context))) $message = self::interpolate($message,$context);
             if (empty($context['category'])) $context['category'] = 'simple-ical-block';
             if ( $minlevelnr >= self::$priorityMap[$level] ) {
-                $content = strtoupper( $level ) . Chr(9);
+                $content = $level . Chr(9);
     //            $content .= 'clientipadddress' .Chr(9);
                 $content .= strtolower( $context['category']) . Chr(9);
                 $content .= $message;
