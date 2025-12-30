@@ -11,6 +11,8 @@
  *
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
+// no direct access
+defined('ABSPATH') or die ('Restricted access');
 
 class Classloader
 {

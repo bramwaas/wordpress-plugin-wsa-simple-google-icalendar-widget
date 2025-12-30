@@ -17,4 +17,7 @@
   * 2.4.3 created to replace render_callback option in server side register_block_type    
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
+// no direct access
+defined('ABSPATH') or die ('Restricted access');
+
 echo wp_kses(SimpleicalHelper::render_block($attributes),'post');

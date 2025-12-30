@@ -6,9 +6,8 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
     die;
 }
 
-$option_name = 'simple_ical_block_attrs';
 
-delete_option( $option_name );
+delete_option( 'simple_ical_block_attrs' );
 
 // for site options in Multisite
-delete_site_option( $option_name );
+delete_site_option( 'simple_ical_block_attrs' );

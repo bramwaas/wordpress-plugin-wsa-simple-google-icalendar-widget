@@ -22,6 +22,8 @@
  * 3.0.0 add formatted logging via own Log class to error_log().       
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
+// no direct access
+defined('ABSPATH') or die ('Restricted access');
 
 class SimpleicalWidgetAdmin {
     const SIB_OPTIONS = 'simple_ical_options';

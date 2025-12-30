@@ -18,6 +18,9 @@
  * 2.7.1 remove load textdomain as recommended by PluginCheck      
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
+// no direct access
+defined('ABSPATH') or die ('Restricted access');
+
 class SimpleicalWidget extends \WP_Widget
     {
         /*

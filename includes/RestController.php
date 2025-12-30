@@ -13,6 +13,9 @@
  *  2.6.0 SimpleicalBlock => SimpleicalHelper, added wp_kses post  to REST_response   
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
+// no direct access
+defined('ABSPATH') or die ('Restricted access');
+
 
 use \WP_REST_Controller as WP_REST_Controller;
 use \WP_Error as WP_Error;
