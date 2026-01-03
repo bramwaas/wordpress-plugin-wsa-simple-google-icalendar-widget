@@ -6,10 +6,10 @@
  * @package    Simple Google iCalendar Widget
  * @subpackage Admin
  * @author     Bram Waasdorp <bram@waasdorpsoekhan.nl>
- * @copyright  Copyright (c)  2017 - 2025, Bram Waasdorp
+ * @copyright  Copyright (c)  2017 - 2026, Bram Waasdorp
  * @link       https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  * @license    http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * Version: 2.6.1
+ * Version: 3.0.0
  * 20220410 namespaced and renamed after classname.
  * 2.1.0 option for comma seperated list of IDs
  * 2.1.3 block footer after events and placeholder when no events.

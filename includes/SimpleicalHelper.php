@@ -5,7 +5,7 @@
  * @package Simple Google iCalendar Widget
  * @subpackage Block
  * @author Bram Waasdorp <bram@waasdorpsoekhan.nl>
- * @copyright Copyright (c) 2022 - 2025, Bram Waasdorp
+ * @copyright Copyright (c) 2022 - 2026, Bram Waasdorp
  * @link https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * Gutenberg Block functions since v2.1.2 also used for widget.
@@ -31,7 +31,8 @@
  * 2.6.1  Started simplifying (bootstrap) collapse by toggles for adding javascript and trigger collapse by title.
    Remove toggle to allow safe html in summary and description, save html is always allowed now.
    Sameday as logical and calculated with localtime instead of gmdate. Add titlenode to REST output. Removed ev_class from li head.
- * 2.7.0 Added cast $class to string in sanitize_html_clss, defaults for new collapse fields. Add support for details/summary tag combination.         
+ * 2.7.0 Added cast $class to string in sanitize_html_clss, defaults for new collapse fields. Add support for details/summary tag combination.
+ * 3.0.0 removed messages, (replaced by Notices and Warning in error_log)         
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
@@ -166,11 +167,8 @@ class SimpleicalHelper
             $attributes['tag_sum'] = 'a';
             $ipd = IcsParser::getData($attributes);
             $data = $ipd['data'];
-            foreach ($ipd['messages'] as $msg) {
-                $secho .= '<!-- ' . $msg . ' -->';
-            }
             if (! empty($data) && is_array($data)) {
-                $secho .= '<ul id="lg' .$attributes['anchorId'] .'" class="list-group' . $attributes['suffix_lg_class'] . ' simple-ical-widget 270 '. $attributes['title_collapse_toggle'] . '" > ';
+                $secho .= '<ul id="lg' .$attributes['anchorId'] .'" class="list-group' . $attributes['suffix_lg_class'] . ' simple-ical-widget '. $attributes['title_collapse_toggle'] . '" > ';
                 $curdate = '';
                 foreach ($data as $e) {
                     $idlist = explode("@", $e->uid,2);
@@ -266,7 +264,7 @@ class SimpleicalHelper
             } else {
                 $secho .= $attributes['no_events'];
             }
-            $secho .= '<br class="clear" />';
+            $secho .= '<br class="clear v300" />';
     }
     /**
      * copied from WP sanitize_html_class, and added space as allowed character to accomodate multiple classes in one string.
