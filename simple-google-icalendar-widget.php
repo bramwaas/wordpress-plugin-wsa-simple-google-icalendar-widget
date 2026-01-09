@@ -30,7 +30,7 @@
 /*
  Simple Google Calendar Outlook Events Widget
  Copyright (C) Bram Waasdorp 2017 - 2026
- 2026-01-03
+ 2026-01-09
  Forked from Simple Google Calendar Widget v 0.7 by Nico Boehr
  
  This program is free software: you can redistribute it and/or modify
