@@ -71,20 +71,20 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
     __NAMESPACE__ .'\RestController',
     'init_and_register_routes'
 ));
-$SGCOE_ical_admin = new SimpleicalWidgetAdmin;
-$SGCOE_options = SimpleicalWidgetAdmin::get_plugin_options();
+$SGCOEW_ical_admin = new SimpleicalWidgetAdmin;
+$SGCOEW_options = SimpleicalWidgetAdmin::get_plugin_options();
 add_action('wp_enqueue_scripts', __NAMESPACE__ .'\enqueue_view_script');
-if ($SGCOE_options['simpleical_add_collapse_code']){
+if ($SGCOEW_options['simpleical_add_collapse_code']){
     add_action('wp_enqueue_scripts', __NAMESPACE__ .'\enqueue_bs_scripts');
 }
-if ($SGCOE_options['simpleical_add_collapse_code_admin']){
+if ($SGCOEW_options['simpleical_add_collapse_code_admin']){
     add_action( 'enqueue_block_assets', __NAMESPACE__ .'\enqueue_bs_block_assets' );}/**
     * Register our simple_ical_settings_init to the admin_init action hook.
     * Register our simple_ical_options_page and simple_ical_info_page to the admin_menu action hook.
     */
-    add_action( 'admin_init', [$SGCOE_ical_admin, 'simple_ical_settings_init'] );
-    add_action('admin_menu',[$SGCOE_ical_admin, 'simple_ical_options_page']);
-    add_action('admin_menu',array ($SGCOE_ical_admin, 'simple_ical_info_page'));
+    add_action( 'admin_init', [$SGCOEW_ical_admin, 'simple_ical_settings_init'] );
+    add_action('admin_menu',[$SGCOEW_ical_admin, 'simple_ical_options_page']);
+    add_action('admin_menu',array ($SGCOEW_ical_admin, 'simple_ical_info_page'));
     
     /**
      * enqueue scripts for use in client REST view
