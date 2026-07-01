@@ -6,7 +6,7 @@
  Author: Bram Waasdorp
  Version: 3.1.0
  License: GPLv2
- Tested up to: 6.9
+ Tested up to: 7.0
  Requires at least: 5.3
  Requires PHP:  7.4
  Text Domain:  simple-google-icalendar-widget
@@ -49,7 +49,7 @@
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 // no direct access
-defined('ABSPATH') or die ('Restricted access');
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 
 if (!class_exists('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\Classloader')) {

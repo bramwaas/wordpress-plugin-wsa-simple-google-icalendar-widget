@@ -1178,7 +1178,7 @@ END:VCALENDAR';
                 if(is_array($httpData) && array_key_exists('body', $httpData)) {
                     $httpBody = $httpData['body'];
                 } else {
-					Log::log(Log::WARNING, 'No body key found in httpdata:' . substr(print_r($httpData,true),0,1000));
+					Log::log(Log::WARNING, 'No body key found in httpdata.');
 					continue;
 				}
              }

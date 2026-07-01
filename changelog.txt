@@ -1,7 +1,7 @@
 === Simple Google Calendar Outlook Events Block Widget ===
 Plugin name: Simple Google Calendar Outlook Events Block Widget
 Requires at least: 5.3
-Tested up to: 6.9
+Tested up to: 7.0
 Requires PHP: 7.4
 Version: 3.1.0
 
