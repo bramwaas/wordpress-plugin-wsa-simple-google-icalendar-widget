@@ -143,7 +143,7 @@ class RestController extends WP_REST_Controller {
     public function get_content_by_ids($request)
     {
         // get parameters from request
-        $params = array_intersect_key($request->get_params(),['sibid'=>'' , 'tzid_ui'=>'']);
+        $params = array_intersect_key($request->get_params(),['sibid'=>'' , 'tzid_ui'=>'', 'wptype'=>'']);
         if (empty($params['sibid'])) {return new WP_Error('404', __('Empty sibid. Not possible to get block content', 'simple-google-icalendar-widget'));}
         else {$baa = get_option(SimpleicalHelper::SIB_ATTR);
             $block_attributes = isset($baa[$params['sibid']]) ? $baa[$params['sibid']] : [];}
@@ -157,7 +157,7 @@ class RestController extends WP_REST_Controller {
         }
         $data = $this->prepare_item_for_response([
                 'content' => $content,
-                'params' => []
+            'params' => []
             ], $request);
         if (isset($data)) {
             return new WP_REST_Response($data, 200);
