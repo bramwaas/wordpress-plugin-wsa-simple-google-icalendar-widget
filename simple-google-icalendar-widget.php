@@ -43,13 +43,9 @@ namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 // no direct access
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-$sgcoew_icaladmin = new SimpleicalWidgetAdmin;
-$sgcoew_options = SimpleicalWidgetAdmin::get_plugin_options();
-
 if (!class_exists('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\Classloader')) {
     require_once( 'includes/Classloader.php' );
 }
-
 Classloader::register();
 
 if ( is_wp_version_compatible( '6.3' ) )   { // block  v3
@@ -66,6 +62,8 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
     __NAMESPACE__ .'\RestController',
     'init_and_register_routes'
 ));
+$sgcoew_icaladmin = new SimpleicalWidgetAdmin;
+$sgcoew_options = SimpleicalWidgetAdmin::get_plugin_options();
 add_action('wp_enqueue_scripts', __NAMESPACE__ .'\enqueue_view_script');
 if ($sgcoew_options['simpleical_add_collapse_code']){
     add_action('wp_enqueue_scripts', __NAMESPACE__ .'\enqueue_bs_scripts');
