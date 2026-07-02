@@ -9,20 +9,7 @@
  * @link https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * Gutenberg Block functions since v2.1.2 also used for widget.
- * Version: 2.7.0
- * 2.2.0 20240106 changed text domain to simple-google-icalendar-widget
- * 2.2.1 20240123 don't display description line when excerpt-length = 0
- * 2.3.0 remove definition of attributes, leave it to block.json
- * improvement of working with client timezone: add client timezone as an extra parameter to wp_date because date_default_timezone_set has no effect
- * block default version 3 version 2; add <span class="dsc"> to description output to make it easier to refer to in css
- * title with more wptypes, no display of empty title, title output secured with wp_kses (to display empty title line use <>.
- * 2.3.1 spelling error in render block block/ssr 
- * 2.4.0 str_replace('Etc/GMT ','Etc/GMT+' for some UTC-... timezonesettings.
- * 2.4.1 resolved with wptype 'rest_ph_w' warning on wrapper_attributes when wptype 'rest_ph' and started from widget 
- * 2.4.3 replace render_callback in server side register_block_type by render in block.json (v3 plus ( is_wp_version_compatible( '6.3' ) )) 
-   add  "data-sib-utzui":props.attributes.rest_utzui to rest placeholder tag; use tag_title when not placeholder for widget
- * 2.4.4 improve compare equallity in update_rest_attrs by removing attributes that are added during save process or depend on saving environment.
- * 2.5.0 Add filter and display support for categories.
+ * Version: 3.1.0
  * 2.6.0 improve security by following Plugin Check recommendations; Moved functions common with Joomla to top. 
    rename SimpleicalBlock to SimpleicalHelper and register widget in this class. 
    Replace echo by $secho in &$secho param a.o. in display_block, to simplify escaping output by replacing multiple echoes by one. 
@@ -264,7 +251,7 @@ class SimpleicalHelper
             } else {
                 $secho .= $attributes['no_events'];
             }
-            $secho .= '<br class="clear v300" />';
+            $secho .= '<br class="clear v310" />';
     }
     /**
      * copied from WP sanitize_html_class, and added space as allowed character to accomodate multiple classes in one string.
