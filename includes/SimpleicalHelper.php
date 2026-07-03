@@ -19,7 +19,9 @@
    Remove toggle to allow safe html in summary and description, save html is always allowed now.
    Sameday as logical and calculated with localtime instead of gmdate. Add titlenode to REST output. Removed ev_class from li head.
  * 2.7.0 Added cast $class to string in sanitize_html_clss, defaults for new collapse fields. Add support for details/summary tag combination.
- * 3.0.0 removed messages, (replaced by Notices and Warning in error_log)         
+ * 3.0.0 removed messages, (replaced by Notices and Warning in error_log)
+ * 3.1.0 in response to PCP error replace get_block_wrapper_attributes() by expected result 
+   'class="wp-block-simplegoogleicalenderwidget-simple-ical-block"'; // hardcoded untill (is_wp_version_compatible('5.6'));           
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 
@@ -319,7 +321,7 @@ class SimpleicalHelper
                     break;
                 case 'rest_ph':
                     // Placeholder starting point for REST processing display of block.
-                    $wrapperattr = (is_wp_version_compatible('5.6')) ? get_block_wrapper_attributes() : '';
+                    $wrapperattr = 'class="wp-block-simplegoogleicalenderwidget-simple-ical-block"'; // hardcoded untill (is_wp_version_compatible('5.6')) ? get_block_wrapper_attributes() : '';
                     $secho .= sprintf($block_attributes['before_widget'], ($block_attributes['anchorId'] . '" data-sib-id="' . $block_attributes['sibid'] . '" data-sib-utzui="' . $block_attributes['rest_utzui'] . '" data-sib-st="0-start' ), $wrapperattr);
                     $secho .= $titlenode;
                     $secho .= '<p>';
@@ -335,7 +337,7 @@ class SimpleicalHelper
                 case 'block':
                 case 'ssr':
                     // Block rendered serverside, or in admin via serversiderenderer
-                    $wrapperattr = (is_wp_version_compatible('5.6')) ? get_block_wrapper_attributes() : '';
+                    $wrapperattr = 'class="wp-block-simplegoogleicalenderwidget-simple-ical-block"'; // hardcoded untill (is_wp_version_compatible('5.6')) ? get_block_wrapper_attributes() : '';
                     $secho .= sprintf($block_attributes['before_widget'], ($block_attributes['anchorId'] . '" data-sib-id="' . $block_attributes['sibid']), $wrapperattr);
                     if (! empty($block_attributes['title'])) {
                         $secho .= $titlenode;
