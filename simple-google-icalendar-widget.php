@@ -19,13 +19,11 @@
  *   bw 20250112 v2.6.0 plugin check, Using simple classloader and PSR-4 name conventions. Moved  SimpleicalWidget class to separate file.
  *   bw 20250219 v2.6.1 use bootstrap collapse script if desired
  *   bw 20250922 v2.7.1 Additional selection on Namespace in Classloader
- *   bw 20260701 v3.1.0 whitelist REST params to solve security vulnerability issue
+ *   bw 20260701 v3.1.0 whitelist REST params to solve security vulnerability issue, small changes in response to PCP (plugincheck).
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 // no direct access
 if ( ! defined( 'ABSPATH' ) ) exit;
-
-global $sgcoew_icaladmin, $sgcoew_options; //define global variables with prefix sgcoew
 
 if (!class_exists('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\Classloader')) {
     require_once( 'includes/Classloader.php' );
@@ -46,21 +44,40 @@ else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
     __NAMESPACE__ .'\RestController',
     'init_and_register_routes'
 ));
-$sgcoew_icaladmin = new SimpleicalWidgetAdmin;
-$sgcoew_options = SimpleicalWidgetAdmin::get_plugin_options();
-add_action('wp_enqueue_scripts', __NAMESPACE__ .'\enqueue_view_script');
-if ($sgcoew_options['simpleical_add_collapse_code']){
-    add_action('wp_enqueue_scripts', __NAMESPACE__ .'\enqueue_bs_scripts');
+
+add_action('wp_enqueue_scripts', __NAMESPACE__ . '\enqueue_view_script');
+create_admin_menu_pages();
+
+/**
+ * create admin menu pages in function in response to PCP warning about global variable prefix make those varables local.
+ */
+function create_admin_menu_pages()
+{
+    $sgcoew_icaladmin = new SimpleicalWidgetAdmin();
+    $sgcoew_options = SimpleicalWidgetAdmin::get_plugin_options();
+    if ($sgcoew_options['simpleical_add_collapse_code']) {
+        add_action('wp_enqueue_scripts', __NAMESPACE__ . '\enqueue_bs_scripts');
+    }
+    if ($sgcoew_options['simpleical_add_collapse_code_admin']) {
+        add_action('enqueue_block_assets', __NAMESPACE__ . '\enqueue_bs_block_assets');
+    }
+    /**
+     * Register our simple_ical_settings_init to the admin_init action hook.
+     * Register our simple_ical_options_page and simple_ical_info_page to the admin_menu action hook.
+     */
+    add_action('admin_init', [
+        $sgcoew_icaladmin,
+        'simple_ical_settings_init'
+    ]);
+    add_action('admin_menu', [
+        $sgcoew_icaladmin,
+        'simple_ical_options_page'
+    ]);
+    add_action('admin_menu', array(
+        $sgcoew_icaladmin,
+        'simple_ical_info_page'
+    ));
 }
-if ($sgcoew_options['simpleical_add_collapse_code_admin']){
-    add_action( 'enqueue_block_assets', __NAMESPACE__ .'\enqueue_bs_block_assets' );}/**
-    * Register our simple_ical_settings_init to the admin_init action hook.
-    * Register our simple_ical_options_page and simple_ical_info_page to the admin_menu action hook.
-    */
-    add_action( 'admin_init', [$sgcoew_icaladmin, 'simple_ical_settings_init'] );
-    add_action('admin_menu',[$sgcoew_icaladmin, 'simple_ical_options_page']);
-    add_action('admin_menu',array ($sgcoew_icaladmin, 'simple_ical_info_page'));
-    
     /**
      * enqueue scripts for use in client REST view
      * for v 6.3 up args array strategy = defer, else in_footer = that array is casted to boolean true.
