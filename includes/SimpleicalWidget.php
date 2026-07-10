@@ -6,7 +6,7 @@
  *
  * @package Simple Google iCalendar Block
  * @author Bram Waasdorp <bram@waasdorpsoekhan.nl>
- * @copyright Copyright (c) 2024 - 2025, Bram Waasdorp
+ * @copyright Copyright (c) 2024 - 2026, Bram Waasdorp
  * 
  * 2.6.0 in a separate class with namespace since 2.6.0 no underscores in classname. SimpleicalBlock => SimpleicalHelper
  * Replace echo by $secho a.o. in widget(), to simplify escaping output by replacing multiple echoes by one.
@@ -18,6 +18,9 @@
  * 2.7.1 remove load textdomain as recommended by PluginCheck      
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
+// no direct access
+defined('ABSPATH') or die ('Restricted access');
+
 class SimpleicalWidget extends \WP_Widget
     {
         /*

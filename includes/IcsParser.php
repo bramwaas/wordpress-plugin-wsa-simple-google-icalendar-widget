@@ -1,7 +1,7 @@
 <?php
 /**
  * a simple ICS parser.
- * @copyright Copyright (C) 2017 - 2025 Bram Waasdorp. All rights reserved.
+ * @copyright Copyright (C) 2017 - 2026 Bram Waasdorp. All rights reserved.
  * @license GNU General Public License version 3 or later
  *
  * note that this class does not implement all ICS functionality.
@@ -30,6 +30,9 @@
  * use temporary replace \\ by chr(20) and replace chr(20) by \ instead of explode and implode to prevent use of \\ as unescape char.
  * 2.6.0 escaping error messages.
  * 2.7.0 Enable to add summary to filtering categories, when add_sum_catflt add words from summary to categories for filtering. 
+ * 3.0.0 Also cache failed requests for calendar items to prevent prolonged "...Our systems have detected unusual traffic from your computer network. ..."
+ *  errors caused by a large number of requests in a short period of time. (after issues #47 and #48 for joomla module). First 3 failed requests cachetimes
+ *  only 60 seconds next cachetimes same as for succesfull requests. Use formatted standard error_log() logging.
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 // no direct access
@@ -47,8 +50,8 @@ class IcsParser {
      */
     private static $example_events = 'BEGIN:VCALENDAR
 BEGIN:VEVENT
-DTSTART:20240928T150000
-DTEND:20240928T160000
+DTSTART:20250928T150000
+DTEND:20250928T160000
 RRULE:FREQ=WEEKLY;INTERVAL=3;BYDAY=SU,WE,SA
 UID:a-1
 DESCRIPTION:Description event every 3 weeks sunday wednesday and saturday. T
@@ -58,8 +61,8 @@ SUMMARY: Every 3 weeks sunday \\ wednesday \\\\ saturday
 CATEGORIES:Flower
 END:VEVENT
 BEGIN:VEVENT
-DTSTART:20240929T143000
-DTEND:20240929T153000
+DTSTART:20250929T143000
+DTEND:20250929T153000
 RRULE:FREQ=MONTHLY;COUNT=24;BYMONTHDAY=29
 UID:a-2
 DESCRIPTION:Monthly day 29\nCategory Rose\, (with comma in category. test on
@@ -69,8 +72,8 @@ SUMMARY:Example\; Monthly day 29
 CATEGORIES:Rose\,
 END:VEVENT
 BEGIN:VEVENT
-DTSTART;VALUE=DATE:20240928
-//DTEND;VALUE=DATE:20240128
+DTSTART;VALUE=DATE:20250927
+//DTEND;VALUE=DATE:20250128
 DURATION:P1DT23H59M60S
 RRULE:FREQ=MONTHLY;COUNT=13;BYDAY=4SA
 UID:a-3
@@ -81,8 +84,8 @@ SUMMARY:X Monthly 4th weekend
 CATEGORIES:flower,Red Rose,Tulip
 END:VEVENT
 BEGIN:VEVENT
-DTSTART:20241015T143000
-DTEND:20241015T153000
+DTSTART:20251015T143000
+DTEND:20251015T153000
 RRULE:FREQ=MONTHLY;COUNT=24;BYMONTHDAY=29
 UID:a-4
 DESCRIPTION:Monthly day 29, without category
@@ -301,12 +304,12 @@ END:VCALENDAR';
      */
     protected $timezone_string = 'UTC';
     /**
-     * The array of messages during execution. To echo in the calling routine if needed, to remove echoing in this class.
+     * The array of response codes during execution. To see if the cached request failed.
      *
-     * @var    array array of message strings
-     * @since  2.6.0
+     * @var    array array of http response codes
+     * @since  3.0.0
      */
-    public $messages = [];
+    public $codes = [];
     /**
      * Constructor.
      *
@@ -700,8 +703,8 @@ END:VCALENDAR';
                 $cat_ary = array_map("strtolower",(empty($e->categories)) ? ['']:$e->categories );
                 if ($add_sum_catflt){ 
                     $cat_ary = array_merge($cat_ary, (empty($e->summary)?[]:
-                        explode(',',strtolower(str_replace([' ', ',,'], [','], $e->summary))))
-                        );
+                    explode(',',strtolower(str_replace([' ', ',,'], [','], $e->summary))))
+                    );
                 }
                 if ('' == $cat_ary[0] && 1 < count($cat_ary)) { array_shift($cat_ary);
                 }
@@ -734,6 +737,7 @@ END:VCALENDAR';
                     $newEvents[] = $e;
                 }
         }
+        
         return $newEvents;
     }
     
@@ -1077,20 +1081,31 @@ END:VCALENDAR';
             $p_end = $pdt_start->modify("+$ep day")->getTimestamp();
         }
         if ($instance['clear_cache_now']) delete_transient($transientId);
-        if(false === ($ipd = get_transient($transientId))) {
+        if(false === ($ipd = get_transient($transientId))
+            || ((!empty($ipd['errcnt'])) && $ipd['errcnt'] < 3 && (!empty($ipd['ctime'])) && ($now - $ipd['ctime']) > 60)  ) {
             $parser = new IcsParser($instance['calendar_id'], $instance['cache_time'], $instance['event_period'], $instance['tzid_ui'] );
             $data = $parser->fetch( );
-            $ipd = ['data'=>$data, 'messages'=>$parser->messages];
-            // do not cache data if fetching failed
-            if ($data) {
-                set_transient($transientId, $ipd, $instance['cache_time']*60);
+            if ($data || in_array(200, $parser->codes, false)) { // fetch succes
+                $errcnt = 0;
+            } else {
+                if (empty($ipd['errcnt'])) {$errcnt = 1;
+                } else { $errcnt = $ipd['errcnt'] + 1;
+                }
+            }
+            $ipd = ['data'=>$data, 'messages'=>[], 'ctime'=>$now, 'errcnt'=>$errcnt, 'codes'=>$parser->codes, 'version'=>'3.0.0'];
+            // V3.0.0 also catch failed requests (with empty $data)
+            set_transient($transientId, $ipd, $instance['cache_time']*60);
+        }
+        if ( ! array_key_exists('data', $ipd)) {  // version before 2.6.0 only cached $data
+            if (empty($ipd['codes'])) {
+                $ipd = ['data'=>$ipd, 'messages'=>[], 'codes'=>[], 'ctime'=>$now, 'errcnt'=>0];
             }
         }
-        if ( ! array_key_exists('data', $ipd)) {
-            $ipd = ['data'=>$ipd, 'messages'=>[]];
-        }
-        return ['data'=>self::getFutureEvents($ipd['data'], $p_start, $p_end, $instance['event_count'], (($instance['categories_filter'])??''), (($instance['categories_filter_op'])??''), ($instance['add_sum_catflt']??false)),
-            'messages'=>$ipd['messages']];
+
+        $data = self::getFutureEvents($ipd['data'], $p_start, $p_end, $instance['event_count'],
+            (($instance['categories_filter'])??''), (($instance['categories_filter_op'])??''), ($instance['add_sum_catflt']??false));
+        $ipd['data'] = $data;
+        return $ipd;
     }
     /**
      * Fetches from calender using calendar_ids and event_period
@@ -1103,6 +1118,8 @@ END:VCALENDAR';
     function fetch()
     {
         $cal_ord = 0;
+        $statuscode = 0;
+        $this->codes = [];
         foreach (self::unescTextList($this->calendar_ids) as $cal)
         {
             $calary = explode(';', $cal, 2);
@@ -1111,22 +1128,60 @@ END:VCALENDAR';
             ++$cal_ord;
             if ('#example' == $cal_id){
                 $httpBody = self::$example_events;
+                $statuscode = 200;
+                $this->codes[] = $statuscode;
             }
             else  {
                 $url = self::getCalendarUrl($cal_id);
-                $httpData = wp_remote_get($url);
-                if(is_wp_error($httpData)) {
-                    $this->messages[] =  esc_url( $url ) . ' not found ' . 'fall back to https://';
-                    $httpData = wp_remote_get('https://' . explode('://', $url)[1]);
-                    if(is_wp_error($httpData)) {
-                        $this->messages[] = 'Simple iCal Block: '. $httpData->get_error_message();
+
+				try {
+                	$httpData = wp_remote_get($url);
+	                if(is_wp_error($httpData)|| empty($httpData['response']['code'])) {
+						$this->codes[] = 100.0;
+						Log::log(Log::WARNING, $httpData->get_error_code() . '.0 '. $httpData->get_error_message());
+                        continue;
+                    }
+                    $statuscode = $httpData['response']['code'];
+                    $this->codes[] = $statuscode;
+                } catch(\Exception $exc) {
+                    Log::log(Log::WARNING, '404.1: Code:'. $exc->getCode() . ' Message: ' . $exc->getMessage());
+                    $this->codes[] = 404.1;
+                    continue ;
+                }
+                if (200 != $statuscode) {
+                    Log::log(Log::NOTICE,($statuscode ?? 0) . '.2 ' . esc_url($url) . ' not found ');
+                    if (substr($url, 0, 6) != 'https:') {
+                       Log::log(Log::NOTICE,'100.2  fall back to https//:');
+					   try {
+                            $httpData = wp_remote_get('https://' . explode('://', $url)[1]);
+	    	              if(is_wp_error($httpData)|| empty($httpData['response']['code'])) {
+							$this->codes[] = 100.3;
+							Log::log(Log::WARNING, $httpData->get_error_code() . '.3 '. $httpData->get_error_message());
+                    	    continue;
+	                      }
+    	                  $statuscode = $httpData['response']['code'];
+        	              $this->codes[] = $statuscode;
+                          if (200 != $statuscode) {
+                              Log::log(Log::WARNING, '404.3 ' . esc_url($url) . ' not found. Response code: ' . $statuscode . ' body: ' . htmlspecialchars($httpData['body'] ?? ''));
+                            continue;
+                          }
+            	       } catch(\Exception $exc) {
+                	       Log::log(Log::WARNING, '404.4: Code:'. $exc->getCode() . ' Message: ' . $exc->getMessage());
+                    	   $this->codes[] = 404.4;
+                    	   continue ;
+                       }
+                    } else {
+                        Log::log(Log::WARNING, ($statuscode ?? 0) . '.5 body: ' . htmlspecialchars($httpData['body'] ?? ''));
                         continue;
                     }
                 }
                 if(is_array($httpData) && array_key_exists('body', $httpData)) {
                     $httpBody = $httpData['body'];
-                } else continue;
-            }
+                } else {
+					Log::log(Log::WARNING, 'No body key found in httpdata.');
+					continue;
+				}
+             }
             
             
             try {

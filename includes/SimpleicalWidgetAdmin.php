@@ -6,10 +6,10 @@
  * @package    Simple Google iCalendar Widget
  * @subpackage Admin
  * @author     Bram Waasdorp <bram@waasdorpsoekhan.nl>
- * @copyright  Copyright (c)  2017 - 2025, Bram Waasdorp
+ * @copyright  Copyright (c)  2017 - 2026, Bram Waasdorp
  * @link       https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  * @license    http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * Version: 2.6.1
+ * Version: 3.0.0
  * 20220410 namespaced and renamed after classname.
  * 2.1.0 option for comma seperated list of IDs
  * 2.1.3 block footer after events and placeholder when no events.
@@ -18,9 +18,12 @@
  * 2.4.2 replaced null by 'admin.php' to solve issue 'Deprecation warnings in PHP 8.3'  
  * 2.4.4 added tag_title and extra option for timzone settings 
  * 2.6.1  Started simplifying (bootstrap) collapse by toggles for adding javascript and trigger collapse by title.
-   Remove toggle to allow safe html in summary and description, save html is always allowed now.      
+   Remove toggle to allow safe html in summary and description, save html is always allowed now. 
+ * 3.0.0 add formatted logging via own Log class to error_log().       
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
+// no direct access
+defined('ABSPATH') or die ('Restricted access');
 
 class SimpleicalWidgetAdmin {
     const SIB_OPTIONS = 'simple_ical_options';
@@ -446,7 +449,18 @@ static function get_plugin_options(){
         '</strong></p><p>'.
        __('HTML anchor for this block.<br>Type one or two words - no spaces - to create a unique web address for this block, called an "anchor". Then you can link directly to this section on your page.<br>You can als use this ID to make parts of your extra css specific for this block', 'simple-google-icalendar-widget').
         '</p>');
-
+        
+       echo wp_kses_post('<span id="logging"></span>'.
+           '<p><strong>'.
+           __('Formatted logging to error_log() via Log::log() function', 'simple-google-icalendar-widget').
+           '</strong></p><p>'.
+           __('If a request to retrieve calendar data fails, a message is generated.<br>From version 3.0.0 onwards, the Log::log($priority, $message) function is used for logging the messages (formatted as <priority> <category> <message> to error_log() with the category "simple-ical-block" and<br>generally with the priority NOTICE or WARNING, but other priorities may be added later.<br><br>The standard Wordpress constantes (WP_DEBUG=true, WP_DEBUG_LOG=true, WP_DEBUG_DISPLAY=false) and @ini_set( \'display_errors\', 0 ); set in  wp-config.php<br>control the logging of these messages just like other messages.<br>See: https://developer.wordpress.org/advanced-administration/debug/debug-wordpress/', 'simple-google-icalendar-widget').
+           '</p><p>'.
+           __('Specific for the Log::log() function you can set two constantes in wp-config.php<br>SIB_LOG_MINIMUM_LEVEL to control the minimum priority in the series EMERGENCY,ALERT,CRITICAL,ERROR,WARNING,NOTICE,INFO,DEBUG or ALL to log a message; default WARNING<br>', 'simple-google-icalendar-widget').
+           __('SIB_LOG_MSG_LEN to distribute long messages over more lines with this maximum length; default indefinite, truncated to the length set in the php installation.<br>', 'simple-google-icalendar-widget').
+           '</p>');
+           
+           
        echo wp_kses_post('<span id="title_collapse_toggle"></span>'.
            '<p><strong>' .
            __('Title as collapse toggle.', 'simple-google-icalendar-widget').

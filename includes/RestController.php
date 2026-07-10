@@ -4,15 +4,19 @@
  * @copyright Copyright (C) 2024 - 2025 Bram Waasdorp. All rights reserved.
  * @license GNU General Public License version 3 or later
  *
- * 2.6.0 
+ * 3.1.0 
  * 2.4.1 adressed Notice: register_rest_route was called <strong>incorrectly</strong>. Namespace must not start or end with a slash.
  *  and added 'permission_callback' => '__return_true', for public routes.
  * 2.4.4 add all (non default) attributes to returned params 'get_content_by_ids';
  *  add attribute tag_title (default h3); remove calendar_id from returned params.
  *  when saved attributes are not found and calendar_id is present in params use params as attributes
  *  2.6.0 SimpleicalBlock => SimpleicalHelper, added wp_kses post  to REST_response   
+ *  3.1.0 whitelist params to solve security vulnerability issue
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
+// no direct access
+defined('ABSPATH') or die ('Restricted access');
+
 
 use \WP_REST_Controller as WP_REST_Controller;
 use \WP_Error as WP_Error;
@@ -130,20 +134,20 @@ class RestController extends WP_REST_Controller {
     }
 
     /**
-     * Get block content with sibid or complete set of attributes including calendar_id,  and client timezone from request
+     * Get block content with sibid (block instance ID),  and tzid_ui (client timezone) from request
      *
      * @param WP_REST_Request $request
      *            Full data about the request.
-     * @return WP_Error|WP_REST_Response $since 2.3.0
+     * @return WP_Error|WP_REST_Response with formatted calendar content $since 2.3.0
      */
     public function get_content_by_ids($request)
     {
         // get parameters from request
-        $params = $request->get_params();
+        $params = array_intersect_key($request->get_params(),['sibid'=>'' , 'tzid_ui'=>'', 'wptype'=>'']);
         if (empty($params['sibid'])) {return new WP_Error('404', __('Empty sibid. Not possible to get block content', 'simple-google-icalendar-widget'));}
         else {$baa = get_option(SimpleicalHelper::SIB_ATTR);
             $block_attributes = isset($baa[$params['sibid']]) ? $baa[$params['sibid']] : [];}
-        if (empty($block_attributes) && empty($params['calendar_id'])) {
+        if (empty($block_attributes)) {
                 $content = '<p>' . __('Settings not found in saved option', 'simple-google-icalendar-widget') . '<br>' .
                 __('Not possible to get block content', 'simple-google-icalendar-widget') . '</p>';
         } else {
@@ -153,7 +157,7 @@ class RestController extends WP_REST_Controller {
         }
         $data = $this->prepare_item_for_response([
                 'content' => $content,
-                'params' => $block_attributes
+            'params' => []
             ], $request);
         if (isset($data)) {
             return new WP_REST_Response($data, 200);

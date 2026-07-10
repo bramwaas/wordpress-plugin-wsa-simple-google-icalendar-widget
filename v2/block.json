@@ -1,6 +1,6 @@
 {
 	"$schema" : "https://json.schemastore.org/block.json",
-	"apiVersion" : 2,
+	"apiVersion" : 3,
 	"title" : "Simple ical Block",
 	"name" : "simplegoogleicalenderwidget/simple-ical-block",
 	"category" : "widgets",
@@ -17,7 +17,7 @@
 		"ics"
 	],
 	"icon" : "calendar-alt",
-	"version" : "2.7.0.2",
+	"version" : "3.1.0.2",
 	"textdomain" : "simple-google-icalendar-widget",
 	"attributes" : {
 		"wptype" : {

@@ -4,13 +4,15 @@
  *
  * very simple classloader for this project created to load classes only when needed.
  * works for PSR-4 name conventions and use namespace in all php sources
- * 2.7.1
+ * 3.0.0
  * @package Simple Google iCalendar Widget
  * @author Bram Waasdorp <bram@waasdorpsoekhan.nl>
- * @copyright Copyright (c) 2024 - 2025, Bram Waasdorp
+ * @copyright Copyright (c) 2024 - 2026, Bram Waasdorp
  *
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
+// no direct access
+defined('ABSPATH') or die ('Restricted access');
 
 class Classloader
 {
