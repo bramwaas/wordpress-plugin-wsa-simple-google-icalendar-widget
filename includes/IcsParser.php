@@ -1135,7 +1135,7 @@ END:VCALENDAR';
                 $url = self::getCalendarUrl($cal_id);
 
 				try {
-                	$httpData = wp_remote_get($url);
+                	$httpData = wp_safe_remote_get($url);
 	                if(is_wp_error($httpData)|| empty($httpData['response']['code'])) {
 						$this->codes[] = 100.0;
 						Log::log(Log::WARNING, $httpData->get_error_code() . '.0 '. $httpData->get_error_message());
@@ -1153,7 +1153,7 @@ END:VCALENDAR';
                     if (substr($url, 0, 6) != 'https:') {
                        Log::log(Log::NOTICE,'100.2  fall back to https//:');
 					   try {
-                            $httpData = wp_remote_get('https://' . explode('://', $url)[1]);
+                            $httpData = wp_safe_remote_get('https://' . explode('://', $url)[1]);
 	    	              if(is_wp_error($httpData)|| empty($httpData['response']['code'])) {
 							$this->codes[] = 100.3;
 							Log::log(Log::WARNING, $httpData->get_error_code() . '.3 '. $httpData->get_error_message());

@@ -243,10 +243,10 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 2017&thinsp;&ndash;&thinsp;2023 &copy; [Bram Waasdorp](http://www.waasdorpsoekhan.nl).
 
 == Upgrade Notice ==
-* from 2024 (v2.3.0) requires php 7.4. "Use Client timezone settings, with REST" in "Use client timezone settings" works only correct with Javascript enabled in a browser with version newer than 2016 but not in Internet Explorer (fetch and Promise are used).         
+* next version (after 3.1.0) will require WP 5.9 so that I can remove older code.         
 
 == Changelog ==
-* 3.1.0 whitelist REST params to solve security vulnerability issue
+* 3.1.0 whitelist REST params to solve security vulnerability issue. Some changes to meet PCP (plugin check) requirements
 * 3.0.0 Also cache failed requests for calendar items to prevent prolonged "...Our systems have detected unusual traffic from your computer network. ..." errors   
  caused by a large number of requests in a short period of time. (after issues #47 and #48 for joomla module).  
  Replaced Messages about failed requests to front-end by formatted Logs to error_log(), distribute long messages over more log lines, controlled by constants in wp-config.php

@@ -6,6 +6,8 @@ Requires PHP: 7.4
 Version: 3.1.0
 
 == Upgrade Notice ==
+* next version (after 3.1.0) will require WP 5.9 so that I can remove older code.         
+* from 2024 (v2.3.0) requires php 7.4. "Use Client timezone settings, with REST" in "Use client timezone settings" works only correct with Javascript enabled in a browser with version newer than 2016 but not in Internet Explorer (fetch and Promise are used).
 * error in WP 6.6 this block (with serverside rendering) breaks editor when placed on a page via a synced pattern. Issue reported as WordPress Trac #61592. probably olved in 2.4.4-a.
 * from 2024 (v2.3.0) requires php 7.4. "Use Client timezone settings, with REST" in "Use client timezone settings" works only correct with Javascript enabled in a browser with version newer than 2016 but not in Internet Explorer (fetch and Promise are used).         
 * from 2023 (v2.1.1) deprecation php older than 7.4. I don't test in older php versions than 7.4 older versions might still work, but in future I may use new functions of php 8.
@@ -13,7 +15,7 @@ Version: 3.1.0
 * since v1.2.0 Wordpress version 5.3.0 is required because of the use of wp_date() 
 
 == Changelog ==
-* 3.1.0 whitelist REST params to solve security vulnerability issue
+* 3.1.0 whitelist REST params to solve security vulnerability issue. Some changes to meet PCP (plugin check) requirements
 * 3.0.0 Also cache failed requests for calendar items to prevent prolonged "...Our systems have detected unusual traffic from your computer network. ..." errors   
  caused by a large number of requests in a short period of time. (after issues #47 and #48 for joomla module).  
  Replaced Messages about failed requests to front-end by formatted Logs to error_log(), distribute long messages over more log lines, controlled by constants in wp-config.php
