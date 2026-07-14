@@ -4,13 +4,13 @@
  Description: Widget that displays events from a public google calendar or iCal file
  Plugin URI: https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  Author: Bram Waasdorp
- Version: 3.1.0
+ Version: 3.1.1
  License: GPLv2
  Tested up to: 7.0
  Requires at least: 5.3
  Requires PHP:  7.4
  Text Domain:  simple-google-icalendar-widget
- 20260702
+ 20260713
  *   bw 20240125 v2.3.0 v2 dir for older versions eg block.json version 2 for WP6.3 - Extra save instance/attributes in option 'simple_ical_block_attrs', like in standaard
  *      wp-widget in array with sibid as index so that the attributes are available for REST call.
  *   bw 20240509 v2.4.1 added defaults to all used keys of $args to solve issue 'PHP warnings' of johansam on support forum. Undefined array key “classname” in .../simple-google-icalendar-widget.php on line 170
@@ -20,6 +20,7 @@
  *   bw 20250219 v2.6.1 use bootstrap collapse script if desired
  *   bw 20250922 v2.7.1 Additional selection on Namespace in Classloader
  *   bw 20260701 v3.1.0 whitelist REST params to solve security vulnerability issue, small changes in response to PCP (plugincheck).
+ *   bw 20260713 v3.1.1 replaced wp_remote_get by wp_safe_remote_get to further harden security after fixing a security issue
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 // no direct access
