@@ -26,11 +26,11 @@ namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 // no direct access
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-//define('SGCE_FILE', __FILE__); //an absolute path to this directory
-define('SGCE_DIR', plugin_dir_path( __FILE__ )); //an absolute path to this plugin directory
-define('SGCE_TEMPLATES_DIR', SGCE_DIR .'/tmpl'); //an absolute path to the plugin templates directory
-//define('SGCE_DIR_URI', trailingslashit(plugins_url('',__FILE__))); //an absolute path to this directory
-define('SGCE_SLUG', plugin_basename( __FILE__ )); //for updates
+//define('SIB_FILE', __FILE__); //an absolute path to this directory
+define('SIB_DIR', plugin_dir_path( __FILE__ )); //an absolute path to this plugin directory
+define('SIB_TEMPLATES_DIR', SGCE_DIR .'/tmpl'); //an absolute path to the plugin templates directory
+//define('SIB_DIR_URI', trailingslashit(plugins_url('',__FILE__))); //an absolute path to this directory
+define('SIB_SLUG', plugin_basename( __FILE__ )); //for updates
 
 
 if (!class_exists('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\Classloader')) {
