@@ -362,14 +362,14 @@ class SimpleicalHelper
         $real_file = $templatename . '.php';
         
         // Look for a file in theme
-        if( $theme_template = locate_template('my_plugin/' . $real_file ) ) {
+        if( $theme_template = locate_template(SIB_SLUG . $real_file ) ) {
             
             require_once $theme_template;
             
         } else {
             
             // Nothing found, let's look in our plugin
-            $plugin_template = MY_PLUGIN_TEMPLATE_DIR .  $real_file;
+            $plugin_template = SIB_TEMPLATES_DIR .  $real_file;
             if( file_exists( $plugin_template ) ){
                 require_once $plugin_template;
             }

@@ -27,10 +27,10 @@ namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 //define('SIB_FILE', __FILE__); //an absolute path to this directory
-define('SIB_DIR', plugin_dir_path( __FILE__ )); //an absolute path to this plugin directory
+define('SIB_DIR', trailingslashit( dirname( __FILE__))); //an absolute path to this plugin directory
 define('SIB_TEMPLATES_DIR', SIB_DIR .'/tmpl'); //an absolute path to the plugin templates directory
 //define('SIB_DIR_URI', trailingslashit(plugins_url('',__FILE__))); //an absolute path to this directory
-define('SIB_SLUG', plugin_basename( __FILE__ )); //for updates
+define('SIB_SLUG', dirname(plugin_basename( __FILE__ ))); // name of plugin (directory)
 
 
 if (!class_exists('WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\Classloader')) {
