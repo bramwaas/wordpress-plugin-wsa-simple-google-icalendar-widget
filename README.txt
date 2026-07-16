@@ -246,6 +246,7 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 * next version (after 3.1.0) will require WP 5.9 so that I can remove older code.         
 
 == Changelog ==
+* 3.2.0 Working with overridable templates, similar to Joomla module. The Events Manager plugin (https://en-gb.wordpress.org/plugins/events-manager/) was used as a reference for the modifications to the WordPress plugin.
 * 3.1.1 replaced wp_remote_get by wp_safe_remote_get to further harden security after fixing a security issue
 * 3.1.0 whitelist REST params to solve security vulnerability issue. Some changes to meet PCP (plugin check) requirements
 * 3.0.0 Also cache failed requests for calendar items to prevent prolonged "...Our systems have detected unusual traffic from your computer network. ..." errors   

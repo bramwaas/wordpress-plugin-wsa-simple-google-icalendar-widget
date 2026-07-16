@@ -24,6 +24,8 @@
    'class="wp-block-simplegoogleicalenderwidget-simple-ical-block"'; // hardcoded untill (is_wp_version_compatible('5.6'));           
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
+// no direct access
+defined('ABSPATH') or die ('Restricted access');
 
 class SimpleicalHelper
 {
@@ -285,7 +287,7 @@ class SimpleicalHelper
      * @param array $content
      *            as saved in post by save in ...block.js
      * @param object $block
-     *            the bolck that is rendered
+     *            the block that is rendered
      * @return string HTML to render for the block (frontend)
      */
     static function render_block($block_attributes, $content = null, $block = null)
