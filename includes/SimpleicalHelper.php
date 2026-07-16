@@ -362,7 +362,7 @@ class SimpleicalHelper
         $real_file = $templatename . '.php';
         
         // Look for a file in theme
-        if( $theme_template = locate_template(SIB_SLUG . $real_file ) ) {
+        if( $theme_template = locate_template(SIB_SLUG . '/' . $real_file ) ) {
             
             require_once $theme_template;
             
