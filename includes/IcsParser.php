@@ -33,7 +33,9 @@
  * 3.0.0 Also cache failed requests for calendar items to prevent prolonged "...Our systems have detected unusual traffic from your computer network. ..."
  *  errors caused by a large number of requests in a short period of time. (after issues #47 and #48 for joomla module). First 3 failed requests cachetimes
  *  only 60 seconds next cachetimes same as for succesfull requests. Use formatted standard error_log() logging.
+ *  3.1.1 replaced wp_remote_get by wp_safe_remote_get to further harden security after fixing a security issue
  */
+
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 // no direct access
 defined('ABSPATH') or die ('Restricted access');
@@ -1135,7 +1137,7 @@ END:VCALENDAR';
                 $url = self::getCalendarUrl($cal_id);
 
 				try {
-                	$httpData = wp_remote_get($url);
+                	$httpData = wp_safe_remote_get($url);
 	                if(is_wp_error($httpData)|| empty($httpData['response']['code'])) {
 						$this->codes[] = 100.0;
 						Log::log(Log::WARNING, $httpData->get_error_code() . '.0 '. $httpData->get_error_message());
@@ -1153,7 +1155,7 @@ END:VCALENDAR';
                     if (substr($url, 0, 6) != 'https:') {
                        Log::log(Log::NOTICE,'100.2  fall back to https//:');
 					   try {
-                            $httpData = wp_remote_get('https://' . explode('://', $url)[1]);
+                            $httpData = wp_safe_remote_get('https://' . explode('://', $url)[1]);
 	    	              if(is_wp_error($httpData)|| empty($httpData['response']['code'])) {
 							$this->codes[] = 100.3;
 							Log::log(Log::WARNING, $httpData->get_error_code() . '.3 '. $httpData->get_error_message());
