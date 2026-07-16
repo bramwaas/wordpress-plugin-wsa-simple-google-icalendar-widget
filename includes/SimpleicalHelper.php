@@ -353,6 +353,30 @@ class SimpleicalHelper
             return $secho;
     }
     /**
+     * In this function we are searching for a folder my_plugin in our theme directory. $templatename.php. If that folders and file do exist in our theme,
+     *  we will provide that template. If that file or folders do not exist, we look for a template in our plugin's template directory.
+     * @param string $templatename
+     * @return void (includes found templatefile.
+     */
+    static function my_plugin_get_template( $templatename ) {
+        $real_file = $templatename . '.php';
+        
+        // Look for a file in theme
+        if( $theme_template = locate_template('my_plugin/' . $real_file ) ) {
+            
+            require_once $theme_template;
+            
+        } else {
+            
+            // Nothing found, let's look in our plugin
+            $plugin_template = MY_PLUGIN_TEMPLATE_DIR .  $real_file;
+            if( file_exists( $plugin_template ) ){
+                require_once $plugin_template;
+            }
+            
+        }
+    }
+    /**
      * Compare attributes with those in widget option and changed
      * Save attributes in widget option for use in REST call (only when changed on other then excluded keys)
      *
