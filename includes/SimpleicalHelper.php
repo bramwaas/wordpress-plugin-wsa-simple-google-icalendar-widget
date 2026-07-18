@@ -346,6 +346,7 @@ class SimpleicalHelper
                     }
                     self::display_block($block_attributes, $secho);
                     $secho .= $block_attributes['after_widget'];
+                    $secho .= '<p> ...' . self::getLayoutPath('default') . '...</p>';  
                     break;
                 default:
                     $secho .= "<!-- unknown wptype:" . $block_attributes['wptype'] . "-->" . PHP_EOL;
@@ -356,25 +357,28 @@ class SimpleicalHelper
      * In this function we are searching for a folder my_plugin in our theme directory. $templatename.php. If that folders and file do exist in our theme,
      *  we will provide that template. If that file or folders do not exist, we look for a template in our plugin's template directory.
      * @param string $templatename
-     * @return void (includes found templatefile.
+     * @return string/boolean ...  found templatefile path for require_once / false.
+     * 
+     * @since   3.2.0
      */
-    static function my_plugin_get_template( $templatename ) {
-        $real_file = $templatename . '.php';
-        
+    static function getLayoutPath( $layout = 'default' ) {
+        $real_file = $layout . '.php';
+//        return 'rf:' . $real_file . ' SIB_SLUG:' . SIB_SLUG . ' SIB_TEMPLATES_DIR:' . SIB_TEMPLATES_DIR;
         // Look for a file in theme
         if( $theme_template = locate_template(SIB_SLUG . '/' . $real_file ) ) {
-            
-            require_once $theme_template;
-            
+            return 'TT:' . $theme_template;
         } else {
             
             // Nothing found, let's look in our plugin
             $plugin_template = SIB_TEMPLATES_DIR .  $real_file;
             if( file_exists( $plugin_template ) ){
-                require_once $plugin_template;
+                return 'PT:' . $plugin_template;
+   
             }
+            else return 'fout pad:' . $plugin_template; 
             
         }
+        return false;
     }
     /**
      * Compare attributes with those in widget option and changed
