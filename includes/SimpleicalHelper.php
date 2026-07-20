@@ -344,41 +344,57 @@ class SimpleicalHelper
                     if (! empty($block_attributes['title'])) {
                         $secho .= $titlenode;
                     }
-                    self::display_block($block_attributes, $secho);
+                    require_once self::getLayoutPath('default');
                     $secho .= $block_attributes['after_widget'];
-                    $secho .= '<p> ...' . self::getLayoutPath('default') . '...</p>';  
                     break;
                 default:
                     $secho .= "<!-- unknown wptype:" . $block_attributes['wptype'] . "-->" . PHP_EOL;
             }
             return $secho;
     }
+
     /**
-     * In this function we are searching for a folder my_plugin in our theme directory. $templatename.php. If that folders and file do exist in our theme,
-     *  we will provide that template. If that file or folders do not exist, we look for a template in our plugin's template directory.
-     * @param string $templatename
-     * @return string/boolean ...  found templatefile path for require_once / false.
-     * 
-     * @since   3.2.0
+     * In this function we are searching for (an override) template file (also called layout) in the theme etc or default in the plugin
+     * It searches for the template file within the SIB_SLU ('simple-google-calendar-widget') directory, checking the following locations in order:
+     * 1.
+     * the active theme;
+     * 2. the parent theme (if a child theme is in use);
+     * 3. wp-includes//theme-compat/;
+     * 4. the plugin directory/tmpl.
+     * If the file is not found using the provided name, it searches again in the same order using the name 'default'.
+     *
+     * @param string $layout templatename
+     *            
+     * @return string/boolean ... found templatefile path for require_once / not found false.
+     *        
+     * @since 3.2.0
      */
-    static function getLayoutPath( $layout = 'default' ) {
-        $real_file = $layout . '.php';
-//        return 'rf:' . $real_file . ' SIB_SLUG:' . SIB_SLUG . ' SIB_TEMPLATES_DIR:' . SIB_TEMPLATES_DIR;
-        // Look for a file in theme
-        if( $theme_template = locate_template(SIB_SLUG . '/' . $real_file ) ) {
-            return 'TT:' . $theme_template;
-        } else {
-            
-            // Nothing found, let's look in our plugin
-            $plugin_template = SIB_TEMPLATES_DIR .  $real_file;
-            if( file_exists( $plugin_template ) ){
-                return 'PT:' . $plugin_template;
-   
+    static function getLayoutPath($layout = 'default')
+    {
+        $template_names[] = $layout . '.php';
+        if ('default' != $layout)
+            $template_names[] = 'default.php';
+        $is_child_theme = is_child_theme();
+
+        foreach ((array) $template_names as $template_name) {
+            if (! $template_name) {
+                continue;
             }
-            else return 'fout pad:' . $plugin_template; 
-            
+            if (file_exists(get_stylesheet_directory() . '/' . SIB_SLUG . '/' . $template_name)) {
+                return get_stylesheet_directory() . '/' . SIB_SLUG . '/' . $template_name;
+                break;
+            } elseif ($is_child_theme && file_exists(get_template_directory() . '/' . SIB_SLUG . '/' . $template_name)) {
+                return get_template_directory() . '/' . SIB_SLUG . '/' . $template_name;
+                break;
+            } elseif (file_exists(ABSPATH . WPINC . '/theme-compat/' . SIB_SLUG . '/' . $template_name)) {
+                return ABSPATH . WPINC . '/theme-compat/' . SIB_SLUG . '/' . $template_name;
+                break;
+            } elseif (file_exists(SIB_TEMPLATES_DIR . $template_name)) {
+                return SIB_TEMPLATES_DIR . $template_name;
+                break;
+            }
         }
-        return false;
+        return 'fout pad:' . $layout;
     }
     /**
      * Compare attributes with those in widget option and changed
