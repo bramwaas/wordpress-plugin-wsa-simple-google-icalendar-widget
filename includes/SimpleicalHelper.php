@@ -399,7 +399,7 @@ class SimpleicalHelper
             }
         }
         Log::log(Log::ERROR, '404 ' . SIB_TEMPLATES_DIR . 'default.php not found; plugin incomplete.');
-        return 'x';
+        return SIB_TEMPLATES_DIR . 'error.php';
     }
     /**
      * Compare attributes with those in widget option and changed
