@@ -344,9 +344,11 @@ class SimpleicalHelper
                     if (! empty($block_attributes['title'])) {
                         $secho .= $titlenode;
                     }
-                    require_once self::getLayoutPath('default');
+                    // will give an php E_Warning on failing, more includes possible when more intances of the block are on the same page.
+                    include self::getLayoutPath('default');
                     $secho .= $block_attributes['after_widget'];
-                    break;
+ //                   self::display_block($block_attributes, $secho);
+                                        break;
                 default:
                     $secho .= "<!-- unknown wptype:" . $block_attributes['wptype'] . "-->" . PHP_EOL;
             }
@@ -365,7 +367,7 @@ class SimpleicalHelper
      *
      * @param string $layout templatename
      *            
-     * @return string/boolean ... found templatefile path for require_once / not found false.
+     * @return string ... found templatefile path for require_once / not found '' and Log error default.php should always be available.
      *        
      * @since 3.2.0
      */
@@ -394,7 +396,8 @@ class SimpleicalHelper
                 break;
             }
         }
-        return 'fout pad:' . $layout;
+        Log::log(Log::ERROR, '404' . SIB_TEMPLATES_DIR . 'default.php not found; plugin incomplete.');
+        return '';
     }
     /**
      * Compare attributes with those in widget option and changed
