@@ -319,7 +319,9 @@ class SimpleicalHelper
                     $secho .= $titlenode;
                 case 'REST':
                     // Block displayed via REST
-                    self::display_block($block_attributes, $secho);
+                    // will give an php E_Warning on failing, more includes possible when more intances of the block are on the same page.
+                    include self::getLayoutPath('defaultp');
+                    // self::display_block($block_attributes, $secho);
                     break;
                 case 'rest_ph':
                     // Placeholder starting point for REST processing display of block.
@@ -396,8 +398,8 @@ class SimpleicalHelper
                 break;
             }
         }
-        Log::log(Log::ERROR, '404' . SIB_TEMPLATES_DIR . 'default.php not found; plugin incomplete.');
-        return '';
+        Log::log(Log::ERROR, '404 ' . SIB_TEMPLATES_DIR . 'default.php not found; plugin incomplete.');
+        return 'x';
     }
     /**
      * Compare attributes with those in widget option and changed
