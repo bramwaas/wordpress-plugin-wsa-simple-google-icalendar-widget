@@ -10,34 +10,14 @@
  * @link https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * Gutenberg Block functions since v2.1.2 also used for widget.
- * Version: 3.1.0
- * 2.6.0 improve security by following Plugin Check recommendations; Moved functions common with Joomla to top. 
-   rename SimpleicalBlock to SimpleicalHelper and register widget in this class. 
-   Replace echo by $secho in &$secho param a.o. in display_block, to simplify escaping output by replacing multiple echoes by one. 
-   known error: in wp 5.9.5 with elementor 3.14.1 aria-expanded and aria-controls are stripped bij wp_kses before wp 6.3.0 (see wp_kses.php) 
-    issue is solved tested with wp 6.7.1 with elementor 3.26.5 . 
- * 2.6.1  Started simplifying (bootstrap) collapse by toggles for adding javascript and trigger collapse by title.
-   Remove toggle to allow safe html in summary and description, save html is always allowed now.
-   Sameday as logical and calculated with localtime instead of gmdate. Add titlenode to REST output. Removed ev_class from li head.
- * 2.7.0 Added cast $class to string in sanitize_html_clss, defaults for new collapse fields. Add support for details/summary tag combination.
- * 3.0.0 removed messages, (replaced by Notices and Warning in error_log)
- * 3.1.0 in response to PCP error replace get_block_wrapper_attributes() by expected result 
-   'class="wp-block-simplegoogleicalenderwidget-simple-ical-block"'; // hardcoded untill (is_wp_version_compatible('5.6'));           
+ * Version: 3.2.0
+ * 3.2.0 first created as copy of display_block
  */
 // no direct access
 defined('ABSPATH') or die ('Restricted access');
 
 use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\IcsParser;
 use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalHelper;
-/*
-if (!empty($wa))$wa->addInlineStyle('.simple_ical_block p[hidden]{display:none !important;}', ['name' => 'simple-ical-block-inline-style']);
-if (empty($secho)) {  $secho = ''; }
-
-if (empty($nohead) ) {
-    $block_attributes = SimpleicalHelper::render_attributes( $params->toArray());
-    $secho .= '<div id="' . $block_attributes['anchorId']  .'" data-sib-id="' . $block_attributes['sibid'] . '" ' . ' class="simple_ical_block ' . $block_attributes['title_collapse_toggle']. '" >';
-}
-*/
 /**
  * Front-end display of module, block or widget.
  *
@@ -186,14 +166,6 @@ if (empty($nohead) ) {
         } else {
             $secho .= $block_attributes['no_events'];
         }
-        $secho .= '<br class="clear v310" />';
+        $secho .= '<br class="clear v320" />';
 }
-/* end display_block */
-//if (empty($nohead)) {
-//    $secho .= '</div>';
-//}
-
-//echo SimpleicalHelper::clean_output($secho);
-//$secho = '';
-
 
