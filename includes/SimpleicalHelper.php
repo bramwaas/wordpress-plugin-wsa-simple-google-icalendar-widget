@@ -328,9 +328,8 @@ class SimpleicalHelper
                     $wrapperattr = 'class="wp-block-simplegoogleicalenderwidget-simple-ical-block"'; // hardcoded untill (is_wp_version_compatible('5.6')) ? get_block_wrapper_attributes() : '';
                     $secho .= sprintf($block_attributes['before_widget'], ($block_attributes['anchorId'] . '" data-sib-id="' . $block_attributes['sibid'] . '" data-sib-utzui="' . $block_attributes['rest_utzui'] . '" data-sib-st="0-start' ), $wrapperattr);
                     $secho .= $titlenode;
-                    $secho .= '<p>';
-                    $secho .= __('Processing', 'simple-google-icalendar-widget');
-                    $secho .= '</p>' . $block_attributes['after_widget'];
+                    include self::getLayoutPath('rest-client-timezone');
+                    $secho .= $block_attributes['after_widget'];
                     try {
                         unset($block_attributes['before_widget'], $block_attributes['after_widget']);
                         self::update_rest_attrs($block_attributes);
