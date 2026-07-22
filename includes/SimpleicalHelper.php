@@ -360,9 +360,8 @@ class SimpleicalHelper
     /**
      * In this function we are searching for (an override) template file (also called layout) in the theme etc or default in the plugin
      * It searches for the template file within the SIB_SLU ('simple-google-calendar-widget') directory, checking the following locations in order:
-     * 1.
-     * the active theme;
-     * 2. the parent theme (if a child theme is in use);
+     * 1. the active theme templates directory;
+     * 2. the parent theme templates directory (if a child theme is in use);
      * 3. wp-includes//theme-compat/;
      * 4. the plugin directory/tmpl.
      * If the file is not found using the provided name, it searches again in the same order using the name 'default'.
@@ -384,11 +383,11 @@ class SimpleicalHelper
             if (! $template_name) {
                 continue;
             }
-            if (file_exists(get_stylesheet_directory() . '/' . SIB_SLUG . '/' . $template_name)) {
-                return get_stylesheet_directory() . '/' . SIB_SLUG . '/' . $template_name;
+            if (file_exists(get_stylesheet_directory() . '/templates/' . SIB_SLUG . '/' . $template_name)) {
+                return get_stylesheet_directory() . '/templates/' . SIB_SLUG . '/' . $template_name;
                 break;
-            } elseif ($is_child_theme && file_exists(get_template_directory() . '/' . SIB_SLUG . '/' . $template_name)) {
-                return get_template_directory() . '/' . SIB_SLUG . '/' . $template_name;
+            } elseif ($is_child_theme && file_exists(get_template_directory() . '/templates/' . SIB_SLUG . '/' . $template_name)) {
+                return get_template_directory() . '/templates/' . SIB_SLUG . '/' . $template_name;
                 break;
             } elseif (file_exists(ABSPATH . WPINC . '/theme-compat/' . SIB_SLUG . '/' . $template_name)) {
                 return ABSPATH . WPINC . '/theme-compat/' . SIB_SLUG . '/' . $template_name;
