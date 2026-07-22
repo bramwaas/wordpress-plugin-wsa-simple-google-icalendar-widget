@@ -319,8 +319,8 @@ class SimpleicalHelper
                     $secho .= $titlenode;
                 case 'REST':
                     // Block displayed via REST
-                    // will give an php E_Warning on failing, more includes possible when more intances of the block are on the same page.
-                    include self::getLayoutPath('defaultp');
+                    // more includes possible when more intances of the block are on the same page.
+                    require self::getLayoutPath('default');
                     // self::display_block($block_attributes, $secho);
                     break;
                 case 'rest_ph':
@@ -328,13 +328,18 @@ class SimpleicalHelper
                     $wrapperattr = 'class="wp-block-simplegoogleicalenderwidget-simple-ical-block"'; // hardcoded untill (is_wp_version_compatible('5.6')) ? get_block_wrapper_attributes() : '';
                     $secho .= sprintf($block_attributes['before_widget'], ($block_attributes['anchorId'] . '" data-sib-id="' . $block_attributes['sibid'] . '" data-sib-utzui="' . $block_attributes['rest_utzui'] . '" data-sib-st="0-start' ), $wrapperattr);
                     $secho .= $titlenode;
-                    include self::getLayoutPath('rest-client-timezone');
+                    $secho .= '<p>';
+                    $secho .= __('Processing', 'simple-google-icalendar-widget');
+                    $secho .= '</p>' . $block_attributes['after_widget'];
+                    
+                    //require self::getLayoutPath('rest-client-timezone');
                     $secho .= $block_attributes['after_widget'];
                     try {
                         unset($block_attributes['before_widget'], $block_attributes['after_widget']);
                         self::update_rest_attrs($block_attributes);
                     } catch (\Exception $e) {
                         $secho .= '<p>Caught exception: ' . $e->getMessage() . "</p>\n";
+                        Log::log(Log::WARNING, 'Attributes not saved ' . 'Caught exception: ' . $e->getMessage());
                     }
                     break;
                 case 'block':
@@ -345,8 +350,8 @@ class SimpleicalHelper
                     if (! empty($block_attributes['title'])) {
                         $secho .= $titlenode;
                     }
-                    // will give an php E_Warning on failing, more includes possible when more intances of the block are on the same page.
-                    include self::getLayoutPath('default');
+                    // more includes possible when more intances of the block are on the same page.
+                    require self::getLayoutPath('default');
                     $secho .= $block_attributes['after_widget'];
  //                   self::display_block($block_attributes, $secho);
                                         break;
