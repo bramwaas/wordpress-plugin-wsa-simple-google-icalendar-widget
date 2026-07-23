@@ -378,7 +378,7 @@ class SimpleicalHelper
         if ('default' != $layout)
             $template_names[] = 'default.php';
         $is_child_theme = is_child_theme();
-
+        getLayoutDirs();
         foreach ((array) $template_names as $template_name) {
             if (! $template_name) {
                 continue;
@@ -400,6 +400,48 @@ class SimpleicalHelper
         Log::log(Log::ERROR, '404 ' . SIB_TEMPLATES_DIR . 'default.php not found; plugin incomplete.');
         return SIB_TEMPLATES_DIR . 'error.php';
     }
+    /**
+     * Get an array of layout unique file names in layout path directories. In this function we are searching for (an override) template file (also called layout) in the theme etc or default in the plugin
+     *
+     * @param string $layout templatename
+     *
+     * @return array found file names.
+     *
+     * @since 3.2.0
+     */
+    static function getLayoutFiles()
+    {
+        
+    }
+    /**
+     * Get an array of layout path directories in correct order. 
+     * It returns the template file directories within the SIB_SLUG ('simple-google-calendar-widget') directory, checking the following locations in order:
+     * 1. the active theme templates directory;
+     * 2. the parent theme templates directory (if a child theme is in use);
+     * 3. wp-includes//theme-compat/;
+     * 4. the plugin directory/tmpl.
+
+     * @param string $layout templatename
+     *
+     * @return array found layout directories in corrst order.
+     *
+     * @since 3.2.0
+     */
+    static function getLayoutDirs()
+    {
+        $dir = get_stylesheet_directory() . '/templates/' . SIB_SLUG;
+        if (isdir($dir)) $layoutdirs[] = [$dir, 'theme' ];
+        $dir = get_template_directory() . '/templates/' . SIB_SLUG;
+        if (isdir($dir)) $layoutdirs[] = [$dir, 'parent-theme' ];
+        $dir = ABSPATH . WPINC . '/theme-compat/' . SIB_SLUG;
+        if (isdir($dir)) $layoutdirs[] = [$dir, 'theme-compat' ];
+        $dir = SIB_TEMPLATES_DIR;
+        if (isdir($dir)) $layoutdirs[] = [$dir, 'plugin' ];
+        Log::log(Log::NOTICE, implode(array_keys($layoutdirs)) . 'vals' . implode($layoutdirs) );
+        return $layoutdirs;
+        
+    }
+    
     /**
      * Compare attributes with those in widget option and changed
      * Save attributes in widget option for use in REST call (only when changed on other then excluded keys)
