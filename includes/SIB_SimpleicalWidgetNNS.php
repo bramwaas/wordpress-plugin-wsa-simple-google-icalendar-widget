@@ -1,19 +1,20 @@
 <?php
 /*
- * SimpleicalWidgetNNS.php
+ * SIB_SimpleicalWidgetNNS.php
  *
- * legagcy widget 
+ * frontend without namespace for legagcy widget 
  *
  * @package Simple Google iCalendar Block
  * @author Bram Waasdorp <bram@waasdorpsoekhan.nl>
- * @copyright Copyright (c) 2024 - 2026, Bram Waasdorp
+ * @copyright Copyright (c) 2026 - 2026, Bram Waasdorp
  * 
- * 3.1.3 designed to support legacy ('Stone Age') applications that cannot work with namespaces      
+ * 3.1.3 designed to support legacy ('Stone Age') applications that cannot work with namespaces, 
+ *   first for SiteOrigin page builer. Not loaded automatic by classloader, so use require before registering.      
  */
 // no direct access
 defined('ABSPATH') or die ('Restricted access');
 
-class SimpleicalWidgetNNS extends  WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalWidget
+class SIB_SimpleicalWidgetNNS extends  WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalWidget
     {
         /*
          * contruct the old widget
@@ -21,7 +22,7 @@ class SimpleicalWidgetNNS extends  WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalend
          */
         public function __construct($id_base = '', $name = '', $widget_options = array(), $control_options = array())
         {
-            if (empty( $id_base )) $id_base = 'simple_ical_widget_nns';
+            if (empty( $id_base )) $id_base = 'sib_simple_ical_widget_nns';
             if (empty( $name )) $name = 'Simple Google iCalendar Widget No Namespace';
             if (empty( $widget_options )) $widget_options = [ 
                 'classname' => 'Simple_iCal_WidgetNNS',

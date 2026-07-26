@@ -22,7 +22,7 @@
  * 3.0.0 removed messages, (replaced by Notices and Warning in error_log)
  * 3.1.0 in response to PCP error replace get_block_wrapper_attributes() by expected result 
    'class="wp-block-simplegoogleicalenderwidget-simple-ical-block"'; // hardcoded untill (is_wp_version_compatible('5.6'));  
- * 3.1.3 extra widget with no namespace           
+ * 3.1.3 extra widget SIB_SimpleicalWidgetNNS with no namespace as frontend for standars legacy widget SimpleicalWidget           
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 // no direct access
@@ -598,7 +598,7 @@ class SimpleicalHelper
      */
     static function simple_ical_widget ()
     {  register_widget( '\WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalWidget' );
-       require  __DIR__ . DIRECTORY_SEPARATOR . 'SimpleicalWidgetNNS.php';
-       register_widget( '\SimpleicalWidgetNNS' );
+       require  __DIR__ . DIRECTORY_SEPARATOR . 'SIB_SimpleicalWidgetNNS.php';
+       register_widget( '\SIB_SimpleicalWidgetNNS' );
     }
 } // end class SimpleicalHelper
