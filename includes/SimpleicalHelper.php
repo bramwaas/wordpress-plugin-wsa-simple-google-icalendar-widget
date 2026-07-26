@@ -598,6 +598,7 @@ class SimpleicalHelper
      */
     static function simple_ical_widget ()
     {  register_widget( '\WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalWidget' );
+       require  __DIR__ . DIRECTORY_SEPARATOR . 'SimpleicalWidgetNNS.php';
        register_widget( '\SimpleicalWidgetNNS' );
     }
 } // end class SimpleicalHelper
