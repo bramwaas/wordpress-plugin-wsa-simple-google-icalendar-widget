@@ -21,7 +21,8 @@
  * 2.7.0 Added cast $class to string in sanitize_html_clss, defaults for new collapse fields. Add support for details/summary tag combination.
  * 3.0.0 removed messages, (replaced by Notices and Warning in error_log)
  * 3.1.0 in response to PCP error replace get_block_wrapper_attributes() by expected result 
-   'class="wp-block-simplegoogleicalenderwidget-simple-ical-block"'; // hardcoded untill (is_wp_version_compatible('5.6'));           
+   'class="wp-block-simplegoogleicalenderwidget-simple-ical-block"'; // hardcoded untill (is_wp_version_compatible('5.6'));  
+ * 3.1.3 extra widget with no namespace           
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 // no direct access
@@ -360,13 +361,15 @@ class SimpleicalHelper
     /**
      * In this function we are searching for (an override) template file (also called layout) in the theme etc or default in the plugin
      * It searches for the template file within the SIB_SLU ('simple-google-calendar-widget') directory, checking the following locations in order:
-     * 1. the active theme templates directory;
+     * 1.
+     * the active theme templates directory;
      * 2. the parent theme templates directory (if a child theme is in use);
      * 3. wp-includes//theme-compat/;
      * 4. the plugin directory/tmpl.
      * If the file is not found using the provided name, it searches again in the same order using the name 'default'.
      *
-     * @param string $layout templatename
+     * @param string $layout
+     *            templatename
      *            
      * @return string ... found templatefile path for require_once / not found '' and Log error default.php should always be available.
      *        
@@ -374,27 +377,20 @@ class SimpleicalHelper
      */
     static function getLayoutPath($layout = 'default')
     {
+        self::getLayoutFiles();
         $template_names[] = $layout . '.php';
         if ('default' != $layout)
             $template_names[] = 'default.php';
-        $is_child_theme = is_child_theme();
-        getLayoutDirs();
+
         foreach ((array) $template_names as $template_name) {
             if (! $template_name) {
                 continue;
             }
-            if (file_exists(get_stylesheet_directory() . '/templates/' . SIB_SLUG . '/' . $template_name)) {
-                return get_stylesheet_directory() . '/templates/' . SIB_SLUG . '/' . $template_name;
-                break;
-            } elseif ($is_child_theme && file_exists(get_template_directory() . '/templates/' . SIB_SLUG . '/' . $template_name)) {
-                return get_template_directory() . '/templates/' . SIB_SLUG . '/' . $template_name;
-                break;
-            } elseif (file_exists(ABSPATH . WPINC . '/theme-compat/' . SIB_SLUG . '/' . $template_name)) {
-                return ABSPATH . WPINC . '/theme-compat/' . SIB_SLUG . '/' . $template_name;
-                break;
-            } elseif (file_exists(SIB_TEMPLATES_DIR . $template_name)) {
-                return SIB_TEMPLATES_DIR . $template_name;
-                break;
+            foreach (self::getLayoutDirs() as $dir) {
+                if (file_exists($dir . $template_name)) {
+                    return $dir . $template_name;
+                    break;
+                }
             }
         }
         Log::log(Log::ERROR, '404 ' . SIB_TEMPLATES_DIR . 'default.php not found; plugin incomplete.');
@@ -411,35 +407,49 @@ class SimpleicalHelper
      */
     static function getLayoutFiles()
     {
+        $dirs = implode(',', self::getLayoutDirs());
+//        $b = '22_02_18_country_';
+        $files = glob("{$dirs}*.php",  GLOB_BRACE);
+        // OR //
+        // $m= glob({".$a.",".$b."}*.txt", GLOB_BRACE);
+        // OR //
+        
+        Log::log(Log::NOTICE, implode(', ', $layoutdirs));
         
     }
+
     /**
-     * Get an array of layout path directories in correct order. 
+     * Get an array of layout path directories in correct order.
      * It returns the template file directories within the SIB_SLUG ('simple-google-calendar-widget') directory, checking the following locations in order:
      * 1. the active theme templates directory;
      * 2. the parent theme templates directory (if a child theme is in use);
      * 3. wp-includes//theme-compat/;
      * 4. the plugin directory/tmpl.
-
-     * @param string $layout templatename
      *
+     * @param string $layout
+     *            templatename
+     *            
      * @return array found layout directories in corrst order.
-     *
+     *        
      * @since 3.2.0
      */
     static function getLayoutDirs()
     {
-        $dir = get_stylesheet_directory() . '/templates/' . SIB_SLUG;
-        if (isdir($dir)) $layoutdirs[] = [$dir, 'theme' ];
-        $dir = get_template_directory() . '/templates/' . SIB_SLUG;
-        if (isdir($dir)) $layoutdirs[] = [$dir, 'parent-theme' ];
-        $dir = ABSPATH . WPINC . '/theme-compat/' . SIB_SLUG;
-        if (isdir($dir)) $layoutdirs[] = [$dir, 'theme-compat' ];
-        $dir = SIB_TEMPLATES_DIR;
-        if (isdir($dir)) $layoutdirs[] = [$dir, 'plugin' ];
-        Log::log(Log::NOTICE, implode(array_keys($layoutdirs)) . 'vals' . implode($layoutdirs) );
+        $dir = get_stylesheet_directory() . '/templates/' . SIB_SLUG . '/';
+        if (is_dir($dir))
+            $layoutdirs[] = $dir;
+        if (is_child_theme()) {
+            $dir = get_template_directory() . '/templates/' . SIB_SLUG . '/';
+            if (is_dir($dir))
+                $layoutdirs[] = $dir;
+        }
+        $dir = ABSPATH . WPINC . '/theme-compat/' . SIB_SLUG . '/';
+        if (is_dir($dir))
+            $layoutdirs[] = $dir;
+        // SIB_TEMPLATES_DIR should always be avalable and a dir.
+        $layoutdirs[] = SIB_TEMPLATES_DIR;
+//        Log::log(Log::NOTICE, implode(', ', $layoutdirs));
         return $layoutdirs;
-        
     }
     
     /**
@@ -588,5 +598,6 @@ class SimpleicalHelper
      */
     static function simple_ical_widget ()
     {  register_widget( '\WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalWidget' );
+       register_widget( '\SimpleicalWidgetNNS' );
     }
 } // end class SimpleicalHelper
