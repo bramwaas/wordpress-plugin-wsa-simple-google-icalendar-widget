@@ -598,10 +598,10 @@ class SimpleicalHelper
      */
     static function simple_ical_widget ()
     {  register_widget( '\WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalWidget' );
-       $sgcoew_options = SimpleicalWidgetAdmin::get_plugin_options();
-       if (SimpleicalWidgetAdmin::get_plugin_options('simpleical_add_widget_nns')) {
-         require  __DIR__ . DIRECTORY_SEPARATOR . 'SIB_SimpleicalWidgetNNS.php';
-         register_widget( '\SIB_SimpleicalWidgetNNS' );
+       $sib_options = SimpleicalWidgetAdmin::get_plugin_options();
+       if ($sib_options['simpleical_add_widget_nns']) {
+         require  __DIR__ . DIRECTORY_SEPARATOR . 'SimpleicalWidgetNNS.php';
+         register_widget( 'SimpleicalWidgetNNS' );
        }
     }
 } // end class SimpleicalHelper

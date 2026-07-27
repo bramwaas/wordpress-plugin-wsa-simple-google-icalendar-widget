@@ -15,12 +15,12 @@
  * 2.1.3 block footer after events and placeholder when no events.
  * 2.2.0 fix spell-error in namespace, and use new correct text domain
  * 2.3.0 anchors (id) at several places in document
- * 2.4.2 replaced null by 'admin.php' to solve issue 'Deprecation warnings in PHP 8.3'  
- * 2.4.4 added tag_title and extra option for timzone settings 
+ * 2.4.2 replaced null by 'admin.php' to solve issue 'Deprecation warnings in PHP 8.3'
+ * 2.4.4 added tag_title and extra option for timzone settings
  * 2.6.1  Started simplifying (bootstrap) collapse by toggles for adding javascript and trigger collapse by title.
-   Remove toggle to allow safe html in summary and description, save html is always allowed now. 
- * 3.0.0 add formatted logging via own Log class to error_log(). 
- * 3.1.3 otiop to add legacy widget with no namespace.      
+ Remove toggle to allow safe html in summary and description, save html is always allowed now.
+ * 3.0.0 add formatted logging via own Log class to error_log().
+ * 3.1.3 otiop to add legacy widget with no namespace.
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 // no direct access
@@ -29,7 +29,7 @@ defined('ABSPATH') or die ('Restricted access');
 class SimpleicalWidgetAdmin {
     const SIB_OPTIONS = 'simple_ical_options';
     
-// Start Options    
+    // Start Options
     /**
      * custom option and settings
      */
