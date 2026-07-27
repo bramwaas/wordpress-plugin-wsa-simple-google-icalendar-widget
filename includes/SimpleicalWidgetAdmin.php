@@ -50,7 +50,7 @@ class SimpleicalWidgetAdmin {
             'simpleical_add_widget_nns', // As of WP 4.6 this value is used only internally.
             // Use $args' field_name to populate the id inside the callback.
             __( 'Add legacy widget with no namespace', 'simple-google-icalendar-widget' ),
-            [$this, 'simpleical_add_widget_nns_cb'],
+            [$this, 'simpleical_add_checkbox_code_cb'],
             'simpleical_options_form',
             'simpleical_section_developers',
             array(
@@ -64,7 +64,7 @@ class SimpleicalWidgetAdmin {
             'simpleical_add_collapse_code', // As of WP 4.6 this value is used only internally.
             // Use $args' field_name to populate the id inside the callback.
             __( 'Site add BS collapse code', 'simple-google-icalendar-widget' ),
-            [$this, 'simpleical_add_collapse_code_cb'],
+            [$this, 'simpleical_add_checkbox_code_cb'],
             'simpleical_options_form',
             'simpleical_section_developers',
             array(
@@ -78,7 +78,7 @@ class SimpleicalWidgetAdmin {
             'simpleical_add_collapse_code_admin', // As of WP 4.6 this value is used only internally.
             // Use $args' field_name to populate the id inside the callback.
             __( 'Admin add BS collapse code', 'simple-google-icalendar-widget' ),
-            [$this, 'simpleical_add_collapse_code_cb'],
+            [$this, 'simpleical_add_checkbox_code_cb'],
             'simpleical_options_form',
             'simpleical_section_developers',
             array(
@@ -127,7 +127,7 @@ class SimpleicalWidgetAdmin {
  *
  * @param array $args
  */
-function simpleical_add_collapse_code_cb( $args ) {
+function simpleical_add_checkbox_code_cb( $args ) {
 	// Get the value of the setting we've registered with register_setting()
     $options = self::get_plugin_options();
 	?>	 
