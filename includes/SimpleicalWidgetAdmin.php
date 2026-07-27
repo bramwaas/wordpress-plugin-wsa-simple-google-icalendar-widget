@@ -95,6 +95,8 @@ class SimpleicalWidgetAdmin {
      * @param array $options.
      */
     function sanitize_options ($options) {
+        $options['simpleical_add_widget_nns'] =
+        (empty($options['simpleical_add_widget_nns'])? false : esc_attr($options['simpleical_add_widget_nns']));
         $options['simpleical_add_collapse_code'] =
         (empty($options['simpleical_add_collapse_code'])? false : esc_attr($options['simpleical_add_collapse_code']));
         $options['simpleical_add_collapse_code_admin'] =
@@ -208,6 +210,7 @@ static function get_plugin_options(){
     $options = get_option(self::SIB_OPTIONS);
     if (! is_array($options)) $options = [];
     $options = array_merge([
+        'simpleical_add_widget_nns' => false,
         'simpleical_add_collapse_code' => false,
         'simpleical_add_collapse_code_admin' => false,
     ], $options);
