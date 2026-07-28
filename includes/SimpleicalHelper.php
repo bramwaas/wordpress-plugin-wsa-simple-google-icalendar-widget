@@ -589,19 +589,20 @@ class SimpleicalHelper
     {
         return wp_kses(SimpleicalHelper::render_block($block_attributes),'post');
     }
-    
+
     /**
      * Widget init register legacy widget
      *
      * @param
      *            .
      */
-    static function simple_ical_widget ()
-    {  register_widget( '\WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalWidget' );
-       $sib_options = SimpleicalWidgetAdmin::get_plugin_options();
-       if ($sib_options['simpleical_add_widget_nns']) {
-         require  __DIR__ . DIRECTORY_SEPARATOR . 'SimpleicalWidgetNNS.php';
-         register_widget( 'SimpleicalWidgetNNS' );
-       }
+    static function simple_ical_widget()
+    {
+        register_widget('\WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalWidget');
+        $sib_options = SimpleicalWidgetAdmin::get_plugin_options();
+        if ($sib_options['simpleical_add_widget_nns']) {
+            require __DIR__ . DIRECTORY_SEPARATOR . 'SIB_SimpleicalWidgetNNS.php';
+            register_widget("SIB_SimpleicalWidgetNNS");
+        }
     }
 } // end class SimpleicalHelper
