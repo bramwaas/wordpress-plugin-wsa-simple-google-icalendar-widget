@@ -1189,6 +1189,7 @@ END:VCALENDAR';
             try {
                 $this->parse($httpBody,  $cal_class, $cal_ord );
             } catch(\Exception $exc) {
+                Log::log(Log::NOTICE, 'Parse failed. Exc:' . $exc->getMessage() . PHP_EOL . 'in file: ' . $exc->getFile() . ' in line:' . $exc->getLine() );
                 continue;
             }
         } // end foreach
