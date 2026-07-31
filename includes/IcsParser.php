@@ -41,7 +41,7 @@ namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 defined('ABSPATH') or die ('Restricted access');
 
 class IcsParser {
-    
+    const TOKEN_BEGIN_VCALENDAR = "BEGIN:VCALENDAR";
     const TOKEN_BEGIN_VEVENT = "BEGIN:VEVENT";
     const TOKEN_END_VEVENT = "END:VEVENT";
     const TOKEN_BEGIN_VTIMEZONE = "\nBEGIN:VTIMEZONE";
@@ -1187,7 +1187,15 @@ END:VCALENDAR';
             
             
             try {
-                $this->parse($httpBody,  $cal_class, $cal_ord );
+                $startpos = strpos($httpBody, self::TOKEN_BEGIN_VEVENT);
+                if ($startpos !== false) {
+                    $this->parse($httpBody,  $cal_class, $cal_ord );
+                } else {
+                    if (false !== strpos($httpBody, self::TOKEN_BEGIN_VCALENDAR) ){
+                        Log::log(Log::WARNING, 'No valid BEGIN:VCALENDAR  found in fetched file :' . substr($httpBody, 1, 100));
+                    }
+                    Log::log(Log::INFO, 'No valid BEGIN:VEVENT found. ');
+                }
             } catch(\Exception $exc) {
                 Log::log(Log::NOTICE, 'Parse failed. Exc:' . $exc->getMessage() . PHP_EOL . 'in file: ' . $exc->getFile() . ' in line:' . $exc->getLine() );
                 continue;
