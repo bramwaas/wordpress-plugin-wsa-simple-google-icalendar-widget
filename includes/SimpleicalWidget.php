@@ -102,7 +102,7 @@ class SimpleicalWidget extends \WP_Widget
                $secho .= __('Processing', 'simple-google-icalendar-widget');
                 $secho .= '</p>';
             } else {
-                if ((false === strpos($instance['calendar_id'],'//:')) || (false === strpos($instance['calendar_id'],'@'))) $instance['calendar_id'] = base64_decode($instance['calendar_id']);
+                if ((false === strpos($instance['calendar_id'],'//:')) && (false === strpos($instance['calendar_id'],'@'))) $instance['calendar_id'] = base64_decode($instance['calendar_id']);
                 SimpleicalHelper::display_block($instance, $secho);
             }
             // end lay-out block
@@ -222,6 +222,7 @@ class SimpleicalWidget extends \WP_Widget
                 else $instance['sibid'] = 'W' . bin2hex(random_bytes(7));
             }
             $instance = wp_parse_args((array) $instance, $default);
+            $insyance['calendar_id'] = (((false === strpos($instance['calendar_id'],'//:')) && (false === strpos($instance['calendar_id'],'@'))) ? base64_decode($instance['calendar_id']): ($instance['calendar_id']));
             $nwsibid = 'w' .  bin2hex(random_bytes(7));
             
             ?>
@@ -231,7 +232,7 @@ class SimpleicalWidget extends \WP_Widget
         </p>
         <p>
           <label for="<?php echo esc_attr($this->get_field_id('calendar_id')); ?>"><?php esc_attr_e('Calendar ID, or iCal URL:', 'simple-google-icalendar-widget'); ?></label> 
-          <input class="widefat" id="<?php echo esc_attr($this->get_field_id('calendar_id')); ?>" name="<?php echo esc_attr($this->get_field_name('calendar_id')); ?>" type="text" value="<?php echo (((false === strpos($instance['calendar_id'],'//:')) || (false === strpos($instance['calendar_id'],'@'))) ? base64_decode($instance['calendar_id']): ($instance['calendar_id'])); ?>" />
+          <input class="widefat" id="<?php echo esc_attr($this->get_field_id('calendar_id')); ?>" name="<?php echo esc_attr($this->get_field_name('calendar_id')); ?>" type="text" value="<?php echo $instance['calendar_id']; ?>" />
         </p>
         <p>
           <label for="<?php echo esc_attr($this->get_field_id('event_count')); ?>"><?php esc_attr_e('Number of events displayed:', 'simple-google-icalendar-widget'); ?></label> 
