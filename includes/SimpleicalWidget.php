@@ -16,7 +16,8 @@
  *  Remove toggle to allow safe html in summary and description, save html is always allowed now. 
  * 2.7.0 Enable to add words of summary to categories for filtering. Add support for details/summary tag combination.
  * 2.7.1 remove load textdomain as recommended by PluginCheck
- * 3.1.3 make extendable by adding parameters to construct.      
+ * 3.1.3 make extendable by adding parameters to construct.   
+ * 3.1.4 remove single htmlspecialchars valiidation that broke url with & in it replaced by base64encode and decode.   
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 // no direct access
@@ -101,6 +102,7 @@ class SimpleicalWidget extends \WP_Widget
                $secho .= __('Processing', 'simple-google-icalendar-widget');
                 $secho .= '</p>';
             } else {
+                if ((false === strpos($instance['calendar_id'],'//:')) || (false === strpos($instance['calendar_id'],'@'))) $instance['calendar_id'] = base64_decode($instance['calendar_id']);
                 SimpleicalHelper::display_block($instance, $secho);
             }
             // end lay-out block
@@ -121,7 +123,11 @@ class SimpleicalWidget extends \WP_Widget
         {
             $instance['title'] = wp_strip_all_tags($new_instance['title']);
             
-            $instance['calendar_id'] = htmlspecialchars($new_instance['calendar_id']);
+            if (empty($old_instance['calendar_id']) || $old_instance['calendar_id'] != $new_instance['calendar_id']){
+                delete_transient('SimpleicalBlock'  . $instance['sibid']);
+            }
+                
+            $instance['calendar_id'] = base64_encode($new_instance['calendar_id']);
             
             if(is_numeric($new_instance['cache_time']) && 1 < $new_instance['cache_time']) {
                 $instance['cache_time'] = $new_instance['cache_time'];
@@ -225,7 +231,7 @@ class SimpleicalWidget extends \WP_Widget
         </p>
         <p>
           <label for="<?php echo esc_attr($this->get_field_id('calendar_id')); ?>"><?php esc_attr_e('Calendar ID, or iCal URL:', 'simple-google-icalendar-widget'); ?></label> 
-          <input class="widefat" id="<?php echo esc_attr($this->get_field_id('calendar_id')); ?>" name="<?php echo esc_attr($this->get_field_name('calendar_id')); ?>" type="text" value="<?php echo esc_attr($instance['calendar_id']); ?>" />
+          <input class="widefat" id="<?php echo esc_attr($this->get_field_id('calendar_id')); ?>" name="<?php echo esc_attr($this->get_field_name('calendar_id')); ?>" type="text" value="<?php echo (((false === strpos($instance['calendar_id'],'//:')) || (false === strpos($instance['calendar_id'],'@'))) ? base64_decode($instance['calendar_id']): ($instance['calendar_id'])); ?>" />
         </p>
         <p>
           <label for="<?php echo esc_attr($this->get_field_id('event_count')); ?>"><?php esc_attr_e('Number of events displayed:', 'simple-google-icalendar-widget'); ?></label> 
