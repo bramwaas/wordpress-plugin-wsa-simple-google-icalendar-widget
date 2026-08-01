@@ -34,6 +34,7 @@
  *  errors caused by a large number of requests in a short period of time. (after issues #47 and #48 for joomla module). First 3 failed requests cachetimes
  *  only 60 seconds next cachetimes same as for succesfull requests. Use formatted standard error_log() logging.
  *  3.1.1 replaced wp_remote_get by wp_safe_remote_get to further harden security after fixing a security issue
+ *  3.1.4 extra logging e.g. if found file has no ical calendar structure 
  */
 
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
