@@ -128,7 +128,11 @@ class SimpleicalWidget extends \WP_Widget
             }
             if ((false !== strpos($instance['calendar_id'],'//:')) || (false !== strpos($instance['calendar_id'],'@'))) {
                 $instance['calendar_id'] = base64_encode($new_instance['calendar_id']);
+            } else {
+                $instance['calendar_id'] = $new_instance['calendar_id'];
+                
             }
+                
             
             if(is_numeric($new_instance['cache_time']) && 1 < $new_instance['cache_time']) {
                 $instance['cache_time'] = $new_instance['cache_time'];
