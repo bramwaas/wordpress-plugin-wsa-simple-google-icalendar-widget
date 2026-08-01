@@ -237,7 +237,7 @@ class SimpleicalWidget extends \WP_Widget
         </p>
         <p>
           <label for="<?php echo esc_attr($this->get_field_id('calendar_id')); ?>"><?php esc_attr_e('Calendar ID, or iCal URL:', 'simple-google-icalendar-widget'); ?></label> 
-          <input class="widefat" id="<?php echo esc_attr($this->get_field_id('calendar_id')); ?>" name="<?php echo esc_attr($this->get_field_name('calendar_id')); ?>" type="text" value="<?php echo $instance['calendar_id']; ?>" />
+          <input class="widefat" id="<?php echo esc_attr($this->get_field_id('calendar_id')); ?>" name="<?php echo esc_attr($this->get_field_name('calendar_id')); ?>" type="text" value="<?php echo esc_attr($instance['calendar_id']); ?>" />
         </p>
         <p>
           <label for="<?php echo esc_attr($this->get_field_id('event_count')); ?>"><?php esc_attr_e('Number of events displayed:', 'simple-google-icalendar-widget'); ?></label> 
