@@ -223,7 +223,7 @@ class SimpleicalWidget extends \WP_Widget
                 else $instance['sibid'] = 'W' . bin2hex(random_bytes(7));
             }
             $instance = wp_parse_args((array) $instance, $default);
-            $instance['calendar_id'] = (((false === strpos($instance['calendar_id'],'//:')) && (false === strpos($instance['calendar_id'],'@'))) ? base64_decode($instance['calendar_id']): ($instance['calendar_id']));
+            if ((false === strpos($instance['calendar_id'],'//:')) && (false === strpos($instance['calendar_id'],'@')))  $instance['calendar_id'] = base64_decode($instance['calendar_id']);
             $nwsibid = 'w' .  bin2hex(random_bytes(7));
             
             ?>
