@@ -126,8 +126,9 @@ class SimpleicalWidget extends \WP_Widget
             if (empty($old_instance['calendar_id']) || $old_instance['calendar_id'] != $new_instance['calendar_id']){
                 delete_transient('SimpleicalBlock'  . $instance['sibid']);
             }
-                
-            $instance['calendar_id'] = base64_encode($new_instance['calendar_id']);
+            if ((false !== strpos($instance['calendar_id'],'//:')) || (false !== strpos($instance['calendar_id'],'@'))) {
+                $instance['calendar_id'] = base64_encode($new_instance['calendar_id']);
+            }
             
             if(is_numeric($new_instance['cache_time']) && 1 < $new_instance['cache_time']) {
                 $instance['cache_time'] = $new_instance['cache_time'];
@@ -222,7 +223,7 @@ class SimpleicalWidget extends \WP_Widget
                 else $instance['sibid'] = 'W' . bin2hex(random_bytes(7));
             }
             $instance = wp_parse_args((array) $instance, $default);
-            $insyance['calendar_id'] = (((false === strpos($instance['calendar_id'],'//:')) && (false === strpos($instance['calendar_id'],'@'))) ? base64_decode($instance['calendar_id']): ($instance['calendar_id']));
+            $instance['calendar_id'] = (((false === strpos($instance['calendar_id'],'//:')) && (false === strpos($instance['calendar_id'],'@'))) ? base64_decode($instance['calendar_id']): ($instance['calendar_id']));
             $nwsibid = 'w' .  bin2hex(random_bytes(7));
             
             ?>
