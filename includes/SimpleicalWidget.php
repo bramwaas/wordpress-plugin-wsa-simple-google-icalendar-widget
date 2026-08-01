@@ -102,7 +102,7 @@ class SimpleicalWidget extends \WP_Widget
                $secho .= __('Processing', 'simple-google-icalendar-widget');
                 $secho .= '</p>';
             } else {
-                if ((false === strpos($instance['calendar_id'],'//:')) && (false === strpos($instance['calendar_id'],'@'))) $instance['calendar_id'] = base64_decode($instance['calendar_id']);
+//                if ((false === strpos($instance['calendar_id'],'//:')) && (false === strpos($instance['calendar_id'],'@'))) $instance['calendar_id'] = base64_decode($instance['calendar_id']);
                 SimpleicalHelper::display_block($instance, $secho);
             }
             // end lay-out block
@@ -126,12 +126,12 @@ class SimpleicalWidget extends \WP_Widget
             if (empty($old_instance['calendar_id']) || $old_instance['calendar_id'] != $new_instance['calendar_id']){
                 delete_transient('SimpleicalBlock'  . $instance['sibid']);
             }
-            if ((false !== strpos($instance['calendar_id'],'//:')) || (false !== strpos($instance['calendar_id'],'@'))) {
-                $instance['calendar_id'] = base64_encode($new_instance['calendar_id']);
-            } else {
+//            if ((false !== strpos($instance['calendar_id'],'//:')) || (false !== strpos($instance['calendar_id'],'@'))) {
+//                $instance['calendar_id'] = base64_encode($new_instance['calendar_id']);
+//            } else {
                 $instance['calendar_id'] = $new_instance['calendar_id'];
                 
-            }
+//            }
                 
             
             if(is_numeric($new_instance['cache_time']) && 1 < $new_instance['cache_time']) {
@@ -227,7 +227,7 @@ class SimpleicalWidget extends \WP_Widget
                 else $instance['sibid'] = 'W' . bin2hex(random_bytes(7));
             }
             $instance = wp_parse_args((array) $instance, $default);
-            if ((false === strpos($instance['calendar_id'],'//:')) && (false === strpos($instance['calendar_id'],'@')))  $instance['calendar_id'] = base64_decode($instance['calendar_id']);
+//            if ((false === strpos($instance['calendar_id'],'//:')) && (false === strpos($instance['calendar_id'],'@')))  $instance['calendar_id'] = base64_decode($instance['calendar_id']);
             $nwsibid = 'w' .  bin2hex(random_bytes(7));
             
             ?>
