@@ -17,7 +17,7 @@
  * 2.7.0 Enable to add words of summary to categories for filtering. Add support for details/summary tag combination.
  * 2.7.1 remove load textdomain as recommended by PluginCheck
  * 3.1.3 make extendable by adding parameters to construct.   
- * 3.1.4 remove single htmlspecialchars validation that broke url with & in it replaced by base64encode and decode.   
+ * 3.1.4 remove single htmlspecialchars validation that broke url with & in it .   
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 // no direct access
