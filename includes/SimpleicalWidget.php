@@ -16,6 +16,7 @@
  *  Remove toggle to allow safe html in summary and description, save html is always allowed now. 
  * 2.7.0 Enable to add words of summary to categories for filtering. Add support for details/summary tag combination.
  * 2.7.1 remove load textdomain as recommended by PluginCheck      
+ * 3.1.3 make extendable by adding parameters to construct.      
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 // no direct access
@@ -27,18 +28,19 @@ class SimpleicalWidget extends \WP_Widget
          * contruct the old widget
          *
          */
-        public function __construct()
+        public function __construct($id_base = '', $name = '', $widget_options = array(), $control_options = array())
         {
-            // load our textdomain
-//            load_plugin_textdomain('simple-google-icalendar-widget', false, basename( dirname( __FILE__ ) ) . '/languages' );
-            
-            parent::__construct('simple_ical_widget', // Base ID
-                'Simple Google iCalendar Widget', // Name
-                array( // Args
-                    'classname' => 'Simple_iCal_Widget',
-                    'description' => __('Displays events from a public Google Calendar or other iCal source', 'simple-google-icalendar-widget'),
-                    'show_instance_in_rest' => true, // allow migrating to block
-                )
+            if (empty( $id_base )) $id_base = 'simple_ical_widget';
+            if (empty( $name )) $name = 'Simple Google iCalendar Widget';
+            if (empty( $widget_options )) $widget_options = [ 
+                'classname' => 'Simple_iCal_Widget',
+                'description' => __('Displays events from a public Google Calendar or other iCal source', 'simple-google-icalendar-widget'),
+                'show_instance_in_rest' => true, // allow migrating to block
+            ];
+            parent::__construct($id_base, // Base ID
+                $name , // Name
+                $widget_options,
+                $control_options
                 );
         }
         

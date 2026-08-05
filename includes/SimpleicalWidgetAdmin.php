@@ -19,7 +19,8 @@
  * 2.4.4 added tag_title and extra option for timzone settings 
  * 2.6.1  Started simplifying (bootstrap) collapse by toggles for adding javascript and trigger collapse by title.
    Remove toggle to allow safe html in summary and description, save html is always allowed now. 
- * 3.0.0 add formatted logging via own Log class to error_log().       
+ * 3.0.0 add formatted logging via own Log class to error_log(). 
+ * 3.1.3 otiop to add legacy widget with no namespace.      
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 // no direct access
@@ -46,10 +47,24 @@ class SimpleicalWidgetAdmin {
             );
         // Register a new field in the "simpleical_section_developers" section, inside the "simpleical_options_form" page.
         add_settings_field(
+            'simpleical_add_widget_nns', // As of WP 4.6 this value is used only internally.
+            // Use $args' field_name to populate the id inside the callback.
+            __( 'Add legacy widget with no namespace', 'simple-google-icalendar-widget' ),
+            [$this, 'simpleical_add_checkbox_code_cb'],
+            'simpleical_options_form',
+            'simpleical_section_developers',
+            array(
+                'field_name'         => 'simpleical_add_widget_nns',
+                'class'             => 'checkbox',
+                'simpleical_custom_data' => 'custom',
+                'field_desc' => __('Check checkbox to add add legacy widget with no namespace e.g., for use in SiteOrigin..', 'simple-google-icalendar-widget' ),
+            )
+            );
+        add_settings_field(
             'simpleical_add_collapse_code', // As of WP 4.6 this value is used only internally.
             // Use $args' field_name to populate the id inside the callback.
             __( 'Site add BS collapse code', 'simple-google-icalendar-widget' ),
-            [$this, 'simpleical_add_collapse_code_cb'],
+            [$this, 'simpleical_add_checkbox_code_cb'],
             'simpleical_options_form',
             'simpleical_section_developers',
             array(
@@ -63,7 +78,7 @@ class SimpleicalWidgetAdmin {
             'simpleical_add_collapse_code_admin', // As of WP 4.6 this value is used only internally.
             // Use $args' field_name to populate the id inside the callback.
             __( 'Admin add BS collapse code', 'simple-google-icalendar-widget' ),
-            [$this, 'simpleical_add_collapse_code_cb'],
+            [$this, 'simpleical_add_checkbox_code_cb'],
             'simpleical_options_form',
             'simpleical_section_developers',
             array(
@@ -80,6 +95,8 @@ class SimpleicalWidgetAdmin {
      * @param array $options.
      */
     function sanitize_options ($options) {
+        $options['simpleical_add_widget_nns'] =
+        (empty($options['simpleical_add_widget_nns'])? false : esc_attr($options['simpleical_add_widget_nns']));
         $options['simpleical_add_collapse_code'] =
         (empty($options['simpleical_add_collapse_code'])? false : esc_attr($options['simpleical_add_collapse_code']));
         $options['simpleical_add_collapse_code_admin'] =
@@ -103,7 +120,7 @@ class SimpleicalWidgetAdmin {
 
 
 /**
- * Cecknox field callback function.
+ * Checknox field callback function.
  *
  * WordPress has magic interaction with the following keys: field_name, class.
  * - the "field_name" key value is used for the "for" attribute of the <label>.
@@ -112,7 +129,7 @@ class SimpleicalWidgetAdmin {
  *
  * @param array $args
  */
-function simpleical_add_collapse_code_cb( $args ) {
+function simpleical_add_checkbox_code_cb( $args ) {
 	// Get the value of the setting we've registered with register_setting()
     $options = self::get_plugin_options();
 	?>	 
@@ -193,6 +210,7 @@ static function get_plugin_options(){
     $options = get_option(self::SIB_OPTIONS);
     if (! is_array($options)) $options = [];
     $options = array_merge([
+        'simpleical_add_widget_nns' => false,
         'simpleical_add_collapse_code' => false,
         'simpleical_add_collapse_code_admin' => false,
     ], $options);

@@ -1,10 +1,10 @@
 <?php
 /**
  * a simple wordpress REST Controller for the simple-ical-block.
- * @copyright Copyright (C) 2024 - 2025 Bram Waasdorp. All rights reserved.
+ * @copyright Copyright (C) 2024 - 2026 Bram Waasdorp. All rights reserved.
  * @license GNU General Public License version 3 or later
  *
- * 3.1.0 
+ * 3.1.2 
  * 2.4.1 adressed Notice: register_rest_route was called <strong>incorrectly</strong>. Namespace must not start or end with a slash.
  *  and added 'permission_callback' => '__return_true', for public routes.
  * 2.4.4 add all (non default) attributes to returned params 'get_content_by_ids';
@@ -12,6 +12,7 @@
  *  when saved attributes are not found and calendar_id is present in params use params as attributes
  *  2.6.0 SimpleicalBlock => SimpleicalHelper, added wp_kses post  to REST_response   
  *  3.1.0 whitelist params to solve security vulnerability issue
+ *  3.1.2 repaired error missing title introduced in version 3.1.0
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 // no direct access
@@ -157,8 +158,8 @@ class RestController extends WP_REST_Controller {
         }
         $data = $this->prepare_item_for_response([
                 'content' => $content,
-            'params' => []
-            ], $request);
+            'params' => array_intersect_key ($block_attributes, ['title'=>'', 'tag_title'=>'h3'] )
+        ], $request);
         if (isset($data)) {
             return new WP_REST_Response($data, 200);
         } else {

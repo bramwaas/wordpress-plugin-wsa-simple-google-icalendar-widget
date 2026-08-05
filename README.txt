@@ -6,7 +6,7 @@ Tags: Google Calendar, iCal, Events, Block, Calendar
 Requires at least: 5.3   
 Tested up to: 7.0   
 Requires PHP: 7.4   
-Stable tag: 3.1.1
+Stable tag: 3.1.3
 License: GPLv2 or later   
 License URI: http://www.gnu.org/licenses/gpl-2.0.html   
     
@@ -246,6 +246,8 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 * next version (after 3.1.0) will require WP 5.9 so that I can remove older code.         
 
 == Changelog ==
+* 3.1.3 after issue 'No Events displayed' by @alinaseibt when legacy widget is included in SiteOrigin: Added frontend widget without namespace designed to     support applications that cannot work with namespaces.
+* 3.1.2 Repaired error missing title introduced in version 3.1.0.
 * 3.1.1 replaced wp_remote_get by wp_safe_remote_get to further harden security after fixing a security issue
 * 3.1.0 whitelist REST params to solve security vulnerability issue. Some changes to meet PCP (plugin check) requirements
 * 3.0.0 Also cache failed requests for calendar items to prevent prolonged "...Our systems have detected unusual traffic from your computer network. ..." errors   
