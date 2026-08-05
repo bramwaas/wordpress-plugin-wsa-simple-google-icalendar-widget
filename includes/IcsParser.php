@@ -34,6 +34,7 @@
  *  errors caused by a large number of requests in a short period of time. (after issues #47 and #48 for joomla module). First 3 failed requests cachetimes
  *  only 60 seconds next cachetimes same as for succesfull requests. Use formatted standard error_log() logging.
  *  3.1.1 replaced wp_remote_get by wp_safe_remote_get to further harden security after fixing a security issue
+ *  3.1.4 extra logging e.g. if found file has no ical calendar structure 
  */
 
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
@@ -41,7 +42,7 @@ namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 defined('ABSPATH') or die ('Restricted access');
 
 class IcsParser {
-    
+    const TOKEN_BEGIN_VCALENDAR = "BEGIN:VCALENDAR";
     const TOKEN_BEGIN_VEVENT = "BEGIN:VEVENT";
     const TOKEN_END_VEVENT = "END:VEVENT";
     const TOKEN_BEGIN_VTIMEZONE = "\nBEGIN:VTIMEZONE";
@@ -1187,8 +1188,17 @@ END:VCALENDAR';
             
             
             try {
-                $this->parse($httpBody,  $cal_class, $cal_ord );
+                $startpos = strpos($httpBody, self::TOKEN_BEGIN_VEVENT);
+                if ($startpos !== false) {
+                    $this->parse($httpBody,  $cal_class, $cal_ord );
+                } else {
+                    if (false !== strpos($httpBody, self::TOKEN_BEGIN_VCALENDAR) ){
+                        Log::log(Log::WARNING, 'No valid BEGIN:VCALENDAR  found in fetched file :' . substr($httpBody, 1, 100));
+                    }
+                    Log::log(Log::INFO, 'No valid BEGIN:VEVENT found. ');
+                }
             } catch(\Exception $exc) {
+                Log::log(Log::NOTICE, 'Parse failed. Exc:' . $exc->getMessage() . PHP_EOL . 'in file: ' . $exc->getFile() . ' in line:' . $exc->getLine() );
                 continue;
             }
         } // end foreach

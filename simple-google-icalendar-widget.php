@@ -4,7 +4,7 @@
  Description: Widget that displays events from a public google calendar or iCal file
  Plugin URI: https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  Author: Bram Waasdorp
- Version: 3.1.3
+ Version: 3.1.4
  License: GPLv2
  Tested up to: 7.0
  Requires at least: 5.3
