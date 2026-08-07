@@ -22,7 +22,7 @@
  *   bw 20260701 v3.1.0 whitelist REST params to solve security vulnerability issue, small changes in response to PCP (plugincheck).
  *   bw 20260713 v3.1.1 replaced wp_remote_get by wp_safe_remote_get to further harden security after fixing a security issue
  *   bw 20260720 v3.1.2 Repaired error missing title introduced in version 3.1.0.
- *   bw 20260726 v3.1.3 adde no namespace frontend for legacy widget
+  *   bw 20260727 v3.1.3 Added optional legacy widget with no namespace.
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 // no direct access

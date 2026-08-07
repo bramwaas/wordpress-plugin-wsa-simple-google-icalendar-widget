@@ -9,7 +9,7 @@
  * @copyright  Copyright (c)  2017 - 2026, Bram Waasdorp
  * @link       https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  * @license    http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * Version: 3.0.0
+ * Version: 3.1.3
  * 20220410 namespaced and renamed after classname.
  * 2.1.0 option for comma seperated list of IDs
  * 2.1.3 block footer after events and placeholder when no events.
@@ -20,7 +20,7 @@
  * 2.6.1  Started simplifying (bootstrap) collapse by toggles for adding javascript and trigger collapse by title.
  Remove toggle to allow safe html in summary and description, save html is always allowed now.
  * 3.0.0 add formatted logging via own Log class to error_log().
- * 3.1.3 otiop to add legacy widget with no namespace.
+ * 3.1.3 option to add legacy widget with no namespace.
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 // no direct access

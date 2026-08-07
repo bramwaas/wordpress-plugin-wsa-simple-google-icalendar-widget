@@ -596,13 +596,12 @@ class SimpleicalHelper
      * @param
      *            .
      */
-    static function simple_ical_widget()
-    {
-        register_widget('\WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalWidget');
-        $sib_options = SimpleicalWidgetAdmin::get_plugin_options();
-        if ($sib_options['simpleical_add_widget_nns']) {
-            require __DIR__ . DIRECTORY_SEPARATOR . 'SIB_SimpleicalWidgetNNS.php';
-            register_widget("SIB_SimpleicalWidgetNNS");
-        }
+    static function simple_ical_widget ()
+    {  register_widget( '\WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalWidget' );
+       $sib_options = SimpleicalWidgetAdmin::get_plugin_options();
+       if ($sib_options['simpleical_add_widget_nns']) {
+         require  __DIR__ . DIRECTORY_SEPARATOR . 'SIB_SimpleicalWidgetNNS.php';
+         register_widget( "SIB_SimpleicalWidgetNNS" );
+       }
     }
 } // end class SimpleicalHelper
