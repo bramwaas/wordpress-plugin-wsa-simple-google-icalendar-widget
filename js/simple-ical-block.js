@@ -4,7 +4,7 @@
  * Move styles to stylesheets - both edit and front-end.
  * and use attributes and editable fields
  * attributes as Inspectorcontrols (settings)
- * v2.7.0
+ * v3.2.0
  * 20230625 added quotes to the options of the Layout SelectControl,
  *  add parseInt to all integers in transform, added conversion dateformat_lgend and _tsend and anchorid = sibid
  * 20230420 added parseInt on line 147(now 148) to keep layout in block-editor
@@ -26,6 +26,7 @@
  * 2.5.0 support for categories.
  * 2.6.1  Started simplifying (bootstrap) collapse by toggles for adding javascript and trigger collapse by title.
  * 2.7.0 Enable to add words of summary to categories for filtering. Add support for details/summary tag combination.
+ * 3.2.0 choose from layout files in stead of layout and rest_utzui
  */
 (function(blocks, i18n, element, blockEditor, components) {
 	const el = element.createElement;
@@ -129,15 +130,21 @@
 		edit: function(props) {
 			useEffect(function() {
 			if (typeof props.attributes.sibid !== 'string') {
-				if (typeof props.attributes.blockid == 'string') {
-					props.attributes.sibid = props.attributes.blockid;
-					props.setAttributes({ sibid: props.attributes.blockid });
- 				}
-				else { 
-					props.attributes.sibid = 'b' + props.clientId;
-					props.setAttributes({ sibid: 'b' + props.clientId }); 
- 				};
+				props.attributes.sibid = 'b' + props.clientId;
+				props.setAttributes({ sibid: 'b' + props.clientId }); 
  			};	
+			if (typeof props.attributes.layout !== 'string') {
+				if (typeof props.attributes.layout == 'integer') {
+					if ( 2 == props.attributes.layout) {
+						props.attributes.layout = 'start_with_summary';
+					} else {
+						props.attributes.layout = 'old_style';
+					}
+								}	else {
+					props.attributes.layout = 'default';
+				}
+				props.setAttributes({ layout: props.attributes.layout }); 
+			};	
 			}, []);
 			useEffect(function() {
 				if (typeof props.attributes.sibid == 'string') {
@@ -223,9 +230,9 @@
 								value: props.attributes.layout,
 								onChange: function(value) { props.setAttributes({ layout: parseInt(value) }); },
 								options: [
-									{ value: 1, label: __('Startdate higher level', 'simple-google-icalendar-widget') },
-									{ value: 2, label: __('Start with summary', 'simple-google-icalendar-widget') },
-									{ value: 3, label: __('Old style', 'simple-google-icalendar-widget') }
+									{ value: "default", label: __('Startdate higher level', 'simple-google-icalendar-widget') },
+									{ value: "start_with_summary" , label: __('Start with summary', 'simple-google-icalendar-widget') },
+									{ value: "old_style", label: __('Old style', 'simple-google-icalendar-widget') }
 								]
 							}
 						),
@@ -581,6 +588,81 @@
 		)
 		},
 		deprecated: [
+				{ // dep270 
+					"attributes": {
+					"wptype": { "type": "string", "default": "block" },
+					"sibid": { "type": "string" },
+					"title": { "type": "string", "default": "Events" },
+					"calendar_id": { "type": "string", "default": "" },
+					"event_count": { "type": "integer", "default": 10 },
+					"event_period": { "type": "integer", "default": 92 },
+					"layout": { "type": "integer", "default": 3 },
+					"categories_filter_op": { "type": "string", "enum": ["", "ANY", "ALL", "NOTANY", "NOTALL"], "default": "" },
+					"categories_filter": { "type": "string", "default": "" },
+					"categories_display": { "type": "string", "default": "" },
+					"add_sum_catflt": { "type": "boolean", "default": false },
+					"cache_time": { "type": "integer", "default": 60 },
+					"dateformat_lg": { "type": "string", "default": "l jS \\of F" },
+					"dateformat_lgend": { "type": "string", "default": "" },
+					"tag_sum": { "type": "string", "enum": ["a", "b", "div", "h1", "h2", "h3", "h4", "h5", "h6", "i", "span", "strong", "u"], "default": "a" },
+					"tag_title": { "type": "string", "enum": ["a", "b", "div", "h1", "h2", "h3", "h4", "h5", "h6", "i", "span", "strong", "u"], "default": "h3" },
+					"dateformat_tsum": { "type": "string", "default": "G:i " },
+					"dateformat_tsend": { "type": "string", "default": "" },
+					"dateformat_tstart": { "type": "string", "default": "G:i" },
+					"dateformat_tend": { "type": "string", "default": " - G:i " },
+					"excerptlength": { "type": "string", "default": "" },
+					"suffix_lg_class": { "type": "string", "default": "" },
+					"suffix_lgi_class": { "type": "string", "default": " py-0" },
+					"suffix_lgia_class": { "type": "string", "default": "" },
+					"allowhtml": { "type": "boolean", "default": false },
+					"after_events": { "type": "string", "default": "" },
+					"no_events": { "type": "string", "default": "" },
+					"clear_cache_now": { "type": "boolean", "default": false },
+					"period_limits": { "type": "string", "enum": ["1", "2", "3", "4"], "default": "1" },
+					"rest_utzui": { "type": "string", "enum": ["", "1", "2"], "default": "" },
+					"anchorId": { "type": "string", "default": "" },
+					"title_collapse_toggle" : {	"type" : "string", 	"enum" : [ "", 	"collapse", "collapse show" ] },
+					"add_collapse_code" : {	"type" : "boolean", "default": false }
+					},
+					save: function (props) {
+							    return (el(
+						'div',
+						useBlockProps.save({
+							key: 'simple_ical',
+							"id":(props.attributes.anchorId ? props.attributes.anchorId : props.attributes.sibid),
+							"data-sib-id":props.attributes.sibid,
+							"data-sib-utzui":props.attributes.rest_utzui,
+							"data-sib-st":"0-start",
+						}),
+						{},
+						el(
+							props.attributes.tag_title,
+							{
+							  "class":"widget-title block-title", 
+							  "data-sib-t":"true",
+							},
+							(('' < props.attributes.title_collapse_toggle )
+							 ? el( 'a',
+							 	 {
+								   "href": "#lg" + (props.attributes.anchorId ? props.attributes.anchorId : props.attributes.sibid),
+								   "data-toggle": "collapse",
+								   "data-bs-toggle": "collapse",
+								   "role":"button",
+								   "aria-expanded":("collapse show" == props.attributes.title_collapse_toggle),
+								   "aria-controls":"collapseMod"
+							 	 },
+								 props.attributes.title
+						 	)
+							 : props.attributes.title
+						    )
+						 ),
+						el('p',
+						    {},
+							__('Processing', 'simple-google-icalendar-widget')
+						)
+					));
+					}
+			},
 			{ // dep261 
 				"attributes": {
 				"wptype": { "type": "string", "default": "block" },
@@ -608,7 +690,6 @@
 				"no_events": { "type": "string", "default": "" },
 				"clear_cache_now": { "type": "boolean", "default": false },
 				"period_limits": { "type": "string", "enum": ["1", "2", "3", "4"], "default": "1" },
-				"rest_utzui": { "type": "string", "enum": ["", "1", "2"], "default": "" },
 				"anchorId": { "type": "string", "default": "" },
 				"title_collapse_toggle" : {	"type" : "string", 	"enum" : [ "", 	"collapse", "collapse show" ] },
 				"add_collapse_code" : {	"type" : "string"}
