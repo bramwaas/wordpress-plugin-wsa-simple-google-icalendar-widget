@@ -413,12 +413,13 @@ class SimpleicalHelper
         if (empty($suffixes)) $suffixes = ['php'];
         $sflst = implode(',', $suffixes);
         //        $b = '22_02_18_country_';
-        $files = glob("{$dirlst}*.{$sflst}",  GLOB_BRACE);
+        $files = glob("{$dirlst}*.php",  GLOB_BRACE);
+//        $files = glob("{/home/deb120151/domains/dev1.soekhan.nl/public_html/wp6/wp-includes/theme-compat/simple-google-icalendar-widget/,/home/deb120151/domains/dev1.soekhan.nl/public_html/wp6/wp-content/plugins/simple-google-icalendar-widget/tmpl/}*.php",  GLOB_BRACE);
         // OR //
         // $m= glob({".$a.",".$b."}*.txt", GLOB_BRACE);
         // OR //
         
-        Log::log(Log::NOTICE, implode(', ', $files));
+        Log::log(Log::NOTICE, 'getLayoutFiles:' . $dirlst);
         return $files;
     }
 
