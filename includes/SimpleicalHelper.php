@@ -406,20 +406,24 @@ class SimpleicalHelper
      *
      * @since 3.2.0
      */
-    static function getLayoutFiles($suffixes = [], $dirs = [])
+    static function getLayoutFiles($suffixes = [])
     {
-        if (empty($dirs)) $dirs = self::getLayoutDirs();
+        $dirs = self::getLayoutDirs();
         $dirlst = implode(',', $dirs);
         if (empty($suffixes)) $suffixes = ['php'];
         $sflst = implode(',', $suffixes);
         //        $b = '22_02_18_country_';
-        $files = glob("{$dirlst}*.php",  GLOB_BRACE);
+        $files = glob("{".$dirlst."}",  GLOB_BRACE);
+        $dir1 = '/home/deb120151/domains/dev1.soekhan.nl/public_html/wp6/wp-includes/theme-compat/simple-google-icalendar-widget/';
+        
+        $dir2 = '/home/deb120151/domains/dev1.soekhan.nl/public_html/wp6/wp-content/plugins/simple-google-icalendar-widget/tmpl/';
+//        $files = glob("{".$dir1.",".$dir2."}", GLOB_BRACE); 
 //        $files = glob("{/home/deb120151/domains/dev1.soekhan.nl/public_html/wp6/wp-includes/theme-compat/simple-google-icalendar-widget/,/home/deb120151/domains/dev1.soekhan.nl/public_html/wp6/wp-content/plugins/simple-google-icalendar-widget/tmpl/}*.php",  GLOB_BRACE);
         // OR //
         // $m= glob({".$a.",".$b."}*.txt", GLOB_BRACE);
         // OR //
         
-        Log::log(Log::NOTICE, 'getLayoutFiles:' . $dirlst);
+        Log::log(Log::NOTICE, 'getLayoutFiles:' . "{".$dirlst."}");
         return $files;
     }
 
