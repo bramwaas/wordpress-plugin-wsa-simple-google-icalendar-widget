@@ -138,7 +138,8 @@ class RestController extends WP_REST_Controller {
         array(
             'methods'             => 'GET, POST',
             'callback'            => array( $this, 'get_sib_layouts' ),
-            'permission_callback' => array( $this,'edit_others_posts_permissions_check'),
+//            'permission_callback' => array( $this,'edit_others_posts_permissions_check'),
+            'permission_callback' => '__return_true',
             'args'                => array(
                 'suffix' => [],
                 'dirs'   => []
@@ -232,7 +233,7 @@ class RestController extends WP_REST_Controller {
     public function get_sib_layouts( $request ) {
         //get parameters from request
         $params = $request->get_params();
-        $content = SimpleicalHelper::get_sib_layouts($params);
+        $content = SimpleicalHelper::getLayoutFiles($params);
         $data = $this->prepare_item_for_response( ['content' => $content, 'params' => $params], $request );
         //return a response or error based on some conditional
         if (isset($data)) {
