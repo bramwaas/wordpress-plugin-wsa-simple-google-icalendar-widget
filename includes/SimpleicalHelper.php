@@ -415,7 +415,7 @@ class SimpleicalHelper
         foreach ($files as $file) {
             $fnames[] = basename($file, '.php');        
         }
-        return array_unique($fnames);
+        return sort(array_unique($fnames),  SORT_NATURAL | SORT_FLAG_CASE );
     }
 
     /**
