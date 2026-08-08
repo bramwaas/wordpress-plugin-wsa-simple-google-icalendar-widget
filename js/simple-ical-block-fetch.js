@@ -11,6 +11,10 @@
 window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 	bizzySavingAttrs: 0, 
 	bizzySibid: '',
+	layoutOps: [{ value: "Startdate_higher_level", label: ('Startdate higher level')}, // __ , 'simple-google-icalendar-widget' tijdelijk weggelaten
+	{ value: "start_with_summary" , label: ('Start with summary') },
+	{ value: "default", label: ('Old style (default)') }
+	],
 	fetchFromRest: function(dobj, ni) {
 		const fpath = "/simple-google-icalendar-widget/v1/content-by-ids";
 		let titl;

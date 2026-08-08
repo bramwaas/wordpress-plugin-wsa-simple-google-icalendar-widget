@@ -148,8 +148,8 @@
 			}, []);
 			useEffect(function() {
 				if (typeof props.attributes.sibid == 'string') {
-					window.simpleIcalBlockF.getBlockByIds(props.attributes);
 					window.simpleIcalBlockF.setSibAttrs(props.attributes);
+					window.simpleIcalBlockF.getBlockByIds(props.attributes);
 				  }
 			}, [props.attributes]);
 			useEffect(function() {
@@ -229,11 +229,7 @@
 								label: __('Lay-out:', 'simple-google-icalendar-widget'),
 								value: props.attributes.layout,
 								onChange: function(value) { props.setAttributes({ layout: parseInt(value) }); },
-								options: [
-									{ value: "default", label: __('Startdate higher level', 'simple-google-icalendar-widget') },
-									{ value: "start_with_summary" , label: __('Start with summary', 'simple-google-icalendar-widget') },
-									{ value: "old_style", label: __('Old style', 'simple-google-icalendar-widget') }
-								]
+								options: window.simpleIcalBlockF.layoutOps
 							}
 						),
 						el(
