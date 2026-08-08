@@ -13,6 +13,7 @@
  *  2.6.0 SimpleicalBlock => SimpleicalHelper, added wp_kses post  to REST_response   
  *  3.1.0 whitelist params to solve security vulnerability issue
  *  3.1.2 repaired error missing title introduced in version 3.1.0
+ *  3.2.0 get list of layout file-names as array
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 // no direct access
@@ -111,7 +112,7 @@ class RestController extends WP_REST_Controller {
             array(
                 'methods'             => 'GET, POST',
                 'callback'            => array( $this, 'set_sib_attrs' ),
-                'permission_callback' => array( $this,'set_sib_attrs_permissions_check'),
+                'permission_callback' => array( $this,'edit_others_posts_permissions_check'),
                 'args'                => array(
                     'sibid' => [],
                     'prev_sib'   => []
@@ -132,7 +133,33 @@ class RestController extends WP_REST_Controller {
             'permission_callback' => '__return_true' 
             
         ));
-    }
+    //
+    register_rest_route( $this->namespace, '/v1/get-sib-layouts', array(
+        array(
+            'methods'             => 'GET, POST',
+            'callback'            => array( $this, 'get_sib_layouts' ),
+            'permission_callback' => array( $this,'edit_others_posts_permissions_check'),
+            'args'                => array(
+                'suffix' => [],
+                'dirs'   => []
+            )
+        ),
+        'schema' => array(
+            $this,
+            'get_sib_layouts_schema'
+        ),
+        'permission_callback' => '__return_true'
+    ));
+    register_rest_route($this->namespace, '/v1/get_sib_layouts/schema', array(
+        'methods' => WP_REST_Server::READABLE,
+        'callback' => array(
+            $this,
+            'get_sib_layouts_schema'
+        ),
+        'permission_callback' => '__return_true'
+        
+    ));
+}
 
     /**
      * Get block content with sibid (block instance ID),  and tzid_ui (client timezone) from request
@@ -174,14 +201,38 @@ class RestController extends WP_REST_Controller {
      * Set attributes in option.
      *
      * @param WP_REST_Request $request attributes to save with $params['sibid'] as key.
-     * @return WP_Error|WP_REST_Response (when a change is made response.content = $params['sibid'] else false or 'FALSE')
+     * @return WP_REST_Response|WP_Error  array of file names | 'FALSE')
      * $since 2.3.0
-     * example .../wp-json/simple-google-icalendar-widget/v1/set-sib-attrs?sibid=b123&test=xyz&prev_sibid=w234
+     * example .../wp-json/simple-google-icalendar-widget/v1/get_sib_layouts?sibid=b123&test=xyz&prev_sibid=w234
      */
     public function set_sib_attrs( $request ) {
         //get parameters from request
         $params = $request->get_params();
         $content = SimpleicalHelper::update_rest_attrs($params);
+        $data = $this->prepare_item_for_response( ['content' => $content, 'params' => $params], $request );
+        //return a response or error based on some conditional
+        if (isset($data)) {
+            return new WP_REST_Response($data, 200);
+        } else {
+            $data = $this->prepare_item_for_response([
+                'content' => 'FALSE',
+                'params' => $params
+            ], $request);
+            return new WP_REST_Response($data, 404);
+        }
+    }
+    /**
+     * Get sib layouts from applicable directories.
+     *
+     * @param WP_REST_Request $request 
+     * @return WP_Error|WP_REST_Response (when a change is made response.content = $params['sibid'] else false or 'FALSE')
+     * $since 3.2.0
+     * example .../wp-json/simple-google-icalendar-widget/v1/get-sib-layouts?suffix=php&suffix=txt
+     */
+    public function get_sib_layouts( $request ) {
+        //get parameters from request
+        $params = $request->get_params();
+        $content = SimpleicalHelper::get_sib_layouts($params);
         $data = $this->prepare_item_for_response( ['content' => $content, 'params' => $params], $request );
         //return a response or error based on some conditional
         if (isset($data)) {
@@ -268,6 +319,43 @@ class RestController extends WP_REST_Controller {
         
         return $this->set_sib_attrs_schema;
     }
+    /**
+     * Get schema for get_sib_layouts_schema.
+     *
+     * @return array The schema
+     *
+     */
+    public function get_sib_layouts_schema() {
+        if ( $this->get_sib_layouts_schema ) {
+            // Since WordPress 5.3, the schema can be cached in the $schema property.
+            return $this->get_sib_layouts_schema;
+        }
+        
+        $this->get_sib_layouts_schema = array(
+            // This tells the spec of JSON Schema we are using which is draft 4.
+            '$schema'              => 'http://json-schema.org/draft-04/schema#',
+            // The title property marks the identity of the resource.
+            'title'                => 'get_sib_layouts',
+            'type'                 => 'object',
+            // In JSON Schema you can specify object properties in the properties attribute.
+            'properties'           => array(
+                'content' => array(
+                    'description'  => esc_html__( 'The result of the action.', 'simple-google-icalendar-widget' ),
+                    'type'         => 'string',
+                    'context'      => array( 'view', 'edit', 'embed' ),
+                    'readonly'     => true,
+                ),
+                'params' => array(
+                    'description'  => esc_html__( 'The parameters used.', 'simple-google-icalendar-widget' ),
+                    'type'         => 'array',
+                    'context'      => array( 'view' ),
+                    'readonly'     => true,
+                ),
+            ),
+        );
+        
+        return $this->get_sib_layouts_schema;
+    }
     
     
     /**
@@ -289,7 +377,7 @@ class RestController extends WP_REST_Controller {
      * @param WP_REST_Request $request Full data about the request.
      * @return WP_Error|bool
      */
-    public function set_sib_attrs_permissions_check( $request ) {
+    public function edit_others_posts_permissions_check( $request ) {
         //return true; <--use to make readable by all
         return current_user_can( 'edit_others_posts' );
     }
@@ -332,33 +420,4 @@ class RestController extends WP_REST_Controller {
             self::$instance = new RestController;
         return self::$instance;
     }
-    /**
-     * Method to recursively attributes from multidimensional array of blocks.
-     *
-     * @param array $blocks blocks haystack
-     * @param string $bid needle 1 attr['sibid']
-     * @param string $bname  needle 2 name of block
-     * $params int $depth depth of  recursion.
-     * @return  array $attributes or false
-     *
-     * @since       2.3.0
-     *
-     */
-    public static function find_block_attributes($blocks, $bid, $bname, $depth = 10 )
-    {
-        $depth = $depth - 1;
-        foreach ($blocks as $block){
-            if (!empty($block['blockName']) && $block['blockName'] == $bname 
-                && !empty($block['attrs']['sibid']) && $block['attrs']['sibid'] == $bid ) {
-            //found
-                  return $block['attrs'];
-            }
-             if (0 < $depth && !empty($block['innerBlocks'])) {
-                //maybe in innerblock.
-                 $result = self::find_block_attributes($block['innerBlocks'], $bid, $bname, $depth );
-                if (false !== $result) return $result;
-            } 
-        }
-        return false;
-    }
-}
+ }

@@ -7,6 +7,7 @@
  * object simpleIcalBlock differentiated by adding F
  * v2.4.4 use present attrs to fetch content not from option in case attrs are not set in option
  * v2.6.1 ad collapse code tot title
+ * v3.2.0 get list of layout file-names save as array in layoutOps
 **/
 window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 	bizzySavingAttrs: 0, 
