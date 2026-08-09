@@ -141,8 +141,6 @@ class RestController extends WP_REST_Controller {
 //            'permission_callback' => array( $this,'edit_others_posts_permissions_check'),
             'permission_callback' => '__return_true',
             'args'                => array(
-                'suffix' => [],
-                'dirs'   => []
             )
         ),
         'schema' => array(
@@ -228,7 +226,7 @@ class RestController extends WP_REST_Controller {
      * @param WP_REST_Request $request 
      * @return WP_Error|WP_REST_Response (when a change is made response.content = $params['sibid'] else false or 'FALSE')
      * $since 3.2.0
-     * example .../wp-json/simple-google-icalendar-widget/v1/get-sib-layouts?suffix=php&suffix=txt
+     * example .../wp-json/simple-google-icalendar-widget/v1/get-sib-layouts
      */
     public function get_sib_layouts( $request ) {
         //get parameters from request
