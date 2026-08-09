@@ -1,6 +1,7 @@
 /**
  * simple-ical-block-fetch.js
- * set attributes in option, gets rendered output with fetch from server.
+ * helper functions and properties in object window.simpleIcalBlockF
+ * set attributes in option, gets rendered output with fetch from server, get array of layout file names in layoutOps
  * started as copy of view simple-ical-block 
  * replaced fetch() by apiFetch therefore no need to define restRoot
  * added search in iFrame,  selection on sibid, and choice of Timezone
@@ -12,10 +13,11 @@
 window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 	bizzySavingAttrs: 0, 
 	bizzySibid: '',
-	layoutOps: [{ value: "Startdate_higher_level", label: ('Startdate higher level')}, // __ , 'simple-google-icalendar-widget' tijdelijk weggelaten
+	sibLayoutOps: [{ value: "Startdate_higher_level", label: ('Startdate higher level')}, // __ , 'simple-google-icalendar-widget' tijdelijk weggelaten
 	{ value: "start_with_summary" , label: ('Start with summary') },
 	{ value: "default", label: ('Old style (default)') }
 	],
+	sibOpsCacheTime: 0,
 	fetchFromRest: function(dobj, ni) {
 		const fpath = "/simple-google-icalendar-widget/v1/content-by-ids";
 		let titl;
@@ -70,6 +72,38 @@ window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 	setSibAttrs: async function(attrs) {
 		if (typeof attrs.sibid != 'string' || '' == attrs.sibid) return;
 		const fpath = "/simple-google-icalendar-widget/v1/set-sib-attrs";
+		const lcBizzySavingAttrs = Date.now();
+		let res = null;
+		for (let i = 100; i > 0; i--) {	
+			if (0 == this.bizzySavingAttrs){
+				this.bizzySavingAttrs = lcBizzySavingAttrs;
+				this.bizzySibid = attrs.sibid;
+				i = 5;
+			}
+			if ( lcBizzySavingAttrs == this.bizzySavingAttrs &&	attrs.sibid == this.bizzySibid) {			
+				res = await window.wp.apiFetch({path: fpath, method: 'POST', data: attrs, });
+			    if (true === res.content) {
+					this.bizzySavingAttrs = 0;
+					break;
+				}
+				await this.sleep(50);	
+			}
+			else {
+				await this.sleep(250);	
+			}
+		} 
+		if (this.bizzySavingAttrs == lcBizzySavingAttrs) {
+							this.bizzySavingAttrs = 0;
+		}
+	}
+	,
+	/**
+	 * Gets array of layout file names (key) and labels (value) from layout dirs.Copies attributes in Option via asynchrone REST call and test if succeeded max 5 times 
+	 * only if no other process is  already is doing this (in the same window) else wait.
+	 */
+	getSibLayouts: async function(cache) {
+		if (typeof attrs.sibid != 'string' || '' == attrs.sibid) return;
+		const fpath = "/simple-google-icalendar-widget/v1/get-sib-layouts";
 		const lcBizzySavingAttrs = Date.now();
 		let res = null;
 		for (let i = 100; i > 0; i--) {	

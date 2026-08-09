@@ -200,9 +200,9 @@ class RestController extends WP_REST_Controller {
      * Set attributes in option.
      *
      * @param WP_REST_Request $request attributes to save with $params['sibid'] as key.
-     * @return WP_REST_Response|WP_Error  array of file names | 'FALSE')
+     * @return WP_Error|WP_REST_Response (when a change is made response.content = $params['sibid'] else false or 'FALSE')
      * $since 2.3.0
-     * example .../wp-json/simple-google-icalendar-widget/v1/get_sib_layouts?sibid=b123&test=xyz&prev_sibid=w234
+     * example .../wp-json/simple-google-icalendar-widget/v1/set-sib-attrs?sibid=b123&test=xyz&prev_sibid=w234
      */
     public function set_sib_attrs( $request ) {
         //get parameters from request
@@ -223,8 +223,8 @@ class RestController extends WP_REST_Controller {
     /**
      * Get sib layouts from applicable directories.
      *
-     * @param WP_REST_Request $request 
-     * @return WP_Error|WP_REST_Response (when a change is made response.content = $params['sibid'] else false or 'FALSE')
+     * @param WP_REST_Request $request none
+     * @return WP_REST_Response|WP_Error  array of file names (key) and labels (value) | 'FALSE')
      * $since 3.2.0
      * example .../wp-json/simple-google-icalendar-widget/v1/get-sib-layouts
      */

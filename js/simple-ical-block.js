@@ -229,7 +229,7 @@
 								label: __('Lay-out:', 'simple-google-icalendar-widget'),
 								value: props.attributes.layout,
 								onChange: function(value) { props.setAttributes({ layout: parseInt(value) }); },
-								options: window.simpleIcalBlockF.layoutOps
+								options: window.simpleIcalBlockF.sibLayoutOps
 							}
 						),
 						el(
