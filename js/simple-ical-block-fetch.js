@@ -101,34 +101,34 @@ window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 	 * Gets array of layout file names (key) and labels (value) from layout dirs.Copies attributes in Option via asynchrone REST call and test if succeeded max 5 times 
 	 * only if no other process is  already is doing this (in the same window) else wait.
 	 */
-	getSibLayouts: async function(cache) {
-		if (typeof attrs.sibid != 'string' || '' == attrs.sibid) return;
+	getSibLayouts:  function(cache=60) {
+		
 		const fpath = "/simple-google-icalendar-widget/v1/get-sib-layouts";
-		const lcBizzySavingAttrs = Date.now();
+		let oldCacheTime = 0;
+		let tmpCacheTime = 0;
 		let res = null;
-		for (let i = 100; i > 0; i--) {	
-			if (0 == this.bizzySavingAttrs){
-				this.bizzySavingAttrs = lcBizzySavingAttrs;
-				this.bizzySibid = attrs.sibid;
-				i = 5;
-			}
-			if ( lcBizzySavingAttrs == this.bizzySavingAttrs &&	attrs.sibid == this.bizzySibid) {			
-				res = await window.wp.apiFetch({path: fpath, method: 'POST', data: attrs, });
-			    if (true === res.content) {
-					this.bizzySavingAttrs = 0;
-					break;
-				}
-				await this.sleep(50);	
-			}
-			else {
-				await this.sleep(250);	
-			}
-		} 
-		if (this.bizzySavingAttrs == lcBizzySavingAttrs) {
-							this.bizzySavingAttrs = 0;
+		if (typeof this.sibOpsCacheTime != 'number')  this.sibOpsCacheTime = 0;
+		if (Date.now() > (this.sibOpsCacheTime + (1000 * cache))) {
+			oldCacheTime = this.sibOpsCacheTime;
+			this.sibOpsCacheTime = Date.now();
+			tmpCacheTime = this.sibOpsCacheTime;
+		} else 
+		{
+			console.log('getSibLayouts: cache still valid');
+			return;
 		}
+		window.wp.apiFetch({
+			path: fpath, 
+			method: 'POST', 
+			data: [], 
+		}).then((res) => {
+			sibLayoutOps = res.content;
+			console.log('getSibLayouts: succes content' + res.content );
+			this.sibOpsCacheTime = Date.now();
+		}).catch((error) => {
+			console.log('getSibLayouts: error');
+			if (this.sibOpsCacheTime == tmpCacheTime)  this.sibOpsCacheTime = oldpCacheTime;
+		});
 	}
-
-}
 }	
-
+}
