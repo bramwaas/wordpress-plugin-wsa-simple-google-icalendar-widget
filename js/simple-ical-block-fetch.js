@@ -128,7 +128,7 @@ window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 			this.sibOpsCacheTime = Date.now();
 		}).catch((error) => {
 			console.log('getSibLayouts: error');
-			if (this.sibOpsCacheTime == tmpCacheTime)  this.sibOpsCacheTime = oldpCacheTime;
+			if (this.sibOpsCacheTime == tmpCacheTime)  this.sibOpsCacheTime = oldCacheTime;
 		});
 	}
 }	
