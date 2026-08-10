@@ -413,6 +413,7 @@ class SimpleicalHelper
         $files = glob("{".$dirlst."}*.php",  GLOB_BRACE);
 //        Log::log(Log::NOTICE, 'getLayoutFiles:' . "{".$dirlst."}");
         foreach ($files as $file) {
+//            $fnames[] = basename($file, '.php');
             $key = basename($file, '.php');
             $fnames[$key] = strtr($key, ['_' => ' ']);        
         }
