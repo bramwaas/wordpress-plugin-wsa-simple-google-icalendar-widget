@@ -120,11 +120,11 @@ window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 		window.wp.apiFetch({
 			path: fpath, 
 			method: 'POST', 
-			data: [], 
+			data: {}, 
 		}).then((res) => {
-			console.log('getSibLayouts: succes content' + res.content );
-			sibLayoutOps.splice(0,sibLayoutOps,res.content);
-			console.log('getSibLayouts: succes sibLayoutOps=' + res.contentsibLayoutOps );
+			console.log('getSibLayouts: succes content: ' + Object.keys(res.content) + ',  ' + Object.values(res.content)) ;
+//			sibLayoutOps.splice(0,sibLayoutOps,res.content);
+//			console.log('getSibLayouts: succes sibLayoutOps=' + res.contentsibLayoutOps );
 			this.sibOpsCacheTime = Date.now();
 		}).catch((error) => {
 			console.log('getSibLayouts: error');
