@@ -122,8 +122,9 @@ window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 			method: 'POST', 
 			data: [], 
 		}).then((res) => {
-			sibLayoutOps = res.content;
 			console.log('getSibLayouts: succes content' + res.content );
+			sibLayoutOps.splice(0,sibLayoutOps,res.content);
+			console.log('getSibLayouts: succes sibLayoutOps=' + res.contentsibLayoutOps );
 			this.sibOpsCacheTime = Date.now();
 		}).catch((error) => {
 			console.log('getSibLayouts: error');

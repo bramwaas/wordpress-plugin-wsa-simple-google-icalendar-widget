@@ -145,6 +145,7 @@
 				}
 				props.setAttributes({ layout: props.attributes.layout }); 
 			};	
+			window.simpleIcalBlockF.getSibLayouts();
 			}, []);
 			useEffect(function() {
 				if (typeof props.attributes.sibid == 'string') {
