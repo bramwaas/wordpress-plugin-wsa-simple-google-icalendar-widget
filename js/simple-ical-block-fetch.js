@@ -106,7 +106,6 @@ window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 		const fpath = "/simple-google-icalendar-widget/v1/get-sib-layouts";
 		let oldCacheTime = 0;
 		let tmpCacheTime = 0;
-		let res = null;
 		if (typeof this.sibOpsCacheTime != 'number')  this.sibOpsCacheTime = 0;
 		if (Date.now() > (this.sibOpsCacheTime + (1000 * cache))) {
 			oldCacheTime = this.sibOpsCacheTime;
@@ -122,10 +121,10 @@ window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 			method: 'POST', 
 			data: {}, 
 		}).then((res) => {
-			console.log(this.sibLayoutOps );
-			console.log('getSibLayouts: succes content: ' + Object.keys(res.content) + ',  ' + Object.values(res.content)) ;
-			this.sibLayoutOps.splice(0,this.sibLayoutOps.length, Object.entries(res.content) );
-			console.log(this.sibLayoutOps );
+//			console.log('getSibLayouts: succes content: ');
+//			console.log(res.content);
+			this.sibLayoutOps.splice(0,this.sibLayoutOps.length, ...res.content );
+//			console.log(this.sibLayoutOps );
 			this.sibOpsCacheTime = Date.now();
 		}).catch((error) => {
 			console.log('getSibLayouts error:');
