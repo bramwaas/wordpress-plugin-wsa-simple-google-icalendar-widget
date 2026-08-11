@@ -114,7 +114,7 @@ window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 			tmpCacheTime = this.sibOpsCacheTime;
 		} else 
 		{
-			console.log('getSibLayouts: cache still valid');
+			console.log('getSibLayouts: cache still valid: ' + this.sibOpsCacheTime);
 			return;
 		}
 		window.wp.apiFetch({
@@ -127,7 +127,8 @@ window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 			console.log(this.sibLayoutOps );
 			this.sibOpsCacheTime = Date.now();
 		}).catch((error) => {
-			console.log('getSibLayouts: error');
+			console.log('getSibLayouts error:');
+			console.log(error);
 			if (this.sibOpsCacheTime == tmpCacheTime)  this.sibOpsCacheTime = oldCacheTime;
 		});
 	}
