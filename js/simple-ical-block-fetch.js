@@ -122,6 +122,7 @@ window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 			method: 'POST', 
 			data: {}, 
 		}).then((res) => {
+			console.log(this.sibLayoutOps );
 			console.log('getSibLayouts: succes content: ' + Object.keys(res.content) + ',  ' + Object.values(res.content)) ;
 			this.sibLayoutOps.splice(0,this.sibLayoutOps.length, Object.entries(res.content) );
 			console.log(this.sibLayoutOps );
