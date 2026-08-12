@@ -13,7 +13,7 @@
 window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 	bizzySavingAttrs: 0, 
 	bizzySibid: '',
-	sibLayoutOps: [{ value: "startdate_higher_level", label: window.wp.i18n.__('Startdate higher level', 'simple-google-icalendar-widget')}, // __  tijdelijk weggelaten
+	sibLayoutOps: [{ value: "startdate_higher_level", label: window.wp.i18n.__('Startdate higher level', 'simple-google-icalendar-widget')}, 
 	{ value: "start_with_summary" , label: window.wp.i18n.__('Start with summary', 'simple-google-icalendar-widget') },
 	{ value: "default", label: window.wp.i18n.__('Old style', 'simple-google-icalendar-widget') }
 	],
