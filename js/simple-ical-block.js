@@ -50,6 +50,11 @@
 	const ToggleControl = components.ToggleControl;
 	const SelectControl = components.SelectControl;
 	const useEffect = element.useEffect;
+	const sibLayoutOps = [	{ value: "default", label: window.wp.i18n.__('Default', 'simple-google-icalendar-widget') }, // 0
+		{ value: "startdate_higher_level", label: window.wp.i18n.__('Startdate higher level', 'simple-google-icalendar-widget')}, // 1 
+		{ value: "start_with_summary" , label: window.wp.i18n.__('Start with summary', 'simple-google-icalendar-widget') },  // 2
+		{ value: "old_style", label: window.wp.i18n.__('Old style', 'simple-google-icalendar-widget') } // 3
+	];
 	const tagOpsh = [{ value: 'div', label: __('div', 'simple-google-icalendar-widget') },
 	{ value: 'b', label: __('b (attention, bold)', 'simple-google-icalendar-widget') },
 	{ value: 'div', label: __('div', 'simple-google-icalendar-widget') },
@@ -133,19 +138,19 @@
 				props.attributes.sibid = 'b' + props.clientId;
 				props.setAttributes({ sibid: 'b' + props.clientId }); 
  			};	
-			if (typeof props.attributes.layout !== 'string') {
-				if (typeof props.attributes.layout == 'integer') {
-					if ( 2 == props.attributes.layout) {
-						props.attributes.layout = 'start_with_summary';
-					} else {
-						props.attributes.layout = 'startdate_higher_level';
-					}
-								}	else {
-					props.attributes.layout = 'old_style';
-				}
-				props.setAttributes({ layout: props.attributes.layout }); 
-			};	
-			sibHelper.getSibLayouts();
+//			if (typeof props.attributes.layout !== 'string') {
+//				if (typeof props.attributes.layout == 'integer') {
+//					if ( 2 == props.attributes.layout) {
+//						props.attributes.layout = 'start_with_summary';
+//					} else {
+//						props.attributes.layout = 'startdate_higher_level';
+//					}
+//								}	else {
+//					props.attributes.layout = 'old_style';
+//				}
+//				props.setAttributes({ layout: props.attributes.layout }); 
+//			};	
+			sibHelper.getSibLayouts(sibLayoutOps, 60);
 			}, []);
 			useEffect(function() {
 				if (typeof props.attributes.sibid == 'string') {
@@ -229,7 +234,7 @@
 							{
 								label: __('Lay-out:', 'simple-google-icalendar-widget'),
 								value: props.attributes.layout,
-								onChange: function(value) { props.setAttributes({ layout: parseInt(value) }); },
+								onChange: function(value) { props.setAttributes({ layout: value }); },
 								options: window.simpleIcalBlockF.sibLayoutOps
 							}
 						),

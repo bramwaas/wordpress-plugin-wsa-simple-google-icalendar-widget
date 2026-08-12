@@ -406,23 +406,22 @@ class SimpleicalHelper
      *
      * @since 3.2.0
      */
-    static function getLayoutFiles()
+    static function getLayoutFiles($defLO = [])
     {
+        Log::log(Log::NOTICE, 'getLayoutFiles defLO:' . print_r($defLO,true));
         $fnames = [];
         $lfns=[];
         $dirlst = implode(',', self::getLayoutDirs());
         $files = glob("{".$dirlst."}*.php",  GLOB_BRACE);
 //        Log::log(Log::NOTICE, 'getLayoutFiles:' . "{".$dirlst."}");
         foreach ($files as $file) {
-            $fnames[] = basename($file, '.php');
-//            $key = basename($file, '.php');
-//            $fnames[$key] = strtr($key, ['_' => ' ']);  
-        }
+            $fnames[] = strtolower(basename($file, '.php'));
+       }
         asort($fnames,  SORT_NATURAL | SORT_FLAG_CASE );
         foreach (array_unique($fnames) as $key ) {
             $obj = new \stdClass;
-            $obj->Value = $key;
-            $obj->Label = ucfirst(strtr($key, ['_' => ' ']));
+            $obj->value = $key;
+            $obj->label = ucfirst(strtr($key, ['_' => ' ']));
             $lfns[] = $obj;
         }
         return $lfns;

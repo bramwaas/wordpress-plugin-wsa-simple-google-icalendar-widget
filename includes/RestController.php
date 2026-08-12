@@ -141,6 +141,7 @@ class RestController extends WP_REST_Controller {
 //            'permission_callback' => array( $this,'edit_others_posts_permissions_check'),
             'permission_callback' => '__return_true',
             'args'                => array(
+                'defLO' => []
             )
         ),
         'schema' => array(

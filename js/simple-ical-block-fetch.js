@@ -13,9 +13,10 @@
 window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 	bizzySavingAttrs: 0, 
 	bizzySibid: '',
-	sibLayoutOps: [{ value: "startdate_higher_level", label: window.wp.i18n.__('Startdate higher level', 'simple-google-icalendar-widget')}, 
-	{ value: "start_with_summary" , label: window.wp.i18n.__('Start with summary', 'simple-google-icalendar-widget') },
-	{ value: "default", label: window.wp.i18n.__('Old style', 'simple-google-icalendar-widget') }
+	sibLayoutOps: [	{ value: "default", label: window.wp.i18n.__('Default', 'simple-google-icalendar-widget') }, // 0
+		{ value: "startdate_higher_level", label: window.wp.i18n.__('Startdate higher level', 'simple-google-icalendar-widget')}, // 1 
+		{ value: "start_with_summary" , label: window.wp.i18n.__('Start with summary', 'simple-google-icalendar-widget') },  // 2
+		{ value: "old_style", label: window.wp.i18n.__('Old style', 'simple-google-icalendar-widget') } // 3
 	],
 	sibOpsCacheTime: 0,
 	fetchFromRest: function(dobj, ni) {
@@ -101,7 +102,7 @@ window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 	 * Gets array of layout file names (key) and labels (value) from layout dirs.Copies attributes in Option via asynchrone REST call and test if succeeded max 5 times 
 	 * only if no other process is  already is doing this (in the same window) else wait.
 	 */
-	getSibLayouts:  function(cache=60) {
+	getSibLayouts:  function(defaultLO = this.sibLayoutOps , cache=60) {
 		
 		const fpath = "/simple-google-icalendar-widget/v1/get-sib-layouts";
 		let oldCacheTime = 0;
@@ -119,12 +120,12 @@ window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 		window.wp.apiFetch({
 			path: fpath, 
 			method: 'POST', 
-			data: {}, 
+			data: defaultLO, 
 		}).then((res) => {
-//			console.log('getSibLayouts: succes content: ');
-//			console.log(res.content);
+			console.log('getSibLayouts: succes content: ');
+			console.log(res.content);
 			this.sibLayoutOps.splice(0,this.sibLayoutOps.length, ...res.content );
-//			console.log(this.sibLayoutOps );
+			console.log(this.sibLayoutOps );
 			this.sibOpsCacheTime = Date.now();
 		}).catch((error) => {
 			console.log('getSibLayouts error:');
