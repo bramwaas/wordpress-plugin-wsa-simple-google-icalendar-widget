@@ -150,7 +150,7 @@
 //				}
 //				props.setAttributes({ layout: props.attributes.layout }); 
 //			};	
-			sibHelper.getSibLayouts(sibLayoutOps, 60);
+			sibHelper.getSibLayouts();
 			}, []);
 			useEffect(function() {
 				if (typeof props.attributes.sibid == 'string') {

@@ -406,9 +406,13 @@ class SimpleicalHelper
      *
      * @since 3.2.0
      */
-    static function getLayoutFiles($defLO = [])
+    static function getLayoutFiles()
     {
-        Log::log(Log::NOTICE, 'getLayoutFiles defLO:' . print_r($defLO,true));
+        $defaultLOsTrs = 	 [	__('Default', 'simple-google-icalendar-widget'),
+                 __('Startdate higher level', 'simple-google-icalendar-widget'),
+                 __('Start with summary', 'simple-google-icalendar-widget'),
+                 __('Old style', 'simple-google-icalendar-widget'),
+        ];
         $fnames = [];
         $lfns=[];
         $dirlst = implode(',', self::getLayoutDirs());
@@ -421,7 +425,7 @@ class SimpleicalHelper
         foreach (array_unique($fnames) as $key ) {
             $obj = new \stdClass;
             $obj->value = $key;
-            $obj->label = ucfirst(strtr($key, ['_' => ' ']));
+            $obj->label = __(ucfirst(strtr($key, ['_' => ' '])));
             $lfns[] = $obj;
         }
         return $lfns;

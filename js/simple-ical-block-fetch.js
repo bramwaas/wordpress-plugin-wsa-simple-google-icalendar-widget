@@ -102,7 +102,7 @@ window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 	 * Gets array of layout file names (key) and labels (value) from layout dirs.Copies attributes in Option via asynchrone REST call and test if succeeded max 5 times 
 	 * only if no other process is  already is doing this (in the same window) else wait.
 	 */
-	getSibLayouts:  function(defaultLO = this.sibLayoutOps , cache=60) {
+	getSibLayouts:  function(cache=60) {
 		
 		const fpath = "/simple-google-icalendar-widget/v1/get-sib-layouts";
 		let oldCacheTime = 0;
@@ -120,10 +120,10 @@ window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 		window.wp.apiFetch({
 			path: fpath, 
 			method: 'POST', 
-			data: defaultLO, 
+			data: [], 
 		}).then((res) => {
 			console.log('getSibLayouts: succes content: ');
-			console.log(res.content);
+//			console.log(res.content);
 			this.sibLayoutOps.splice(0,this.sibLayoutOps.length, ...res.content );
 			console.log(this.sibLayoutOps );
 			this.sibOpsCacheTime = Date.now();
