@@ -13,7 +13,7 @@
 window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 	bizzySavingAttrs: 0, 
 	bizzySibid: '',
-	sibLayoutOps: [{ value: "Startdate_higher_level", label: ('Startdate higher level')}, // __ , 'simple-google-icalendar-widget' tijdelijk weggelaten
+	sibLayoutOps: [{ value: "startdate_higher_level", label: ('Startdate higher level')}, // __ , 'simple-google-icalendar-widget' tijdelijk weggelaten
 	{ value: "start_with_summary" , label: ('Start with summary') },
 	{ value: "default", label: ('Old style (default)') }
 	],

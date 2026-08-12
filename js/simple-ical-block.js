@@ -28,7 +28,7 @@
  * 2.7.0 Enable to add words of summary to categories for filtering. Add support for details/summary tag combination.
  * 3.2.0 choose from layout files in stead of layout and rest_utzui
  */
-(function(blocks, i18n, element, blockEditor, components) {
+(function(blocks, i18n, element, blockEditor, components, sibHelper) {
 	const el = element.createElement;
 	const __ = i18n.__;
 	const useBlockProps = blockEditor.useBlockProps;
@@ -138,19 +138,19 @@
 					if ( 2 == props.attributes.layout) {
 						props.attributes.layout = 'start_with_summary';
 					} else {
-						props.attributes.layout = 'old_style';
+						props.attributes.layout = 'startdate_higher_level';
 					}
 								}	else {
-					props.attributes.layout = 'default';
+					props.attributes.layout = 'old_style';
 				}
 				props.setAttributes({ layout: props.attributes.layout }); 
 			};	
-			window.simpleIcalBlockF.getSibLayouts();
+			sibHelper.getSibLayouts();
 			}, []);
 			useEffect(function() {
 				if (typeof props.attributes.sibid == 'string') {
-					window.simpleIcalBlockF.setSibAttrs(props.attributes);
-					window.simpleIcalBlockF.getBlockByIds(props.attributes);
+					sibHelper.setSibAttrs(props.attributes);
+					sibHelper.getBlockByIds(props.attributes);
 				  }
 			}, [props.attributes]);
 			useEffect(function() {
@@ -759,5 +759,6 @@
 	window.wp.i18n,
 	window.wp.element,
 	window.wp.blockEditor,
-	window.wp.components)
+	window.wp.components,
+    window.simpleIcalBlockF)
 );
