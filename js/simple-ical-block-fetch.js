@@ -13,9 +13,9 @@
 window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 	bizzySavingAttrs: 0, 
 	bizzySibid: '',
-	sibLayoutOps: [{ value: "startdate_higher_level", label: ('Startdate higher level')}, // __ , 'simple-google-icalendar-widget' tijdelijk weggelaten
-	{ value: "start_with_summary" , label: ('Start with summary') },
-	{ value: "default", label: ('Old style (default)') }
+	sibLayoutOps: [{ value: "startdate_higher_level", label: window.wp.i18n.__('Startdate higher level', 'simple-google-icalendar-widget')}, // __  tijdelijk weggelaten
+	{ value: "start_with_summary" , label: window.wp.i18n.__('Start with summary', 'simple-google-icalendar-widget') },
+	{ value: "default", label: window.wp.i18n.__('Old style', 'simple-google-icalendar-widget') }
 	],
 	sibOpsCacheTime: 0,
 	fetchFromRest: function(dobj, ni) {

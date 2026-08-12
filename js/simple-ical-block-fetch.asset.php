@@ -1,6 +1,6 @@
 <?php 
 /*
- * version 3.1.0
+ * version 3.2.0
  */
 if ( ! defined( 'ABSPATH' ) ) exit;
-return ['dependencies' => ['wp-api-fetch'],  'version' => '3.1.0-' . filemtime( plugin_dir_path( __FILE__ ) . 'simple-ical-block-fetch.js' ) ];
+return ['dependencies' => ['wp-api-fetch', 'wp-i18n'],  'version' => '3.2.0-' . filemtime( plugin_dir_path( __FILE__ ) . 'simple-ical-block-fetch.js' ) ];
