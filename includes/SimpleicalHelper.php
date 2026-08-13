@@ -34,6 +34,17 @@ class SimpleicalHelper
     const SIB_ATTR = 'simple_ical_block_attrs';
 
     /**
+     * Translations of default layout names, only used to create translations for names that are in variables. Does it work ???
+     *
+     * @var array
+     */
+    static $defaultLayoutsTranslations = [__('Default', 'simple-google-icalendar-widget'),
+        __('Startdate higher level', 'simple-google-icalendar-widget'),
+        __('Start with summary', 'simple-google-icalendar-widget'),
+        __('Old style', 'simple-google-icalendar-widget'),
+    ];
+    
+        /**
      * tags allowed for summary
      *
      * @var array
@@ -328,10 +339,7 @@ class SimpleicalHelper
                 case 'rest_ph':
                     // Placeholder starting point for REST processing display of block.
                     $wrapperattr = 'class="wp-block-simplegoogleicalenderwidget-simple-ical-block"'; // hardcoded untill (is_wp_version_compatible('5.6')) ? get_block_wrapper_attributes() : '';
-                    $secho .= sprintf($block_attributes['before_widget'], ($block_attributes['anchorId'] . '" data-sib-id="' . $block_attributes['sibid'] . '" data-sib-utzui="' . $block_attributes['rest_utzui'] . '" data-sib-st="0-start' ), $wrapperattr);
-                    $secho .= $titlenode;
-                    require self::getLayoutPath('rest-client-timezone');
-                    $secho .= $block_attributes['after_widget'];
+                    require self::getLayoutPath('rest_ph/rest-client-placeholder');
                     try {
                         unset($block_attributes['before_widget'], $block_attributes['after_widget']);
                         self::update_rest_attrs($block_attributes);
@@ -408,11 +416,6 @@ class SimpleicalHelper
      */
     static function getLayoutFiles()
     {
-        $defaultLOsTrs = 	 [	__('Default', 'simple-google-icalendar-widget'),
-                 __('Startdate higher level', 'simple-google-icalendar-widget'),
-                 __('Start with summary', 'simple-google-icalendar-widget'),
-                 __('Old style', 'simple-google-icalendar-widget'),
-        ];
         $fnames = [];
         $lfns=[];
         $dirlst = implode(',', self::getLayoutDirs());
