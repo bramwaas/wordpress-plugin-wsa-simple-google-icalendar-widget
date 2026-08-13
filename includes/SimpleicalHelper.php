@@ -38,11 +38,11 @@ class SimpleicalHelper
      *
      * @var array
      */
-    static $defaultLayoutsTranslations = [__('Default', 'simple-google-icalendar-widget'),
-        __('Startdate higher level', 'simple-google-icalendar-widget'),
-        __('Start with summary', 'simple-google-icalendar-widget'),
-        __('Old style', 'simple-google-icalendar-widget'),
-    ];
+//     static $defaultLayoutsTranslations = [__('Default', 'simple-google-icalendar-widget'),
+//         __('Startdate higher level', 'simple-google-icalendar-widget'),
+//         __('Start with summary', 'simple-google-icalendar-widget'),
+//         __('Old style', 'simple-google-icalendar-widget'),
+//     ];
     
         /**
      * tags allowed for summary
