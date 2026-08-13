@@ -48,7 +48,22 @@ use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalHelper;
         $block_attributes['tzid_ui'] = 'UTC';
         $block_attributes['tz_ui'] = new \DateTimeZone('UTC');
     }
-    $layout = (isset($block_attributes['layout'])) ? $block_attributes['layout'] : 3;
+    if ($block_attributes['layout']) {
+        switch ($block_attributes['layout']){
+            case 'startdate_higher_level':
+                $layout = 1;
+                break;
+            case 'start_with_summary':
+                $layout = 2;
+                break;
+            default:
+                $layout = 3;
+        }
+    }
+    else {
+        $layout = 3;
+    }
+     
     $dflg = (isset($block_attributes['dateformat_lg'])) ? $block_attributes['dateformat_lg'] : 'l jS \of F';
     $dflgend = (isset($block_attributes['dateformat_lgend'])) ? $block_attributes['dateformat_lgend'] : '';
     $dftsum = (isset($block_attributes['dateformat_tsum'])) ? $block_attributes['dateformat_tsum'] : 'G:i ';

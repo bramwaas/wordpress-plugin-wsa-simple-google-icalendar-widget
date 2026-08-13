@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Id: default.php
+ * @version $Id: old_style.php
  * @package simpleicalblock
  * 
  * @package Simple Google iCalendar Widget
@@ -10,7 +10,7 @@
  * @link https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * Gutenberg Block functions since v2.1.2 also used for widget.
- * Version: 3.1.0
+ * Version: 3.2.0
  * 2.6.0 improve security by following Plugin Check recommendations; Moved functions common with Joomla to top. 
    rename SimpleicalBlock to SimpleicalHelper and register widget in this class. 
    Replace echo by $secho in &$secho param a.o. in display_block, to simplify escaping output by replacing multiple echoes by one. 
@@ -186,7 +186,7 @@ if (empty($nohead) ) {
         } else {
             $secho .= $block_attributes['no_events'];
         }
-        $secho .= '<br class="clear v310" />';
+        $secho .= '<br class="clear v320 old style" />';
 }
 /* end display_block */
 //if (empty($nohead)) {
