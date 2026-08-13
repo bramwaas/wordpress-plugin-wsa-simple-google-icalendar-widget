@@ -333,7 +333,7 @@ class SimpleicalHelper
                 case 'REST':
                     // Block displayed via REST
                     // more includes possible when more intances of the block are on the same page.
-                    require self::getLayoutPath('default');
+                    require self::getLayoutPath($block_attributes['layout']);
                     // self::display_block($block_attributes, $secho);
                     break;
                 case 'rest_ph':
@@ -357,7 +357,7 @@ class SimpleicalHelper
                         $secho .= $titlenode;
                     }
                     // more includes possible when more intances of the block are on the same page.
-                    require self::getLayoutPath('default');
+                    require self::getLayoutPath($block_attributes['layout']);
                     $secho .= $block_attributes['after_widget'];
  //                   self::display_block($block_attributes, $secho);
                                         break;
