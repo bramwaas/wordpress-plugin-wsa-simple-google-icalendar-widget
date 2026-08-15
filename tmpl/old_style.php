@@ -94,8 +94,9 @@ use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalHelper;
             }
             $evdtsum = (($e->startisdate === false) ? wp_date($dftsum, $e->start, $block_attributes['tz_ui']) . wp_date($dftsend, $e->end, $block_attributes['tz_ui']) : '');
             $secho .= '<li class="list-group-item' . $sflgi . $ev_class . '">';
-            $secho .= '<span class="ical-date">' . ucfirst($evdate) . '</span>' . (('a' == $block_attributes['tag_sum']) ? '<br>' : '');
-
+            if ($curdate != $evdate) {
+                $secho .= '<span class="ical-date">' . ucfirst($evdate) . '</span>' . (('a' == $block_attributes['tag_sum']) ? '<br>' : '');
+            }
             if ('summary' == $block_attributes['tag_sum']) {
                 $secho .= '<details class="ical_details' . $sflgia . '" id="' . $itemid . '">';
             }
