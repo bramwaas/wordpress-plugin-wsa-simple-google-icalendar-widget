@@ -11,44 +11,24 @@
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * Gutenberg Block functions since v2.1.2 also used for widget.
  * Version: 3.2.0
- * 2.6.0 improve security by following Plugin Check recommendations; Moved functions common with Joomla to top. 
-   rename SimpleicalBlock to SimpleicalHelper and register widget in this class. 
-   Replace echo by $secho in &$secho param a.o. in display_block, to simplify escaping output by replacing multiple echoes by one. 
-   known error: in wp 5.9.5 with elementor 3.14.1 aria-expanded and aria-controls are stripped bij wp_kses before wp 6.3.0 (see wp_kses.php) 
-    issue is solved tested with wp 6.7.1 with elementor 3.26.5 . 
- * 2.6.1  Started simplifying (bootstrap) collapse by toggles for adding javascript and trigger collapse by title.
-   Remove toggle to allow safe html in summary and description, save html is always allowed now.
-   Sameday as logical and calculated with localtime instead of gmdate. Add titlenode to REST output. Removed ev_class from li head.
- * 2.7.0 Added cast $class to string in sanitize_html_clss, defaults for new collapse fields. Add support for details/summary tag combination.
- * 3.0.0 removed messages, (replaced by Notices and Warning in error_log)
- * 3.1.0 in response to PCP error replace get_block_wrapper_attributes() by expected result 
-   'class="wp-block-simplegoogleicalenderwidget-simple-ical-block"'; // hardcoded untill (is_wp_version_compatible('5.6'));           
+ * v3.2.0 To make layout of output overridable: display_block() with optional code depending on layout attribute replaced by different template files for each layout option.
+ * layout options 1 => startdate_higher_level, 2 => start_with_summary 3 => old_style.             
  */
 // no direct access
-defined('ABSPATH') or die ('Restricted access');
+defined('ABSPATH') or die('Restricted access');
 
 use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\IcsParser;
 use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalHelper;
-/*
-if (!empty($wa))$wa->addInlineStyle('.simple_ical_block p[hidden]{display:none !important;}', ['name' => 'simple-ical-block-inline-style']);
-if (empty($secho)) {  $secho = ''; }
-
-if (empty($nohead) ) {
-    $block_attributes = SimpleicalHelper::render_attributes( $params->toArray());
-    $secho .= '<div id="' . $block_attributes['anchorId']  .'" data-sib-id="' . $block_attributes['sibid'] . '" ' . ' class="simple_ical_block ' . $block_attributes['title_collapse_toggle']. '" >';
-}
-*/
 /**
- * Front-end display of module, block or widget.
- *
- * @see
+ * Front-end display of module, block or widget for layout old_style.
  *
  * @param array $block_attributes
- * @param string &$secho (reference to $secho), output to echo in calling function, to simplify escaping output by replacing multiple echoes by one
+ * @param
+ *            string &$secho (reference to $secho), output to echo in calling function, to simplify escaping output by replacing multiple echoes by one
  *            Saved attribute/option values from database.
- * was static function display_block($block_attributes, &$secho)
+ *            was static function display_block($block_attributes, &$secho)
  */
- // start
+// start
 {
     $sn = 0;
     try {
@@ -56,19 +36,18 @@ if (empty($nohead) ) {
     } catch (\Exception $exc) {}
     if (empty($block_attributes['tz_ui']))
         try {
-            $block_attributes['tzid_ui'] = str_replace('Etc/GMT ','Etc/GMT+',$block_attributes['tzid_ui']);
+            $block_attributes['tzid_ui'] = str_replace('Etc/GMT ', 'Etc/GMT+', $block_attributes['tzid_ui']);
             $block_attributes['tz_ui'] = new \DateTimeZone($block_attributes['tzid_ui']);
-    } catch (\Exception $exc) {}
+        } catch (\Exception $exc) {}
     if (empty($block_attributes['tz_ui']))
         try {
             $block_attributes['tzid_ui'] = wp_timezone_string();
             $block_attributes['tz_ui'] = new \DateTimeZone($block_attributes['tzid_ui']);
-    } catch (\Exception $exc) {}
+        } catch (\Exception $exc) {}
     if (empty($block_attributes['tz_ui'])) {
         $block_attributes['tzid_ui'] = 'UTC';
         $block_attributes['tz_ui'] = new \DateTimeZone('UTC');
     }
-    $layout = (isset($block_attributes['layout'])) ? $block_attributes['layout'] : 3;
     $dflg = (isset($block_attributes['dateformat_lg'])) ? $block_attributes['dateformat_lg'] : 'l jS \of F';
     $dflgend = (isset($block_attributes['dateformat_lgend'])) ? $block_attributes['dateformat_lgend'] : '';
     $dftsum = (isset($block_attributes['dateformat_tsum'])) ? $block_attributes['dateformat_tsum'] : 'G:i ';
@@ -83,117 +62,93 @@ if (empty($nohead) ) {
         $cat_disp = false;
     } else {
         $cat_disp = true;
-        $cat_sep = '</small>'.$block_attributes['categories_display'].'<small>';
+        $cat_sep = '</small>' . $block_attributes['categories_display'] . '<small>';
     }
     if (! in_array($block_attributes['tag_sum'], self::$allowed_tags_sum))
         $block_attributes['tag_sum'] = 'a';
-        $ipd = IcsParser::getData($block_attributes);
-        $data = $ipd['data'];
-        if (! empty($data) && is_array($data)) {
-            $secho .= '<ul id="lg' .$block_attributes['anchorId'] .'" class="list-group' . $block_attributes['suffix_lg_class'] . ' simple-ical-widget '. $block_attributes['title_collapse_toggle'] . '" > ';
-            $curdate = '';
-            foreach ($data as $e) {
-                $idlist = explode("@", $e->uid,2);
-                $itemid = $block_attributes['sibid'] . '_' . strval(++ $sn) . '_' . $idlist[0];
-                $evdate = wp_date($dflg, $e->start, $block_attributes['tz_ui']);
-                $sameday = (wp_date('yz', $e->start, $block_attributes['tz_ui']) === wp_date('yz', $e->end, $block_attributes['tz_ui']));
-                $ev_class = ((! empty($e->cal_class)) ? ' ' . sanitize_html_class($e->cal_class) : '');
-                $cat_list = '';
-                if (!empty($e->categories)) {
-                    $ev_class = $ev_class . ' ' . implode( ' ', array_map( "sanitize_html_class", $e->categories ));
-                    if ($cat_disp) {
-                        $cat_list = '<div class="categories"><small>'
-                            . implode($cat_sep,str_replace("\n", '<br>', $e->categories ))
-                            . '</small></div>';
-                    }
+    $ipd = IcsParser::getData($block_attributes);
+    $data = $ipd['data'];
+    if (! empty($data) && is_array($data)) {
+        $secho .= '<ul id="lg' . $block_attributes['anchorId'] . '" class="list-group' . $block_attributes['suffix_lg_class'] . ' simple-ical-widget ' . $block_attributes['title_collapse_toggle'] . '" > ';
+        $curdate = '';
+        foreach ($data as $e) {
+            $idlist = explode("@", $e->uid, 2);
+            $itemid = $block_attributes['sibid'] . '_' . strval(++ $sn) . '_' . $idlist[0];
+            $evdate = wp_date($dflg, $e->start, $block_attributes['tz_ui']);
+            $sameday = (wp_date('yz', $e->start, $block_attributes['tz_ui']) === wp_date('yz', $e->end, $block_attributes['tz_ui']));
+            $ev_class = ((! empty($e->cal_class)) ? ' ' . sanitize_html_class($e->cal_class) : '');
+            $cat_list = '';
+            if (! empty($e->categories)) {
+                $ev_class = $ev_class . ' ' . implode(' ', array_map("sanitize_html_class", $e->categories));
+                if ($cat_disp) {
+                    $cat_list = '<div class="categories"><small>' . implode($cat_sep, str_replace("\n", '<br>', $e->categories)) . '</small></div>';
                 }
-                if (! $sameday ) {
-                    $evdate = str_replace(array(
-                        "</div><div>",
-                        "</h4><h4>",
-                        "</h5><h5>",
-                        "</h6><h6>"
-                    ), '', $evdate . wp_date($dflgend, $e->end - 1, $block_attributes['tz_ui']));
-                }
-                $evdtsum = (($e->startisdate === false) ? wp_date($dftsum, $e->start, $block_attributes['tz_ui']) . wp_date($dftsend, $e->end, $block_attributes['tz_ui']) : '');
-                if ($layout < 2 && $curdate != $evdate) {
-                    if ($curdate != '') {
-                        $secho .= '</ul></li>';
-                    }
-                    $secho .= '<li class="list-group-item' . $sflgi . ' head">' . '<span class="ical-date">' . ucfirst($evdate) . '</span><ul class="list-group' . $block_attributes['suffix_lg_class'] . '">';
-                }
-                $secho .= '<li class="list-group-item' . $sflgi . $ev_class . '">';
-                if ($layout == 3 && $curdate != $evdate) {
-                    $secho .= '<span class="ical-date">' . ucfirst($evdate) . '</span>' . (('a' == $block_attributes['tag_sum']) ? '<br>' : '');
-                }
-                
-                if ('summary' == $block_attributes['tag_sum']) {
-                    $secho .= '<details class="ical_details' . $sflgia . '" id="'. $itemid. '">';
-                }
-                
-                $secho .=  '<' . $block_attributes['tag_sum'] . ' class="ical_summary' . $sflgia . (('a' == $block_attributes['tag_sum']) ? '" data-toggle="collapse" data-bs-toggle="collapse" href="#' . $itemid . '" aria-expanded="false" aria-controls="' . $itemid . '">' : '">');
-                if ($layout != 2) {
-                    $secho .= $evdtsum;
-                }
-                if (! empty($e->summary)) {
-                    $secho .= str_replace("\n", '<br>', $e->summary);
-                }
-                $secho .= '</' . $block_attributes['tag_sum'] . '>' . $cat_list;
-                if ($layout == 2) {
-                    $secho .= '<span>'. $evdate . $evdtsum . '</span>';
-                }
-                
-                if ('summary' != $block_attributes['tag_sum']) {
-                    $secho .= '<div class="ical_details' . $sflgia . (('a' == $block_attributes['tag_sum']) ? ' collapse' : '') . '" id="'. $itemid. '">';
-                }
-                
-                if (! empty($e->description) && trim($e->description) > '' && $excerptlength !== 0) {
-                    if ($excerptlength !== '' && strlen($e->description) > $excerptlength) {
-                        $e->description = substr($e->description, 0, $excerptlength + 1);
-                        if (rtrim($e->description) !== $e->description) {
-                            $e->description = substr($e->description, 0, $excerptlength);
+            }
+            if (! $sameday) {
+                $evdate = str_replace(array(
+                    "</div><div>",
+                    "</h4><h4>",
+                    "</h5><h5>",
+                    "</h6><h6>"
+                ), '', $evdate . wp_date($dflgend, $e->end - 1, $block_attributes['tz_ui']));
+            }
+            $evdtsum = (($e->startisdate === false) ? wp_date($dftsum, $e->start, $block_attributes['tz_ui']) . wp_date($dftsend, $e->end, $block_attributes['tz_ui']) : '');
+            $secho .= '<li class="list-group-item' . $sflgi . $ev_class . '">';
+            $secho .= '<span class="ical-date">' . ucfirst($evdate) . '</span>' . (('a' == $block_attributes['tag_sum']) ? '<br>' : '');
+
+            if ('summary' == $block_attributes['tag_sum']) {
+                $secho .= '<details class="ical_details' . $sflgia . '" id="' . $itemid . '">';
+            }
+
+            $secho .= '<' . $block_attributes['tag_sum'] . ' class="ical_summary' . $sflgia . (('a' == $block_attributes['tag_sum']) ? '" data-toggle="collapse" data-bs-toggle="collapse" href="#' . $itemid . '" aria-expanded="false" aria-controls="' . $itemid . '">' : '">');
+            $secho .= $evdtsum;
+            if (! empty($e->summary)) {
+                $secho .= str_replace("\n", '<br>', $e->summary);
+            }
+            $secho .= '</' . $block_attributes['tag_sum'] . '>' . $cat_list;
+
+            if ('summary' != $block_attributes['tag_sum']) {
+                $secho .= '<div class="ical_details' . $sflgia . (('a' == $block_attributes['tag_sum']) ? ' collapse' : '') . '" id="' . $itemid . '">';
+            }
+
+            if (! empty($e->description) && trim($e->description) > '' && $excerptlength !== 0) {
+                if ($excerptlength !== '' && strlen($e->description) > $excerptlength) {
+                    $e->description = substr($e->description, 0, $excerptlength + 1);
+                    if (rtrim($e->description) !== $e->description) {
+                        $e->description = substr($e->description, 0, $excerptlength);
+                    } else {
+                        if (strrpos($e->description, ' ', max(0, $excerptlength - 10)) !== false or strrpos($e->description, "\n", max(0, $excerptlength - 10)) !== false) {
+                            $e->description = substr($e->description, 0, max(strrpos($e->description, "\n", max(0, $excerptlength - 10)), strrpos($e->description, ' ', max(0, $excerptlength - 10))));
                         } else {
-                            if (strrpos($e->description, ' ', max(0, $excerptlength - 10)) !== false or strrpos($e->description, "\n", max(0, $excerptlength - 10)) !== false) {
-                                $e->description = substr($e->description, 0, max(strrpos($e->description, "\n", max(0, $excerptlength - 10)), strrpos($e->description, ' ', max(0, $excerptlength - 10))));
-                            } else {
-                                $e->description = substr($e->description, 0, $excerptlength);
-                            }
+                            $e->description = substr($e->description, 0, $excerptlength);
                         }
                     }
-                    $e->description = str_replace("\n", '<br>', $e->description);
-                    $secho .= '<span class="dsc">'. $e->description. ((strrpos($e->description, '<br>') === (strlen($e->description) - 4)) ? '' : '<br>'). '</span>';
                 }
-                if ($e->startisdate === false && $sameday) {
-                    $secho .= '<span class="time">'. wp_date($dftstart, $e->start, $block_attributes['tz_ui']). '</span><span class="time">'. wp_date($dftend, $e->end, $block_attributes['tz_ui']). '</span> ';
-                } else {
-                    $secho .= '';
-                }
-                if (! empty($e->location)) {
-                    $secho .= '<span class="location">'. str_replace("\n", '<br>', $e->location). '</span>';
-                }
-                if ('summary' == $block_attributes['tag_sum']) {
-                    $secho .= '</details></li>';
-                } else {
-                    $secho .= '</div></li>';
-                }
-                $curdate = $evdate;
+                $e->description = str_replace("\n", '<br>', $e->description);
+                $secho .= '<span class="dsc">' . $e->description . ((strrpos($e->description, '<br>') === (strlen($e->description) - 4)) ? '' : '<br>') . '</span>';
             }
-            if ($layout < 2) {
-                $secho .= '</ul></li>';
+            if ($e->startisdate === false && $sameday) {
+                $secho .= '<span class="time">' . wp_date($dftstart, $e->start, $block_attributes['tz_ui']) . '</span><span class="time">' . wp_date($dftend, $e->end, $block_attributes['tz_ui']) . '</span> ';
+            } else {
+                $secho .= '';
             }
-            $secho .= '</ul>';
-            $secho .= $block_attributes['after_events'];
-        } else {
-            $secho .= $block_attributes['no_events'];
+            if (! empty($e->location)) {
+                $secho .= '<span class="location">' . str_replace("\n", '<br>', $e->location) . '</span>';
+            }
+            if ('summary' == $block_attributes['tag_sum']) {
+                $secho .= '</details></li>';
+            } else {
+                $secho .= '</div></li>';
+            }
+            $curdate = $evdate;
+        }
+        $secho .= '</ul>';
+        $secho .= $block_attributes['after_events'];
+    } else {
+        $secho .= $block_attributes['no_events'];
         }
         $secho .= '<br class="clear v320 old style" />';
 }
 /* end display_block */
-//if (empty($nohead)) {
-//    $secho .= '</div>';
-//}
-
-//echo SimpleicalHelper::clean_output($secho);
-//$secho = '';
 
 
