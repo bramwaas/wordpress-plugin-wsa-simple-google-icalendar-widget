@@ -17,7 +17,7 @@
 		"ics"
 	],
 	"icon" : "calendar-alt",
-	"version" : "3.1.0",
+	"version" : "3.2.0",
 	"textdomain" : "simple-google-icalendar-widget",
 	"attributes" : {
 		"wptype" : {
@@ -43,8 +43,7 @@
 			"default" : 92
 		},
 		"layout" : {
-			"type" : "integer",
-			"default" : 3
+			"type" : "string"
 		},
 		"categories_filter_op" : {
 			"type" : "string",
