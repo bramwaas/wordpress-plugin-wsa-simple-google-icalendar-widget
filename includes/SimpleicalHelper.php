@@ -33,22 +33,11 @@ class SimpleicalHelper
 {
     const SIB_ATTR = 'simple_ical_block_attrs';
 
-    /**
-     * Translations of default layout names, only used to create translations for names that are in variables. Does it work ???
-     *
-     * @var array
-     */
-//     static $defaultLayoutsTranslations = [__('Default', 'simple-google-icalendar-widget'),
-//         __('Startdate higher level', 'simple-google-icalendar-widget'),
-//         __('Start with summary', 'simple-google-icalendar-widget'),
-//         __('Old style', 'simple-google-icalendar-widget'),
-//     ];
-    
-        /**
-     * tags allowed for summary
-     *
-     * @var array
-     */
+/* 
+ * tags allowed for summary
+ *
+ * @var array
+ */
     static $allowed_tags_sum = [
         'a',
         'b',
@@ -416,6 +405,13 @@ class SimpleicalHelper
      */
     static function getLayoutFiles()
     {
+// Translations of default layout names, only used to create translations for names that are in variables. Does it work ???
+        $defaultLayoutsTranslations = [ __('Default', 'simple-google-icalendar-widget'),
+          __('Startdate higher level', 'simple-google-icalendar-widget'),
+          __('Start with summary', 'simple-google-icalendar-widget'),
+          __('Old style', 'simple-google-icalendar-widget'),
+        ];
+        
         $fnames = [];
         $lfns=[];
         $dirlst = implode(',', self::getLayoutDirs());
