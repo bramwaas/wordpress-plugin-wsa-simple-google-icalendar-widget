@@ -250,9 +250,19 @@ class SimpleicalWidget extends \WP_Widget
         <p>
           <label for="<?php echo esc_attr($this->get_field_id('layout')); ?>"><?php esc_attr_e('Lay-out:', 'simple-google-icalendar-widget'); ?></label> 
           <select class="widefat" id="<?php echo esc_attr($this->get_field_id('layout')); ?>" name="<?php echo esc_attr($this->get_field_name('layout')); ?>" >
+         <?php 
+         foreach (getLayoutFiles() as $option){
+             echo 'option value=' . $option->value . ' ' .(($option->value = esc_attr($instance['layout']) ? 'selected':'')) . ' >' 
+                 . esc_attr_e($option->label, 'simple-google-icalendar-widget') . '</option>';
+             
+         }
+         ?>
+
+<?php /*
             <option value="1"<?php echo (1==esc_attr($instance['layout']))?'selected':''; ?>><?php esc_attr_e('Startdate higher level', 'simple-google-icalendar-widget'); ?></option>
   			<option value="2"<?php echo (2==esc_attr($instance['layout']))?'selected':''; ?>><?php esc_attr_e('Start with summary', 'simple-google-icalendar-widget'); ?></option>
   			<option value="3"<?php echo (3==esc_attr($instance['layout']))?'selected':''; ?>><?php esc_attr_e('Old style', 'simple-google-icalendar-widget'); ?></option>
+*/ ?>
   		 </select>	
         </p>
          <p>
