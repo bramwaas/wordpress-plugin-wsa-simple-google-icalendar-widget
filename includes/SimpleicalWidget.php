@@ -252,7 +252,7 @@ class SimpleicalWidget extends \WP_Widget
           <select class="widefat" id="<?php echo esc_attr($this->get_field_id('layout')); ?>" name="<?php echo esc_attr($this->get_field_name('layout')); ?>" >
          <?php 
          foreach (SimpleicalHelper::getLayoutFiles() as $option){
-             echo 'option value=' . $option->value . ' ' .(($option->value = esc_attr($instance['layout']) ? 'selected':'')) . ' >' 
+             echo '<option value=' . $option->value . ' ' .(($option->value = esc_attr($instance['layout']) ? 'selected':'')) . ' >' 
                  . esc_attr_e($option->label, 'simple-google-icalendar-widget') . '</option>';
              
          }
