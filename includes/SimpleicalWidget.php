@@ -17,7 +17,8 @@
  * 2.7.0 Enable to add words of summary to categories for filtering. Add support for details/summary tag combination.
  * 2.7.1 remove load textdomain as recommended by PluginCheck
  * 3.1.3 make extendable by adding parameters to construct.   
- * 3.1.4 remove single htmlspecialchars validation that broke url with & in it .   
+ * 3.1.4 remove single htmlspecialchars validation that broke url with & in it .
+ * 3.2.0 layout options from getLayoutFiles().   
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 // no direct access
@@ -252,17 +253,10 @@ class SimpleicalWidget extends \WP_Widget
           <select class="widefat" id="<?php echo esc_attr($this->get_field_id('layout')); ?>" name="<?php echo esc_attr($this->get_field_name('layout')); ?>" >
          <?php 
          foreach (SimpleicalHelper::getLayoutFiles() as $option){
-             echo '<option value=' . $option->value . ' ' .(($option->value = esc_attr($instance['layout']) ? 'selected':'')) . ' >' 
-                 . esc_attr_e($option->label, 'simple-google-icalendar-widget') . '</option>';
-             
+             echo '<option value=' . $option->value . ' ' .((esc_attr($option->value) == esc_attr($instance['layout']) ? 'selected':'')) . ' >'
+                . esc_attr($option->label) . '</option>';
          }
          ?>
-
-<?php /*
-            <option value="1"<?php echo (1==esc_attr($instance['layout']))?'selected':''; ?>><?php esc_attr_e('Startdate higher level', 'simple-google-icalendar-widget'); ?></option>
-  			<option value="2"<?php echo (2==esc_attr($instance['layout']))?'selected':''; ?>><?php esc_attr_e('Start with summary', 'simple-google-icalendar-widget'); ?></option>
-  			<option value="3"<?php echo (3==esc_attr($instance['layout']))?'selected':''; ?>><?php esc_attr_e('Old style', 'simple-google-icalendar-widget'); ?></option>
-*/ ?>
   		 </select>	
         </p>
          <p>
