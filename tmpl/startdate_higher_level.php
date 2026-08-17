@@ -54,16 +54,16 @@ use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalHelper;
     $dftstart = (isset($block_attributes['dateformat_tstart'])) ? $block_attributes['dateformat_tstart'] : 'G:i';
     $dftend = (isset($block_attributes['dateformat_tend'])) ? $block_attributes['dateformat_tend'] : ' - G:i ';
     $excerptlength = (isset($block_attributes['excerptlength']) && ' ' < trim($block_attributes['excerptlength'])) ? (int) $block_attributes['excerptlength'] : '';
-    $block_attributes['suffix_lg_class'] = self::sanitize_html_clss($block_attributes['suffix_lg_class']);
-    $sflgi = self::sanitize_html_clss($block_attributes['suffix_lgi_class']);
-    $sflgia = self::sanitize_html_clss($block_attributes['suffix_lgia_class']);
+    $block_attributes['suffix_lg_class'] = SimpleicalHelper::sanitize_html_clss($block_attributes['suffix_lg_class']);
+    $sflgi = SimpleicalHelper::sanitize_html_clss($block_attributes['suffix_lgi_class']);
+    $sflgia = SimpleicalHelper::sanitize_html_clss($block_attributes['suffix_lgia_class']);
     if (empty($block_attributes['categories_display'])) {
         $cat_disp = false;
     } else {
         $cat_disp = true;
         $cat_sep = '</small>' . $block_attributes['categories_display'] . '<small>';
     }
-    if (! in_array($block_attributes['tag_sum'], self::$allowed_tags_sum))
+    if (! in_array($block_attributes['tag_sum'], SimpleicalHelper::$allowed_tags_sum))
         $block_attributes['tag_sum'] = 'a';
     $ipd = IcsParser::getData($block_attributes);
     $data = $ipd['data'];

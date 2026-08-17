@@ -53,10 +53,10 @@ class SimpleicalWidget extends \WP_Widget
          *
          * @param array $args
          *            Widget arguments.
-         * @param array $instance
+         * @param array $block_attributes (was $instance)
          *            Saved values from database.
          */
-        public function widget($args, $instance)
+        public function widget($args, $block_attributes)
         {
             $secho = '';
             $args = array_merge(['before_widget' => '',
@@ -65,46 +65,49 @@ class SimpleicalWidget extends \WP_Widget
                 'after_widget' => '',
                 'classname' => 'Simple_iCal_Widget' ],
                 $args);
-            $instance = array_merge(SimpleicalHelper::$default_block_attributes,
+            $block_attributes = array_merge(SimpleicalHelper::$default_block_attributes,
                 ['title' => __('Events', 'simple-google-icalendar-widget'),
                     'tzid_ui' => wp_timezone_string(),
                     'wptype' => 'widget'],
-                $instance  );
-            if (empty($instance['anchorId'])) $instance['anchorId'] =  $instance['sibid'];
+                $block_attributes  );
+            if (empty($block_attributes['anchorId'])) $block_attributes['anchorId'] =  $block_attributes['sibid'];
             
-            if (! empty($instance['rest_utzui']) &&  is_numeric($instance['rest_utzui'])) {
-                $instance['wptype'] = 'rest_ph_w';
+            if (! empty($block_attributes['rest_utzui']) &&  is_numeric($block_attributes['rest_utzui'])) {
+                $block_attributes['wptype'] = 'rest_ph_w';
             }
             // lay-out block:
-            $instance['clear_cache_now'] = false;
+            $block_attributes['clear_cache_now'] = false;
             $secho .= sprintf($args['before_widget'],
-                ('w-' . $instance['anchorId']),
+                ('w-' . $block_attributes['anchorId']),
                 $args['classname']) ;
-            $secho .= '<span id="' . $instance['anchorId'] . '" data-sib-id="'
-                . $instance['sibid'] . '" data-sib-utzui="' . $instance['rest_utzui']
-                . (('rest_ph_w' == $instance['wptype']) ? '" data-sib-st="0-start" >' : '">');
+            $secho .= '<span id="' . $block_attributes['anchorId'] . '" data-sib-id="'
+                . $block_attributes['sibid'] . '" data-sib-utzui="' . $block_attributes['rest_utzui']
+                . (('rest_ph_w' == $block_attributes['wptype']) ? '" data-sib-st="0-start" >' : '">');
             $args['after_widget'] = '</span>' . $args['after_widget'];
             
-            if (! empty($instance['title'])) {
+            if (! empty($block_attributes['title'])) {
                 if (false === stripos(' data-sib-t="true" ', $args['before_title'])) {
                     $l = explode('>', $args['before_title'], 2);
                     $args['before_title'] = implode(' data-sib-t="true" >', $l);
                 }
-                if (!empty($instance['title_collapse_toggle'])){
-                    $args['before_title'] .= '<a data-toggle="collapse" data-bs-toggle="collapse" href="#lg' .$instance['anchorId'] . '" role="button" aria-expanded="'.(('collapse' == $instance['title_collapse_toggle'])?'false':'true').'" aria-controls="collapseMod">';
+                if (!empty($block_attributes['title_collapse_toggle'])){
+                    $args['before_title'] .= '<a data-toggle="collapse" data-bs-toggle="collapse" href="#lg' .$block_attributes['anchorId'] . '" role="button" aria-expanded="'.(('collapse' == $block_attributes['title_collapse_toggle'])?'false':'true').'" aria-controls="collapseMod">';
                     $args['after_title']  = '</a>' . $args['after_title'];
                 }
-                $title = apply_filters('widget_title', $instance['title']);
+                $title = apply_filters('widget_title', $block_attributes['title']);
                 $secho .= $args['before_title']. $title. $args['after_title'];
             }
-            if ('rest_ph_w' == $instance['wptype'] ) {
-                SimpleicalHelper::update_rest_attrs($instance );
-                $secho .= '<p>';
-               $secho .= __('Processing', 'simple-google-icalendar-widget');
-                $secho .= '</p>';
+            if ('rest_ph_w' == $block_attributes['wptype'] ) {
+                try {
+                    SimpleicalHelper::update_rest_attrs($block_attributes);
+                } catch (\Exception $e) {
+                    $secho .= '<p>Caught exception: ' . $e->getMessage() . "</p>\n";
+                    Log::log(Log::WARNING, 'Attributes not saved ' . 'Caught exception: ' . $e->getMessage());
+                }
+                require SimpleicalHelper::getLayoutPath('rest_ph/rest-client-placeholder');
             } else {
-//                if ((false === strpos($instance['calendar_id'],'//:')) && (false === strpos($instance['calendar_id'],'@'))) $instance['calendar_id'] = base64_decode($instance['calendar_id']);
-                SimpleicalHelper::display_block($instance, $secho);
+                require SimpleicalHelper::getLayoutPath($block_attributes['layout']);
+                
             }
             // end lay-out block
             $secho .= $args['after_widget'];
