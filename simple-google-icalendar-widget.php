@@ -7,7 +7,7 @@
  Version: 3.1.1
  License: GPLv2
  Tested up to: 7.0
- Requires at least: 5.3
+ Requires at least: 5.9
  Requires PHP:  7.4
  Text Domain:  simple-google-icalendar-widget
  20260713
@@ -23,6 +23,7 @@
  *   bw 20260713 v3.1.1 replaced wp_remote_get by wp_safe_remote_get to further harden security after fixing a security issue
  *   bw 20260720 v3.1.2 Repaired error missing title introduced in version 3.1.0.
   *   bw 20260727 v3.1.3 Added optional legacy widget with no namespace.
+  *   nw 20260820 v3.2.0 Working with overridable templates, similar to Joomla module. Requires WP5.9 (was 5.3)
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 // no direct access
@@ -63,12 +64,12 @@ create_admin_menu_pages();
  */
 function create_admin_menu_pages()
 {
-    $sgcoew_icaladmin = new SimpleicalWidgetAdmin();
-    $sgcoew_options = SimpleicalWidgetAdmin::get_plugin_options();
-    if ($sgcoew_options['simpleical_add_collapse_code']) {
+    $sib_icaladmin = new SimpleicalWidgetAdmin();
+    $sib_options = SimpleicalWidgetAdmin::get_plugin_options();
+    if ($sib_options['simpleical_add_collapse_code']) {
         add_action('wp_enqueue_scripts', __NAMESPACE__ . '\enqueue_bs_scripts');
     }
-    if ($sgcoew_options['simpleical_add_collapse_code_admin']) {
+    if ($sib_options['simpleical_add_collapse_code_admin']) {
         add_action('enqueue_block_assets', __NAMESPACE__ . '\enqueue_bs_block_assets');
     }
     /**
@@ -76,15 +77,15 @@ function create_admin_menu_pages()
      * Register our simple_ical_options_page and simple_ical_info_page to the admin_menu action hook.
      */
     add_action('admin_init', [
-        $sgcoew_icaladmin,
+        $sib_icaladmin,
         'simple_ical_settings_init'
     ]);
     add_action('admin_menu', [
-        $sgcoew_icaladmin,
+        $sib_icaladmin,
         'simple_ical_options_page'
     ]);
     add_action('admin_menu', array(
-        $sgcoew_icaladmin,
+        $sib_icaladmin,
         'simple_ical_info_page'
     ));
 }

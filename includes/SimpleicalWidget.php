@@ -230,6 +230,21 @@ class SimpleicalWidget extends \WP_Widget
                 }
                 else $instance['sibid'] = 'W' . bin2hex(random_bytes(7));
             }
+            if (empty($instance['layout'])) {
+                $instance['layout'] = 'old_style';
+            } else {
+                switch ($instance['layout']){
+                    case 1:
+                        $instance['layout'] = 'startdate_higher_level';
+                        break;
+                    case 2:
+                        $instance['layout'] = 'start_with_summary';
+                        break;
+                    case 3:
+                        $instance['layout'] = 'old_style';
+                }
+            }
+            
             $instance = wp_parse_args((array) $instance, $default);
 //            if ((false === strpos($instance['calendar_id'],'//:')) && (false === strpos($instance['calendar_id'],'@')))  $instance['calendar_id'] = base64_decode($instance['calendar_id']);
             $nwsibid = 'w' .  bin2hex(random_bytes(7));

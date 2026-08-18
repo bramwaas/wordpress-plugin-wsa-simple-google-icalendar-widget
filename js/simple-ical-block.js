@@ -138,18 +138,25 @@
 				props.attributes.sibid = 'b' + props.clientId;
 				props.setAttributes({ sibid: 'b' + props.clientId }); 
  			};	
-//			if (typeof props.attributes.layout !== 'string') {
-//				if (typeof props.attributes.layout == 'integer') {
-//					if ( 2 == props.attributes.layout) {
-//						props.attributes.layout = 'start_with_summary';
-//					} else {
-//						props.attributes.layout = 'startdate_higher_level';
-//					}
-//								}	else {
-//					props.attributes.layout = 'old_style';
-//				}
-//				props.setAttributes({ layout: props.attributes.layout }); 
-//			};	
+			if (typeof props.attributes.layout !== 'string') {
+				if (typeof props.attributes.layout == 'integer') {
+					switch (props.attributes.layout) {
+						case 1: 
+							props.attributes.layout = 'startdate_higher_level';
+							break;
+						case  2:
+							props.attributes.layout = 'start_with_summary';
+							break;
+						case  3: 
+							props.attributes.layout = 'old_style';
+							break;
+						default:
+							props.attributes.layout = 'default';
+					}
+				} else {
+					props.attributes.layout = 'old_style';
+				}
+			};	
 			sibHelper.getSibLayouts();
 			}, []);
 			useEffect(function() {

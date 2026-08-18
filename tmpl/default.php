@@ -48,7 +48,7 @@ use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalHelper;
         $block_attributes['tzid_ui'] = 'UTC';
         $block_attributes['tz_ui'] = new \DateTimeZone('UTC');
     }
-    if ($block_attributes['layout']) {
+    if (!empty($block_attributes['layout'])) {
         switch ($block_attributes['layout']){
             case 'startdate_higher_level':
                 $layout = 1;
