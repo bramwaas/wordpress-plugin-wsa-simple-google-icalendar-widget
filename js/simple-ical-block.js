@@ -28,7 +28,7 @@
  * 2.7.0 Enable to add words of summary to categories for filtering. Add support for details/summary tag combination.
  * 3.2.0 choose from layout files in stead of layout and rest_utzui
  */
-(function(blocks, i18n, element, blockEditor, components, sibHelper) {
+(function(blocks, i18n, element, blockEditor, components) {
 	const el = element.createElement;
 	const __ = i18n.__;
 	const useBlockProps = blockEditor.useBlockProps;
@@ -80,7 +80,9 @@
 	{ value: 'summary', label: __('summary with details', 'simple-google-icalendar-widget') },
 	{ value: 'u', label: __('u (unarticulated, underline )', 'simple-google-icalendar-widget') }
 	];
-	
+	const sibHelper = ((typeof parent.simpleIcalBlockF === 'object') ) ? parent.simpleIcalBlockF: window.simpleIcalBlockF ;
+	console.log('sibHelper');
+	console.log(sibHelper);
 	blocks.registerBlockType('simplegoogleicalenderwidget/simple-ical-block', {
 		icon: iconEl,
 
@@ -138,6 +140,8 @@
 				props.attributes.sibid = 'b' + props.clientId;
 				props.setAttributes({ sibid: 'b' + props.clientId }); 
  			};	
+			console.log('start edit LO 0:');
+			console.log( props.attributes);
 			if (typeof props.attributes.layout !== 'string') {
 				if (typeof props.attributes.layout == 'integer') {
 					switch (props.attributes.layout) {
@@ -157,6 +161,8 @@
 					props.attributes.layout = 'old_style';
 				}
 			};	
+			console.log('start edit LO 1:');
+			console.log( props.attributes);
 			sibHelper.getSibLayouts();
 			}, []);
 			useEffect(function() {
@@ -590,14 +596,14 @@
 			    )
 			 ),
 			el('p',
-			    {},
-				__('Processing', 'simple-google-icalendar-widget')
+			    {"class":"v320"},
+				'Processing ...'
 			)
     	  )
 		)
 		},
 		deprecated: [
-				{ // dep270 
+		 { // dep270 
 					"attributes": {
 					"wptype": { "type": "string", "default": "block" },
 					"sibid": { "type": "string" },
@@ -632,6 +638,36 @@
 					"anchorId": { "type": "string", "default": "" },
 					"title_collapse_toggle" : {	"type" : "string", 	"enum" : [ "", 	"collapse", "collapse show" ] },
 					"add_collapse_code" : {	"type" : "boolean", "default": false }
+					},
+					migrate: function (attributes) {
+						console.log('Migrate');
+//						console.log(attributes.layout);
+						console.log(typeof attributes.layout);
+						var newlayout = '';
+						if (typeof attributes.layout == 'string') {
+							newlayout = attributes.layout;
+						} else if (typeof attributes.layout == 'number') {
+							switch (attributes.layout) {
+								case 1: 
+									newlayout = 'startdate_higher_level';
+									break;
+								case  2:
+									newlayout = 'start_with_summary';
+									break;
+								case  3: 
+									newlayout = 'old_style';
+									break;
+								default:
+									newlayout = 'default';
+							}
+						} else {
+							newlayout = 'old_style';
+						}
+							
+						console.log('Migrate newlayout');
+						console.log(newlayout);
+						attributes.layout = newlayout;
+						return { ...attributes};
 					},
 					save: function (props) {
 							    return (el(
@@ -771,6 +807,6 @@
 	window.wp.i18n,
 	window.wp.element,
 	window.wp.blockEditor,
-	window.wp.components,
-    window.simpleIcalBlockF)
+	window.wp.components
+    )
 );

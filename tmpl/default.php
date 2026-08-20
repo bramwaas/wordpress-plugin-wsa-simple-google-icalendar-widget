@@ -17,6 +17,7 @@
 defined('ABSPATH') or die ('Restricted access');
 
 use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\IcsParser;
+use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\Log;
 use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalHelper;
 /**
  * Front-end display of module, block or widget.
@@ -48,6 +49,7 @@ use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalHelper;
         $block_attributes['tzid_ui'] = 'UTC';
         $block_attributes['tz_ui'] = new \DateTimeZone('UTC');
     }
+    Log::log(Log::NOTICE, 'Default layout:'. $block_attributes('layout') . ' title ' .$block_attributes('title'));
     if (!empty($block_attributes['layout'])) {
         switch ($block_attributes['layout']){
             case 'startdate_higher_level':
