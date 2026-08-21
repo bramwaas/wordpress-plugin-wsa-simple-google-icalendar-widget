@@ -22,7 +22,9 @@
 defined('ABSPATH') or die ('Restricted access');
 
 $secho .= sprintf($block_attributes['before_widget'], ($block_attributes['anchorId'] . '" data-sib-id="' . $block_attributes['sibid'] . '" data-sib-utzui="' . $block_attributes['rest_utzui'] . '" data-sib-st="0-start' ), $wrapperattr);
-$secho .= $titlenode;
+if (! empty($block_attributes['title'])) {
+    $secho .= $titlenode;
+}
 $secho .= '<p>';
 $secho .= __('Processing', 'simple-google-icalendar-widget');
 $secho .= '</p>';

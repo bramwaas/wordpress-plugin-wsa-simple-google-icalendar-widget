@@ -26,9 +26,9 @@
  * 2.5.0 support for categories.
  * 2.6.1  Started simplifying (bootstrap) collapse by toggles for adding javascript and trigger collapse by title.
  * 2.7.0 Enable to add words of summary to categories for filtering. Add support for details/summary tag combination.
- * 3.2.0 choose from layout files in stead of layout and rest_utzui
+ * 3.2.0 choose from layout files in stead of layout and rest_utzui, attr layout integer => sib_layout string
  */
-(function(blocks, i18n, element, blockEditor, components) {
+(function (blocks, i18n, element, blockEditor, components) {
 	const el = element.createElement;
 	const __ = i18n.__;
 	const useBlockProps = blockEditor.useBlockProps;
@@ -142,23 +142,23 @@
  			};	
 			console.log('start edit LO 0:');
 			console.log( props.attributes);
-			if (typeof props.attributes.layout !== 'string') {
-				if (typeof props.attributes.layout == 'integer') {
+			if (typeof props.attributes.sib_layout !== 'string' || '' == props.attributes.sib_layout ) {
+				if (typeof props.attributes.layout == 'number') {
 					switch (props.attributes.layout) {
 						case 1: 
-							props.attributes.layout = 'startdate_higher_level';
+							props.attributes.sib_layout = 'startdate_higher_level';
 							break;
 						case  2:
-							props.attributes.layout = 'start_with_summary';
+							props.attributes.sib_layout = 'start_with_summary';
 							break;
 						case  3: 
-							props.attributes.layout = 'old_style';
+							props.attributes.sib_layout = 'old_style';
 							break;
 						default:
-							props.attributes.layout = 'default';
+							props.attributes.sib_layout = 'default';
 					}
 				} else {
-					props.attributes.layout = 'old_style';
+					props.attributes.sib_layout = 'old_style';
 				}
 			};	
 			console.log('start edit LO 1:');
@@ -246,8 +246,8 @@
 							SelectControl,
 							{
 								label: __('Lay-out:', 'simple-google-icalendar-widget'),
-								value: props.attributes.layout,
-								onChange: function(value) { props.setAttributes({ layout: value }); },
+								value: props.attributes.sib_layout,
+								onChange: function(value) { props.setAttributes({ sib_layout: value }); },
 								options: window.simpleIcalBlockF.sibLayoutOps
 							}
 						),
@@ -644,8 +644,8 @@
 //						console.log(attributes.layout);
 						console.log(typeof attributes.layout);
 						var newlayout = '';
-						if (typeof attributes.layout == 'string') {
-							newlayout = attributes.layout;
+						if (typeof attributes.sib_layout == 'string' && '' < attributes.sib_layout) {
+							newlayout = attributes.sib_layout;
 						} else if (typeof attributes.layout == 'number') {
 							switch (attributes.layout) {
 								case 1: 
@@ -666,7 +666,7 @@
 							
 						console.log('Migrate newlayout');
 						console.log(newlayout);
-						attributes.layout = newlayout;
+						attributes.sib_layout = newlayout;
 						return { ...attributes};
 					},
 					save: function (props) {

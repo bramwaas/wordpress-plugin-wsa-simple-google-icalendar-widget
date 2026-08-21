@@ -72,7 +72,7 @@ class SimpleicalHelper
         'categories_filter' => '',
         'categories_display' => '',
         'add_sum_catflt' => false,
-        'layout' => 3,
+        'sib_layout' => '',
         'dateformat_lg' => 'l jS \of F',
         'dateformat_lgend' => '',
         'tag_title' => 'h3',
@@ -145,10 +145,27 @@ class SimpleicalHelper
      */
     static function render_block($block_attributes, $content = null, $block = null)
     {
+//         Log::log(Log::NOTICE, 'sibHelper incoming attributes:' . $block_attributes['title']);
+//         Log::log(Log::NOTICE,  (($block_attributes['layout']) ?? 'empty'));
+//         Log::log(Log::NOTICE,  (($block_attributes['sib_layout']) ?? 'empty'));
         $block_attributes = array_merge(self::$default_block_attributes, [
             'title' => __('Events', 'simple-google-icalendar-widget'),
             'tzid_ui' => wp_timezone_string()
         ], $block_attributes);
+        if (empty($block_attributes['sib_layout']) && !empty($block_attributes['layout'])) {
+            switch ($block_attributes['layout']){
+                case 1:
+                    $block_attributes['sib_layout'] = 'startdate_higher_level';
+                    break;
+                case 2:
+                    $block_attributes['sib_layout'] = 'start_with_summary';
+                    break;
+                default:
+                    $block_attributes['sib_layout'] = 'old_style';
+            }
+        }
+//        Log::log(Log::NOTICE, 'sib_layout:' . (($block_attributes['sib_layout']) ?? 'empty'));
+        
         $block_attributes['anchorId'] = self::sanitize_html_clss($block_attributes['anchorId'], $block_attributes['sibid']);
         if (empty($block_attributes['tzid_ui'])) {
             $block_attributes['tzid_ui'] = wp_timezone_string();
@@ -166,27 +183,25 @@ class SimpleicalHelper
             . '</' . $block_attributes['tag_title'] . '>';
             
             $secho = '';
-//            $secho .= PHP_EOL . '<!-- ' . PHP_EOL . print_r($block_attributes, true) . PHP_EOL . '-->' . PHP_EOL;
             switch ($block_attributes['wptype']) {
                 case 'REST_t':
                     $secho .= $titlenode;
                 case 'REST':
                     // Block displayed via REST
                     // more includes possible when more intances of the block are on the same page.
-                    require self::getLayoutPath($block_attributes['layout']);
+                    require self::getLayoutPath($block_attributes['sib_layout']);
                     // self::display_block($block_attributes, $secho);
                     break;
                 case 'rest_ph':
                     // Placeholder starting point for REST processing display of block.
                     $wrapperattr = 'class="wp-block-simplegoogleicalenderwidget-simple-ical-block"'; // hardcoded untill (is_wp_version_compatible('5.6')) ? get_block_wrapper_attributes() : '';
                     try {
-//                        unset($block_attributes['before_widget'], $block_attributes['after_widget']);
                         self::update_rest_attrs($block_attributes);
                     } catch (\Exception $e) {
                         $secho .= '<p>Caught exception: ' . $e->getMessage() . "</p>\n";
                         Log::log(Log::WARNING, 'Attributes not saved ' . 'Caught exception: ' . $e->getMessage());
                     }
-                    require self::getLayoutPath('rest_ph/rest-client-placeholder');
+                    require self::getLayoutPath('rest_ph/rest_client_placeholder');
                     break;
                 case 'block':
                 case 'ssr':
@@ -197,10 +212,9 @@ class SimpleicalHelper
                         $secho .= $titlenode;
                     }
                     // more includes possible when more intances of the block are on the same page.
-                    require self::getLayoutPath($block_attributes['layout']);
+                    require self::getLayoutPath($block_attributes['sib_layout']);
                     $secho .= $block_attributes['after_widget'];
- //                   self::display_block($block_attributes, $secho);
-                                        break;
+                    break;
                 default:
                     $secho .= "<!-- unknown wptype:" . $block_attributes['wptype'] . "-->" . PHP_EOL;
             }
@@ -236,6 +250,7 @@ class SimpleicalHelper
                 continue;
             }
             foreach (self::getLayoutDirs() as $dir) {
+//                if ('rest' == substr($layout, 0, 4)) Log::log(Log::NOTICE, 'glp:' . $dir . $template_name );
                 if (file_exists($dir . $template_name)) {
                     return $dir . $template_name;
                     break;
@@ -336,6 +351,7 @@ class SimpleicalHelper
                 unset($instances[$instance['prev_sibid']]);
             }
             $new_instance = array_diff_assoc(array_merge($instance, self::$exclude_test_attrs), self::$default_block_attributes, self::$exclude_test_attrs);
+            Log::log(Log::NOTICE, 'upd_rest_a ni sl:' . (($new_instance['sib_layout']) ?? 'empty'));
             if (!empty($instances[$instance['sibid']]) && array_diff_assoc(array_merge($instances[$instance['sibid']], self::$exclude_test_attrs), self::$exclude_test_attrs) == $new_instance){
                 return true;
             }

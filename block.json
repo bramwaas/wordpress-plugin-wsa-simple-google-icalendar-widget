@@ -42,8 +42,11 @@
 			"type" : "integer",
 			"default" : 92
 		},
-		"layout" : {
+		"sib_layout" : {
 			"type" : "string"
+		},
+		"layout" : {
+			"type" : "integer"
 		},
 		"categories_filter_op" : {
 			"type" : "string",
