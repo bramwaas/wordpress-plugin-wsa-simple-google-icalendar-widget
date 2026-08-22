@@ -4,7 +4,7 @@
  * Move styles to stylesheets - both edit and front-end.
  * and use attributes and editable fields
  * attributes as Inspectorcontrols (settings)
- * v2.6.1
+ * v3.2.0
  * 20230625 added quotes to the options of the Layout SelectControl,
  *  add parseInt to all integers in transform, added conversion dateformat_lgend and _tsend and anchorid = sibid
  * 20230420 added parseInt on line 147(now 148) to keep layout in block-editor
@@ -25,6 +25,7 @@
  * 2.5.0 support for categories. 
 * 2.6.1  Started simplifying (bootstrap) collapse by toggles for adding javascript and trigger collapse by title.
 * 2.7.0 Enable to add words of summary to categories for filtering. Add support for details/summary tag combination.
+* 3.2.0 choose from layout files in stead of layout and rest_utzui, attr layout integer => sib_layout string
  */
 (function(blocks, i18n, element, blockEditor, components, serverSideRender) {
 	const el = element.createElement;
@@ -49,6 +50,11 @@
 	const ToggleControl = components.ToggleControl;
 	const SelectControl = components.SelectControl;
 	const useEffect = element.useEffect;
+	const sibLayoutDflt = [	{ value: "default", label: __('Default', 'simple-google-icalendar-widget') }, // 0
+		{ value: "startdate_higher_level", label: __('Startdate higher level', 'simple-google-icalendar-widget')}, // 1 
+		{ value: "start_with_summary" , label: __('Start with summary', 'simple-google-icalendar-widget') },  // 2
+		{ value: "old_style", label: __('Old style', 'simple-google-icalendar-widget') } // 3
+	];
 	const tagOpsh = [{ value: 'div', label: __('div', 'simple-google-icalendar-widget') },
 	{ value: 'b', label: __('b (attention, bold)', 'simple-google-icalendar-widget') },
 	{ value: 'div', label: __('div', 'simple-google-icalendar-widget') },
@@ -76,6 +82,9 @@
 	];
 
 		let ptzid_ui;
+	const sibHelper = ((typeof parent.simpleIcalBlockF === 'object') ) ? parent.simpleIcalBlockF: window.simpleIcalBlockF ;
+	console.log('sibHelper');
+	console.log(sibHelper);
 	blocks.registerBlockType('simplegoogleicalenderwidget/simple-ical-block', {
 		icon: iconEl,
 
@@ -130,16 +139,34 @@
 		edit: function(props) {
 			useEffect(function() {
 			if (typeof props.attributes.sibid !== 'string') {
-				if (typeof props.attributes.blockid == 'string') {
-					props.attributes.sibid = props.attributes.blockid;
-					props.setAttributes({ sibid: props.attributes.blockid });
- 				}
-				else { 
-					props.attributes.sibid = 'b' + props.clientId;
-					props.setAttributes({ sibid: 'b' + props.clientId }); 
- 				};
-			};
-			}, [props.attributes]);
+				props.attributes.sibid = 'b' + props.clientId;
+				props.setAttributes({ sibid: 'b' + props.clientId }); 
+ 			};	
+			console.log('start edit LO 0:');
+			console.log( props.attributes);
+			if (typeof props.attributes.sib_layout !== 'string' || '' == props.attributes.sib_layout ) {
+				if (typeof props.attributes.layout == 'number') {
+					switch (props.attributes.layout) {
+						case 1: 
+							props.attributes.sib_layout = 'startdate_higher_level';
+							break;
+						case  2:
+							props.attributes.sib_layout = 'start_with_summary';
+							break;
+						case  3: 
+							props.attributes.sib_layout = 'old_style';
+							break;
+						default:
+							props.attributes.sib_layout = 'default';
+					}
+				} else {
+					props.attributes.sib_layout = 'old_style';
+				}
+			};	
+			console.log('start edit LO 1:');
+			console.log( props.attributes);
+			sibHelper.getSibLayouts();
+			}, []);
 			useEffect(function() {
 				if (props.attributes.clear_cache_now) {
 					let x = setTimeout(stopCC, 1000);
@@ -206,13 +233,9 @@
 							SelectControl,
 							{
 								label: __('Lay-out:', 'simple-google-icalendar-widget'),
-								value: props.attributes.layout,
-								onChange: function(value) { props.setAttributes({ layout: parseInt(value) }); },
-								options: [
-									{ value: 1, label: __('Startdate higher level', 'simple-google-icalendar-widget') },
-									{ value: 2, label: __('Start with summary', 'simple-google-icalendar-widget') },
-									{ value: 3, label: __('Old style', 'simple-google-icalendar-widget') }
-								]
+								value: props.attributes.sib_layout,
+								onChange: function(value) { props.setAttributes({ sib_layout: value }); },
+								options: window.simpleIcalBlockF.sibLayoutOps
 							}
 						),
 						el(
