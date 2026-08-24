@@ -48,6 +48,7 @@ if ( is_wp_version_compatible( '6.3' ) )   { // block  v3
 } // end wp-version > 6.3 block v3
 else if ( is_wp_version_compatible( '5.9' ) )   { // block  v2
     \add_action( 'init', array (__NAMESPACE__ .'\SimpleicalHelper', 'init_block_v2') );
+    \add_action('wp_enqueue_scripts', __NAMESPACE__ . '\enqueue_editor_helper_script');
     
 } // end wp-version > 5.9 block v2
 
@@ -95,7 +96,7 @@ function create_admin_menu_pages()
      */
     function enqueue_view_script()
     {
-        wp_enqueue_script('simplegoogleicalenderwidget-simple-ical-block-view-script', plugins_url('/js/simple-ical-block-view.js', __FILE__), [], '3.1.0-' . filemtime(plugin_dir_path(__FILE__) . 'js/simple-ical-block-view.js'),
+        wp_enqueue_script('simplegoogleicalenderwidget-simple-ical-block-view-script', plugins_url('/js/simple-ical-block-view.js', __FILE__), [], '3.2.0-' . filemtime(plugin_dir_path(__FILE__) . 'js/simple-ical-block-view.js'),
             ['strategy' => 'defer' ]);
         wp_add_inline_script('simplegoogleicalenderwidget-simple-ical-block-view-script', '(window.simpleIcalBlock=window.simpleIcalBlock || {}).restRoot = "' . get_rest_url() . '"', 'before');
     }
@@ -113,6 +114,15 @@ function create_admin_menu_pages()
             [],
             '5.3.3-' . filemtime(plugin_dir_path(__FILE__) . 'vendor/bs/css/collapse.css'),
             'all');
+    }
+    /**
+     * enqueue scripts for use in admin v2
+     * for v 6.3 up args array strategy = defer, else in_footer = that array is casted to boolean true.
+     */
+    function enqueue_editor_helper_script()
+    {
+        wp_enqueue_script('sib_helper', plugins_url('/js/simple-ical-block-helper.js', __FILE__), [], '3.2.0-' . filemtime(plugin_dir_path(__FILE__) . 'js/simple-ical-block-helper.js'),
+            ['strategy' => 'defer' ]);
     }
     /**
      * Enqueue block content assets but only in the Editor.
