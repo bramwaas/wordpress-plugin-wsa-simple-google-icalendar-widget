@@ -211,7 +211,7 @@
 		"align" : true
 	},
 	"editorScript" : [
-		"file:./js/simple-ical-block-fetch.js",
+		"file:./js/simple-ical-block-helper.js",
 		"file:./js/simple-ical-block.js"
 	]
 }
