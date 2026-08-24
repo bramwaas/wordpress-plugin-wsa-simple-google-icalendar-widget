@@ -42,9 +42,11 @@
 			"type" : "integer",
 			"default" : 92
 		},
+		"sib_layout" : {
+			"type" : "string"
+		},
 		"layout" : {
-			"type" : "integer",
-			"default" : 3
+			"type" : "integer"
 		},
 		"categories_filter_op" : {
 			"type" : "string",
@@ -207,5 +209,8 @@
 	"supports" : {
 		"align" : true
 	},
-	"editorScript" : "file:./js/simple-ical-block.js"
+	"editorScript" : [
+		"file:../js/simple-ical-block-fetch.js",
+		"file:./js/simple-ical-block.js"
+	]
 }
