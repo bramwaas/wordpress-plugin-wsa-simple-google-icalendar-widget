@@ -81,8 +81,6 @@
 	{ value: 'u', label: __('u (unarticulated, underline )', 'simple-google-icalendar-widget') }
 	];
 	const sibHelper = ((typeof parent.simpleIcalBlockF === 'object') ) ? parent.simpleIcalBlockF: window.simpleIcalBlockF ;
-	console.log('sibHelper');
-	console.log(sibHelper);
 	blocks.registerBlockType('simplegoogleicalenderwidget/simple-ical-block', {
 		icon: iconEl,
 
@@ -140,10 +138,8 @@
 				props.attributes.sibid = 'b' + props.clientId;
 				props.setAttributes({ sibid: 'b' + props.clientId }); 
  			};	
-			console.log('start edit LO 0:');
-			console.log( props.attributes);
-			if (typeof props.attributes.sib_layout !== 'string' || '' == props.attributes.sib_layout ) {
-				if (typeof props.attributes.layout == 'number') {
+			if (typeof props.attributes.sib_layout !== 'string' || '' === props.attributes.sib_layout ) {
+				if (typeof props.attributes.layout === 'number') {
 					switch (props.attributes.layout) {
 						case 1: 
 							props.attributes.sib_layout = 'startdate_higher_level';
@@ -161,12 +157,10 @@
 					props.attributes.sib_layout = 'old_style';
 				}
 			};	
-			console.log('start edit LO 1:');
-			console.log( props.attributes);
 			sibHelper.getSibLayouts();
 			}, []);
 			useEffect(function() {
-				if (typeof props.attributes.sibid == 'string') {
+				if (typeof props.attributes.sibid === 'string') {
 					sibHelper.setSibAttrs(props.attributes);
 					sibHelper.getBlockByIds(props.attributes);
 				  }
@@ -587,7 +581,7 @@
 					   "data-toggle": "collapse",
   					   "data-bs-toggle": "collapse",
 					   "role":"button",
-					   "aria-expanded":("collapse show" == props.attributes.title_collapse_toggle),
+					   "aria-expanded":("collapse show" === props.attributes.title_collapse_toggle),
 					   "aria-controls":"collapseMod"
 				 	 },
 					 props.attributes.title
@@ -640,13 +634,10 @@
 					"add_collapse_code" : {	"type" : "boolean", "default": false }
 					},
 					migrate: function (attributes) {
-						console.log('Migrate');
-//						console.log(attributes.layout);
-						console.log(typeof attributes.layout);
 						var newlayout = '';
-						if (typeof attributes.sib_layout == 'string' && '' < attributes.sib_layout) {
+						if (typeof attributes.sib_layout === 'string' && '' < attributes.sib_layout) {
 							newlayout = attributes.sib_layout;
-						} else if (typeof attributes.layout == 'number') {
+						} else if (typeof attributes.layout === 'number') {
 							switch (attributes.layout) {
 								case 1: 
 									newlayout = 'startdate_higher_level';
@@ -663,9 +654,6 @@
 						} else {
 							newlayout = 'old_style';
 						}
-							
-						console.log('Migrate newlayout');
-						console.log(newlayout);
 						attributes.sib_layout = newlayout;
 						return { ...attributes};
 					},
@@ -693,7 +681,7 @@
 								   "data-toggle": "collapse",
 								   "data-bs-toggle": "collapse",
 								   "role":"button",
-								   "aria-expanded":("collapse show" == props.attributes.title_collapse_toggle),
+								   "aria-expanded":("collapse show" === props.attributes.title_collapse_toggle),
 								   "aria-controls":"collapseMod"
 							 	 },
 								 props.attributes.title
