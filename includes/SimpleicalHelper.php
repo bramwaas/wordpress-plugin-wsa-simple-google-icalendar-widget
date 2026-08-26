@@ -290,7 +290,7 @@ class SimpleicalHelper
         foreach (array_unique($fnames) as $key ) {
             $obj = new \stdClass;
             $obj->value = $key;
-            $obj->label = __(ucfirst(strtr($key, ['_' => ' '])));
+            $obj->label = __(ucfirst(strtr($key, ['_' => ' '])),'simple-google-icalendar-widget');
             $lfns[] = $obj;
         }
         return $lfns;

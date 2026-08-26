@@ -50,11 +50,6 @@
 	const ToggleControl = components.ToggleControl;
 	const SelectControl = components.SelectControl;
 	const useEffect = element.useEffect;
-	const sibLayoutDflt = [	{ value: "default", label: __('Default', 'simple-google-icalendar-widget') }, // 0
-		{ value: "startdate_higher_level", label: __('Startdate higher level', 'simple-google-icalendar-widget')}, // 1 
-		{ value: "start_with_summary" , label: __('Start with summary', 'simple-google-icalendar-widget') },  // 2
-		{ value: "old_style", label: __('Old style', 'simple-google-icalendar-widget') } // 3
-	];
 	const tagOpsh = [{ value: 'div', label: __('div', 'simple-google-icalendar-widget') },
 	{ value: 'b', label: __('b (attention, bold)', 'simple-google-icalendar-widget') },
 	{ value: 'div', label: __('div', 'simple-google-icalendar-widget') },
@@ -83,8 +78,6 @@
 
 		let ptzid_ui;
 	const sibHelper = ((typeof parent.simpleIcalBlockF === 'object') ) ? parent.simpleIcalBlockF: window.simpleIcalBlockF ;
-	console.log('sibHelper');
-	console.log(sibHelper);
 	blocks.registerBlockType('simplegoogleicalenderwidget/simple-ical-block', {
 		icon: iconEl,
 
@@ -142,8 +135,6 @@
 				props.attributes.sibid = 'b' + props.clientId;
 				props.setAttributes({ sibid: 'b' + props.clientId }); 
  			};	
-			console.log('start edit LO 0:');
-			console.log( props.attributes);
 			if (typeof props.attributes.sib_layout !== 'string' || '' == props.attributes.sib_layout ) {
 				if (typeof props.attributes.layout == 'number') {
 					switch (props.attributes.layout) {
@@ -163,8 +154,6 @@
 					props.attributes.sib_layout = 'old_style';
 				}
 			};	
-			console.log('start edit LO 1:');
-			console.log( props.attributes);
 			sibHelper.getSibLayouts();
 			}, []);
 			useEffect(function() {

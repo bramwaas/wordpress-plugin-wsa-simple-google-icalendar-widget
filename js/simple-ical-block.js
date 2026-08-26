@@ -50,11 +50,6 @@
 	const ToggleControl = components.ToggleControl;
 	const SelectControl = components.SelectControl;
 	const useEffect = element.useEffect;
-	const sibLayoutDflt = [	{ value: "default", label: __('Default', 'simple-google-icalendar-widget') }, // 0
-		{ value: "startdate_higher_level", label: __('Startdate higher level', 'simple-google-icalendar-widget')}, // 1 
-		{ value: "start_with_summary" , label: __('Start with summary', 'simple-google-icalendar-widget') },  // 2
-		{ value: "old_style", label: __('Old style', 'simple-google-icalendar-widget') } // 3
-	];
 	const tagOpsh = [{ value: 'div', label: __('div', 'simple-google-icalendar-widget') },
 	{ value: 'b', label: __('b (attention, bold)', 'simple-google-icalendar-widget') },
 	{ value: 'div', label: __('div', 'simple-google-icalendar-widget') },
