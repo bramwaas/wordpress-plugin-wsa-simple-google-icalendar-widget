@@ -113,19 +113,16 @@ To support users wo cannot use the Gutenberg block I have in v2.1.1 (with pain i
 Choose the calendar you want to share (in browser layout on the left panel). On that calendar's line, click the show calendar information icon (a person cropped into a circle) on the right side of the line. In the pop up Calendar Sharing check the box Public Calendar. You see the url below something like webcal://p59-caldav.icloud.com/published/2/MTQxNzk0NDA2NjE0MTc5AAAAAXt2Dy6XXXXXPXXxuZnTLDV9xr6A6_m3r_GU33Qj. Click on Copy Link and OK. Paste that in the "Calendar ID, or iCal URL" field of the widget (before version 1.3.1 you had to change webcal in https)
 
 = How to change the output layout by overriding or adding an output template (layout file). =
-From version 3.2.0 this plugin uses output templates (layout files) to output the data in the desired lay out. By default, four templates are available in a selection list that you can choose from using the LAY-OUT setting. This list has been compiled based on the template file names in the template folders.
-The following folders in order of precedence are used, first is searched with the chosen template name, if nothing is found then the 'default' template wil be searched.
-1. <wp-folder>/wp-content/themes/<active (child) theme>/templates/simple-google-icalendar-widget (recommended location for your overrides or additions)
-2. <wp-folder>/wp-content/themes/<parent theme>/templates/simple-google-icalendar-widget  (only when a child theme is used; cleared after them update!)
-3. <wp-folder>/wp-includes/theme-compat/simple-google-icalendar-widget
-4. <wp-folder>/wp-content/plugins/simple-google-icalendar-widget/tmpl     (Here are the default templates included with the plugin; these are reset after a plugin update.)
+From version 3.2.0 this plugin uses output templates (layout files) to output the data in the desired lay out. By default, four templates are available in a selection list that you can choose from using the LAY-OUT setting. This list is compiled based on the unique filenames of templates in the template folders. Files containing an underscore ('_') in their name are excluded from the selection list so that they can be used for other purposes. Labels are derived from the filenames by replacing hyphens ('-') with spaces and capitalizing the first letter (and then translated).    
+The following folders are used in order of priority: first, the system searches for the selected template name, and if nothing is found, it searches for the 'default template'.    
+1. `<wp-folder>/wp-content/themes/<active (child) theme>/templates/simple-google-icalendar-widget` (recommended location for your overrides or additions)
+2. `<wp-folder>/wp-content/themes/<parent theme>/templates/simple-google-icalendar-widget`  (only when a child theme is used; cleared after them update!)
+3. `<wp-folder>/wp-includes/theme-compat/simple-google-icalendar-widget`
+4. `<wp-folder>/wp-content/plugins/simple-google-icalendar-widget/tmpl`     (Here are the default templates included with the plugin; these are reset after a plugin update.)   
 
 You can copy a template file—such as `default.php`—from `<wp-folder>/wp-content/plugins/simple-google-icalendar-widget/tmpl` to `<wp-folder>/wp-content/themes/<active (child) theme>/templates/simple-google-icalendar-widget`. Then, modify the code in the copied file as desired and save it.
 You have now created an 'override' for the default template; if you select 'Default' in the 'LAY-OUT' setting, the custom template file will be used.
-Taking it a step further: if you rename the copied file to `my_default.php`, you create a new option called 'My default' in the LAY-OUT selection list. You can then select this option to use your custom template file.
-
-
-  
+Taking it a step further: if you rename the copied file to `my-default.php`, you create a new option called 'My default' in the LAY-OUT selection list. You can then select this option to use your custom template file.
 
 = Error: cURL error 28: Operation timed out after 5000 milliseconds with 0 bytes received =
 

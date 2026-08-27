@@ -288,10 +288,12 @@ class SimpleicalHelper
        }
         asort($fnames,  SORT_NATURAL | SORT_FLAG_CASE );
         foreach (array_unique($fnames) as $key ) {
-            $obj = new \stdClass;
-            $obj->value = $key;
-            $obj->label = __(ucfirst(strtr($key, ['_' => ' '])),'simple-google-icalendar-widget');
-            $lfns[] = $obj;
+            if (false === strrpos($key,'_')) {
+                $obj = new \stdClass;
+                $obj->value = $key;
+                $obj->label = __(ucfirst(strtr($key, ['-' => ' '])),'simple-google-icalendar-widget');
+                $lfns[] = $obj;
+            }
         }
         return $lfns;
     }
