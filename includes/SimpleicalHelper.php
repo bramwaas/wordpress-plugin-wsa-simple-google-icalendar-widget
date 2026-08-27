@@ -155,13 +155,13 @@ class SimpleicalHelper
         if (empty($block_attributes['sib_layout']) && !empty($block_attributes['layout'])) {
             switch ($block_attributes['layout']){
                 case 1:
-                    $block_attributes['sib_layout'] = 'startdate_higher_level';
+                    $block_attributes['sib_layout'] = 'startdate-higher-level';
                     break;
                 case 2:
-                    $block_attributes['sib_layout'] = 'start_with_summary';
+                    $block_attributes['sib_layout'] = 'start-with-summary';
                     break;
                 default:
-                    $block_attributes['sib_layout'] = 'old_style';
+                    $block_attributes['sib_layout'] = 'old-style';
             }
         }
 //        Log::log(Log::NOTICE, 'sib_layout:' . (($block_attributes['sib_layout']) ?? 'empty'));

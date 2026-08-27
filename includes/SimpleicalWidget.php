@@ -73,13 +73,13 @@ class SimpleicalWidget extends \WP_Widget
             if (empty($block_attributes['sib_layout']) && !empty($block_attributes['layout'])) {
                 switch ($block_attributes['layout']){
                     case 1:
-                        $block_attributes['sib_layout'] = 'startdate_higher_level';
+                        $block_attributes['sib_layout'] = 'startdate-higher-level';
                         break;
                     case 2:
-                        $block_attributes['sib_layout'] = 'start_with_summary';
+                        $block_attributes['sib_layout'] = 'start-with-summary';
                         break;
                     default:
-                        $block_attributes['sib_layout'] = 'old_style';
+                        $block_attributes['sib_layout'] = 'old-style';
                 }
             }
             //        Log::log(Log::NOTICE, 'sib_layout:' . (($block_attributes['sib_layout']) ?? 'empty'));
@@ -239,13 +239,13 @@ class SimpleicalWidget extends \WP_Widget
             if (empty($instance['sib_layout']) && !empty($instance['layout'])) {
                 switch ($instance['layout']){
                     case 1:
-                        $instance['sib_layout'] = 'startdate_higher_level';
+                        $instance['sib_layout'] = 'startdate-higher_level';
                         break;
                     case 2:
-                        $instance['sib_layout'] = 'start_with_summary';
+                        $instance['sib_layout'] = 'start-with-summary';
                         break;
                     case 3:
-                        $instance['sib_layout'] = 'old_style';
+                        $instance['sib_layout'] = 'old-style';
                 }
             }
             

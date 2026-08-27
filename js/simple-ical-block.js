@@ -137,19 +137,19 @@
 				if (typeof props.attributes.layout === 'number') {
 					switch (props.attributes.layout) {
 						case 1: 
-							props.attributes.sib_layout = 'startdate_higher_level';
+							props.attributes.sib_layout = 'startdate-higher-level';
 							break;
 						case  2:
-							props.attributes.sib_layout = 'start_with_summary';
+							props.attributes.sib_layout = 'start-with-summary';
 							break;
 						case  3: 
-							props.attributes.sib_layout = 'old_style';
+							props.attributes.sib_layout = 'old-style';
 							break;
 						default:
 							props.attributes.sib_layout = 'default';
 					}
 				} else {
-					props.attributes.sib_layout = 'old_style';
+					props.attributes.sib_layout = 'old-style';
 				}
 			};	
 			sibHelper.getSibLayouts();
@@ -635,19 +635,19 @@
 						} else if (typeof attributes.layout === 'number') {
 							switch (attributes.layout) {
 								case 1: 
-									newlayout = 'startdate_higher_level';
+									newlayout = 'startdate-higher-level';
 									break;
 								case  2:
-									newlayout = 'start_with_summary';
+									newlayout = 'start-with-summary';
 									break;
 								case  3: 
-									newlayout = 'old_style';
+									newlayout = 'old-style';
 									break;
 								default:
 									newlayout = 'default';
 							}
 						} else {
-							newlayout = 'old_style';
+							newlayout = 'old-style';
 						}
 						attributes.sib_layout = newlayout;
 						return { ...attributes};

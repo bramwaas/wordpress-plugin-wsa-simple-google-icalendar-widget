@@ -139,19 +139,19 @@
 				if (typeof props.attributes.layout == 'number') {
 					switch (props.attributes.layout) {
 						case 1: 
-							props.attributes.sib_layout = 'startdate_higher_level';
+							props.attributes.sib_layout = 'startdate-higher-level';
 							break;
 						case  2:
-							props.attributes.sib_layout = 'start_with_summary';
+							props.attributes.sib_layout = 'start-with-summary';
 							break;
 						case  3: 
-							props.attributes.sib_layout = 'old_style';
+							props.attributes.sib_layout = 'old-style';
 							break;
 						default:
 							props.attributes.sib_layout = 'default';
 					}
 				} else {
-					props.attributes.sib_layout = 'old_style';
+					props.attributes.sib_layout = 'old-style';
 				}
 			};	
 			sibHelper.getSibLayouts();
