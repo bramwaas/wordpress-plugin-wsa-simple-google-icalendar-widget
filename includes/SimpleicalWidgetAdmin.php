@@ -304,7 +304,7 @@ static function get_plugin_options(){
        '<li>' . __('`&lt;wp-folder&gt;/wp-includes/theme-compat/simple-google-icalendar-widget`', 'simple-google-icalendar-widget'). '</li>' .
        '<li>' . __('`&lt;wp-folder&gt;/wp-content/plugins/simple-google-icalendar-widget/tmpl` (Here are the default templates included with the plugin; these are reset after a plugin update.)', 'simple-google-icalendar-widget'). '</li>' .
        '</ol><p>' .
-           __('You can copy a template file—such as `default.php`—from `&lt;wp-folder&gt;/wp-content/plugins/simple-google-icalendar-widget/tmpl` to `&lt;wp-folder&gt;/wp-content/themes/&lt;active (child) theme&gt;/templates/simple-google-icalendar-widget`. Then, modify the code in the copied file as desired and save it.
+           __('You can copy a template file -such as `default.php`-from `&lt;wp-folder&gt;/wp-content/plugins/simple-google-icalendar-widget/tmpl` to `&lt;wp-folder&gt;/wp-content/themes/&lt;active (child) theme&gt;/templates/simple-google-icalendar-widget`. Then, modify the code in the copied file as desired and save it.
        You have now created an &#39;override&#39; for the default template; if you select &#39;Default&#39; in the &#39;LAY-OUT&#39; setting, the custom template file will be used.
        Taking it a step further: if you rename the copied file to &#39;my-default.php&#39;, you create a new option called &#39;My default&#39; in the LAY-OUT selection list. You can then select this option to use your custom template file.', 'simple-google-icalendar-widget') .
           '</p></details>' 
