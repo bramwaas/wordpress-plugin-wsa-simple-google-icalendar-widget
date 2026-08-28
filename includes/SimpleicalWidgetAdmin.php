@@ -487,16 +487,24 @@ static function get_plugin_options(){
        __('HTML anchor for this block.<br>Type one or two words - no spaces - to create a unique web address for this block, called an "anchor". Then you can link directly to this section on your page.<br>You can als use this ID to make parts of your extra css specific for this block', 'simple-google-icalendar-widget').
         '</p>');
         
-       echo wp_kses_post('<span id="logging"></span>'.
-           '<p><strong>'.
-           __('Formatted logging to error_log() via Log::log() function', 'simple-google-icalendar-widget').
-           '</strong></p><p>'.
-           __('If a request to retrieve calendar data fails, a message is generated.<br>From version 3.0.0 onwards, the Log::log($priority, $message) function is used for logging the messages (formatted as <priority> <category> <message> to error_log() with the category "simple-ical-block" and<br>generally with the priority NOTICE or WARNING, but other priorities may be added later.<br><br>The standard Wordpress constantes (WP_DEBUG=true, WP_DEBUG_LOG=true, WP_DEBUG_DISPLAY=false) and @ini_set( \'display_errors\', 0 ); set in  wp-config.php<br>control the logging of these messages just like other messages.<br>See: https://developer.wordpress.org/advanced-administration/debug/debug-wordpress/', 'simple-google-icalendar-widget').
-           '</p><p>'.
-           __('Specific for the Log::log() function you can set two constantes in wp-config.php<br>SIB_LOG_MINIMUM_LEVEL to control the minimum priority in the series EMERGENCY,ALERT,CRITICAL,ERROR,WARNING,NOTICE,INFO,DEBUG or ALL to log a message; default WARNING<br>', 'simple-google-icalendar-widget').
-           __('SIB_LOG_MSG_LEN to distribute long messages over more lines with this maximum length; default indefinite, truncated to the length set in the php installation.<br>', 'simple-google-icalendar-widget').
-           '</p>');
-           
+         echo wp_kses_post('<h3>'.
+        __('Plugin level settings', 'simple-google-icalendar-widget') .
+        '</h3><span id="plugin-options-form"></span>'.
+           '<p>'.
+           __('Use plugin options form to add legacy widget with no namespace or to add Bootstrap collapse code (js and css) when not provided by theme.', 'simple-google-icalendar-widget') .
+           '</p><p><a href="' .
+           esc_url(admin_url('admin.php?page=simple_ical_options')) .
+           '" target="_blank">' .
+           __('Options form', 'simple-google-icalendar-widget') .
+           '</a></p>');
+       
+           echo wp_kses_post('<span id="simpleical_add_widget_nns"></span>'.
+               '<p><strong>' .
+               __('Add legacy widget with no namespace.', 'simple-google-icalendar-widget').
+               '</strong></p><p>'.
+               __("Checkbox to add a legacy widget without a namespace. For use in site builders like SiteOrigin that do not work correctly with namespaces.", 'simple-google-icalendar-widget').
+               '</strong></p>'.
+               '</p></div>');
            
        echo wp_kses_post('<span id="title_collapse_toggle"></span>'.
            '<p><strong>' .
@@ -504,14 +512,20 @@ static function get_plugin_options(){
            '</strong></p><p>'.
            __('Use title link as collapse/show toggle for this module content.', 'simple-google-icalendar-widget').
            '</p><p><strong>' .
-           __('Checkbox Add bootstrap collapse code.', 'simple-google-icalendar-widget').
-       '</strong></p>'.
-        __('Use plugin options form to add Bootstrap collapse code (js and css) when not provided by theme.', 'simple-google-icalendar-widget') .
-        '<p><a href="' .
-        esc_url(admin_url('admin.php?page=simple_ical_options')) .
-        '" target="_blank">' . 
-        __('Options form', 'simple-google-icalendar-widget') .
-        '</a></p></div>');
+           __('Checkbox add bootstrap collapse code.', 'simple-google-icalendar-widget').
+           '</strong></p>'.
+           '</p></div>');
+
+        echo wp_kses_post('<span id="logging"></span>'.
+            '<p><strong>'.
+            __('Formatted logging to error_log() via Log::log() function', 'simple-google-icalendar-widget').
+            '</strong></p><p>'.
+            __('If a request to retrieve calendar data fails, a message is generated.<br>From version 3.0.0 onwards, the Log::log($priority, $message) function is used for logging the messages (formatted as <priority> <category> <message> to error_log() with the category "simple-ical-block" and<br>generally with the priority NOTICE or WARNING, but other priorities may be added later.<br><br>The standard Wordpress constantes (WP_DEBUG=true, WP_DEBUG_LOG=true, WP_DEBUG_DISPLAY=false) and @ini_set( \'display_errors\', 0 ); set in  wp-config.php<br>control the logging of these messages just like other messages.<br>See: https://developer.wordpress.org/advanced-administration/debug/debug-wordpress/', 'simple-google-icalendar-widget').
+            '</p><p>'.
+            __('Specific for the Log::log() function you can set two constantes in wp-config.php<br>SIB_LOG_MINIMUM_LEVEL to control the minimum priority in the series EMERGENCY,ALERT,CRITICAL,ERROR,WARNING,NOTICE,INFO,DEBUG or ALL to log a message; default WARNING<br>', 'simple-google-icalendar-widget').
+            __('SIB_LOG_MSG_LEN to distribute long messages over more lines with this maximum length; default indefinite, truncated to the length set in the php installation.<br>', 'simple-google-icalendar-widget').
+            '</p>');
+            
     }
     // info in admin-menu
 }
