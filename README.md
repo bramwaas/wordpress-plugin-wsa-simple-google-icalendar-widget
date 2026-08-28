@@ -109,10 +109,12 @@ Are you using a page builder like Elementor or SiteOrigin? The block might not s
 To support users wo cannot use the Gutenberg block I have in v2.1.1 (with pain in my hart because Gutenberg blocks are in my opinion the future of WP) synchronized the output of the widget again with that of the block. 
  Otherwise they needed to use a work-around with an extra plugin like described in [How to Display Gutenberg Blocks in Other Page Builders (Elementor, Divi, etc)](https://gutenberghub.com/how-to-display-gutenberg-blocks-in-other-page-builders/) or use an other plugin that adds a shortcode to a Gutenberg block or maybe some pro functionality of Elementor.   
 
-= How to use Apple Calendar (iCloud)? =
+= How to use Apple Calendar (iCloud)? =     
+
 Choose the calendar you want to share (in browser layout on the left panel). On that calendar's line, click the show calendar information icon (a person cropped into a circle) on the right side of the line. In the pop up Calendar Sharing check the box Public Calendar. You see the url below something like webcal://p59-caldav.icloud.com/published/2/MTQxNzk0NDA2NjE0MTc5AAAAAXt2Dy6XXXXXPXXxuZnTLDV9xr6A6_m3r_GU33Qj. Click on Copy Link and OK. Paste that in the "Calendar ID, or iCal URL" field of the widget (before version 1.3.1 you had to change webcal in https)
 
-= How to change the output layout by overriding or adding an output template (layout file). =
+= How to change the output layout by overriding or adding an output template (layout file). =    
+
 From version 3.2.0 this plugin uses output templates (layout files) to output the data in the desired lay out. By default, four templates are available in a selection list that you can choose from using the LAY-OUT setting. This list is compiled based on the unique filenames of templates in the template folders. Files containing an underscore ('_') in their name are excluded from the selection list so that they can be used for other purposes. Labels are derived from the filenames by replacing hyphens ('-') with spaces and capitalizing the first letter (and then translated).    
 The following folders are used in order of priority: first, the system searches for the selected template name, and if nothing is found, it searches for the 'default template'.    
 1. `<wp-folder>/wp-content/themes/<active (child) theme>/templates/simple-google-icalendar-widget` (recommended location for your overrides or additions)

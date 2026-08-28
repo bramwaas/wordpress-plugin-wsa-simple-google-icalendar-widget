@@ -9,8 +9,9 @@
  * @copyright  Copyright (c)  2017 - 2026, Bram Waasdorp
  * @link       https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  * @license    http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * Version: 3.1.3
- * 20220410 namespaced and renamed after classname.
+ * Version: 3.2.0
+ * 20220828
+ *  namespaced and renamed after classname.
  * 2.1.0 option for comma seperated list of IDs
  * 2.1.3 block footer after events and placeholder when no events.
  * 2.2.0 fix spell-error in namespace, and use new correct text domain
@@ -21,6 +22,7 @@
  Remove toggle to allow safe html in summary and description, save html is always allowed now.
  * 3.0.0 add formatted logging via own Log class to error_log().
  * 3.1.3 option to add legacy widget with no namespace.
+ * 3.2.0 help for lay-out overrides
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 // no direct access
@@ -286,10 +288,27 @@ static function get_plugin_options(){
         
         echo wp_kses_post('<span id="layout"></span>'.
         '<p><strong>'.
-       __('Select lay-out</strong>', 'simple-google-icalendar-widget').
-        '</p><p>'.
+       __('Select lay-out', 'simple-google-icalendar-widget').
+        '</strong></p><p>'.
        __('Startdate line on a higher level in the list; Start with summary before first date line; Old style, summary after first date line, remove duplicate date lines.', 'simple-google-icalendar-widget').
         '</p>');
+        
+       echo wp_kses_post(
+       '<details><strong><summary>' .
+           __('How to change the output layout by overriding or adding an output template (layout file)', 'simple-google-icalendar-widget').
+       '</strong></summary><ol>' .
+           __('From version 3.2.0 this plugin uses output templates (layout files) to output the data in the desired lay out. By default, four templates are available in a selection list that you can choose from using the LAY-OUT setting. This list is compiled based on the unique filenames of templates in the template folders. Files containing an underscore (&#39;_&#39;) in their name are excluded from the selection list so that they can be used for other purposes. Labels are derived from the filenames by replacing hyphens (&#39;-&#39;) with spaces and capitalizing the first letter (and then translated).
+       The following folders are used in order of priority: first, the system searches for the selected template name, and if nothing is found, it searches for the &#39;default template&#39;', 'simple-google-icalendar-widget').
+       '<li>' . __('`&lt;wp-folder&gt;/wp-content/themes/&lt;active (child) theme&gt;/templates/simple-google-icalendar-widget` (recommended location for your overrides or additions)', 'simple-google-icalendar-widget') . '</li>' .
+       '<li>' . __('`&lt;wp-folder&gt;/wp-content/themes/&lt;parent theme&gt;/templates/simple-google-icalendar-widget`  (only when a child theme is used; cleared after them update!)', 'simple-google-icalendar-widget') . '</li>'.
+       '<li>' . __('`&lt;wp-folder&gt;/wp-includes/theme-compat/simple-google-icalendar-widget`', 'simple-google-icalendar-widget'). '</li>' .
+       '<li>' . __('`&lt;wp-folder&gt;/wp-content/plugins/simple-google-icalendar-widget/tmpl` (Here are the default templates included with the plugin; these are reset after a plugin update.)', 'simple-google-icalendar-widget'). '</li>' .
+       '</ol><p>' .
+           __('You can copy a template file—such as `default.php`—from `&lt;wp-folder&gt;/wp-content/plugins/simple-google-icalendar-widget/tmpl` to `&lt;wp-folder&gt;/wp-content/themes/&lt;active (child) theme&gt;/templates/simple-google-icalendar-widget`. Then, modify the code in the copied file as desired and save it.
+       You have now created an &#39;override&#39; for the default template; if you select &#39;Default&#39; in the &#39;LAY-OUT&#39; setting, the custom template file will be used.
+       Taking it a step further: if you rename the copied file to &#39;my-default.php&#39;, you create a new option called &#39;My default&#39; in the LAY-OUT selection list. You can then select this option to use your custom template file.', 'simple-google-icalendar-widget') .
+          '</p></details>' 
+       );
         
         echo wp_kses_post('<span id="dateformat-lg"></span>'.
         '<p><strong>'.
