@@ -486,7 +486,17 @@ static function get_plugin_options(){
         '</strong></p><p>'.
        __('HTML anchor for this block.<br>Type one or two words - no spaces - to create a unique web address for this block, called an "anchor". Then you can link directly to this section on your page.<br>You can als use this ID to make parts of your extra css specific for this block', 'simple-google-icalendar-widget').
         '</p>');
-        
+       
+       echo wp_kses_post('<span id="title_collapse_toggle"></span>'.
+           '<p><strong>' .
+           __('Title as collapse toggle.', 'simple-google-icalendar-widget').
+           '</strong></p><p>'.
+           __('Use title link as collapse/show toggle for this module content.', 'simple-google-icalendar-widget').
+           '</p><p><strong>' .
+           __('Checkbox add bootstrap collapse code.', 'simple-google-icalendar-widget').
+           '</strong></p>'.
+           '</p>');
+           
          echo wp_kses_post('<h3>'.
         __('Plugin level settings', 'simple-google-icalendar-widget') .
         '</h3><span id="plugin-options-form"></span>'.
@@ -503,19 +513,15 @@ static function get_plugin_options(){
                __('Add legacy widget with no namespace.', 'simple-google-icalendar-widget').
                '</strong></p><p>'.
                __("Checkbox to add a legacy widget without a namespace. For use in site builders like SiteOrigin that do not work correctly with namespaces.", 'simple-google-icalendar-widget').
-               '</strong></p>'.
-               '</p></div>');
-           
-       echo wp_kses_post('<span id="title_collapse_toggle"></span>'.
-           '<p><strong>' .
-           __('Title as collapse toggle.', 'simple-google-icalendar-widget').
-           '</strong></p><p>'.
-           __('Use title link as collapse/show toggle for this module content.', 'simple-google-icalendar-widget').
-           '</p><p><strong>' .
-           __('Checkbox add bootstrap collapse code.', 'simple-google-icalendar-widget').
-           '</strong></p>'.
-           '</p></div>');
+               '</p>');
 
+               echo wp_kses_post('<span id="simpleical_add_collapse_code"></span>'.
+                   '<p><strong>' .
+                   __('Checkbox Add bootstrap collapse code.', 'simple-google-icalendar-widget').
+               '</strong></p><p>'.
+               __('Use plugin options form to add Bootstrap collapse code (js and css) when not provided by theme.', 'simple-google-icalendar-widget') .
+                   '</p>');
+               
         echo wp_kses_post('<span id="logging"></span>'.
             '<p><strong>'.
             __('Formatted logging to error_log() via Log::log() function', 'simple-google-icalendar-widget').
@@ -524,7 +530,7 @@ static function get_plugin_options(){
             '</p><p>'.
             __('Specific for the Log::log() function you can set two constantes in wp-config.php<br>SIB_LOG_MINIMUM_LEVEL to control the minimum priority in the series EMERGENCY,ALERT,CRITICAL,ERROR,WARNING,NOTICE,INFO,DEBUG or ALL to log a message; default WARNING<br>', 'simple-google-icalendar-widget').
             __('SIB_LOG_MSG_LEN to distribute long messages over more lines with this maximum length; default indefinite, truncated to the length set in the php installation.<br>', 'simple-google-icalendar-widget').
-            '</p>');
+            '</p></div>');
             
     }
     // info in admin-menu
