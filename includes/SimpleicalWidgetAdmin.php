@@ -519,7 +519,7 @@ static function get_plugin_options(){
                    '<p><strong>' .
                    __('Checkbox Add bootstrap collapse code.', 'simple-google-icalendar-widget').
                '</strong></p><p>'.
-               __('Use plugin options form to add Bootstrap collapse code (js and css) when not provided by theme.', 'simple-google-icalendar-widget') .
+               __('Use checkbox(es) on plugin options form to add Bootstrap collapse code (js and css) when not provided by theme.', 'simple-google-icalendar-widget') .
                    '</p>');
                
         echo wp_kses_post('<span id="logging"></span>'.
