@@ -11,25 +11,22 @@
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * Gutenberg Block functions since v2.1.2 also used for widget.
  * Version: 3.2.0
- * 3.2.0 first created as copy of display_block
+ * 3.2.0 first Created as a copy of display_block, later changed to start-with-summary with additional comments.
  */
 // no direct access
 defined('ABSPATH') or die ('Restricted access');
 
 use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\IcsParser;
-use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\Log;
 use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalHelper;
 /**
- * Front-end display of module, block or widget.
- *
- * @see
+ * Front-end display of module, block or widget for layout startdate_higher_level
  *
  * @param array $block_attributes
  * @param string &$secho (reference to $secho), output to echo in calling function, to simplify escaping output by replacing multiple echoes by one
  *            Saved attribute/option values from database.
  * was static function display_block($block_attributes, &$secho)
  */
- // start
+// start
 {
     $sn = 0;
     try {
@@ -37,7 +34,7 @@ use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalHelper;
     } catch (\Exception $exc) {}
     if (empty($block_attributes['tz_ui']))
         try {
-            $block_attributes['tzid_ui'] = str_replace('Etc/GMT ','Etc/GMT+',$block_attributes['tzid_ui']);
+            $block_attributes['tzid_ui'] = str_replace('Etc/GMT ', 'Etc/GMT+', $block_attributes['tzid_ui']);
             $block_attributes['tz_ui'] = new \DateTimeZone($block_attributes['tzid_ui']);
     } catch (\Exception $exc) {}
     if (empty($block_attributes['tz_ui']))
@@ -49,22 +46,6 @@ use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalHelper;
         $block_attributes['tzid_ui'] = 'UTC';
         $block_attributes['tz_ui'] = new \DateTimeZone('UTC');
     }
-    if (empty($block_attributes['sib_layout']) && !empty($block_attributes['layout'])) {
-        switch ($block_attributes['sib_layout']){
-            case 'startdate_higher_level':
-                $layout = 1;
-                break;
-            case 'start_with_summary':
-                $layout = 2;
-                break;
-            default:
-                $layout = 3;
-        }
-    }
-    else {
-        $layout = 3;
-    }
-     
     $dflg = (isset($block_attributes['dateformat_lg'])) ? $block_attributes['dateformat_lg'] : 'l jS \of F';
     $dflgend = (isset($block_attributes['dateformat_lgend'])) ? $block_attributes['dateformat_lgend'] : '';
     $dftsum = (isset($block_attributes['dateformat_tsum'])) ? $block_attributes['dateformat_tsum'] : 'G:i ';
@@ -79,31 +60,29 @@ use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalHelper;
         $cat_disp = false;
     } else {
         $cat_disp = true;
-        $cat_sep = '</small>'.$block_attributes['categories_display'].'<small>';
+        $cat_sep = '</small>' . $block_attributes['categories_display'] . '<small>';
     }
     if (! in_array($block_attributes['tag_sum'], SimpleicalHelper::$allowed_tags_sum))
         $block_attributes['tag_sum'] = 'a';
         $ipd = IcsParser::getData($block_attributes);
         $data = $ipd['data'];
         if (! empty($data) && is_array($data)) {
-            $secho .= '<ul id="lg' .$block_attributes['anchorId'] .'" class="list-group' . $block_attributes['suffix_lg_class'] . ' simple-ical-widget '. $block_attributes['title_collapse_toggle'] . '" > ';
+            $secho .= '<ul id="lg' . $block_attributes['anchorId'] . '" class="list-group' . $block_attributes['suffix_lg_class'] . ' simple-ical-widget ' . $block_attributes['title_collapse_toggle'] . '" > ';
             $curdate = '';
             foreach ($data as $e) {
-                $idlist = explode("@", $e->uid,2);
+                $idlist = explode("@", $e->uid, 2);
                 $itemid = $block_attributes['sibid'] . '_' . strval(++ $sn) . '_' . $idlist[0];
                 $evdate = wp_date($dflg, $e->start, $block_attributes['tz_ui']);
                 $sameday = (wp_date('yz', $e->start, $block_attributes['tz_ui']) === wp_date('yz', $e->end, $block_attributes['tz_ui']));
                 $ev_class = ((! empty($e->cal_class)) ? ' ' . sanitize_html_class($e->cal_class) : '');
                 $cat_list = '';
-                if (!empty($e->categories)) {
-                    $ev_class = $ev_class . ' ' . implode( ' ', array_map( "sanitize_html_class", $e->categories ));
+                if (! empty($e->categories)) {
+                    $ev_class = $ev_class . ' ' . implode(' ', array_map("sanitize_html_class", $e->categories));
                     if ($cat_disp) {
-                        $cat_list = '<div class="categories"><small>'
-                            . implode($cat_sep,str_replace("\n", '<br>', $e->categories ))
-                            . '</small></div>';
+                        $cat_list = '<div class="categories"><small>' . implode($cat_sep, str_replace("\n", '<br>', $e->categories)) . '</small></div>';
                     }
                 }
-                if (! $sameday ) {
+                if (! $sameday) {
                     $evdate = str_replace(array(
                         "</div><div>",
                         "</h4><h4>",
@@ -112,37 +91,30 @@ use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalHelper;
                     ), '', $evdate . wp_date($dflgend, $e->end - 1, $block_attributes['tz_ui']));
                 }
                 $evdtsum = (($e->startisdate === false) ? wp_date($dftsum, $e->start, $block_attributes['tz_ui']) . wp_date($dftsend, $e->end, $block_attributes['tz_ui']) : '');
-                if ($layout < 2 && $curdate != $evdate) {
+// New date: close the sublist and the main list item for the previous date (if present) and open a sublist with  the new main list item.
+                if ($curdate != $evdate) {
                     if ($curdate != '') {
                         $secho .= '</ul></li>';
                     }
                     $secho .= '<li class="list-group-item' . $sflgi . ' head">' . '<span class="ical-date">' . ucfirst($evdate) . '</span><ul class="list-group' . $block_attributes['suffix_lg_class'] . '">';
                 }
+// start sub-list item, with summary/details tags the details includes the summary and the description, otherwise the tag for the description starts after summary.  
                 $secho .= '<li class="list-group-item' . $sflgi . $ev_class . '">';
-                if ($layout == 3 && $curdate != $evdate) {
-                    $secho .= '<span class="ical-date">' . ucfirst($evdate) . '</span>' . (('a' == $block_attributes['tag_sum']) ? '<br>' : '');
-                }
-                
                 if ('summary' == $block_attributes['tag_sum']) {
-                    $secho .= '<details class="ical_details' . $sflgia . '" id="'. $itemid. '">';
+                    $secho .= '<details class="ical_details' . $sflgia . '" id="' . $itemid . '">';
                 }
                 
-                $secho .=  '<' . $block_attributes['tag_sum'] . ' class="ical_summary' . $sflgia . (('a' == $block_attributes['tag_sum']) ? '" data-toggle="collapse" data-bs-toggle="collapse" href="#' . $itemid . '" aria-expanded="false" aria-controls="' . $itemid . '">' : '">');
-                if ($layout != 2) {
-                    $secho .= $evdtsum;
-                }
+                $secho .= '<' . $block_attributes['tag_sum'] . ' class="ical_summary' . $sflgia . (('a' == $block_attributes['tag_sum']) ? '" data-toggle="collapse" data-bs-toggle="collapse" href="#' . $itemid . '" aria-expanded="false" aria-controls="' . $itemid . '">' : '">');
+                $secho .= $evdtsum;
                 if (! empty($e->summary)) {
                     $secho .= str_replace("\n", '<br>', $e->summary);
                 }
                 $secho .= '</' . $block_attributes['tag_sum'] . '>' . $cat_list;
-                if ($layout == 2) {
-                    $secho .= '<span>'. $evdate . $evdtsum . '</span>';
-                }
                 
                 if ('summary' != $block_attributes['tag_sum']) {
-                    $secho .= '<div class="ical_details' . $sflgia . (('a' == $block_attributes['tag_sum']) ? ' collapse' : '') . '" id="'. $itemid. '">';
+                    $secho .= '<div class="ical_details' . $sflgia . (('a' == $block_attributes['tag_sum']) ? ' collapse' : '') . '" id="' . $itemid . '">';
                 }
-                
+// description                
                 if (! empty($e->description) && trim($e->description) > '' && $excerptlength !== 0) {
                     if ($excerptlength !== '' && strlen($e->description) > $excerptlength) {
                         $e->description = substr($e->description, 0, $excerptlength + 1);
@@ -157,15 +129,15 @@ use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalHelper;
                         }
                     }
                     $e->description = str_replace("\n", '<br>', $e->description);
-                    $secho .= '<span class="dsc">'. $e->description. ((strrpos($e->description, '<br>') === (strlen($e->description) - 4)) ? '' : '<br>'). '</span>';
+                    $secho .= '<span class="dsc">' . $e->description . ((strrpos($e->description, '<br>') === (strlen($e->description) - 4)) ? '' : '<br>') . '</span>';
                 }
                 if ($e->startisdate === false && $sameday) {
-                    $secho .= '<span class="time">'. wp_date($dftstart, $e->start, $block_attributes['tz_ui']). '</span><span class="time">'. wp_date($dftend, $e->end, $block_attributes['tz_ui']). '</span> ';
+                    $secho .= '<span class="time">' . wp_date($dftstart, $e->start, $block_attributes['tz_ui']) . '</span><span class="time">' . wp_date($dftend, $e->end, $block_attributes['tz_ui']) . '</span> ';
                 } else {
                     $secho .= '';
                 }
                 if (! empty($e->location)) {
-                    $secho .= '<span class="location">'. str_replace("\n", '<br>', $e->location). '</span>';
+                    $secho .= '<span class="location">' . str_replace("\n", '<br>', $e->location) . '</span>';
                 }
                 if ('summary' == $block_attributes['tag_sum']) {
                     $secho .= '</details></li>';
@@ -174,14 +146,14 @@ use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalHelper;
                 }
                 $curdate = $evdate;
             }
-            if ($layout < 2) {
-                $secho .= '</ul></li>';
-            }
-            $secho .= '</ul>';
+//          end sub-list, main listitem and main list.
+            $secho .= '</ul></li></ul>';
             $secho .= $block_attributes['after_events'];
         } else {
             $secho .= $block_attributes['no_events'];
         }
-        $secho .= '<br class="clear v320" />';
+        $secho .= '<br class="clear v320 default" />';
 }
+/* end display_block */
+
 

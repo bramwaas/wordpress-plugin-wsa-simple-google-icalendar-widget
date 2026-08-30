@@ -257,9 +257,10 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 2017&thinsp;&ndash;&thinsp;2023 &copy; [Bram Waasdorp](http://www.waasdorpsoekhan.nl).
 
 == Upgrade Notice ==
-* next version (after 3.1.0) will require WP 5.9 so that I can remove older code.         
+* require WP 5.9 so that I can remove older code.         
 
 == Changelog ==
+* 3.2.0 Working with overridable templates, similar to Joomla module. Requires WP5.9 (was 5.3)
 * 3.1.4 after issue 'No Events displayed' by @alinaseibt remove single htmlspecialchars validation that broke url with & in it in legacy widget.
 Added more Loggings in IcsParser e.g. also if found file is no ical calendar  
 * 3.1.3 after issue 'No Events displayed' by @alinaseibt when legacy widget is included in SiteOrigin: Added frontend widget without namespace designed to     support applications that cannot work with namespaces.
