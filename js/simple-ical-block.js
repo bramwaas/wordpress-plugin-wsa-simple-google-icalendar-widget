@@ -142,11 +142,8 @@
 						case  2:
 							props.attributes.sib_layout = 'start-with-summary';
 							break;
-						case  3: 
-							props.attributes.sib_layout = 'old-style';
-							break;
 						default:
-							props.attributes.sib_layout = 'default';
+							props.attributes.sib_layout = 'old-style';;
 					}
 				} else {
 					props.attributes.sib_layout = 'old-style';
@@ -640,11 +637,8 @@
 								case  2:
 									newlayout = 'start-with-summary';
 									break;
-								case  3: 
-									newlayout = 'old-style';
-									break;
 								default:
-									newlayout = 'default';
+									newlayout = 'old-style';
 							}
 						} else {
 							newlayout = 'old-style';

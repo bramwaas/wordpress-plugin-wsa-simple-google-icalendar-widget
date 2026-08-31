@@ -70,7 +70,7 @@ class SimpleicalWidget extends \WP_Widget
                     'tzid_ui' => wp_timezone_string(),
                     'wptype' => 'widget'],
                 $block_attributes  );
-            if (empty($block_attributes['sib_layout']) && !empty($block_attributes['layout'])) {
+            if (empty($block_attributes['sib_layout']) ) {
                 switch ($block_attributes['layout']){
                     case 1:
                         $block_attributes['sib_layout'] = 'startdate-higher-level';

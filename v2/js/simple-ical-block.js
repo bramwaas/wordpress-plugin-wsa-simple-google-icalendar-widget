@@ -144,11 +144,8 @@
 						case  2:
 							props.attributes.sib_layout = 'start-with-summary';
 							break;
-						case  3: 
-							props.attributes.sib_layout = 'old-style';
-							break;
 						default:
-							props.attributes.sib_layout = 'default';
+							props.attributes.sib_layout = 'old-style';
 					}
 				} else {
 					props.attributes.sib_layout = 'old-style';
