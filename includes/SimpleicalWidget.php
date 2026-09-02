@@ -275,7 +275,7 @@ class SimpleicalWidget extends \WP_Widget
           <select class="widefat" id="<?php echo esc_attr($this->get_field_id('sib_layout')); ?>" name="<?php echo esc_attr($this->get_field_name('sib_layout')); ?>" >
          <?php 
          foreach (SimpleicalHelper::getLayoutFiles() as $option){
-             echo '<option value=' . $option->value . ' ' .((esc_attr($option->value) == esc_attr($instance['sib_layout']) ? 'selected':'')) . ' >'
+             echo '<option value=' . esc_attr($option->value) . ' ' .((esc_attr($option->value) == esc_attr($instance['sib_layout']) ? 'selected':'')) . ' >'
                 . esc_attr($option->label) . '</option>';
          }
          ?>
