@@ -145,15 +145,12 @@ class SimpleicalHelper
      */
     static function render_block($block_attributes, $content = null, $block = null)
     {
-//         Log::log(Log::NOTICE, 'sibHelper incoming attributes:' . $block_attributes['title']);
-//         Log::log(Log::NOTICE,  (($block_attributes['layout']) ?? 'empty'));
-//         Log::log(Log::NOTICE,  (($block_attributes['sib_layout']) ?? 'empty'));
         $block_attributes = array_merge(self::$default_block_attributes, [
             'title' => __('Events', 'simple-google-icalendar-widget'),
             'tzid_ui' => wp_timezone_string()
         ], $block_attributes);
-        if (empty($block_attributes['sib_layout']) && !empty($block_attributes['layout'])) {
-            switch ($block_attributes['layout']){
+        if (empty($block_attributes['sib_layout'])) {
+            switch (($block_attributes['layout'])?? 3) {
                 case 1:
                     $block_attributes['sib_layout'] = 'startdate-higher-level';
                     break;
@@ -164,7 +161,6 @@ class SimpleicalHelper
                     $block_attributes['sib_layout'] = 'old-style';
             }
         }
-//        Log::log(Log::NOTICE, 'sib_layout:' . (($block_attributes['sib_layout']) ?? 'empty'));
         
         $block_attributes['anchorId'] = self::sanitize_html_clss($block_attributes['anchorId'], $block_attributes['sibid']);
         if (empty($block_attributes['tzid_ui'])) {

@@ -71,7 +71,7 @@ class SimpleicalWidget extends \WP_Widget
                     'wptype' => 'widget'],
                 $block_attributes  );
             if (empty($block_attributes['sib_layout']) ) {
-                switch ($block_attributes['layout']){
+                switch (($block_attributes['layout'])?? 3){
                     case 1:
                         $block_attributes['sib_layout'] = 'startdate-higher-level';
                         break;
