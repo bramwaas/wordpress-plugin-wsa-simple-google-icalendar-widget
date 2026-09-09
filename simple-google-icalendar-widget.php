@@ -10,10 +10,10 @@
  Requires at least: 5.9
  Requires PHP:  7.4
  Text Domain:  simple-google-icalendar-widget
- 20260713
+ 20260720
  *   bw 20240125 v2.3.0 v2 dir for older versions eg block.json version 2 for WP6.3 - Extra save instance/attributes in option 'simple_ical_block_attrs', like in standaard
  *      wp-widget in array with sibid as index so that the attributes are available for REST call.
- *   bw 20240509 v2.4.1 added defaults to all used keys of $args to solve issue 'PHP warnings' of johansam on support forum. Undefined array key ìclassnameî in .../simple-google-icalendar-widget.php on line 170
+ *   bw 20240509 v2.4.1 added defaults to all used keys of $args to solve issue 'PHP warnings' of johansam on support forum. Undefined array key ‚Äúclassname‚Äù in .../simple-google-icalendar-widget.php on line 170
  *   bw 20240727 v2.4.4 simplified defaulting args and improved code around that for the widget output
  *   bw 20241028 v2.5.0 Add support for categories    Tested with 6.7-RC and 5.9.5.
  *   bw 20250112 v2.6.0 plugin check, Using simple classloader and PSR-4 name conventions. Moved  SimpleicalWidget class to separate file.

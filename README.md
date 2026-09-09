@@ -122,7 +122,7 @@ The following folders are used in order of priority: first, the system searches 
 3. `<wp-folder>/wp-includes/theme-compat/simple-google-icalendar-widget`
 4. `<wp-folder>/wp-content/plugins/simple-google-icalendar-widget/tmpl`     (Here are the default templates included with the plugin; these are reset after a plugin update.)   
 
-You can copy a template file—such as `default.php`—from `<wp-folder>/wp-content/plugins/simple-google-icalendar-widget/tmpl` to `<wp-folder>/wp-content/themes/<active (child) theme>/templates/simple-google-icalendar-widget`. Then, modify the code in the copied file as desired and save it.
+You can copy a template fileÂ—such as `default.php`Â—from `<wp-folder>/wp-content/plugins/simple-google-icalendar-widget/tmpl` to `<wp-folder>/wp-content/themes/<active (child) theme>/templates/simple-google-icalendar-widget`. Then, modify the code in the copied file as desired and save it.
 You have now created an 'override' for the default template; if you select 'Default' in the 'LAY-OUT' setting, the custom template file will be used.
 Taking it a step further: if you rename the copied file to `my-default.php`, you create a new option called 'My default' in the LAY-OUT selection list. You can then select this option to use your custom template file.
 
@@ -285,7 +285,7 @@ known issue: in wp 5.9.5 with elementor 3.14.1 aria-expanded and aria-controls a
  Remove most unused attributes from block.json. Add deprecation for older Save methods.    
 * 2.4.3 replaced render_callback in server side register_block_type by render in block.json (v3 plus ( is_wp_version_compatible( '6.3' ) ))  simplifying initialization edit js to reduce change of looping when used in synced pattern and reviewing initializing in block.json.
 * 2.4.2 replaced null by 'admin.php' to solve issue 'Deprecation warnings in PHP 8.3' of Knut Sparhell (@knutsp) on support forum. Moved older entries of changelog to changelog.txt.
-* 2.4.1 added defaults to all used keys of $args to solve issue 'PHP warnings' of johansam on support forum. Undefined array key “classname” in .../simple-google-icalendar-widget.php on line 170
+* 2.4.1 added defaults to all used keys of $args to solve issue 'PHP warnings' of johansam on support forum. Undefined array key Â“classnameÂ” in .../simple-google-icalendar-widget.php on line 170
 * 2.4.0 exclude DTEND from event that is evend ends before (<) DTEND in stead of at (<=) DTEND. removed modulo 4    
  Checks if time zone ID with Etc/GMT 'replaced by'Etc/GMT+' is a Iana timezone then return this timezone.    
 * more in changelog.txt.
