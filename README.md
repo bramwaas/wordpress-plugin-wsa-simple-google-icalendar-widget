@@ -3,10 +3,10 @@
 Plugin name: Simple Google Calendar Outlook Events Widget   
 Contributors: bramwaas   
 Tags: Google Calendar, iCal, Events, Block, Calendar   
-Requires at least: 5.3   
-Tested up to: 7.0   
+Requires at least: 5.9   
+Tested up to: 7.1  
 Requires PHP: 7.4   
-Stable tag: 3.1.4
+Stable tag: 3.2.0
 License: GPLv2 or later   
 License URI: http://www.gnu.org/licenses/gpl-2.0.html   
     
@@ -16,7 +16,6 @@ Block widget that displays events from a public google calendar or iCal file.
 
 Simple block or widget to display events from a public google calendar, microsoft office outlook calendar or an other iCal file, in the style of your website.
 
-The Gutenberg block requires at least Wordpress 5.9.
 This simple block/widget fetches events from a public google calendar (or other calendar in iCal format) and displays them in simple list allowing you to fully adapt to your website by applying all kinds of CSS. 
 Google offers some HTML snippets to embed your public Google Calendar into your website.
 These are great, but as soon as you want to make a few adjustments to the styling, that goes beyond changing some colors, they're not enough.
@@ -24,11 +23,12 @@ These are great, but as soon as you want to make a few adjustments to the stylin
 == Plugin Features ==
 
 * Calendar block or widget to display appointments/events of a public Google calendar or other iCal file.
-* Block gives live preview in the editor and is not constrained to widget area. Old widget will be displayed in legacy widget block only in widget area. Old widget works also with Elementor (with some limitations e.g. preview in backend editor is not always available).
+* Block gives live preview in the editor and is not constrained to widget area. Legacy (old) widget will be displayed in legacy widget block only in widget area. Legacy widget works also with Elementor (with some limitations e.g. preview in backend editor is not always available), with SiteOrigin only the legacy widget with no namespace (activate with checkbox in plugin admin screen) works correct. 
 * Small footprint, uses only Google ID of the calendar, or ICS link for Outlook, or Url of iCal file, to get event information via iCal
 * Merge more calendars into one block
 * Manage events in Google Calendar, or other iCalendar source.
 * Fully adaptable to your website with CSS. Output in unordered list with Bootstrap 4 listgroup classes and toggle for details.
+* Works with overridable templates to make the layout more flexible. (You need basic knowledge of PHP to use this function effectively.) 
 * Choose date / time format in settings screen that best suits your website.
 * Displays per event DTSTART, DTEND, SUMMARY, LOCATION and DESCRIPTION. DTSTART is required other components are optional. 
 * Displays most common repeating events. Frequency Yearly, Monthly, Weekly, Dayly (not Hourly, Minutely and smaller periods)
@@ -103,14 +103,28 @@ First you have to share your calendar to make it public available, or to create 
 Then publish it as  an ICS link and use this link address. (something like https://outlook.live.com/owa/calendar/00000000-0000-0000-0000-000000000000/.../cid-.../calendar.ics) (works from version 1.3.1 of this widget)
 [More details on Microsoft Office support](https://support.office.com/en-us/article/share-your-calendar-in-outlook-on-the-web-7ecef8ae-139c-40d9-bae2-a23977ee58d5)
 
-= I only see the widget not the block =
+= I only see the legacy widget not the block =
 Are you using at least WP 5.9? Below 5.9 the block doesn't work.
-Are you using a page builder like Elementor? The block might not show in the page builder editor, try if it is available in the Wordpress editor.
+Are you using a page builder like Elementor or SiteOrigin? The block might not show in the page builder editor, try if it is available in the Wordpress editor.
 To support users wo cannot use the Gutenberg block I have in v2.1.1 (with pain in my hart because Gutenberg blocks are in my opinion the future of WP) synchronized the output of the widget again with that of the block. 
  Otherwise they needed to use a work-around with an extra plugin like described in [How to Display Gutenberg Blocks in Other Page Builders (Elementor, Divi, etc)](https://gutenberghub.com/how-to-display-gutenberg-blocks-in-other-page-builders/) or use an other plugin that adds a shortcode to a Gutenberg block or maybe some pro functionality of Elementor.   
 
-= How to use Apple Calendar (iCloud)? =
+= How to use Apple Calendar (iCloud)? =     
+
 Choose the calendar you want to share (in browser layout on the left panel). On that calendar's line, click the show calendar information icon (a person cropped into a circle) on the right side of the line. In the pop up Calendar Sharing check the box Public Calendar. You see the url below something like webcal://p59-caldav.icloud.com/published/2/MTQxNzk0NDA2NjE0MTc5AAAAAXt2Dy6XXXXXPXXxuZnTLDV9xr6A6_m3r_GU33Qj. Click on Copy Link and OK. Paste that in the "Calendar ID, or iCal URL" field of the widget (before version 1.3.1 you had to change webcal in https)
+
+= How to change the output layout by overriding or adding an output template (layout file). =    
+
+From version 3.2.0 this plugin uses output templates (layout files) to output the data in the desired lay out. By default, four templates are available in a selection list that you can choose from using the LAY-OUT setting. This list is compiled based on the unique filenames of templates in the template folders. Files containing an underscore ('_') in their name are excluded from the selection list so that they can be used for other purposes. Labels are derived from the filenames by replacing hyphens ('-') with spaces and capitalizing the first letter (and then translated).    
+The following folders are used in order of priority: first, the system searches for the selected template name, and if nothing is found, it searches for the 'default template'.    
+1. `<wp-folder>/wp-content/themes/<active (child) theme>/templates/simple-google-icalendar-widget` (recommended location for your overrides or additions)
+2. `<wp-folder>/wp-content/themes/<parent theme>/templates/simple-google-icalendar-widget`  (only when a child theme is used; cleared after them update!)
+3. `<wp-folder>/wp-includes/theme-compat/simple-google-icalendar-widget`
+4. `<wp-folder>/wp-content/plugins/simple-google-icalendar-widget/tmpl`     (Here are the default templates included with the plugin; these are reset after a plugin update.)   
+
+You can copy a template filesuch as `default.php`from `<wp-folder>/wp-content/plugins/simple-google-icalendar-widget/tmpl` to `<wp-folder>/wp-content/themes/<active (child) theme>/templates/simple-google-icalendar-widget`. Then, modify the code in the copied file as desired and save it.
+You have now created an 'override' for the default template; if you select 'Default' in the 'LAY-OUT' setting, the custom template file will be used.
+Taking it a step further: if you rename the copied file to `my-default.php`, you create a new option called 'My default' in the LAY-OUT selection list. You can then select this option to use your custom template file.
 
 = Error: cURL error 28: Operation timed out after 5000 milliseconds with 0 bytes received =
 
@@ -119,7 +133,7 @@ Probably the calendar is not public (yet), you can copy the link before the agen
 = I only see the headline of the calendar, but no events =
 
 There are no events found within the selection. Test e.g. with an appointment for the next day and refresh the cache or wait till the cache is refreshed.
-Check if you can download the ics file you have designated in the widget with a browser. At least if it is a text file with the first line "BEGIN:VCALENDAR" and further lines "BEGIN:VEVENT" and lines "END:VEVENT". If you cannot resolve it, you can of course report an error / question in our
+Check if you can download the ics file you have designated in the widget with a browser. At least if it is a text file with the first line "BEGIN:VCALENDAR" and further lines "BEGIN:VEVENT" and lines "END:VEVENT". With SiteOrigin only the legacy widget with no namespace (activate with checkbox in plugin admin screen) works correct. If you cannot resolve it, you can of course report an error / question in our
 [community support forum](https://wordpress.org/support/plugin/simple-google-icalendar-widget)
 
 = I only see the title of the calendar, and the text 'Processing' even after waiting more the a minute, or a message &#61 Code: undefined &#61;	Msg: HTTP error, status &#61; 500  =
@@ -243,9 +257,10 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 2017&thinsp;&ndash;&thinsp;2023 &copy; [Bram Waasdorp](http://www.waasdorpsoekhan.nl).
 
 == Upgrade Notice ==
-* next version (after 3.1.0) will require WP 5.9 so that I can remove older code.         
+* require WP 5.9 so that I can remove older code.         
 
 == Changelog ==
+* 3.2.0 Working with overridable templates, similar to Joomla module. Requires WP5.9 (was 5.3)
 * 3.1.4 after issue 'No Events displayed' by @alinaseibt remove single htmlspecialchars validation that broke url with & in it in legacy widget.
 Added more Loggings in IcsParser e.g. also if found file is no ical calendar  
 * 3.1.3 after issue 'No Events displayed' by @alinaseibt when legacy widget is included in SiteOrigin: Added frontend widget without namespace designed to     support applications that cannot work with namespaces.
@@ -270,7 +285,7 @@ known issue: in wp 5.9.5 with elementor 3.14.1 aria-expanded and aria-controls a
  Remove most unused attributes from block.json. Add deprecation for older Save methods.    
 * 2.4.3 replaced render_callback in server side register_block_type by render in block.json (v3 plus ( is_wp_version_compatible( '6.3' ) ))  simplifying initialization edit js to reduce change of looping when used in synced pattern and reviewing initializing in block.json.
 * 2.4.2 replaced null by 'admin.php' to solve issue 'Deprecation warnings in PHP 8.3' of Knut Sparhell (@knutsp) on support forum. Moved older entries of changelog to changelog.txt.
-* 2.4.1 added defaults to all used keys of $args to solve issue 'PHP warnings' of johansam on support forum. Undefined array key �classname� in .../simple-google-icalendar-widget.php on line 170
+* 2.4.1 added defaults to all used keys of $args to solve issue 'PHP warnings' of johansam on support forum. Undefined array key classname in .../simple-google-icalendar-widget.php on line 170
 * 2.4.0 exclude DTEND from event that is evend ends before (<) DTEND in stead of at (<=) DTEND. removed modulo 4    
  Checks if time zone ID with Etc/GMT 'replaced by'Etc/GMT+' is a Iana timezone then return this timezone.    
 * more in changelog.txt.

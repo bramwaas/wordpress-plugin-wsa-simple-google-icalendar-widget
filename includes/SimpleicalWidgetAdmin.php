@@ -9,18 +9,20 @@
  * @copyright  Copyright (c)  2017 - 2026, Bram Waasdorp
  * @link       https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  * @license    http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * Version: 3.0.0
- * 20220410 namespaced and renamed after classname.
+ * Version: 3.2.0
+ * 20220828
+ *  namespaced and renamed after classname.
  * 2.1.0 option for comma seperated list of IDs
  * 2.1.3 block footer after events and placeholder when no events.
  * 2.2.0 fix spell-error in namespace, and use new correct text domain
  * 2.3.0 anchors (id) at several places in document
- * 2.4.2 replaced null by 'admin.php' to solve issue 'Deprecation warnings in PHP 8.3'  
- * 2.4.4 added tag_title and extra option for timzone settings 
+ * 2.4.2 replaced null by 'admin.php' to solve issue 'Deprecation warnings in PHP 8.3'
+ * 2.4.4 added tag_title and extra option for timzone settings
  * 2.6.1  Started simplifying (bootstrap) collapse by toggles for adding javascript and trigger collapse by title.
-   Remove toggle to allow safe html in summary and description, save html is always allowed now. 
- * 3.0.0 add formatted logging via own Log class to error_log(). 
- * 3.1.3 otiop to add legacy widget with no namespace.      
+ Remove toggle to allow safe html in summary and description, save html is always allowed now.
+ * 3.0.0 add formatted logging via own Log class to error_log().
+ * 3.1.3 option to add legacy widget with no namespace.
+ * 3.2.0 help for lay-out overrides
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 // no direct access
@@ -29,7 +31,7 @@ defined('ABSPATH') or die ('Restricted access');
 class SimpleicalWidgetAdmin {
     const SIB_OPTIONS = 'simple_ical_options';
     
-// Start Options    
+    // Start Options
     /**
      * custom option and settings
      */
@@ -286,10 +288,27 @@ static function get_plugin_options(){
         
         echo wp_kses_post('<span id="layout"></span>'.
         '<p><strong>'.
-       __('Select lay-out</strong>', 'simple-google-icalendar-widget').
-        '</p><p>'.
+       __('Select lay-out', 'simple-google-icalendar-widget').
+        '</strong></p><p>'.
        __('Startdate line on a higher level in the list; Start with summary before first date line; Old style, summary after first date line, remove duplicate date lines.', 'simple-google-icalendar-widget').
         '</p>');
+        
+       echo wp_kses_post(
+       '<details><strong><summary>' .
+           __('How to change the output layout by overriding or adding an output template (layout file)', 'simple-google-icalendar-widget').
+       '</strong></summary><ol>' .
+           __('From version 3.2.0 this plugin uses output templates (layout files) to output the data in the desired lay out. By default, four templates are available in a selection list that you can choose from using the LAY-OUT setting. This list is compiled based on the unique filenames of templates in the template folders. Files containing an underscore (&#39;_&#39;) in their name are excluded from the selection list so that they can be used for other purposes. Labels are derived from the filenames by replacing hyphens (&#39;-&#39;) with spaces and capitalizing the first letter (and then translated).
+       The following folders are used in order of priority: first, the system searches for the selected template name, and if nothing is found, it searches for the &#39;default template&#39;', 'simple-google-icalendar-widget').
+       '<li>' . __('`&lt;wp-folder&gt;/wp-content/themes/&lt;active (child) theme&gt;/templates/simple-google-icalendar-widget` (recommended location for your overrides or additions)', 'simple-google-icalendar-widget') . '</li>' .
+       '<li>' . __('`&lt;wp-folder&gt;/wp-content/themes/&lt;parent theme&gt;/templates/simple-google-icalendar-widget`  (only when a child theme is used; cleared after them update!)', 'simple-google-icalendar-widget') . '</li>'.
+       '<li>' . __('`&lt;wp-folder&gt;/wp-includes/theme-compat/simple-google-icalendar-widget`', 'simple-google-icalendar-widget'). '</li>' .
+       '<li>' . __('`&lt;wp-folder&gt;/wp-content/plugins/simple-google-icalendar-widget/tmpl` (Here are the default templates included with the plugin; these are reset after a plugin update.)', 'simple-google-icalendar-widget'). '</li>' .
+       '</ol><p>' .
+           __('You can copy a template file -such as `default.php`-from `&lt;wp-folder&gt;/wp-content/plugins/simple-google-icalendar-widget/tmpl` to `&lt;wp-folder&gt;/wp-content/themes/&lt;active (child) theme&gt;/templates/simple-google-icalendar-widget`. Then, modify the code in the copied file as desired and save it.
+       You have now created an &#39;override&#39; for the default template; if you select &#39;Default&#39; in the &#39;LAY-OUT&#39; setting, the custom template file will be used.
+       Taking it a step further: if you rename the copied file to &#39;my-default.php&#39;, you create a new option called &#39;My default&#39; in the LAY-OUT selection list. You can then select this option to use your custom template file.', 'simple-google-icalendar-widget') .
+          '</p></details>' 
+       );
         
         echo wp_kses_post('<span id="dateformat-lg"></span>'.
         '<p><strong>'.
@@ -467,32 +486,52 @@ static function get_plugin_options(){
         '</strong></p><p>'.
        __('HTML anchor for this block.<br>Type one or two words - no spaces - to create a unique web address for this block, called an "anchor". Then you can link directly to this section on your page.<br>You can als use this ID to make parts of your extra css specific for this block', 'simple-google-icalendar-widget').
         '</p>');
-        
-       echo wp_kses_post('<span id="logging"></span>'.
-           '<p><strong>'.
-           __('Formatted logging to error_log() via Log::log() function', 'simple-google-icalendar-widget').
-           '</strong></p><p>'.
-           __('If a request to retrieve calendar data fails, a message is generated.<br>From version 3.0.0 onwards, the Log::log($priority, $message) function is used for logging the messages (formatted as <priority> <category> <message> to error_log() with the category "simple-ical-block" and<br>generally with the priority NOTICE or WARNING, but other priorities may be added later.<br><br>The standard Wordpress constantes (WP_DEBUG=true, WP_DEBUG_LOG=true, WP_DEBUG_DISPLAY=false) and @ini_set( \'display_errors\', 0 ); set in  wp-config.php<br>control the logging of these messages just like other messages.<br>See: https://developer.wordpress.org/advanced-administration/debug/debug-wordpress/', 'simple-google-icalendar-widget').
-           '</p><p>'.
-           __('Specific for the Log::log() function you can set two constantes in wp-config.php<br>SIB_LOG_MINIMUM_LEVEL to control the minimum priority in the series EMERGENCY,ALERT,CRITICAL,ERROR,WARNING,NOTICE,INFO,DEBUG or ALL to log a message; default WARNING<br>', 'simple-google-icalendar-widget').
-           __('SIB_LOG_MSG_LEN to distribute long messages over more lines with this maximum length; default indefinite, truncated to the length set in the php installation.<br>', 'simple-google-icalendar-widget').
-           '</p>');
-           
-           
+       
        echo wp_kses_post('<span id="title_collapse_toggle"></span>'.
            '<p><strong>' .
            __('Title as collapse toggle.', 'simple-google-icalendar-widget').
            '</strong></p><p>'.
            __('Use title link as collapse/show toggle for this module content.', 'simple-google-icalendar-widget').
            '</p><p><strong>' .
-           __('Checkbox Add bootstrap collapse code.', 'simple-google-icalendar-widget').
-       '</strong></p>'.
-        __('Use plugin options form to add Bootstrap collapse code (js and css) when not provided by theme.', 'simple-google-icalendar-widget') .
-        '<p><a href="' .
-        esc_url(admin_url('admin.php?page=simple_ical_options')) .
-        '" target="_blank">' . 
-        __('Options form', 'simple-google-icalendar-widget') .
-        '</a></p></div>');
+           __('Checkbox add bootstrap collapse code.', 'simple-google-icalendar-widget').
+           '</strong></p>'.
+           '</p>');
+           
+         echo wp_kses_post('<h3>'.
+        __('Plugin level settings', 'simple-google-icalendar-widget') .
+        '</h3><span id="plugin-options-form"></span>'.
+           '<p>'.
+           __('Use plugin options form to add legacy widget with no namespace or to add Bootstrap collapse code (js and css) when not provided by theme.', 'simple-google-icalendar-widget') .
+           '</p><p><a href="' .
+           esc_url(admin_url('admin.php?page=simple_ical_options')) .
+           '" target="_blank">' .
+           __('Options form', 'simple-google-icalendar-widget') .
+           '</a></p>');
+       
+           echo wp_kses_post('<span id="simpleical_add_widget_nns"></span>'.
+               '<p><strong>' .
+               __('Add legacy widget with no namespace.', 'simple-google-icalendar-widget').
+               '</strong></p><p>'.
+               __("Checkbox to add a legacy widget without a namespace. For use in site builders like SiteOrigin that do not work correctly with namespaces.", 'simple-google-icalendar-widget').
+               '</p>');
+
+               echo wp_kses_post('<span id="simpleical_add_collapse_code"></span>'.
+                   '<p><strong>' .
+                   __('Checkbox Add bootstrap collapse code.', 'simple-google-icalendar-widget').
+               '</strong></p><p>'.
+               __('Use checkbox(es) on plugin options form to add Bootstrap collapse code (js and css) when not provided by theme.', 'simple-google-icalendar-widget') .
+                   '</p>');
+               
+        echo wp_kses_post('<span id="logging"></span>'.
+            '<h3>'.
+            __('Formatted logging to error_log() via Log::log() function', 'simple-google-icalendar-widget').
+            '</h3><p>'.
+            __('If a request to retrieve calendar data fails, a message is generated.<br>From version 3.0.0 onwards, the Log::log($priority, $message) function is used for logging the messages (formatted as <priority> <category> <message> to error_log() with the category "simple-ical-block" and<br>generally with the priority NOTICE or WARNING, but other priorities may be added later.<br><br>The standard Wordpress constantes (WP_DEBUG=true, WP_DEBUG_LOG=true, WP_DEBUG_DISPLAY=false) and @ini_set( \'display_errors\', 0 ); set in  wp-config.php<br>control the logging of these messages just like other messages.<br>See: https://developer.wordpress.org/advanced-administration/debug/debug-wordpress/', 'simple-google-icalendar-widget').
+            '</p><p>'.
+            __('Specific for the Log::log() function you can set two constantes in wp-config.php<br>SIB_LOG_MINIMUM_LEVEL to control the minimum priority in the series EMERGENCY,ALERT,CRITICAL,ERROR,WARNING,NOTICE,INFO,DEBUG or ALL to log a message; default WARNING<br>', 'simple-google-icalendar-widget').
+            __('SIB_LOG_MSG_LEN to distribute long messages over more lines with this maximum length; default indefinite, truncated to the length set in the php installation.<br>', 'simple-google-icalendar-widget').
+            '</p></div>');
+            
     }
     // info in admin-menu
 }

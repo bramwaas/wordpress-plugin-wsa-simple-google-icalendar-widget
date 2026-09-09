@@ -1,6 +1,6 @@
 {
 	"$schema" : "https://json.schemastore.org/block.json",
-	"apiVersion" : 3,
+	"apiVersion" : 2,
 	"title" : "Simple ical Block",
 	"name" : "simplegoogleicalenderwidget/simple-ical-block",
 	"category" : "widgets",
@@ -17,7 +17,7 @@
 		"ics"
 	],
 	"icon" : "calendar-alt",
-	"version" : "3.1.0.2",
+	"version" : "3.2.0.2",
 	"textdomain" : "simple-google-icalendar-widget",
 	"attributes" : {
 		"wptype" : {
@@ -42,9 +42,11 @@
 			"type" : "integer",
 			"default" : 92
 		},
+		"sib_layout" : {
+			"type" : "string"
+		},
 		"layout" : {
-			"type" : "integer",
-			"default" : 3
+			"type" : "integer"
 		},
 		"categories_filter_op" : {
 			"type" : "string",

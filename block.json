@@ -17,7 +17,7 @@
 		"ics"
 	],
 	"icon" : "calendar-alt",
-	"version" : "3.1.0",
+	"version" : "3.2.0",
 	"textdomain" : "simple-google-icalendar-widget",
 	"attributes" : {
 		"wptype" : {
@@ -42,9 +42,11 @@
 			"type" : "integer",
 			"default" : 92
 		},
+		"sib_layout" : {
+			"type" : "string"
+		},
 		"layout" : {
-			"type" : "integer",
-			"default" : 3
+			"type" : "integer"
 		},
 		"categories_filter_op" : {
 			"type" : "string",
@@ -209,7 +211,7 @@
 		"align" : true
 	},
 	"editorScript" : [
-		"file:./js/simple-ical-block-fetch.js",
+		"file:./js/simple-ical-block-helper.js",
 		"file:./js/simple-ical-block.js"
 	]
 }

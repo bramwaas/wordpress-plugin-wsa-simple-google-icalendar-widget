@@ -1,16 +1,20 @@
 /**
  * simple-ical-block-fetch.js
- * set attributes in option, gets rendered output with fetch from server.
+ * helper functions and properties in object window.simpleIcalBlockF
+ * set attributes in option, gets rendered output with fetch from server, get array of layout file names in layoutOps
  * started as copy of view simple-ical-block 
  * replaced fetch() by apiFetch therefore no need to define restRoot
  * added search in iFrame,  selection on sibid, and choice of Timezone
  * object simpleIcalBlock differentiated by adding F
  * v2.4.4 use present attrs to fetch content not from option in case attrs are not set in option
  * v2.6.1 ad collapse code tot title
+ * v3.2.0 get list of layout file-names save as array in layoutOps
 **/
 window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 	bizzySavingAttrs: 0, 
 	bizzySibid: '',
+	sibLayoutOps: [],
+	sibOpsCacheTime: 0,
 	fetchFromRest: function(dobj, ni) {
 		const fpath = "/simple-google-icalendar-widget/v1/content-by-ids";
 		let titl;
@@ -89,7 +93,41 @@ window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 							this.bizzySavingAttrs = 0;
 		}
 	}
-
-}
+	,
+	/**
+	 * Gets array of layout file names (key) and labels (value) from layout dirs.Copies attributes in Option via asynchrone REST call and test if succeeded max 5 times 
+	 * only if no other process is  already is doing this (in the same window) else wait.
+	 */
+	getSibLayouts:  function(cache=60) {
+		
+		const fpath = "/simple-google-icalendar-widget/v1/get-sib-layouts";
+		let oldCacheTime = 0;
+		let tmpCacheTime = 0;
+		if (typeof this.sibOpsCacheTime != 'number')  this.sibOpsCacheTime = 0;
+		if (Date.now() > (this.sibOpsCacheTime + (1000 * cache))) {
+			oldCacheTime = this.sibOpsCacheTime;
+			this.sibOpsCacheTime = Date.now();
+			tmpCacheTime = this.sibOpsCacheTime;
+		} else 
+		{
+			console.log('getSibLayouts: cache still valid: ' + this.sibOpsCacheTime);
+			return;
+		}
+		window.wp.apiFetch({
+			path: fpath, 
+			method: 'POST', 
+			data: [], 
+		}).then((res) => {
+			console.log('getSibLayouts: succes content: ');
+//			console.log(res.content);
+			this.sibLayoutOps.splice(0,this.sibLayoutOps.length, ...res.content );
+			console.log(this.sibLayoutOps );
+			this.sibOpsCacheTime = Date.now();
+		}).catch((error) => {
+			console.log('getSibLayouts error:');
+			console.log(error);
+			if (this.sibOpsCacheTime == tmpCacheTime)  this.sibOpsCacheTime = oldCacheTime;
+		});
+	}
 }	
-
+}

@@ -17,7 +17,8 @@
  * 2.7.0 Enable to add words of summary to categories for filtering. Add support for details/summary tag combination.
  * 2.7.1 remove load textdomain as recommended by PluginCheck
  * 3.1.3 make extendable by adding parameters to construct.   
- * 3.1.4 remove single htmlspecialchars validation that broke url with & in it .   
+ * 3.1.4 remove single htmlspecialchars validation that broke url with & in it .
+ * 3.2.0 layout options from getLayoutFiles().   
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 // no direct access
@@ -52,10 +53,10 @@ class SimpleicalWidget extends \WP_Widget
          *
          * @param array $args
          *            Widget arguments.
-         * @param array $instance
+         * @param array $block_attributes (was $instance)
          *            Saved values from database.
          */
-        public function widget($args, $instance)
+        public function widget($args, $block_attributes)
         {
             $secho = '';
             $args = array_merge(['before_widget' => '',
@@ -64,46 +65,62 @@ class SimpleicalWidget extends \WP_Widget
                 'after_widget' => '',
                 'classname' => 'Simple_iCal_Widget' ],
                 $args);
-            $instance = array_merge(SimpleicalHelper::$default_block_attributes,
+            $block_attributes = array_merge(SimpleicalHelper::$default_block_attributes,
                 ['title' => __('Events', 'simple-google-icalendar-widget'),
                     'tzid_ui' => wp_timezone_string(),
                     'wptype' => 'widget'],
-                $instance  );
-            if (empty($instance['anchorId'])) $instance['anchorId'] =  $instance['sibid'];
+                $block_attributes  );
+            if (empty($block_attributes['sib_layout']) ) {
+                switch (($block_attributes['layout'])?? 3){
+                    case 1:
+                        $block_attributes['sib_layout'] = 'startdate-higher-level';
+                        break;
+                    case 2:
+                        $block_attributes['sib_layout'] = 'start-with-summary';
+                        break;
+                    default:
+                        $block_attributes['sib_layout'] = 'old-style';
+                }
+            }
+            //        Log::log(Log::NOTICE, 'sib_layout:' . (($block_attributes['sib_layout']) ?? 'empty'));
+            if (empty($block_attributes['anchorId'])) $block_attributes['anchorId'] =  $block_attributes['sibid'];
             
-            if (! empty($instance['rest_utzui']) &&  is_numeric($instance['rest_utzui'])) {
-                $instance['wptype'] = 'rest_ph_w';
+            if (! empty($block_attributes['rest_utzui']) &&  is_numeric($block_attributes['rest_utzui'])) {
+                $block_attributes['wptype'] = 'rest_ph_w';
             }
             // lay-out block:
-            $instance['clear_cache_now'] = false;
+            $block_attributes['clear_cache_now'] = false;
             $secho .= sprintf($args['before_widget'],
-                ('w-' . $instance['anchorId']),
+                ('w-' . $block_attributes['anchorId']),
                 $args['classname']) ;
-            $secho .= '<span id="' . $instance['anchorId'] . '" data-sib-id="'
-                . $instance['sibid'] . '" data-sib-utzui="' . $instance['rest_utzui']
-                . (('rest_ph_w' == $instance['wptype']) ? '" data-sib-st="0-start" >' : '">');
+            $secho .= '<span id="' . $block_attributes['anchorId'] . '" data-sib-id="'
+                . $block_attributes['sibid'] . '" data-sib-utzui="' . $block_attributes['rest_utzui']
+                . (('rest_ph_w' == $block_attributes['wptype']) ? '" data-sib-st="0-start" >' : '">');
             $args['after_widget'] = '</span>' . $args['after_widget'];
             
-            if (! empty($instance['title'])) {
+            if (! empty($block_attributes['title'])) {
                 if (false === stripos(' data-sib-t="true" ', $args['before_title'])) {
                     $l = explode('>', $args['before_title'], 2);
                     $args['before_title'] = implode(' data-sib-t="true" >', $l);
                 }
-                if (!empty($instance['title_collapse_toggle'])){
-                    $args['before_title'] .= '<a data-toggle="collapse" data-bs-toggle="collapse" href="#lg' .$instance['anchorId'] . '" role="button" aria-expanded="'.(('collapse' == $instance['title_collapse_toggle'])?'false':'true').'" aria-controls="collapseMod">';
+                if (!empty($block_attributes['title_collapse_toggle'])){
+                    $args['before_title'] .= '<a data-toggle="collapse" data-bs-toggle="collapse" href="#lg' .$block_attributes['anchorId'] . '" role="button" aria-expanded="'.(('collapse' == $block_attributes['title_collapse_toggle'])?'false':'true').'" aria-controls="collapseMod">';
                     $args['after_title']  = '</a>' . $args['after_title'];
                 }
-                $title = apply_filters('widget_title', $instance['title']);
+                $title = apply_filters('widget_title', $block_attributes['title']);
                 $secho .= $args['before_title']. $title. $args['after_title'];
             }
-            if ('rest_ph_w' == $instance['wptype'] ) {
-                SimpleicalHelper::update_rest_attrs($instance );
-                $secho .= '<p>';
-               $secho .= __('Processing', 'simple-google-icalendar-widget');
-                $secho .= '</p>';
+            if ('rest_ph_w' == $block_attributes['wptype'] ) {
+                try {
+                    SimpleicalHelper::update_rest_attrs($block_attributes);
+                } catch (\Exception $e) {
+                    $secho .= '<p>Caught exception: ' . $e->getMessage() . "</p>\n";
+                    Log::log(Log::WARNING, 'Attributes not saved ' . 'Caught exception: ' . $e->getMessage());
+                }
+                require SimpleicalHelper::getLayoutPath('rest_ph/rest_client_placeholder');
             } else {
-//                if ((false === strpos($instance['calendar_id'],'//:')) && (false === strpos($instance['calendar_id'],'@'))) $instance['calendar_id'] = base64_decode($instance['calendar_id']);
-                SimpleicalHelper::display_block($instance, $secho);
+                require SimpleicalHelper::getLayoutPath($block_attributes['sib_layout']);
+                
             }
             // end lay-out block
             $secho .= $args['after_widget'];
@@ -117,91 +134,84 @@ class SimpleicalWidget extends \WP_Widget
          * @param array $new_instance Values just sent to be saved.
          * @param array $old_instance Previously saved values from database.
          *
-         * @return array Updated safe values to be saved.
+         * @return array Updated safe values to be saved. ($instance / $block_attributes)
          */
         public function update($new_instance, $old_instance)
         {
-            $instance['title'] = wp_strip_all_tags($new_instance['title']);
+            $block_attributes['title'] = wp_strip_all_tags($new_instance['title']);
             
             if (empty($old_instance['calendar_id']) || $old_instance['calendar_id'] != $new_instance['calendar_id']){
-                delete_transient('SimpleicalBlock'  . $instance['sibid']);
+                delete_transient('SimpleicalBlock'  . $block_attributes['sibid']);
             }
-//            if ((false !== strpos($instance['calendar_id'],'//:')) || (false !== strpos($instance['calendar_id'],'@'))) {
-//                $instance['calendar_id'] = base64_encode($new_instance['calendar_id']);
-//            } else {
-                $instance['calendar_id'] = $new_instance['calendar_id'];
-                
-//            }
-                
-            
+                $block_attributes['calendar_id'] = $new_instance['calendar_id'];
             if(is_numeric($new_instance['cache_time']) && 1 < $new_instance['cache_time']) {
-                $instance['cache_time'] = $new_instance['cache_time'];
+                $block_attributes['cache_time'] = $new_instance['cache_time'];
             } else {
-                $instance['cache_time'] = 60;
+                $block_attributes['cache_time'] = 60;
             }
             
             if(is_numeric($new_instance['event_period']) && 1 < $new_instance['event_period']) {
-                $instance['event_period'] = $new_instance['event_period'];
+                $block_attributes['event_period'] = $new_instance['event_period'];
             } else {
-                $instance['event_period'] = 366;
+                $block_attributes['event_period'] = 366;
             }
             
-            if(is_numeric($new_instance['layout']) && $new_instance['layout'] > 0) {
-                $instance['layout'] = $new_instance['layout'];
+            if ( empty($new_instance['sib_layout'])) {
+                $block_attributes['sib_layout'] = 'default';
             } else {
-                $instance['layout'] = 3;
+                $block_attributes['sib_layout'] = (string) $new_instance['sib_layout'];
             }
-            $instance['categories_filter_op'] = ($new_instance['categories_filter_op'])??'';
-            $instance['categories_filter'] = ($new_instance['categories_filter'])??'';
-            $instance['categories_display'] = ($new_instance['categories_display'])??'';
-            $instance['add_sum_catflt'] = !empty($new_instance['add_sum_catflt']);
+            $block_attributes['categories_filter_op'] = ($new_instance['categories_filter_op'])??'';
+            $block_attributes['categories_filter'] = ($new_instance['categories_filter'])??'';
+            $block_attributes['categories_display'] = ($new_instance['categories_display'])??'';
+            $block_attributes['add_sum_catflt'] = !empty($new_instance['add_sum_catflt']);
             
-            $instance['event_count'] = $new_instance['event_count'];
+            $block_attributes['event_count'] = $new_instance['event_count'];
             if(is_numeric($new_instance['event_count']) && 0 < $new_instance['event_count']) {
-                $instance['event_count'] = $new_instance['event_count'];
+                $block_attributes['event_count'] = $new_instance['event_count'];
             } else {
-                $instance['event_count'] = 5;
+                $block_attributes['event_count'] = 5;
             }
             // using wp_strip_all_tags because it can start with space or contain more classe seperated by spaces
-            $instance['dateformat_lg'] = ($new_instance['dateformat_lg']);
-            $instance['dateformat_lgend'] = ($new_instance['dateformat_lgend']);
-            $instance['dateformat_tsum'] = ($new_instance['dateformat_tsum']);
-            $instance['dateformat_tsend'] = ($new_instance['dateformat_tsend']);
-            $instance['dateformat_tstart'] = ($new_instance['dateformat_tstart']);
-            $instance['dateformat_tend'] = ($new_instance['dateformat_tend']);
+            $block_attributes['dateformat_lg'] = ($new_instance['dateformat_lg']);
+            $block_attributes['dateformat_lgend'] = ($new_instance['dateformat_lgend']);
+            $block_attributes['dateformat_tsum'] = ($new_instance['dateformat_tsum']);
+            $block_attributes['dateformat_tsend'] = ($new_instance['dateformat_tsend']);
+            $block_attributes['dateformat_tstart'] = ($new_instance['dateformat_tstart']);
+            $block_attributes['dateformat_tend'] = ($new_instance['dateformat_tend']);
             if(is_numeric($new_instance['excerptlength']) && 0 <= $new_instance['excerptlength']) {
-                $instance['excerptlength'] = intval($new_instance['excerptlength']);
+                $block_attributes['excerptlength'] = intval($new_instance['excerptlength']);
             } else {
-                $instance['excerptlength'] = '';
+                $block_attributes['excerptlength'] = '';
             }
             if(!empty($new_instance['period_limits']) &&  is_numeric($new_instance['period_limits'])) {
-                $instance['period_limits'] = wp_strip_all_tags($new_instance['period_limits']);
+                $block_attributes['period_limits'] = wp_strip_all_tags($new_instance['period_limits']);
             }
             if(!empty($new_instance['rest_utzui']) &&  is_numeric($new_instance['rest_utzui'])) {
-                $instance['rest_utzui'] = wp_strip_all_tags($new_instance['rest_utzui']);
+                $block_attributes['rest_utzui'] = wp_strip_all_tags($new_instance['rest_utzui']);
             }
-            $instance['tag_sum'] = wp_strip_all_tags($new_instance['tag_sum']);
+            $block_attributes['tag_sum'] = wp_strip_all_tags($new_instance['tag_sum']);
             // prevent trimming first space in suffix
-            $instance['suffix_lg_class'] = substr(wp_strip_all_tags('a' . $new_instance['suffix_lg_class']),1);
-            $instance['suffix_lgi_class'] = substr(wp_strip_all_tags('a' . $new_instance['suffix_lgi_class']),1);
-            $instance['suffix_lgia_class'] = substr(wp_strip_all_tags('a' . $new_instance['suffix_lgia_class']),1);
-            $instance['after_events'] = ($new_instance['after_events']);
-            $instance['no_events'] = ($new_instance['no_events']);
+            $block_attributes['suffix_lg_class'] = substr(wp_strip_all_tags('a' . $new_instance['suffix_lg_class']),1);
+            $block_attributes['suffix_lgi_class'] = substr(wp_strip_all_tags('a' . $new_instance['suffix_lgi_class']),1);
+            $block_attributes['suffix_lgia_class'] = substr(wp_strip_all_tags('a' . $new_instance['suffix_lgia_class']),1);
+            $block_attributes['after_events'] = ($new_instance['after_events']);
+            $block_attributes['no_events'] = ($new_instance['no_events']);
             if (!empty($new_instance['blockid']) && empty($new_instance['sibid'])) {
                 $new_instance['sibid'] = $new_instance['blockid'];
             }
-            $instance['title_collapse_toggle'] = wp_strip_all_tags($new_instance['title_collapse_toggle'] ?? '' );
+            $block_attributes['title_collapse_toggle'] = wp_strip_all_tags($new_instance['title_collapse_toggle'] ?? '' );
             
-            $instance['sibid'] = wp_strip_all_tags($new_instance['sibid']);
-            $instance['anchorId'] = wp_strip_all_tags($new_instance['anchorId'], 1) ?? $instance['sibid'];
+            $block_attributes['sibid'] = wp_strip_all_tags($new_instance['sibid']);
+            $block_attributes['anchorId'] = wp_strip_all_tags($new_instance['anchorId'], 1) ?? $block_attributes['sibid'];
             
             if (!empty($this->number && is_numeric($this->number))) {
-                $instance['postid'] = (string) $this->id;
+                $block_attributes['postid'] = (string) $this->id;
             }
-            if (!empty($old_instance['sibid'])) $instance['prev_sibid'] = $old_instance['sibid'];
-            if (SimpleicalHelper::update_rest_attrs($instance )) $instance['prev_sibid'] = $instance['sibid'];
+            if (!empty($old_instance['sibid'])) $block_attributes['prev_sibid'] = $old_instance['sibid'];
+            if (SimpleicalHelper::update_rest_attrs($block_attributes )) $block_attributes['prev_sibid'] = $block_attributes['sibid'];
             
-            return $instance;
+            return $block_attributes;
         }
         /**
          * Back-end widget form.
@@ -226,6 +236,19 @@ class SimpleicalWidget extends \WP_Widget
                 }
                 else $instance['sibid'] = 'W' . bin2hex(random_bytes(7));
             }
+            if (empty($instance['sib_layout']) && !empty($instance['layout'])) {
+                switch ($instance['layout']){
+                    case 1:
+                        $instance['sib_layout'] = 'startdate-higher_level';
+                        break;
+                    case 2:
+                        $instance['sib_layout'] = 'start-with-summary';
+                        break;
+                    case 3:
+                        $instance['sib_layout'] = 'old-style';
+                }
+            }
+            
             $instance = wp_parse_args((array) $instance, $default);
 //            if ((false === strpos($instance['calendar_id'],'//:')) && (false === strpos($instance['calendar_id'],'@')))  $instance['calendar_id'] = base64_decode($instance['calendar_id']);
             $nwsibid = 'w' .  bin2hex(random_bytes(7));
@@ -248,11 +271,14 @@ class SimpleicalWidget extends \WP_Widget
           <input class="widefat" id="<?php echo esc_attr($this->get_field_id('event_period')); ?>" name="<?php echo esc_attr($this->get_field_name('event_period')); ?>" type="text" value="<?php echo esc_attr($instance['event_period']); ?>" />
         </p>
         <p>
-          <label for="<?php echo esc_attr($this->get_field_id('layout')); ?>"><?php esc_attr_e('Lay-out:', 'simple-google-icalendar-widget'); ?></label> 
-          <select class="widefat" id="<?php echo esc_attr($this->get_field_id('layout')); ?>" name="<?php echo esc_attr($this->get_field_name('layout')); ?>" >
-            <option value="1"<?php echo (1==esc_attr($instance['layout']))?'selected':''; ?>><?php esc_attr_e('Startdate higher level', 'simple-google-icalendar-widget'); ?></option>
-  			<option value="2"<?php echo (2==esc_attr($instance['layout']))?'selected':''; ?>><?php esc_attr_e('Start with summary', 'simple-google-icalendar-widget'); ?></option>
-  			<option value="3"<?php echo (3==esc_attr($instance['layout']))?'selected':''; ?>><?php esc_attr_e('Old style', 'simple-google-icalendar-widget'); ?></option>
+          <label for="<?php echo esc_attr($this->get_field_id('sib_layout')); ?>"><?php esc_attr_e('Lay-out:', 'simple-google-icalendar-widget'); ?></label> 
+          <select class="widefat" id="<?php echo esc_attr($this->get_field_id('sib_layout')); ?>" name="<?php echo esc_attr($this->get_field_name('sib_layout')); ?>" >
+         <?php 
+         foreach (SimpleicalHelper::getLayoutFiles() as $option){
+             echo '<option value=' . esc_attr($option->value) . ' ' .((esc_attr($option->value) == esc_attr($instance['sib_layout']) ? 'selected':'')) . ' >'
+                . esc_attr($option->label) . '</option>';
+         }
+         ?>
   		 </select>	
         </p>
          <p>

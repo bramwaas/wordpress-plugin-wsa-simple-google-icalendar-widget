@@ -3,7 +3,7 @@ Plugin name: Simple Google Calendar Outlook Events Block Widget
 Requires at least: 5.3
 Tested up to: 7.0
 Requires PHP: 7.4
-Version: 3.1.4
+Version: 3.2.0
 
 == Upgrade Notice ==
 * next version (after 3.1.0) will require WP 5.9 so that I can remove older code.         
@@ -13,13 +13,15 @@ Version: 3.1.4
 * from 2023 (v2.1.1) deprecation php older than 7.4. I don't test in older php versions than 7.4 older versions might still work, but in future I may use new functions of php 8.
 * in v2.1.1 Start with summary is replaced with a select. After upgrade you may have to choose the correct option again. 
 * since v1.2.0 Wordpress version 5.3.0 is required because of the use of wp_date() 
+* require WP 5.9 so that I can remove older code.         
 
 == Changelog ==
+* 3.2.0 Working with overridable templates, similar to Joomla module. Requires WP5.9 (was 5.3)
 * 3.1.4 after issue 'No Events displayed' by @alinaseibt remove single htmlspecialchars validation that broke url with & in it in legacy widget.
 Added more Loggings in IcsParser e.g. also if found file is no ical calendar  
-* 3.1.3 after issue 'No Events displayed' by @alinaseibt when legacy widget is included in SiteOrigin: Added frontend widget without namespace designed to     support applications that cannot work with namespaces.
- * 3.1.2 Repaired error missing title introduced in version 3.1.0.
-* 3.1.1 replaced wp_remote_get by wp_safe_remote_get to to further harden security after fixing a security issue
+* 3.1.3 after issue 'No Events displayed' by @alinaseibt when legacy widget is included in SiteOrigin: Added optional frontend widget without namespace designed to support applications that cannot work with namespaces.
+* 3.1.2 Repaired error missing title introduced in version 3.1.0.
+* 3.1.1 replaced wp_remote_get by wp_safe_remote_get to further harden security after fixing a security issue
 * 3.1.0 whitelist REST params to solve security vulnerability issue. Some changes to meet PCP (plugin check) requirements
 * 3.0.0 Also cache failed requests for calendar items to prevent prolonged "...Our systems have detected unusual traffic from your computer network. ..." errors   
  caused by a large number of requests in a short period of time. (after issues #47 and #48 for joomla module).  
@@ -39,7 +41,7 @@ known issue: in wp 5.9.5 with elementor 3.14.1 aria-expanded and aria-controls a
  Remove most unused attributes from block.json. Add deprecation for older Save methods.    
 * 2.4.3 replaced render_callback in server side register_block_type by render in block.json (v3 plus ( is_wp_version_compatible( '6.3' ) ))  simplifying initialization edit js to reduce change of looping when used in synced pattern and reviewing initializing in block.json.
 * 2.4.2 replaced null by 'admin.php' to solve issue 'Deprecation warnings in PHP 8.3' of Knut Sparhell (@knutsp) on support forum. Moved older entries of changelog to changelog.txt.
-* 2.4.1 added defaults to all used keys of $args to solve issue 'PHP warnings' of johansam on support forum. Undefined array key ìclassnameî in .../simple-google-icalendar-widget.php on line 170
+* 2.4.1 added defaults to all used keys of $args to solve issue 'PHP warnings' of johansam on support forum. Undefined array key ‚Äúclassname‚Äù in .../simple-google-icalendar-widget.php on line 170
 * 2.4.0 exclude DTEND from event that is evend ends before (<) DTEND in stead of at (<=) DTEND. removed modulo 4    
  Checks if time zone ID with Etc/GMT 'replaced by'Etc/GMT+' is a Iana timezone then return this timezone.    
 * 2.3.1 Tie moving display events window created by Now and 'Number of days after today' to the display time instead of the data-retrieve/cache time. Make it possible to let the window start at 0H00 and end at 23H59 local time of the startdate and enddate of the window in addition to the current solution where both ends are at the time of the day the data is displayed/retrieved. Add <span class="dsc"> to description output to make it easier to refer to in css. Remove HTML for block title when title is empty. Add unescape \\ to \ and improve \, to ,   \; to ;  chars that should be escaped following the text specification. Extra save attributes in widget option to increase the chance the REST call finds them in that option.      

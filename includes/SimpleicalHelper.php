@@ -21,19 +21,23 @@
  * 2.7.0 Added cast $class to string in sanitize_html_clss, defaults for new collapse fields. Add support for details/summary tag combination.
  * 3.0.0 removed messages, (replaced by Notices and Warning in error_log)
  * 3.1.0 in response to PCP error replace get_block_wrapper_attributes() by expected result 
-   'class="wp-block-simplegoogleicalenderwidget-simple-ical-block"'; // hardcoded untill (is_wp_version_compatible('5.6'));           
+   'class="wp-block-simplegoogleicalenderwidget-simple-ical-block"'; // hardcoded untill (is_wp_version_compatible('5.6'));  
+ * 3.1.3 extra widget SIB_SimpleicalWidgetNNS with no namespace as frontend for standard legacy widget SimpleicalWidget 
+ * 3.2.0 use (overridable) layout files to display content. Get list of layout file-names as array          
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
+// no direct access
+defined('ABSPATH') or die ('Restricted access');
 
 class SimpleicalHelper
 {
     const SIB_ATTR = 'simple_ical_block_attrs';
 
-    /**
-     * tags allowed for summary
-     *
-     * @var array
-     */
+/* 
+ * tags allowed for summary
+ *
+ * @var array
+ */
     static $allowed_tags_sum = [
         'a',
         'b',
@@ -68,7 +72,7 @@ class SimpleicalHelper
         'categories_filter' => '',
         'categories_display' => '',
         'add_sum_catflt' => false,
-        'layout' => 3,
+        'sib_layout' => '',
         'dateformat_lg' => 'l jS \of F',
         'dateformat_lgend' => '',
         'tag_title' => 'h3',
@@ -107,155 +111,6 @@ class SimpleicalHelper
         'tzid_ui' => null,
     ];
     /**
-     * Front-end display of module, block or widget.
-     *
-     * @see
-     *
-     * @param array $attributes
-     * @param string &$secho (reference to $secho), output to echo in calling function, to simplify escaping output by replacing multiple echoes by one 
-     *            Saved attribute/option values from database.
-     */
-    static function display_block($attributes, &$secho)
-    {
-        $sn = 0;
-        try {
-            $attributes['tz_ui'] = new \DateTimeZone($attributes['tzid_ui']);
-        } catch (\Exception $exc) {}
-        if (empty($attributes['tz_ui']))
-            try {
-                $attributes['tzid_ui'] = str_replace('Etc/GMT ','Etc/GMT+',$attributes['tzid_ui']);
-                $attributes['tz_ui'] = new \DateTimeZone($attributes['tzid_ui']);
-        } catch (\Exception $exc) {}
-        if (empty($attributes['tz_ui']))
-            try {
-                $attributes['tzid_ui'] = wp_timezone_string();
-                $attributes['tz_ui'] = new \DateTimeZone($attributes['tzid_ui']);
-        } catch (\Exception $exc) {}
-        if (empty($attributes['tz_ui'])) {
-            $attributes['tzid_ui'] = 'UTC';
-            $attributes['tz_ui'] = new \DateTimeZone('UTC');
-        }
-        $layout = (isset($attributes['layout'])) ? $attributes['layout'] : 3;
-        $dflg = (isset($attributes['dateformat_lg'])) ? $attributes['dateformat_lg'] : 'l jS \of F';
-        $dflgend = (isset($attributes['dateformat_lgend'])) ? $attributes['dateformat_lgend'] : '';
-        $dftsum = (isset($attributes['dateformat_tsum'])) ? $attributes['dateformat_tsum'] : 'G:i ';
-        $dftsend = (isset($attributes['dateformat_tsend'])) ? $attributes['dateformat_tsend'] : '';
-        $dftstart = (isset($attributes['dateformat_tstart'])) ? $attributes['dateformat_tstart'] : 'G:i';
-        $dftend = (isset($attributes['dateformat_tend'])) ? $attributes['dateformat_tend'] : ' - G:i ';
-        $excerptlength = (isset($attributes['excerptlength']) && ' ' < trim($attributes['excerptlength'])) ? (int) $attributes['excerptlength'] : '';
-        $attributes['suffix_lg_class'] = self::sanitize_html_clss($attributes['suffix_lg_class']);
-        $sflgi = self::sanitize_html_clss($attributes['suffix_lgi_class']);
-        $sflgia = self::sanitize_html_clss($attributes['suffix_lgia_class']);
-        if (empty($attributes['categories_display'])) {
-            $cat_disp = false;
-        } else {
-            $cat_disp = true;
-            $cat_sep = '</small>'.$attributes['categories_display'].'<small>';
-        }
-        if (! in_array($attributes['tag_sum'], self::$allowed_tags_sum))
-            $attributes['tag_sum'] = 'a';
-            $ipd = IcsParser::getData($attributes);
-            $data = $ipd['data'];
-            if (! empty($data) && is_array($data)) {
-                $secho .= '<ul id="lg' .$attributes['anchorId'] .'" class="list-group' . $attributes['suffix_lg_class'] . ' simple-ical-widget '. $attributes['title_collapse_toggle'] . '" > ';
-                $curdate = '';
-                foreach ($data as $e) {
-                    $idlist = explode("@", $e->uid,2);
-                    $itemid = $attributes['sibid'] . '_' . strval(++ $sn) . '_' . $idlist[0];
-                    $evdate = wp_date($dflg, $e->start, $attributes['tz_ui']);
-                    $sameday = (wp_date('yz', $e->start, $attributes['tz_ui']) === wp_date('yz', $e->end, $attributes['tz_ui']));
-                    $ev_class = ((! empty($e->cal_class)) ? ' ' . sanitize_html_class($e->cal_class) : '');
-                    $cat_list = '';
-                    if (!empty($e->categories)) {
-                        $ev_class = $ev_class . ' ' . implode( ' ', array_map( "sanitize_html_class", $e->categories ));
-                        if ($cat_disp) {
-                            $cat_list = '<div class="categories"><small>'
-                                . implode($cat_sep,str_replace("\n", '<br>', $e->categories ))
-                                . '</small></div>';
-                        }
-                    }
-                    if (! $sameday ) {
-                        $evdate = str_replace(array(
-                            "</div><div>",
-                            "</h4><h4>",
-                            "</h5><h5>",
-                            "</h6><h6>"
-                        ), '', $evdate . wp_date($dflgend, $e->end - 1, $attributes['tz_ui']));
-                    }
-                    $evdtsum = (($e->startisdate === false) ? wp_date($dftsum, $e->start, $attributes['tz_ui']) . wp_date($dftsend, $e->end, $attributes['tz_ui']) : '');
-                    if ($layout < 2 && $curdate != $evdate) {
-                        if ($curdate != '') {
-                            $secho .= '</ul></li>';
-                        }
-                        $secho .= '<li class="list-group-item' . $sflgi . ' head">' . '<span class="ical-date">' . ucfirst($evdate) . '</span><ul class="list-group' . $attributes['suffix_lg_class'] . '">';
-                    }
-                    $secho .= '<li class="list-group-item' . $sflgi . $ev_class . '">';
-                    if ($layout == 3 && $curdate != $evdate) {
-                        $secho .= '<span class="ical-date">' . ucfirst($evdate) . '</span>' . (('a' == $attributes['tag_sum']) ? '<br>' : '');
-                    }
- 
-                    if ('summary' == $attributes['tag_sum']) {
-                        $secho .= '<details class="ical_details' . $sflgia . '" id="'. $itemid. '">';
-                    }
-                    
-                    $secho .=  '<' . $attributes['tag_sum'] . ' class="ical_summary' . $sflgia . (('a' == $attributes['tag_sum']) ? '" data-toggle="collapse" data-bs-toggle="collapse" href="#' . $itemid . '" aria-expanded="false" aria-controls="' . $itemid . '">' : '">');
-                    if ($layout != 2) {
-                        $secho .= $evdtsum;
-                    }
-                    if (! empty($e->summary)) {
-                        $secho .= str_replace("\n", '<br>', $e->summary);
-                    }
-                    $secho .= '</' . $attributes['tag_sum'] . '>' . $cat_list;
-                    if ($layout == 2) {
-                        $secho .= '<span>'. $evdate . $evdtsum . '</span>';
-                    }
-
-                    if ('summary' != $attributes['tag_sum']) {
-                        $secho .= '<div class="ical_details' . $sflgia . (('a' == $attributes['tag_sum']) ? ' collapse' : '') . '" id="'. $itemid. '">';
-                    }
-
-                    if (! empty($e->description) && trim($e->description) > '' && $excerptlength !== 0) {
-                        if ($excerptlength !== '' && strlen($e->description) > $excerptlength) {
-                            $e->description = substr($e->description, 0, $excerptlength + 1);
-                            if (rtrim($e->description) !== $e->description) {
-                                $e->description = substr($e->description, 0, $excerptlength);
-                            } else {
-                                if (strrpos($e->description, ' ', max(0, $excerptlength - 10)) !== false or strrpos($e->description, "\n", max(0, $excerptlength - 10)) !== false) {
-                                    $e->description = substr($e->description, 0, max(strrpos($e->description, "\n", max(0, $excerptlength - 10)), strrpos($e->description, ' ', max(0, $excerptlength - 10))));
-                                } else {
-                                    $e->description = substr($e->description, 0, $excerptlength);
-                                }
-                            }
-                        }
-                        $e->description = str_replace("\n", '<br>', $e->description);
-                        $secho .= '<span class="dsc">'. $e->description. ((strrpos($e->description, '<br>') === (strlen($e->description) - 4)) ? '' : '<br>'). '</span>';
-                    }
-                    if ($e->startisdate === false && $sameday) {
-                        $secho .= '<span class="time">'. wp_date($dftstart, $e->start, $attributes['tz_ui']). '</span><span class="time">'. wp_date($dftend, $e->end, $attributes['tz_ui']). '</span> ';
-                    } else {
-                        $secho .= '';
-                    }
-                    if (! empty($e->location)) {
-                        $secho .= '<span class="location">'. str_replace("\n", '<br>', $e->location). '</span>';
-                    }
-                    if ('summary' == $attributes['tag_sum']) {
-                        $secho .= '</details></li>';
-                    } else {
-                        $secho .= '</div></li>';
-                    }
-                    $curdate = $evdate;
-                }
-                if ($layout < 2) {
-                    $secho .= '</ul></li>';
-                }
-                $secho .= '</ul>';
-                $secho .= $attributes['after_events'];
-            } else {
-                $secho .= $attributes['no_events'];
-            }
-            $secho .= '<br class="clear v310" />';
-    }
-    /**
      * copied from WP sanitize_html_class, and added space as allowed character to accomodate multiple classes in one string.
      * Strips the string down to A-Z, ,a-z,0-9,_,-. If this results in an empty string then it will return the alternative value supplied.
      *
@@ -285,7 +140,7 @@ class SimpleicalHelper
      * @param array $content
      *            as saved in post by save in ...block.js
      * @param object $block
-     *            the bolck that is rendered
+     *            the block that is rendered
      * @return string HTML to render for the block (frontend)
      */
     static function render_block($block_attributes, $content = null, $block = null)
@@ -294,6 +149,19 @@ class SimpleicalHelper
             'title' => __('Events', 'simple-google-icalendar-widget'),
             'tzid_ui' => wp_timezone_string()
         ], $block_attributes);
+        if (empty($block_attributes['sib_layout'])) {
+            switch (($block_attributes['layout'])?? 3) {
+                case 1:
+                    $block_attributes['sib_layout'] = 'startdate-higher-level';
+                    break;
+                case 2:
+                    $block_attributes['sib_layout'] = 'start-with-summary';
+                    break;
+                default:
+                    $block_attributes['sib_layout'] = 'old-style';
+            }
+        }
+        
         $block_attributes['anchorId'] = self::sanitize_html_clss($block_attributes['anchorId'], $block_attributes['sibid']);
         if (empty($block_attributes['tzid_ui'])) {
             $block_attributes['tzid_ui'] = wp_timezone_string();
@@ -311,28 +179,25 @@ class SimpleicalHelper
             . '</' . $block_attributes['tag_title'] . '>';
             
             $secho = '';
-//            $secho .= PHP_EOL . '<!-- ' . PHP_EOL . print_r($block_attributes, true) . PHP_EOL . '-->' . PHP_EOL;
             switch ($block_attributes['wptype']) {
                 case 'REST_t':
                     $secho .= $titlenode;
                 case 'REST':
                     // Block displayed via REST
-                    self::display_block($block_attributes, $secho);
+                    // more includes possible when more intances of the block are on the same page.
+                    require self::getLayoutPath($block_attributes['sib_layout']);
+                    // self::display_block($block_attributes, $secho);
                     break;
                 case 'rest_ph':
                     // Placeholder starting point for REST processing display of block.
                     $wrapperattr = 'class="wp-block-simplegoogleicalenderwidget-simple-ical-block"'; // hardcoded untill (is_wp_version_compatible('5.6')) ? get_block_wrapper_attributes() : '';
-                    $secho .= sprintf($block_attributes['before_widget'], ($block_attributes['anchorId'] . '" data-sib-id="' . $block_attributes['sibid'] . '" data-sib-utzui="' . $block_attributes['rest_utzui'] . '" data-sib-st="0-start' ), $wrapperattr);
-                    $secho .= $titlenode;
-                    $secho .= '<p>';
-                    $secho .= __('Processing', 'simple-google-icalendar-widget');
-                    $secho .= '</p>' . $block_attributes['after_widget'];
                     try {
-                        unset($block_attributes['before_widget'], $block_attributes['after_widget']);
                         self::update_rest_attrs($block_attributes);
                     } catch (\Exception $e) {
                         $secho .= '<p>Caught exception: ' . $e->getMessage() . "</p>\n";
+                        Log::log(Log::WARNING, 'Attributes not saved ' . 'Caught exception: ' . $e->getMessage());
                     }
+                    require self::getLayoutPath('rest_ph/rest_client_placeholder');
                     break;
                 case 'block':
                 case 'ssr':
@@ -342,7 +207,8 @@ class SimpleicalHelper
                     if (! empty($block_attributes['title'])) {
                         $secho .= $titlenode;
                     }
-                    self::display_block($block_attributes, $secho);
+                    // more includes possible when more intances of the block are on the same page.
+                    require self::getLayoutPath($block_attributes['sib_layout']);
                     $secho .= $block_attributes['after_widget'];
                     break;
                 default:
@@ -350,6 +216,118 @@ class SimpleicalHelper
             }
             return $secho;
     }
+
+    /**
+     * In this function we are searching for (an override) template file (also called layout) in the theme etc or default in the plugin
+     * It searches for the template file within the SIB_SLU ('simple-google-calendar-widget') directory, checking the following locations in order:
+     * 1.
+     * the active theme templates directory;
+     * 2. the parent theme templates directory (if a child theme is in use);
+     * 3. wp-includes//theme-compat/;
+     * 4. the plugin directory/tmpl.
+     * If the file is not found using the provided name, it searches again in the same order using the name 'default'.
+     *
+     * @param string $layout
+     *            templatename
+     *            
+     * @return string ... found templatefile path for require_once / not found '' and Log error default.php should always be available.
+     *        
+     * @since 3.2.0
+     */
+    static function getLayoutPath($layout = 'default')
+    {
+        self::getLayoutFiles();
+        $template_names[] = $layout . '.php';
+        if ('default' != $layout)
+            $template_names[] = 'default.php';
+
+        foreach ((array) $template_names as $template_name) {
+            if (! $template_name) {
+                continue;
+            }
+            foreach (self::getLayoutDirs() as $dir) {
+//                if ('rest' == substr($layout, 0, 4)) Log::log(Log::NOTICE, 'glp:' . $dir . $template_name );
+                if (file_exists($dir . $template_name)) {
+                    return $dir . $template_name;
+                    break;
+                }
+            }
+        }
+        Log::log(Log::ERROR, '404 ' . SIB_TEMPLATES_DIR . 'default.php not found; plugin incomplete.');
+        return SIB_TEMPLATES_DIR . 'error.php';
+    }
+    /**
+     * Get an array of layout unique file names in layout path directories. In this function we are searching for (an override) template file (also called layout) in the theme etc or default in the plugin
+     *
+     * @param string $layout templatename
+     *
+     * @return array found file names.
+     *
+     * @since 3.2.0
+     */
+    static function getLayoutFiles()
+    {
+// Translations of default layout names, only used to create translations for names that are in variables. Does it work ???
+        $defaultLayoutsTranslations = [ __('Default', 'simple-google-icalendar-widget'),
+          __('Startdate higher level', 'simple-google-icalendar-widget'),
+          __('Start with summary', 'simple-google-icalendar-widget'),
+          __('Old style', 'simple-google-icalendar-widget'),
+        ];
+        
+        $fnames = [];
+        $lfns=[];
+        $dirlst = implode(',', self::getLayoutDirs());
+        $files = glob("{".$dirlst."}*.php",  GLOB_BRACE);
+//        Log::log(Log::NOTICE, 'getLayoutFiles:' . "{".$dirlst."}");
+        foreach ($files as $file) {
+            $fnames[] = strtolower(basename($file, '.php'));
+       }
+        asort($fnames,  SORT_NATURAL | SORT_FLAG_CASE );
+        foreach (array_unique($fnames) as $key ) {
+            if (false === strrpos($key,'_')) {
+                $obj = new \stdClass;
+                $obj->value = $key;
+                $obj->label = __(ucfirst(strtr($key, ['-' => ' '])),'simple-google-icalendar-widget');
+                $lfns[] = $obj;
+            }
+        }
+        return $lfns;
+    }
+
+    /**
+     * Get an array of layout path directories in correct order.
+     * It returns the template file directories within the SIB_SLUG ('simple-google-calendar-widget') directory, checking the following locations in order:
+     * 1. the active theme templates directory;
+     * 2. the parent theme templates directory (if a child theme is in use);
+     * 3. wp-includes//theme-compat/;
+     * 4. the plugin directory/tmpl.
+     *
+     * @param string $layout
+     *            templatename
+     *            
+     * @return array found layout directories in corrst order.
+     *        
+     * @since 3.2.0
+     */
+    static function getLayoutDirs()
+    {
+        $dir = get_stylesheet_directory() . '/templates/' . SIB_SLUG . '/';
+        if (is_dir($dir))
+            $layoutdirs[] = $dir;
+        if (is_child_theme()) {
+            $dir = get_template_directory() . '/templates/' . SIB_SLUG . '/';
+            if (is_dir($dir))
+                $layoutdirs[] = $dir;
+        }
+        $dir = ABSPATH . WPINC . '/theme-compat/' . SIB_SLUG . '/';
+        if (is_dir($dir))
+            $layoutdirs[] = $dir;
+        // SIB_TEMPLATES_DIR should always be avalable and a dir.
+        $layoutdirs[] = SIB_TEMPLATES_DIR;
+//        Log::log(Log::NOTICE, implode(', ', $layoutdirs));
+        return $layoutdirs;
+    }
+    
     /**
      * Compare attributes with those in widget option and changed
      * Save attributes in widget option for use in REST call (only when changed on other then excluded keys)
@@ -371,6 +349,7 @@ class SimpleicalHelper
                 unset($instances[$instance['prev_sibid']]);
             }
             $new_instance = array_diff_assoc(array_merge($instance, self::$exclude_test_attrs), self::$default_block_attributes, self::$exclude_test_attrs);
+            Log::log(Log::NOTICE, 'upd_rest_a ni sl:' . (($new_instance['sib_layout']) ?? 'empty'));
             if (!empty($instances[$instance['sibid']]) && array_diff_assoc(array_merge($instances[$instance['sibid']], self::$exclude_test_attrs), self::$exclude_test_attrs) == $new_instance){
                 return true;
             }
@@ -440,7 +419,8 @@ class SimpleicalHelper
             'categories_filter' => ['type' => 'string', 'default' => ''],
             'categories_display' => ['type' => 'string', 'default' => ''],
             'add_sum_catflt' => ['type' => 'boolean', 'default' => false],    
-            'layout' => ['type' => 'integer', 'default' => 3],
+            'sib_layout' => ['type' => 'string'],
+            'layout' => ['type' => 'integer'],
             'cache_time' => ['type' => 'integer', 'default' => 60],
             'dateformat_lg' => ['type' => 'string', 'default' => 'l jS \of F'],
             'dateformat_lgend' => ['type' => 'string', 'default' => ''],
@@ -487,7 +467,7 @@ class SimpleicalHelper
     {
         return wp_kses(SimpleicalHelper::render_block($block_attributes),'post');
     }
-    
+
     /**
      * Widget init register legacy widget
      *

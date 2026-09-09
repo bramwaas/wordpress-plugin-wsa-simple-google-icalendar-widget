@@ -4,7 +4,7 @@
  * Move styles to stylesheets - both edit and front-end.
  * and use attributes and editable fields
  * attributes as Inspectorcontrols (settings)
- * v2.6.1
+ * v3.2.0
  * 20230625 added quotes to the options of the Layout SelectControl,
  *  add parseInt to all integers in transform, added conversion dateformat_lgend and _tsend and anchorid = sibid
  * 20230420 added parseInt on line 147(now 148) to keep layout in block-editor
@@ -25,6 +25,7 @@
  * 2.5.0 support for categories. 
 * 2.6.1  Started simplifying (bootstrap) collapse by toggles for adding javascript and trigger collapse by title.
 * 2.7.0 Enable to add words of summary to categories for filtering. Add support for details/summary tag combination.
+* 3.2.0 choose from layout files in stead of layout and rest_utzui, attr layout integer => sib_layout string
  */
 (function(blocks, i18n, element, blockEditor, components, serverSideRender) {
 	const el = element.createElement;
@@ -76,6 +77,7 @@
 	];
 
 		let ptzid_ui;
+	const sibHelper = ((typeof parent.simpleIcalBlockF === 'object') ) ? parent.simpleIcalBlockF: window.simpleIcalBlockF ;
 	blocks.registerBlockType('simplegoogleicalenderwidget/simple-ical-block', {
 		icon: iconEl,
 
@@ -130,16 +132,27 @@
 		edit: function(props) {
 			useEffect(function() {
 			if (typeof props.attributes.sibid !== 'string') {
-				if (typeof props.attributes.blockid == 'string') {
-					props.attributes.sibid = props.attributes.blockid;
-					props.setAttributes({ sibid: props.attributes.blockid });
- 				}
-				else { 
-					props.attributes.sibid = 'b' + props.clientId;
-					props.setAttributes({ sibid: 'b' + props.clientId }); 
- 				};
-			};
-			}, [props.attributes]);
+				props.attributes.sibid = 'b' + props.clientId;
+				props.setAttributes({ sibid: 'b' + props.clientId }); 
+ 			};	
+			if (typeof props.attributes.sib_layout !== 'string' || '' == props.attributes.sib_layout ) {
+				if (typeof props.attributes.layout == 'number') {
+					switch (props.attributes.layout) {
+						case 1: 
+							props.attributes.sib_layout = 'startdate-higher-level';
+							break;
+						case  2:
+							props.attributes.sib_layout = 'start-with-summary';
+							break;
+						default:
+							props.attributes.sib_layout = 'old-style';
+					}
+				} else {
+					props.attributes.sib_layout = 'old-style';
+				}
+			};	
+			sibHelper.getSibLayouts();
+			}, []);
 			useEffect(function() {
 				if (props.attributes.clear_cache_now) {
 					let x = setTimeout(stopCC, 1000);
@@ -206,13 +219,9 @@
 							SelectControl,
 							{
 								label: __('Lay-out:', 'simple-google-icalendar-widget'),
-								value: props.attributes.layout,
-								onChange: function(value) { props.setAttributes({ layout: parseInt(value) }); },
-								options: [
-									{ value: 1, label: __('Startdate higher level', 'simple-google-icalendar-widget') },
-									{ value: 2, label: __('Start with summary', 'simple-google-icalendar-widget') },
-									{ value: 3, label: __('Old style', 'simple-google-icalendar-widget') }
-								]
+								value: props.attributes.sib_layout,
+								onChange: function(value) { props.setAttributes({ sib_layout: value }); },
+								options: window.simpleIcalBlockF.sibLayoutOps
 							}
 						),
 						el(
