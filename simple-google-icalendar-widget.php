@@ -4,16 +4,16 @@
  Description: Widget that displays events from a public google calendar or iCal file
  Plugin URI: https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  Author: Bram Waasdorp
- Version: 3.2.0
+ Version: 3.2.1
  License: GPLv2
  Tested up to: 7.1
  Requires at least: 5.9
  Requires PHP:  7.4
  Text Domain:  simple-google-icalendar-widget
- 20260720
+ 20260910
  *   bw 20240125 v2.3.0 v2 dir for older versions eg block.json version 2 for WP6.3 - Extra save instance/attributes in option 'simple_ical_block_attrs', like in standaard
  *      wp-widget in array with sibid as index so that the attributes are available for REST call.
- *   bw 20240509 v2.4.1 added defaults to all used keys of $args to solve issue 'PHP warnings' of johansam on support forum. Undefined array key ‚Äúclassname‚Äù in .../simple-google-icalendar-widget.php on line 170
+ *   bw 20240509 v2.4.1 added defaults to all used keys of $args to solve issue 'PHP warnings' of johansam on support forum. Undefined array key ìclassnameî in .../simple-google-icalendar-widget.php on line 170
  *   bw 20240727 v2.4.4 simplified defaulting args and improved code around that for the widget output
  *   bw 20241028 v2.5.0 Add support for categories    Tested with 6.7-RC and 5.9.5.
  *   bw 20250112 v2.6.0 plugin check, Using simple classloader and PSR-4 name conventions. Moved  SimpleicalWidget class to separate file.
@@ -22,8 +22,10 @@
  *   bw 20260701 v3.1.0 whitelist REST params to solve security vulnerability issue, small changes in response to PCP (plugincheck).
  *   bw 20260713 v3.1.1 replaced wp_remote_get by wp_safe_remote_get to further harden security after fixing a security issue
  *   bw 20260720 v3.1.2 Repaired error missing title introduced in version 3.1.0.
-  *   bw 20260727 v3.1.3 Added optional legacy widget with no namespace.
-  *   nw 20260820 v3.2.0 Working with overridable templates, similar to Joomla module. Requires WP5.9 (was 5.3)
+ *   bw 20260727 v3.1.3 Added optional legacy widget with no namespace.
+ *   nw 20260820 v3.2.0 Working with overridable templates, similar to Joomla module. Requires WP5.9 (was 5.3)
+ *   nw 20260910 v3.2.1 issue GLOB_BRACE not present on musl #59 by surkum on github, GLOB_BRACE not present in system not based on glibc, Surkum's suggestion adopted. 
+
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 // no direct access
