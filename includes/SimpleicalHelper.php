@@ -23,7 +23,8 @@
  * 3.1.0 in response to PCP error replace get_block_wrapper_attributes() by expected result 
    'class="wp-block-simplegoogleicalenderwidget-simple-ical-block"'; // hardcoded untill (is_wp_version_compatible('5.6'));  
  * 3.1.3 extra widget SIB_SimpleicalWidgetNNS with no namespace as frontend for standard legacy widget SimpleicalWidget 
- * 3.2.0 use (overridable) layout files to display content. Get list of layout file-names as array          
+ * 3.2.0 use (overridable) layout files to display content. Get list of layout file-names as array
+ * 3.2.1. github #59 (surkum) GLOB_BRACE not present in system not based on glibc, Surkum's suggestion adopted
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 // no direct access
@@ -276,9 +277,13 @@ class SimpleicalHelper
         
         $fnames = [];
         $lfns=[];
-        $dirlst = implode(',', self::getLayoutDirs());
-        $files = glob("{".$dirlst."}*.php",  GLOB_BRACE);
-//        Log::log(Log::NOTICE, 'getLayoutFiles:' . "{".$dirlst."}");
+//        $dirlst = implode(',', self::getLayoutDirs());
+//        $files = glob("{".$dirlst."}*.php",  GLOB_BRACE); ** works only on glibc based php
+		$files = [];
+		foreach (self::getLayoutDirs() as $dir) {
+			$files = array_merge($files, glob($dir . '*.php') ?: []);
+		}
+
         foreach ($files as $file) {
             $fnames[] = strtolower(basename($file, '.php'));
        }
@@ -349,7 +354,7 @@ class SimpleicalHelper
                 unset($instances[$instance['prev_sibid']]);
             }
             $new_instance = array_diff_assoc(array_merge($instance, self::$exclude_test_attrs), self::$default_block_attributes, self::$exclude_test_attrs);
-            Log::log(Log::NOTICE, 'upd_rest_a ni sl:' . (($new_instance['sib_layout']) ?? 'empty'));
+//            Log::log(Log::NOTICE, 'upd_rest_a ni sl:' . (($new_instance['sib_layout']) ?? 'empty'));
             if (!empty($instances[$instance['sibid']]) && array_diff_assoc(array_merge($instances[$instance['sibid']], self::$exclude_test_attrs), self::$exclude_test_attrs) == $new_instance){
                 return true;
             }
