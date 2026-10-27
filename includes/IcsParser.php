@@ -33,8 +33,9 @@
  * 3.0.0 Also cache failed requests for calendar items to prevent prolonged "...Our systems have detected unusual traffic from your computer network. ..."
  *  errors caused by a large number of requests in a short period of time. (after issues #47 and #48 for joomla module). First 3 failed requests cachetimes
  *  only 60 seconds next cachetimes same as for succesfull requests. Use formatted standard error_log() logging.
- *  3.1.1 replaced wp_remote_get by wp_safe_remote_get to further harden security after fixing a security issue
- *  3.1.4 extra logging e.g. if found file has no ical calendar structure 
+ * 3.1.1 replaced wp_remote_get by wp_safe_remote_get to further harden security after fixing a security issue
+ * 3.1.4 extra logging e.g. if found file has no ical calendar structure 
+ * 3.3.0 simplified switch for processing properties and added property URL in IcsParser  
  */
 
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
@@ -907,16 +908,16 @@ END:VCALENDAR';
             if (count($list) > 1 && strlen($token) > 1 && substr($token, 0, 1) > ' ') { //all tokens start with a alphabetic char , otherwise it is a continuation of a description with a colon in it.
                 // trim() to remove \n\r\0
                 $value = trim($list[1]);
-                $tokenprev = $token;
+                $tokenprev = strtolower($token);
                 switch($token) {
-                    case "SUMMARY":
-                        $eventObj->summary = $value;
-                        break;
                     case "DESCRIPTION":
-                        $eventObj->description = $value;
-                        break;
+                    case "DURATION":
                     case "LOCATION":
-                        $eventObj->location = $value;
+                    case "SUMMARY":
+                    case "CATEGORIES":
+                    case "RRULE":
+                    case "URL":
+                        $eventObj->{$tokenprev} = $value;
                         break;
                     case "DTSTART":
                         $tz = $this->parseIanaTimezoneid ($tzid,$value);
@@ -929,14 +930,8 @@ END:VCALENDAR';
                         $eventObj->endisdate = $isdate;
                         $eventObj->end = $this->parseIcsDateTime($value, $tzid);
                         break;
-                    case "DURATION":
-                        $eventObj->duration = $value;
-                        break;
                     case "UID":
                         $eventObj->uid = str_replace('_', '', $value);
-                        break;
-                    case "RRULE":
-                        $eventObj->rrule = $value;
                         break;
                     case "EXDATE":
                         $dtl = explode(",", $value);
@@ -951,25 +946,17 @@ END:VCALENDAR';
                         $eventObj->recuridisdate = $isdate;
                         $eventObj->recurid = $this->parseIcsDateTime($value, $tzid);
                         break;
-                    case "CATEGORIES":
-                        $eventObj->categories = $value;
-                        break;
                 }
             }else { // count($list) <= 1
                 if (strlen($l) > 1) {
                     $desc = substr($l,1);
                     switch($tokenprev) {
-                        case "SUMMARY":
-                            $eventObj->summary .= $desc;
-                            break;
-                        case "DESCRIPTION":
-                            $eventObj->description .= $desc;
-                            break;
-                        case "LOCATION":
-                            $eventObj->location .= $desc;
-                            break;
-                        case "CATEGORIES":
-                            $eventObj->categories .= $desc;
+                        case "description":
+                        case "location":
+                        case "summary":
+                        case "categories":
+                        case "url":
+                            $eventObj->{$tokenprev} .= $desc;
                             break;
                     }
                 }
@@ -979,6 +966,7 @@ END:VCALENDAR';
         if (!empty($eventObj->description)) {$eventObj->description = self::unescText($eventObj->description);}
         if (!empty($eventObj->location)) {$eventObj->location = self::unescText($eventObj->location);}
         if (!empty($eventObj->categories)) {$eventObj->categories = self::unescTextList($eventObj->categories);}
+        if (!empty($eventObj->url)) {$eventObj->url = self::unescText($eventObj->url);}
         if (!isset($eventObj->end)) {
             if (isset($eventObj->duration)) {
                 $timezone = new \DateTimeZone((isset($eventObj->tzid)&& $eventObj->tzid !== '') ? $eventObj->tzid : $this->timezone_string);
