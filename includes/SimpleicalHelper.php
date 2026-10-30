@@ -9,7 +9,7 @@
  * @link https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * Gutenberg Block functions since v2.1.2 also used for widget.
- * Version: 3.1.0
+ * Version: 3.3.0
  * 2.6.0 improve security by following Plugin Check recommendations; Moved functions common with Joomla to top. 
    rename SimpleicalBlock to SimpleicalHelper and register widget in this class. 
    Replace echo by $secho in &$secho param a.o. in display_block, to simplify escaping output by replacing multiple echoes by one. 
@@ -25,6 +25,7 @@
  * 3.1.3 extra widget SIB_SimpleicalWidgetNNS with no namespace as frontend for standard legacy widget SimpleicalWidget 
  * 3.2.0 use (overridable) layout files to display content. Get list of layout file-names as array
  * 3.2.1. github #59 (surkum) GLOB_BRACE not present in system not based on glibc, Surkum's suggestion adopted
+ * 3.3.0 added property URL in link tag for summary  
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 // no direct access
@@ -41,6 +42,7 @@ class SimpleicalHelper
  */
     static $allowed_tags_sum = [
         'a',
+        'a URL',
         'b',
         'div',
         'h1',
@@ -173,6 +175,11 @@ class SimpleicalHelper
         if  (empty($block_attributes['tag_title']))  $block_attributes['tag_title'] = 'h3';
         if (!empty($block_attributes['title_collapse_toggle'])){
             $block_attributes['title'] = ('<a data-toggle="collapse" data-bs-toggle="collapse" href="#lg' .$block_attributes['anchorId'] . '" role="button" aria-expanded="'.(('collapse' == $block_attributes['title_collapse_toggle'])?'false':'true').'" aria-controls="collapseMod">' . $block_attributes['title'] . '</a>');
+        }
+        if (! empty($block_attributes['tag_sum'])) {
+            $l = explode(' ', $args['tag_sum'], 2);
+            $block_attributes['tag_sum'] = $l[0];
+            $block_attributes['tag_sum_x'] = ($l[1] ?? '');
         }
         $titlenode = '<' . $block_attributes['tag_title'] 
             .' class="widget-title block-title" data-sib-t="true">'

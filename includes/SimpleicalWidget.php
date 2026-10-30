@@ -18,7 +18,8 @@
  * 2.7.1 remove load textdomain as recommended by PluginCheck
  * 3.1.3 make extendable by adding parameters to construct.   
  * 3.1.4 remove single htmlspecialchars validation that broke url with & in it .
- * 3.2.0 layout options from getLayoutFiles().   
+ * 3.2.0 layout options from getLayoutFiles().  
+ * 3.3.0 added property URL in tag for summary  
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 // no direct access
@@ -110,6 +111,12 @@ class SimpleicalWidget extends \WP_Widget
                 $title = apply_filters('widget_title', $block_attributes['title']);
                 $secho .= $args['before_title']. $title. $args['after_title'];
             }
+            if (! empty($block_attributes['tag_sum'])) {
+                $l = explode(' ', $args['tag_sum'], 2);
+                $block_attributes['tag_sum'] = $l[0];
+                $block_attributes['tag_sum_x'] = ($l[1] ?? '');
+            }
+                
             if ('rest_ph_w' == $block_attributes['wptype'] ) {
                 try {
                     SimpleicalHelper::update_rest_attrs($block_attributes);
@@ -359,9 +366,11 @@ class SimpleicalWidget extends \WP_Widget
 		<p>
           <label for="<?php echo esc_attr($this->get_field_id('tag_sum')); ?>"><?php esc_attr_e('Tag for summary:', 'simple-google-icalendar-widget'); ?></label> 
           <select class="widefat" id="<?php echo esc_attr($this->get_field_id('tag_sum')); ?>" name="<?php echo esc_attr($this->get_field_name('tag_sum')); ?>" >
-            <option value="a"<?php echo ('a'==esc_attr($instance['tag_sum']))?'selected':''; ?>><?php esc_attr_e('a (link)', 'simple-google-icalendar-widget'); ?></option>
+            <option value="a"<?php echo ('a'==esc_attr($instance['tag_sum']))?'selected':''; ?>><?php esc_attr_e('a (collapse open link)', 'simple-google-icalendar-widget'); ?></option>
+            <option value="a URL"<?php echo ('a URL'==esc_attr($instance['tag_sum']))?'selected':''; ?>><?php esc_attr_e('a (link to URL)', 'simple-google-icalendar-widget'); ?></option>
   			<option value="b"<?php echo ('b'==esc_attr($instance['tag_sum']))?'selected':''; ?>><?php esc_attr_e('b (attention, bold)', 'simple-google-icalendar-widget'); ?></option>
   			<option value="div"<?php echo ('div'==esc_attr($instance['tag_sum']))?'selected':''; ?>><?php esc_attr_e('div', 'simple-google-icalendar-widget'); ?></option>
+  			<option value="h4"<?php echo ('h3'==esc_attr($instance['tag_sum']))?'selected':''; ?>><?php esc_attr_e('h3 (sub header)', 'simple-google-icalendar-widget'); ?></option>
   			<option value="h4"<?php echo ('h4'==esc_attr($instance['tag_sum']))?'selected':''; ?>><?php esc_attr_e('h4 (sub header)', 'simple-google-icalendar-widget'); ?></option>
   			<option value="h5"<?php echo ('h5'==esc_attr($instance['tag_sum']))?'selected':''; ?>><?php esc_attr_e('h5 (sub header)', 'simple-google-icalendar-widget'); ?></option>
   			<option value="h6"<?php echo ('h6'==esc_attr($instance['tag_sum']))?'selected':''; ?>><?php esc_attr_e('h6 (sub header)', 'simple-google-icalendar-widget'); ?></option>

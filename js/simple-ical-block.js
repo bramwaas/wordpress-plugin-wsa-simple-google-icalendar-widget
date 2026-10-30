@@ -27,6 +27,7 @@
  * 2.6.1  Started simplifying (bootstrap) collapse by toggles for adding javascript and trigger collapse by title.
  * 2.7.0 Enable to add words of summary to categories for filtering. Add support for details/summary tag combination.
  * 3.2.0 choose from layout files in stead of layout and rest_utzui, attr layout integer => sib_layout string
+ * 3.3.0 added property URL in tag for summary
  */
 (function (blocks, i18n, element, blockEditor, components) {
 	const el = element.createElement;
@@ -63,9 +64,11 @@
 	{ value: 'span', label: __('span', 'simple-google-icalendar-widget') },
 	{ value: 'u', label: __('u (unarticulated, underline )', 'simple-google-icalendar-widget') }
 	];
-	const tagOps = [{ value: 'a', label: __('a (link)', 'simple-google-icalendar-widget') },
+	const tagOps = [{ value: 'a', label: __('a (collapse open link)', 'simple-google-icalendar-widget') },
+    { value: 'a URL', label: __('a (link to URL)', 'simple-google-icalendar-widget') },
 	{ value: 'b', label: __('b (attention, bold)', 'simple-google-icalendar-widget') },
 	{ value: 'div', label: __('div', 'simple-google-icalendar-widget') },
+	{ value: 'h3', label: __('h3 (sub header)', 'simple-google-icalendar-widget') },
 	{ value: 'h4', label: __('h4 (sub header)', 'simple-google-icalendar-widget') },
 	{ value: 'h5', label: __('h5 (sub header)', 'simple-google-icalendar-widget') },
 	{ value: 'h6', label: __('h6 (sub header)', 'simple-google-icalendar-widget') },
