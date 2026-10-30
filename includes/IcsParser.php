@@ -966,7 +966,7 @@ END:VCALENDAR';
         if (!empty($eventObj->description)) {$eventObj->description = self::unescText($eventObj->description);}
         if (!empty($eventObj->location)) {$eventObj->location = self::unescText($eventObj->location);}
         if (!empty($eventObj->categories)) {$eventObj->categories = self::unescTextList($eventObj->categories);}
-        if (!empty($eventObj->url)) {$eventObj->url = self::unescText($eventObj->url);}
+        if (!empty($eventObj->url)) {$eventObj->url = sanitize_url(self::unescText($eventObj->url));}
         if (!isset($eventObj->end)) {
             if (isset($eventObj->duration)) {
                 $timezone = new \DateTimeZone((isset($eventObj->tzid)&& $eventObj->tzid !== '') ? $eventObj->tzid : $this->timezone_string);
