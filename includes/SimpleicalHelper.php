@@ -177,7 +177,7 @@ class SimpleicalHelper
             $block_attributes['title'] = ('<a data-toggle="collapse" data-bs-toggle="collapse" href="#lg' .$block_attributes['anchorId'] . '" role="button" aria-expanded="'.(('collapse' == $block_attributes['title_collapse_toggle'])?'false':'true').'" aria-controls="collapseMod">' . $block_attributes['title'] . '</a>');
         }
         if (! empty($block_attributes['tag_sum'])) {
-            $l = explode(' ', $args['tag_sum'], 2);
+            $l = explode(' ', $block_attributes['tag_sum'], 2);
             $block_attributes['tag_sum'] = $l[0];
             $block_attributes['tag_sum_x'] = ($l[1] ?? '');
         }

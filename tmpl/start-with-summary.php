@@ -100,10 +100,10 @@ use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalHelper;
                 $secho .= '<details class="ical_details' . $sflgia . '" id="' . $itemid . '">';
             }
 
-            $secho .= '<' . $block_attributes['tag_sum'] . ' class="ical_summary' . $sflgia 
+            $secho .= '<' . $block_attributes['tag_sum'] . ' class="ical_summary' . $sflgia . ' test=' . $block_attributes['tag_sum_x']  .'" '
             . (('a' == $block_attributes['tag_sum']) ?
                 (('URL' == $block_attributes['tag_sum_x'] ) ? 
-                  ('" href="' . $e->url .'" target="_blank"' )
+                  ('" href="' . $e->url .'" target="_blank">' )
                   :'" data-toggle="collapse" data-bs-toggle="collapse" href="#' . $itemid . '" aria-expanded="false" aria-controls="' . $itemid . '">')
                 : '">');
             if (! empty($e->summary)) {
