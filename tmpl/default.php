@@ -10,7 +10,7 @@
  * @link https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * Gutenberg Block functions since v2.1.2 also used for widget.
- * Version: 3.2.0
+ * Version: 3.3.0
  * 3.2.0 first Created as a copy of display_block, later changed to start-with-summary with additional comments.
  */
 // no direct access
@@ -104,7 +104,12 @@ use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalHelper;
                     $secho .= '<details class="ical_details' . $sflgia . '" id="' . $itemid . '">';
                 }
                 
-                $secho .= '<' . $block_attributes['tag_sum'] . ' class="ical_summary' . $sflgia . (('a' == $block_attributes['tag_sum']) ? '" data-toggle="collapse" data-bs-toggle="collapse" href="#' . $itemid . '" aria-expanded="false" aria-controls="' . $itemid . '">' : '">');
+                $secho .= '<' . $block_attributes['tag_sum'] . ' class="ical_summary' . $sflgia
+                . (('a' == $block_attributes['tag_sum']) ?
+                    (('URL' == $block_attributes['tag_sum_a1'] ) ?
+                        ('" href="' . $e->url .'" target="_blank">' )
+                        :'" data-toggle="collapse" data-bs-toggle="collapse" href="#' . $itemid . '" aria-expanded="false" aria-controls="' . $itemid . '">')
+                    : '">');
                 $secho .= $evdtsum;
                 if (! empty($e->summary)) {
                     $secho .= str_replace("\n", '<br>', $e->summary);
@@ -152,7 +157,7 @@ use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalHelper;
         } else {
             $secho .= $block_attributes['no_events'];
         }
-        $secho .= '<br class="clear v320 default" />';
+        $secho .= '<br class="clear v330 default" />';
 }
 /* end display_block */
 

@@ -10,9 +10,10 @@
  * @link https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * Gutenberg Block functions since v2.1.2 also used for widget.
- * Version: 3.2.0
+ * Version: 3.3.0
  * v3.2.0 To make layout of output overridable: display_block() with optional code depending on layout attribute replaced by different template files for each layout option.
- * layout options 1 => startdate_higher_level, 2 => start_with_summary 3 => old_style.             
+ * layout options 1 => startdate_higher_level, 2 => start_with_summary 3 => old_style.
+ * v3.3.0             
  */
 // no direct access
 defined('ABSPATH') or die ('Restricted access');
@@ -103,7 +104,12 @@ use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalHelper;
                 $secho .= '<details class="ical_details' . $sflgia . '" id="' . $itemid . '">';
             }
 
-            $secho .= '<' . $block_attributes['tag_sum'] . ' class="ical_summary' . $sflgia . (('a' == $block_attributes['tag_sum']) ? '" data-toggle="collapse" data-bs-toggle="collapse" href="#' . $itemid . '" aria-expanded="false" aria-controls="' . $itemid . '">' : '">');
+            $secho .= '<' . $block_attributes['tag_sum'] . ' class="ical_summary' . $sflgia
+            . (('a' == $block_attributes['tag_sum']) ?
+                (('URL' == $block_attributes['tag_sum_a1'] ) ?
+                    ('" href="' . $e->url .'" target="_blank">' )
+                    :'" data-toggle="collapse" data-bs-toggle="collapse" href="#' . $itemid . '" aria-expanded="false" aria-controls="' . $itemid . '">')
+                : '">');
             $secho .= $evdtsum;
             if (! empty($e->summary)) {
                 $secho .= str_replace("\n", '<br>', $e->summary);
@@ -150,7 +156,7 @@ use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalHelper;
     } else {
         $secho .= $block_attributes['no_events'];
     }
-    $secho .= '<br class="clear v320 startdate h lv" />';
+    $secho .= '<br class="clear v330 startdate h lv" />';
 }
 /* end display_block */
 

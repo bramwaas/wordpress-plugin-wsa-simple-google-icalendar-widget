@@ -114,7 +114,7 @@ class SimpleicalWidget extends \WP_Widget
             if (! empty($block_attributes['tag_sum'])) {
                 $l = explode(' ', $block_attributes['tag_sum'], 2);
                 $block_attributes['tag_sum'] = $l[0];
-                $block_attributes['tag_sum_x'] = (($l[1]) ?? 'empty?');
+                $block_attributes['tag_sum_a1'] = trim(($l[1]) ?? '');
             }
                 
             if ('rest_ph_w' == $block_attributes['wptype'] ) {

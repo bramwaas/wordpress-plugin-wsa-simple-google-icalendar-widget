@@ -185,6 +185,11 @@ class SimpleicalHelper
             .' class="widget-title block-title" data-sib-t="true">'
             . $block_attributes['title']
             . '</' . $block_attributes['tag_title'] . '>';
+        if (! empty($block_attributes['tag_sum'])) {
+                $l = explode(' ', $block_attributes['tag_sum'], 2);
+                $block_attributes['tag_sum'] = $l[0];
+                $block_attributes['tag_sum_a1'] = trim(($l[1]) ?? '');
+         }
             
             $secho = '';
             switch ($block_attributes['wptype']) {

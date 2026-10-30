@@ -101,7 +101,12 @@ use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalHelper;
                 $secho .= '<details class="ical_details' . $sflgia . '" id="' . $itemid . '">';
             }
 
-            $secho .= '<' . $block_attributes['tag_sum'] . ' class="ical_summary' . $sflgia . (('a' == $block_attributes['tag_sum']) ? '" data-toggle="collapse" data-bs-toggle="collapse" href="#' . $itemid . '" aria-expanded="false" aria-controls="' . $itemid . '">' : '">');
+            $secho .= '<' . $block_attributes['tag_sum'] . ' class="ical_summary' . $sflgia
+            . (('a' == $block_attributes['tag_sum']) ?
+                (('URL' == $block_attributes['tag_sum_a1'] ) ?
+                    ('" href="' . $e->url .'" target="_blank">' )
+                    :'" data-toggle="collapse" data-bs-toggle="collapse" href="#' . $itemid . '" aria-expanded="false" aria-controls="' . $itemid . '">')
+                : '">');
             $secho .= $evdtsum;
             if (! empty($e->summary)) {
                 $secho .= str_replace("\n", '<br>', $e->summary);
@@ -148,7 +153,7 @@ use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalHelper;
     } else {
         $secho .= $block_attributes['no_events'];
         }
-        $secho .= '<br class="clear v320 old style" />';
+        $secho .= '<br class="clear v330 old style" />';
 }
 /* end display_block */
 
