@@ -100,7 +100,12 @@ use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalHelper;
                 $secho .= '<details class="ical_details' . $sflgia . '" id="' . $itemid . '">';
             }
 
-            $secho .= '<' . $block_attributes['tag_sum'] . ' class="ical_summary' . $sflgia . (('a' == $block_attributes['tag_sum']) ? '" data-toggle="collapse" data-bs-toggle="collapse" href="#' . $itemid . '" aria-expanded="false" aria-controls="' . $itemid . '">' : '">');
+            $secho .= '<' . $block_attributes['tag_sum'] . ' class="ical_summary' . $sflgia 
+            . (('a' == $block_attributes['tag_sum']) ?
+                (('URL' == $block_attributes['tag_sum_x'] ) ? 
+                  ('" href="' . $e->url .'" target="_blank"' )
+                  :'" data-toggle="collapse" data-bs-toggle="collapse" href="#' . $itemid . '" aria-expanded="false" aria-controls="' . $itemid . '">')
+                : '">');
             if (! empty($e->summary)) {
                 $secho .= str_replace("\n", '<br>', $e->summary);
             }
