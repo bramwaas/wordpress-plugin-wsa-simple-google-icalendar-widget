@@ -152,7 +152,7 @@ use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalHelper;
     } else {
         $secho .= $block_attributes['no_events'];
         }
-        $secho .= '<br class="clear v320 s w summary," />';
+        $secho .= '<br class="clear v330 s w summary," />';
 }
 /* end display_block */
 
