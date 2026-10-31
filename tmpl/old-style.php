@@ -10,9 +10,10 @@
  * @link https://github.com/bramwaas/wordpress-plugin-wsa-simple-google-calendar-widget
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * Gutenberg Block functions since v2.1.2 also used for widget.
- * Version: 3.2.0
+ * Version: 3.3.0
  * v3.2.0 To make layout of output overridable: display_block() with optional code depending on layout attribute replaced by different template files for each layout option.
- * layout options 1 => startdate_higher_level, 2 => start_with_summary 3 => old_style.             
+ * layout options 1 => startdate_higher_level, 2 => start_with_summary 3 => old_style.
+ *  3.3.0 added property URL in link tag for summary               
  */
 // no direct access
 defined('ABSPATH') or die('Restricted access');
@@ -112,11 +113,10 @@ use WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget\SimpleicalHelper;
                 $secho .= str_replace("\n", '<br>', $e->summary);
             }
             $secho .= '</' . $block_attributes['tag_sum'] . '>' . $cat_list;
-
             if ('summary' != $block_attributes['tag_sum']) {
-                $secho .= '<div class="ical_details' . $sflgia . (('a' == $block_attributes['tag_sum']) ? ' collapse' : '') . '" id="' . $itemid . '">';
+                $secho .= '<div class="ical_details' . $sflgia . (('a' == $block_attributes['tag_sum'] && 'URL' != $block_attributes['tag_sum_a1']) ? ' collapse' : '') . '" id="' . $itemid . '">';
             }
-
+            
             if (! empty($e->description) && trim($e->description) > '' && $excerptlength !== 0) {
                 if ($excerptlength !== '' && strlen($e->description) > $excerptlength) {
                     $e->description = substr($e->description, 0, $excerptlength + 1);
