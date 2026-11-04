@@ -185,14 +185,7 @@ class SimpleicalHelper
             .' class="widget-title block-title" data-sib-t="true">'
             . $block_attributes['title']
             . '</' . $block_attributes['tag_title'] . '>';
-            $secho = '';
-        if (! empty($block_attributes['tag_sum'])) {
-            $secho .= '<p class="test tag_sum">' . $block_attributes['tag_sum'] . '</p>';
-            $l = explode(' ', $block_attributes['tag_sum'], 2);
-                $block_attributes['tag_sum'] = $l[0];
-                $block_attributes['tag_sum_a1'] = trim(($l[1]) ?? '');
-            $secho .= '<p class="test tag_sum splitted">' . $block_attributes['tag_sum'] .',' . $block_attributes['tag_sum_a1'] . '</p>';
-        }
+//            $secho = '';
             
 //            $secho = '';
             switch ($block_attributes['wptype']) {
@@ -223,6 +216,13 @@ class SimpleicalHelper
                     $secho .= sprintf($block_attributes['before_widget'], ($block_attributes['anchorId'] . '" data-sib-id="' . $block_attributes['sibid']), $wrapperattr);
                     if (! empty($block_attributes['title'])) {
                         $secho .= $titlenode;
+                    }
+                    if (! empty($block_attributes['tag_sum'])) {
+                        $secho .= '<p class="test tag_sum">' . $block_attributes['tag_sum'] . '</p>';
+                        $l = explode(' ', $block_attributes['tag_sum'], 2);
+                        $block_attributes['tag_sum'] = $l[0];
+                        $block_attributes['tag_sum_a1'] = trim(($l[1]) ?? '');
+                        $secho .= '<p class="test tag_sum splitted">' . $block_attributes['tag_sum'] .',' . $block_attributes['tag_sum_a1'] . '</p>';
                     }
                     // more includes possible when more intances of the block are on the same page.
                     require self::getLayoutPath($block_attributes['sib_layout']);
