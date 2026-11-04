@@ -185,19 +185,23 @@ class SimpleicalHelper
             .' class="widget-title block-title" data-sib-t="true">'
             . $block_attributes['title']
             . '</' . $block_attributes['tag_title'] . '>';
+            $secho = '';
         if (! empty($block_attributes['tag_sum'])) {
-                $l = explode(' ', $block_attributes['tag_sum'], 2);
+            $secho .= '<p class="test tag_sum">' . $block_attributes['tag_sum'] . '</p>';
+            $l = explode(' ', $block_attributes['tag_sum'], 2);
                 $block_attributes['tag_sum'] = $l[0];
                 $block_attributes['tag_sum_a1'] = trim(($l[1]) ?? '');
-         }
+            $secho .= '<p class="test tag_sum splitted">' . $block_attributes['tag_sum'] .',' . $block_attributes['tag_sum_a1'] . '</p>';
+        }
             
-            $secho = '';
+//            $secho = '';
             switch ($block_attributes['wptype']) {
                 case 'REST_t':
                     $secho .= $titlenode;
                 case 'REST':
                     // Block displayed via REST
                     // more includes possible when more intances of the block are on the same page.
+                    //todo remove
                     require self::getLayoutPath($block_attributes['sib_layout']);
                     // self::display_block($block_attributes, $secho);
                     break;
