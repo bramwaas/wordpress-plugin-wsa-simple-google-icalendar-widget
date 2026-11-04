@@ -192,6 +192,13 @@ class SimpleicalHelper
                 case 'REST_t':
                     $secho .= $titlenode;
                 case 'REST':
+                    if (! empty($block_attributes['tag_sum'])) {
+                        $secho .= '<p class="test rest tag_sum">' . $block_attributes['tag_sum'] . '</p>';
+                        $l = explode(' ', $block_attributes['tag_sum'], 2);
+                        $block_attributes['tag_sum'] = $l[0];
+                        $block_attributes['tag_sum_a1'] = trim(($l[1]) ?? '');
+                        $secho .= '<p class="test tag_sum splitted">' . $block_attributes['tag_sum'] .',' . $block_attributes['tag_sum_a1'] . '</p>';
+                    }
                     // Block displayed via REST
                     // more includes possible when more intances of the block are on the same page.
                     //todo remove
