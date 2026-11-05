@@ -176,18 +176,12 @@ class SimpleicalHelper
         if (!empty($block_attributes['title_collapse_toggle'])){
             $block_attributes['title'] = ('<a data-toggle="collapse" data-bs-toggle="collapse" href="#lg' .$block_attributes['anchorId'] . '" role="button" aria-expanded="'.(('collapse' == $block_attributes['title_collapse_toggle'])?'false':'true').'" aria-controls="collapseMod">' . $block_attributes['title'] . '</a>');
         }
-        if (! empty($block_attributes['tag_sum'])) {
-            $l = explode(' ', $block_attributes['tag_sum'], 2);
-            $block_attributes['tag_sum'] = $l[0];
-            $block_attributes['tag_sum_x'] = ($l[1] ?? '');
-        }
         $titlenode = '<' . $block_attributes['tag_title'] 
             .' class="widget-title block-title" data-sib-t="true">'
             . $block_attributes['title']
             . '</' . $block_attributes['tag_title'] . '>';
-//            $secho = '';
             
-//            $secho = '';
+            $secho = '';
             switch ($block_attributes['wptype']) {
                 case 'REST_t':
                     $secho .= $titlenode;
@@ -197,7 +191,7 @@ class SimpleicalHelper
                         $l = explode(' ', $block_attributes['tag_sum'], 2);
                         $block_attributes['tag_sum'] = $l[0];
                         $block_attributes['tag_sum_a1'] = trim(($l[1]) ?? '');
-                        $secho .= '<p class="test tag_sum splitted">' . $block_attributes['tag_sum'] .',' . $block_attributes['tag_sum_a1'] . '</p>';
+//                        $secho .= '<p class="test tag_sum splitted">' . $block_attributes['tag_sum'] .',' . $block_attributes['tag_sum_a1'] . '</p>';
                     }
                     // Block displayed via REST
                     // more includes possible when more intances of the block are on the same page.
