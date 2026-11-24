@@ -20,4 +20,4 @@ namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 // no direct access
 defined('ABSPATH') or die ('Restricted access');
 
-echo wp_kses(SimpleicalHelper::render_block($attributes),'post');
+echo wp_kses(SimpleicalHelper::render_ph_block($attributes),'post');

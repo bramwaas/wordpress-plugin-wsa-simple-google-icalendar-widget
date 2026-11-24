@@ -188,7 +188,9 @@ class SimpleicalHelper
             switch ($block_attributes['wptype']) {
                 case 'REST_t':
                 case 'REST':
-                    $secho .= $titlenode;
+                    if (! empty($block_attributes['title'])) {
+                        $secho .= $titlenode;
+                    }
                     if (! empty($block_attributes['tag_sum'])) {
                         $l = explode(' ', $block_attributes['tag_sum'], 2);
                         $block_attributes['tag_sum'] = $l[0];
@@ -199,18 +201,6 @@ class SimpleicalHelper
                     //todo remove
                     require self::getLayoutPath($block_attributes['sib_layout']);
                     // self::display_block($block_attributes, $secho);
-                    break;
-                case 'rest_ph':
-                    // Placeholder starting point for REST processing display of block.
-                    $wrapperattr = 'class="wp-block-simplegoogleicalenderwidget-simple-ical-block"'; // hardcoded untill (is_wp_version_compatible('5.6')) ? get_block_wrapper_attributes() : '';
-//todo move update_ret_attrs to  ... 
-                    try {
-                        self::update_rest_attrs($block_attributes);
-                    } catch (\Exception $e) {
-                        $secho .= '<p>Caught exception: ' . $e->getMessage() . "</p>\n";
-                        Log::log(Log::WARNING, 'Attributes not saved ' . 'Caught exception: ' . $e->getMessage());
-                    }
-                    require self::getLayoutPath('rest_ph/rest_client_placeholder');
                     break;
                 case 'block':
                 case 'ssr':
@@ -234,7 +224,35 @@ class SimpleicalHelper
             }
             return $secho;
     }
+    /**
+     * Render the placeholder content of the for the block ( was case 'rest_ph':)
 
+     *
+     * see
+     *
+     * @param array $block_attributes
+     *            the block attributes (that are changed from default therefore first merged with defaults.)
+     * @param array $content
+     *            as saved in post by save in ...block.js
+     * @param object $block
+     *            the block that is rendered
+     * @return string HTML to render for the block (frontend)
+     */
+    static function render_ph_block($block_attributes, $content = null, $block = null)
+    {
+            // Placeholder starting point for REST processing display of block.
+            try {
+                self::update_rest_attrs($block_attributes);
+            } catch (\Exception $e) {
+                $secho .= '<p>Caught exception: ' . $e->getMessage() . "</p>\n";
+                Log::log(Log::WARNING, 'Attributes not saved ' . 'Caught exception: ' . $e->getMessage());
+            }
+            $block_attributes['sib_layout'] = 'rest_ph/rest_client_placeholder';
+            $block_attributes['wptype'] = 'REST';
+            self::render_block($attributes);
+            return $secho;
+    }
+    
     /**
      * In this function we are searching for (an override) template file (also called layout) in the theme etc or default in the plugin
      * It searches for the template file within the SIB_SLU ('simple-google-calendar-widget') directory, checking the following locations in order:
