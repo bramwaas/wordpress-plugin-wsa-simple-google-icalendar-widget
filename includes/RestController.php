@@ -14,6 +14,8 @@
  *  3.1.0 whitelist params to solve security vulnerability issue
  *  3.1.2 repaired error missing title introduced in version 3.1.0
  *  3.2.0 get list of layout file-names as array
+ *  3.3.0 Simplify code by using the same content on both the server side and the client side.
+    The title is part of the content and is rendered via JavaScript, exactly as it would be in a server-side block.
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 // no direct access
@@ -188,7 +190,7 @@ class RestController extends WP_REST_Controller {
         }
         $data = $this->prepare_item_for_response([
                 'content' => $content,
-            'params' => array_intersect_key ($block_attributes, ['title'=>'', 'tag_title'=>'h3'] )
+            'params' =>[] 
         ], $request);
         if (isset($data)) {
             return new WP_REST_Response($data, 200);

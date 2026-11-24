@@ -5,9 +5,10 @@
  *  * v2.7.0
  * 2.4.3 add search in iFrame and choice of used timezone via data-sib-utzui
  * 2.4.4 title from params
+ * 3.3.0 Simplify code by using the same content on both the server side and the client side.
+ *  The title is part of the content and is rendered via JavaScript, exactly as it would be in a server-side block.
 **/
 const endpoint = window.simpleIcalBlock.restRoot + "simple-google-icalendar-widget/v1/content-by-ids";
-let titl;
 
 window.simpleIcalBlock = {...(window.simpleIcalBlock || {}), ...{
 	fetchFromRest: function(dobj, ni) {
@@ -22,18 +23,7 @@ window.simpleIcalBlock = {...(window.simpleIcalBlock || {}), ...{
 			}
 			return response.json();
 		}).then((res) => {
-			if (res.params && res.params.title) {
-				if (ni.querySelector('[data-sib-t="true"]')) {
-					ni.querySelector('[data-sib-t="true"]').innerHTML = res.params.title;
-					titl = ni.querySelector('[data-sib-t="true"]').outerHTML;
-				} else {
-					if (!res.params.tag_title) {res.params.tag_title = 'h3';}
-					titl = '<' + res.params.tag_title + ' class="widget-title block-title" data-sib-t="true">' + res.params.title + '</' + res.params.tag_title + '>';
-				}
-			} else {
-				titl = '';
-			}
-			ni.innerHTML = titl + res.content;
+			ni.innerHTML = res.content;
 			ni.setAttribute('data-sib-st', 'completed');
 		}
 		).catch((error) => {

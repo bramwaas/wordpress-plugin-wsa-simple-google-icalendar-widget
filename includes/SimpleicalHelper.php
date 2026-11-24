@@ -26,6 +26,9 @@
  * 3.2.0 use (overridable) layout files to display content. Get list of layout file-names as array
  * 3.2.1. github #59 (surkum) GLOB_BRACE not present in system not based on glibc, Surkum's suggestion adopted
  * 3.3.0 added property URL in link tag for summary  
+ * 3.3.0 Simplify code by using the same content on both the server side and the client side.
+   The title is part of the content and is rendered via JavaScript, exactly as it would be in a server-side block.
+
  */
 namespace WaasdorpSoekhan\WP\Plugin\SimpleGoogleIcalendarWidget;
 // no direct access
@@ -184,8 +187,8 @@ class SimpleicalHelper
             $secho = '';
             switch ($block_attributes['wptype']) {
                 case 'REST_t':
-                    $secho .= $titlenode;
                 case 'REST':
+                    $secho .= $titlenode;
                     if (! empty($block_attributes['tag_sum'])) {
                         $l = explode(' ', $block_attributes['tag_sum'], 2);
                         $block_attributes['tag_sum'] = $l[0];
@@ -200,6 +203,7 @@ class SimpleicalHelper
                 case 'rest_ph':
                     // Placeholder starting point for REST processing display of block.
                     $wrapperattr = 'class="wp-block-simplegoogleicalenderwidget-simple-ical-block"'; // hardcoded untill (is_wp_version_compatible('5.6')) ? get_block_wrapper_attributes() : '';
+//todo move update_ret_attrs to  ... 
                     try {
                         self::update_rest_attrs($block_attributes);
                     } catch (\Exception $e) {
