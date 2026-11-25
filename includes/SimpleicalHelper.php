@@ -204,6 +204,9 @@ class SimpleicalHelper
                 $secho .= $block_attributes['after_widget'];
                 break;
             case 'REST':
+                if (! empty($block_attributes['title'])) {
+                    $secho .= $titlenode;
+                }
                 // more includes possible when more intances of the block are on the same page.
                 require self::getLayoutPath($block_attributes['sib_layout']);
                 break;
@@ -237,7 +240,8 @@ class SimpleicalHelper
                 Log::log(Log::WARNING, 'Attributes not saved ' . 'Caught exception: ' . $e->getMessage());
             }
             $block_attributes['sib_layout'] = 'rest_ph/rest_client_placeholder';
-            $block_attributes['wptype'] = 'block';
+            $block_attributes['title'] = '';
+            $block_attributes['wptype'] = 'REST';
             $secho .= self::render_block($block_attributes);
             return $secho;
     }
