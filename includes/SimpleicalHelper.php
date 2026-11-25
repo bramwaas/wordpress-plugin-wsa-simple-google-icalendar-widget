@@ -184,46 +184,33 @@ class SimpleicalHelper
             . $block_attributes['title']
             . '</' . $block_attributes['tag_title'] . '>';
             
-            $secho = '';
-            switch ($block_attributes['wptype']) {
-                case 'REST_t':
-                case 'REST':
-                    if (! empty($block_attributes['title'])) {
-                        $secho .= $titlenode;
-                    }
-                    if (! empty($block_attributes['tag_sum'])) {
-                        $l = explode(' ', $block_attributes['tag_sum'], 2);
-                        $block_attributes['tag_sum'] = $l[0];
-                        $block_attributes['tag_sum_a1'] = trim(($l[1]) ?? '');
-                    }
-                    $wrapperattr = 'class="wp-block-simplegoogleicalenderwidget-simple-ical-block"'; // hardcoded untill (is_wp_version_compatible('5.6')) ? get_block_wrapper_attributes() : '';
-                    // Block displayed via REST
-                    // more includes possible when more intances of the block are on the same page.
-                    //todo remove
-                    require self::getLayoutPath($block_attributes['sib_layout']);
-                    // self::display_block($block_attributes, $secho);
-                    break;
-                case 'block':
-                case 'ssr':
-                    // Block rendered serverside, or in admin via serversiderenderer
-                    $wrapperattr = 'class="wp-block-simplegoogleicalenderwidget-simple-ical-block"'; // hardcoded untill (is_wp_version_compatible('5.6')) ? get_block_wrapper_attributes() : '';
-                    $secho .= sprintf($block_attributes['before_widget'], ($block_attributes['anchorId'] . '" data-sib-id="' . $block_attributes['sibid']), $wrapperattr);
-                    if (! empty($block_attributes['title'])) {
-                        $secho .= $titlenode;
-                    }
-                    if (! empty($block_attributes['tag_sum'])) {
-                        $l = explode(' ', $block_attributes['tag_sum'], 2);
-                        $block_attributes['tag_sum'] = $l[0];
-                        $block_attributes['tag_sum_a1'] = trim(($l[1]) ?? '');
-                    }
-                    // more includes possible when more intances of the block are on the same page.
-                    require self::getLayoutPath($block_attributes['sib_layout']);
-                    $secho .= $block_attributes['after_widget'];
-                    break;
-                default:
-                    $secho .= "<!-- unknown wptype:" . $block_attributes['wptype'] . "-->" . PHP_EOL;
-            }
-            return $secho;
+        $secho = '';
+        $wrapperattr = 'class="wp-block-simplegoogleicalenderwidget-simple-ical-block"'; // hardcoded untill (is_wp_version_compatible('5.6')) ? get_block_wrapper_attributes() : '';
+        if (! empty($block_attributes['tag_sum'])) {
+            $l = explode(' ', $block_attributes['tag_sum'], 2);
+            $block_attributes['tag_sum'] = $l[0];
+            $block_attributes['tag_sum_a1'] = trim(($l[1]) ?? '');
+        }
+        switch ($block_attributes['wptype']) {
+            case 'block':
+            case 'ssr':
+                // Block rendered serverside, or in admin via serversiderenderer
+                $secho .= sprintf($block_attributes['before_widget'], ($block_attributes['anchorId'] . '" data-sib-id="' . $block_attributes['sibid']), $wrapperattr);
+                if (! empty($block_attributes['title'])) {
+                    $secho .= $titlenode;
+                }
+                // more includes possible when more intances of the block are on the same page.
+                require self::getLayoutPath($block_attributes['sib_layout']);
+                $secho .= $block_attributes['after_widget'];
+                break;
+            case 'REST':
+                // more includes possible when more intances of the block are on the same page.
+                require self::getLayoutPath($block_attributes['sib_layout']);
+                break;
+            default:
+                $secho .= "<!-- unknown wptype:" . $block_attributes['wptype'] . "-->" . PHP_EOL;
+        }
+        return $secho;
     }
     /**
      * Render the placeholder content of the for the block ( was case 'rest_ph':)
@@ -250,8 +237,7 @@ class SimpleicalHelper
                 Log::log(Log::WARNING, 'Attributes not saved ' . 'Caught exception: ' . $e->getMessage());
             }
             $block_attributes['sib_layout'] = 'rest_ph/rest_client_placeholder';
-            $block_attributes['wptype'] = 'REST';
-            unset ($block_attributes['title']);
+            $block_attributes['wptype'] = 'block';
             $secho .= self::render_block($block_attributes);
             return $secho;
     }
