@@ -196,9 +196,11 @@ class SimpleicalHelper
                         $block_attributes['tag_sum'] = $l[0];
                         $block_attributes['tag_sum_a1'] = trim(($l[1]) ?? '');
                     }
+                    $wrapperattr = 'class="wp-block-simplegoogleicalenderwidget-simple-ical-block"'; // hardcoded untill (is_wp_version_compatible('5.6')) ? get_block_wrapper_attributes() : '';
                     // Block displayed via REST
                     // more includes possible when more intances of the block are on the same page.
                     //todo remove
+                    unset ($block_attributes['title']);
                     require self::getLayoutPath($block_attributes['sib_layout']);
                     // self::display_block($block_attributes, $secho);
                     break;
@@ -241,6 +243,7 @@ class SimpleicalHelper
     static function render_ph_block($block_attributes, $content = null, $block = null)
     {
             // Placeholder starting point for REST processing display of block.
+            $secho = '';
             try {
                 self::update_rest_attrs($block_attributes);
             } catch (\Exception $e) {
@@ -249,7 +252,7 @@ class SimpleicalHelper
             }
             $block_attributes['sib_layout'] = 'rest_ph/rest_client_placeholder';
             $block_attributes['wptype'] = 'REST';
-            self::render_block($attributes);
+            $secho .= self::render_block($block_attributes);
             return $secho;
     }
     
