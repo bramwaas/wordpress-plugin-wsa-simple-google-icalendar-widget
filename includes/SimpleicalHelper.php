@@ -200,7 +200,6 @@ class SimpleicalHelper
                     // Block displayed via REST
                     // more includes possible when more intances of the block are on the same page.
                     //todo remove
-                    unset ($block_attributes['title']);
                     require self::getLayoutPath($block_attributes['sib_layout']);
                     // self::display_block($block_attributes, $secho);
                     break;
@@ -252,6 +251,7 @@ class SimpleicalHelper
             }
             $block_attributes['sib_layout'] = 'rest_ph/rest_client_placeholder';
             $block_attributes['wptype'] = 'REST';
+            unset ($block_attributes['title']);
             $secho .= self::render_block($block_attributes);
             return $secho;
     }
