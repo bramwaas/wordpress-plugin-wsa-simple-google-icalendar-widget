@@ -8,7 +8,9 @@
  * object simpleIcalBlock differentiated by adding F
  * v2.4.4 use present attrs to fetch content not from option in case attrs are not set in option
  * v2.6.1 ad collapse code tot title
- * v3.2.0 get list of layout file-names save as array in layoutOps
+ * v3.2.0 get list of layout file-names save as array in layoutOps 
+ * 3.3.0 Simplify php code by using the same content on both the server side and the client side.
+ *  The title is part of the content and is rendered via JavaScript, exactly as it would be in a server-side block.
 **/
 window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 	bizzySavingAttrs: 0, 
@@ -17,7 +19,7 @@ window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 	sibOpsCacheTime: 0,
 	fetchFromRest: function(dobj, ni) {
 		const fpath = "/simple-google-icalendar-widget/v1/content-by-ids";
-		let titl;
+//		let titl;
 		window.wp.apiFetch({
 			path: fpath,
 			method: 'POST',
@@ -46,7 +48,7 @@ window.simpleIcalBlockF = {...(window.simpleIcalBlockF || {}), ...{
 		const nf = document.querySelectorAll('iframe');
 		let sibid = attrs.sibid;
 		let cwf, nodeList = document.querySelectorAll('[data-sib-st][data-sib-id='+ sibid + ']');
-		let dobj = {...attrs, 'wptype' : "REST_t"};
+		let dobj = {...attrs, 'wptype' : "REST"};
         this.processNodelist(nodeList, dobj);
 		for (let j = 0; j < nf.length; j++) {
 			cwf = (nf[j].contentWindow  || nf[j].contentDocument );
