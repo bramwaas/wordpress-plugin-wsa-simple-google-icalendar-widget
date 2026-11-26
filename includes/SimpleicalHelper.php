@@ -242,7 +242,7 @@ class SimpleicalHelper
             }
             $block_attributes['sib_layout'] = 'rest_ph/rest_client_placeholder';
 //            $block_attributes['title'] = '';
-            $block_attributes['wptype'] = 'rst_ph';
+            $block_attributes['wptype'] = 'rest_ph';
             $secho .= self::render_block($block_attributes);
             return $secho;
     }
